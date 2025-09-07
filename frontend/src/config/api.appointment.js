@@ -8,19 +8,48 @@ export const callGetAppointment = (hash) => {
   return axios.get(`/appointments/${hash}`);
 };
 
+export const callCreateBooking = (
+  vaccineId,
+  centerId,
+  time,
+  firstDoseDate,
+  amount,
+  doseSchedules,
+  method
+) => {
+  return axios.post('/bookings', {
+    vaccineId,
+    centerId,
+    time,
+    firstDoseDate,
+    amount,
+    doseSchedules,
+    method,
+  });
+};
+
+export const updatePaymentPaypal = (bookingId, paymentId) => {
+  return axios.get('/payments/paypal', {
+    bookingId,
+    paymentId,
+  });
+};
+
 export const callAddAppointmentMetaMark = (
   vaccineId,
   centerId,
-  date,
   time,
-  price
+  firstDoseDate,
+  price,
+  doseSchedules
 ) => {
   return axios.post('/appointments/meta-mark', {
     vaccineId,
     centerId,
-    date,
     time,
+    firstDoseDate,
     price,
+    doseSchedules,
   });
 };
 
@@ -57,9 +86,9 @@ export const callVerifyAppointment = (appointmentHash, paymentHash) => {
   });
 };
 
-export const callCreateAppointment = (data) => {
-  return axios.post('/appointments', data);
-};
+// export const callCreateAppointment = (data) => {
+//   return axios.post('/appointments', data);
+// };
 
 export const callListAppointment = (params) => {
   return axios.get('/appointments', { params });

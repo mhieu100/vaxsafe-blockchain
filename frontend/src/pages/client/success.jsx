@@ -1,19 +1,39 @@
-'use strict'
+'use strict';
 import { PageContainer } from '@ant-design/pro-components';
-import { Button, Result, Steps, Card, Row, Col } from 'antd'
+import { Button, Result, Steps, Card, Row, Col } from 'antd';
 import { useEffect, useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { CopyOutlined, QrcodeOutlined, LockOutlined, SafetyCertificateOutlined, LinkOutlined } from '@ant-design/icons';
+import {
+  CopyOutlined,
+  QrcodeOutlined,
+  LockOutlined,
+  SafetyCertificateOutlined,
+  LinkOutlined,
+} from '@ant-design/icons';
 import dayjs from 'dayjs';
 import 'dayjs/locale/vi';
+import { updatePaymentPaypal } from '../../config/api.appointment';
 
 const SuccessPage = () => {
   const location = useLocation();
   const searchParams = new URLSearchParams(location.search);
   const appointmentHash = searchParams.get('appointment_hash');
   const paymentHash = searchParams.get('payment_hash');
+  const booking_id = searchParams.get('booking');
+  const payment_id = searchParams.get('payment');
+  const payerID = searchParams.get('PayerID');
+  const token = searchParams.get('token');
 
-  const [error, setError] = useState(false)
+  useEffect(() => {
+    const handleUpdate = async () => {
+      if (token && payerID && booking_id && payment_id) {
+        await updatePaymentPaypal(booking_id, payment_id);
+      }
+    };
+    handleUpdate();
+  }, [booking_id, payerID, payment_id, token]);
+
+  const [error, setError] = useState(false);
   // useEffect(async () => {
   //   if (appointmentHash && paymentHash) {
   //     setError(false);
@@ -33,22 +53,32 @@ const SuccessPage = () => {
       <Row justify="center" align="middle">
         <Col span={12}>
           <Card className="mt-8">
-            <h2 className="text-xl font-semibold text-gray-800 mb-4">Xác thực Blockchain</h2>
+            <h2 className="text-xl font-semibold text-gray-800 mb-4">
+              Xác thực Blockchain
+            </h2>
             <div className="flex flex-col sm:flex-row gap-6">
               <div className="sm:w-1/3">
                 <div className="bg-gray-100 p-4 rounded-lg flex flex-col items-center">
                   <div className="h-40 w-40 bg-white p-2 rounded flex items-center justify-center mb-2">
-                    <QrcodeOutlined style={{ fontSize: '6em', color: '#d9d9d9' }} />
+                    <QrcodeOutlined
+                      style={{ fontSize: '6em', color: '#d9d9d9' }}
+                    />
                   </div>
-                  <p className="text-xs text-center text-gray-600">Quét để xác thực chứng nhận</p>
-                  <p className="text-xs text-center text-gray-500 mt-1">vaxchain.io/verify/abc123</p>
+                  <p className="text-xs text-center text-gray-600">
+                    Quét để xác thực chứng nhận
+                  </p>
+                  <p className="text-xs text-center text-gray-500 mt-1">
+                    vaxchain.io/verify/abc123
+                  </p>
                 </div>
               </div>
 
               <div className="sm:w-2/3">
                 <div className="space-y-4">
                   <div>
-                    <p className="text-sm text-gray-500">Giao dịch Blockchain</p>
+                    <p className="text-sm text-gray-500">
+                      Giao dịch Blockchain
+                    </p>
                     <div className="flex items-center mt-1">
                       <p className="font-mono text-sm text-blue-600 truncate">
                         {paymentHash}
@@ -56,15 +86,15 @@ const SuccessPage = () => {
                       <Button
                         type="text"
                         icon={<CopyOutlined />}
-                        onClick={() =>
-                          handleCopy(paymentHash)
-                        }
+                        onClick={() => handleCopy(paymentHash)}
                       />
                     </div>
                   </div>
 
                   <div>
-                    <p className="text-sm text-gray-500">Xác thực Blockchain cho lịch hẹn</p>
+                    <p className="text-sm text-gray-500">
+                      Xác thực Blockchain cho lịch hẹn
+                    </p>
                     <div className="flex items-center mt-1">
                       <p className="font-mono text-sm text-blue-600 truncate">
                         {appointmentHash}
@@ -72,9 +102,7 @@ const SuccessPage = () => {
                       <Button
                         type="text"
                         icon={<CopyOutlined />}
-                        onClick={() =>
-                          handleCopy(appointmentHash)
-                        }
+                        onClick={() => handleCopy(appointmentHash)}
                       />
                     </div>
                   </div>
@@ -91,14 +119,14 @@ const SuccessPage = () => {
                       <SafetyCertificateOutlined className="text-blue-400" />
                       <div className="ml-3">
                         <p className="text-sm text-blue-700">
-                          Chứng nhận này được ký số và lưu trữ bất biến trên blockchain Ethereum.
+                          Chứng nhận này được ký số và lưu trữ bất biến trên
+                          blockchain Ethereum.
                         </p>
                       </div>
                     </div>
                   </div>
                 </div>
               </div>
-              
             </div>
 
             <div className="mt-8 pt-6 border-t border-gray-200">
@@ -107,7 +135,9 @@ const SuccessPage = () => {
                   <div className="h-8 w-8 rounded-full bg-green-100 flex items-center justify-center mr-2">
                     <LockOutlined className="text-green-600" />
                   </div>
-                  <span className="text-xs font-medium">Xác thực Blockchain </span>
+                  <span className="text-xs font-medium">
+                    Xác thực Blockchain{' '}
+                  </span>
                 </div>
                 <div className="flex items-center">
                   <div className="h-8 w-8 rounded-full bg-blue-100 flex items-center justify-center mr-2">
@@ -126,8 +156,6 @@ const SuccessPage = () => {
           </Card>
         </Col>
       </Row>
-
-
     );
   };
 
@@ -152,16 +180,14 @@ const SuccessPage = () => {
               Thử lại
             </Button>
           ) : (
-            ""
+            ''
           ),
         ]}
       />
 
-
-
       {renderCertificate()}
     </PageContainer>
-  )
-}
+  );
+};
 
-export default SuccessPage
+export default SuccessPage;

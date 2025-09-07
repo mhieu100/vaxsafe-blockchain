@@ -8,6 +8,7 @@ import com.dapp.backend.dto.request.RegisterRequest;
 import com.dapp.backend.dto.response.LoginResponse;
 import com.dapp.backend.exception.AppException;
 import com.dapp.backend.security.JwtUtil;
+import com.dapp.backend.service.BookingService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
@@ -20,7 +21,6 @@ import com.dapp.backend.annotation.ApiMessage;
 import com.dapp.backend.model.User;
 import com.dapp.backend.dto.mapper.AppointmentMapper;
 import com.dapp.backend.dto.response.AppointmentDto;
-import com.dapp.backend.service.AppointmentService;
 import com.dapp.backend.service.AuthService;
 
 import jakarta.servlet.http.HttpSession;
@@ -33,7 +33,7 @@ import org.web3j.model.VaccineAppointment.Appointment;
 public class AuthController {
 
     private final AuthService authService;
-    private final AppointmentService appointmentService;
+    private final BookingService bookingService;
     private final JwtUtil jwtUtil;
 
     @Value("${jwt.refresh-token-validity-in-seconds}")

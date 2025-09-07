@@ -14,10 +14,7 @@ import VaccineSelection from './steps/VaccineSelection';
 import PaymentMethod from './steps/PaymentMethod';
 import Confirmation from './steps/Confirmation';
 import { callFetchVaccineById } from '../../config/api.vaccine';
-import {
-  callAddAppointmentMetaMark,
-  callVerifyAppointment,
-} from '../../config/api.appointment';
+import { callCreateBooking } from '../../config/api.appointment';
 import dayjs from 'dayjs';
 import { useSelector } from 'react-redux';
 import Web3 from 'web3';
@@ -185,6 +182,47 @@ const BookingPage = () => {
     );
   };
 
+  const renderStepContent = (step) => {
+    const commonProps = {
+      form,
+      currentPage,
+      setCurrentPage,
+      searchText,
+      setSearchText,
+      selectedFilters,
+      setSelectedFilters,
+    };
+
+    switch (step) {
+      case 'vaccine-selection':
+        return queryString.parse(location.search).vaccineId ? (
+          renderSelectedVaccineInfo()
+        ) : (
+          <VaccineSelection
+            {...commonProps}
+            setBookingSummary={setBookingSummary}
+          />
+        );
+
+      case 'confirmation':
+        return (
+          <Confirmation {...commonProps} bookingSummary={bookingSummary} />
+        );
+
+      case 'payment-method':
+        return (
+          <PaymentMethod
+            {...commonProps}
+            selectedPayment={selectedPayment}
+            setSelectedPayment={setSelectedPayment}
+          />
+        );
+
+      default:
+        return null;
+    }
+  };
+
   const validateStep = async () => {
     try {
       const values = await form.validateFields();
@@ -290,104 +328,123 @@ const BookingPage = () => {
         setLoading(false);
         return;
       }
-      const { date, time, center, vaccine } = bookingSummary;
+      const { time, firstDoseDate, center, vaccine, doseSchedules, payment } =
+        bookingSummary;
 
-      if (bookingSummary.payment === 'metamask') {
-        const calculatedEthAmount = vaccine.price / 10000;
-        setEthAmount(calculatedEthAmount);
-        setPaymentStatus('preparing');
-        message.loading({
-          content: 'Đang chuẩn bị giao dịch...',
-          key: 'paymentMessage',
-          duration: 0,
-        });
-        setTimeout(() => {
-          message.loading({
-            content: `Vui lòng xác nhận giao dịch ${calculatedEthAmount} ETH trong ví MetaMask của bạn...`,
-            key: 'paymentMessage',
-            duration: 0,
-          });
-        }, 1500);
-        try {
-          setPaymentStatus('processing');
-          const transactionSuccess = await sendETH();
-          console.log(transactionSuccess);
-          if (!transactionSuccess) {
-            setPaymentStatus('failed');
-            message.error({
-              content:
-                'Thanh toán thất bại. Giao dịch bị từ chối hoặc gặp lỗi.',
-              key: 'paymentMessage',
-              duration: 3,
-            });
-            setLoading(false);
-            return;
-          } else {
-            setPaymentStatus('success-payment');
-            message.loading({
-              content: 'Thanh toán thành công! Đang xử lý đặt lịch...',
-              key: 'paymentMessage',
-              duration: 0,
-            });
-            try {
-              setPaymentStatus('processing-booking');
-              const res = await callAddAppointmentMetaMark(
-                vaccine.vaccineId,
-                center.centerId,
-                date,
-                time,
-                vaccine.price
-              );
-              if (res) {
-                setPaymentStatus('success');
-                message.success({
-                  content: 'Đặt lịch thành công!',
-                  key: 'paymentMessage',
-                  duration: 2,
-                });
-                if (res && transactionSuccess) {
-                  await callVerifyAppointment(res, transactionSuccess);
-                }
-                setTimeout(() => {
-                  navigate(
-                    '/success?appointment_hash=' +
-                      res +
-                      '&payment_hash=' +
-                      transactionSuccess
-                  );
-                }, 1000);
-                return;
-              } else {
-                setPaymentStatus('booking-failed');
-                message.error({
-                  content:
-                    'Thanh toán thành công nhưng đặt lịch thất bại. Vui lòng liên hệ hỗ trợ.',
-                  key: 'paymentMessage',
-                  duration: 5,
-                });
-              }
-            } catch (bookingError) {
-              setPaymentStatus('booking-failed');
-              message.error({
-                content: 'Lỗi khi xử lý đặt lịch. Vui lòng liên hệ hỗ trợ.',
-                key: 'paymentMessage',
-                duration: 5,
-              });
-              console.error('Booking error:', bookingError);
-            }
-          }
-        } catch (txError) {
-          setPaymentStatus('failed');
-          message.error({
-            content:
-              'Giao dịch thất bại: ' +
-              (txError.message || 'Lỗi không xác định'),
-            key: 'paymentMessage',
-            duration: 5,
-          });
-          console.error('Transaction error:', txError);
+      const response = await callCreateBooking(
+        vaccine.vaccineId,
+        center.centerId,
+        time,
+        firstDoseDate,
+        vaccine.price * vaccine.dosage,
+        doseSchedules,
+        payment
+      );
+
+      if (response && response.data) {
+        if (response.data.method === 'CASH') {
+          navigate('/success');
+        } else if (response.data.method === 'PAYPAL') {
+          window.location.href = response.data.paymentURL;
         }
       }
+      // if (bookingSummary.payment === 'metamask') {
+      //   const calculatedEthAmount = vaccine.price / 10000;
+      //   setEthAmount(calculatedEthAmount);
+      //   setPaymentStatus('preparing');
+      //   message.loading({
+      //     content: 'Đang chuẩn bị giao dịch...',
+      //     key: 'paymentMessage',
+      //     duration: 0,
+      //   });
+      //   setTimeout(() => {
+      //     message.loading({
+      //       content: `Vui lòng xác nhận giao dịch ${calculatedEthAmount} ETH trong ví MetaMask của bạn...`,
+      //       key: 'paymentMessage',
+      //       duration: 0,
+      //     });
+      //   }, 1500);
+      //   try {
+      //     setPaymentStatus('processing');
+      //     const transactionSuccess = await sendETH();
+      //     console.log(transactionSuccess);
+      //     if (!transactionSuccess) {
+      //       setPaymentStatus('failed');
+      //       message.error({
+      //         content:
+      //           'Thanh toán thất bại. Giao dịch bị từ chối hoặc gặp lỗi.',
+      //         key: 'paymentMessage',
+      //         duration: 3,
+      //       });
+      //       setLoading(false);
+      //       return;
+      //     } else {
+      //       setPaymentStatus('success-payment');
+      //       message.loading({
+      //         content: 'Thanh toán thành công! Đang xử lý đặt lịch...',
+      //         key: 'paymentMessage',
+      //         duration: 0,
+      //       });
+      //       try {
+      //         setPaymentStatus('processing-booking');
+      // const res = await callAddAppointmentMetaMark(
+      //   vaccine.vaccineId,
+      //   center.centerId,
+      //   time,
+      //   firstDoseDate,
+      //   vaccine.price,
+      //   doseSchedules
+      // );
+      //         if (res) {
+      //           setPaymentStatus('success');
+      //           message.success({
+      //             content: 'Đặt lịch thành công!',
+      //             key: 'paymentMessage',
+      //             duration: 2,
+      //           });
+      //           if (res && transactionSuccess) {
+      //             await callVerifyAppointment(res, transactionSuccess);
+      //           }
+      //           setTimeout(() => {
+      //             navigate(
+      //               '/success?appointment_hash=' +
+      //                 res +
+      //                 '&payment_hash=' +
+      //                 transactionSuccess
+      //             );
+      //           }, 1000);
+      //           return;
+      //         } else {
+      //           setPaymentStatus('booking-failed');
+      //           message.error({
+      //             content:
+      //               'Thanh toán thành công nhưng đặt lịch thất bại. Vui lòng liên hệ hỗ trợ.',
+      //             key: 'paymentMessage',
+      //             duration: 5,
+      //           });
+      //         }
+      //       } catch (bookingError) {
+      //         setPaymentStatus('booking-failed');
+      //         message.error({
+      //           content: 'Lỗi khi xử lý đặt lịch. Vui lòng liên hệ hỗ trợ.',
+      //           key: 'paymentMessage',
+      //           duration: 5,
+      //         });
+      //         console.error('Booking error:', bookingError);
+      //       }
+      //     }
+      //   } catch (txError) {
+      //     setPaymentStatus('failed');
+      //     message.error({
+      //       content:
+      //         'Giao dịch thất bại: ' +
+      //         (txError.message || 'Lỗi không xác định'),
+      //       key: 'paymentMessage',
+      //       duration: 5,
+      //     });
+      //     console.error('Transaction error:', txError);
+      //   }
+      // }
     } catch (error) {
       setPaymentStatus('error');
       message.error({
@@ -414,47 +471,6 @@ const BookingPage = () => {
     },
   ];
 
-  const renderStepContent = (step) => {
-    const commonProps = {
-      form,
-      currentPage,
-      setCurrentPage,
-      searchText,
-      setSearchText,
-      selectedFilters,
-      setSelectedFilters,
-    };
-
-    switch (step) {
-      case 'vaccine-selection':
-        return queryString.parse(location.search).vaccineId ? (
-          renderSelectedVaccineInfo()
-        ) : (
-          <VaccineSelection
-            {...commonProps}
-            setBookingSummary={setBookingSummary}
-          />
-        );
-
-      case 'confirmation':
-        return (
-          <Confirmation {...commonProps} bookingSummary={bookingSummary} />
-        );
-
-      case 'payment-method':
-        return (
-          <PaymentMethod
-            {...commonProps}
-            selectedPayment={selectedPayment}
-            setSelectedPayment={setSelectedPayment}
-          />
-        );
-
-      default:
-        return null;
-    }
-  };
-
   return (
     <div className="min-h-screen bg-gray-50 pt-16">
       <div className="max-w-7xl mx-auto px-4 py-8 sm:px-6 lg:px-8">
@@ -475,13 +491,7 @@ const BookingPage = () => {
           className="mb-8"
         />
 
-        <Form
-          form={form}
-          layout="vertical"
-          initialValues={{
-            payment: 'credit-card',
-          }}
-        >
+        <Form form={form} layout="vertical">
           <div className="bg-white rounded-lg shadow-sm p-6 mb-6">
             {renderStepContent(steps[current].content)}
           </div>

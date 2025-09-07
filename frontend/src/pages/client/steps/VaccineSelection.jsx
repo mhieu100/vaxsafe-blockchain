@@ -363,7 +363,7 @@ const VaccineSelection = ({
                 {getVaccineIcon(vaccine.type)}
               </div>
               <div className="flex items-center bg-green-50 px-2 py-1 rounded-full">
-                <i className="fas fa-link text-green-500 text-xs mr-1"></i>
+                <i className="fas fa-link text-green-500 text-xs mr-1" />
                 <span className="text-xs font-medium text-green-700">{vaccine.disease}</span>
               </div>
             </div>

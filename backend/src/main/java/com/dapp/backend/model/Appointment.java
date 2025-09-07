@@ -1,21 +1,21 @@
 package com.dapp.backend.model;
 
-
-import com.dapp.backend.util.MethodPaymentEnum;
-import com.dapp.backend.util.PaymentEnum;
-
+import com.dapp.backend.util.AppointmentEnum;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
+import java.time.LocalDate;
+import java.time.LocalTime;
+
 @Entity
-@Table(name = "payments")
+@Table(name = "appointments")
 @Data
-@NoArgsConstructor
-@AllArgsConstructor
 @Builder
+@AllArgsConstructor
+@NoArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class Payment {
+public class Appointment {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     Long id;
@@ -24,8 +24,10 @@ public class Payment {
     @JoinColumn(name = "booking_id", nullable = false)
     Booking booking;
 
-    MethodPaymentEnum method;
-    Double amount;
-    String currency;
-    PaymentEnum status;
+    Integer doseNumber;
+    LocalDate scheduledDate;
+    LocalTime scheduledTime;
+
+    @Enumerated(EnumType.STRING)
+    AppointmentEnum status;
 }
