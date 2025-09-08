@@ -29,9 +29,16 @@ export const callCreateBooking = (
 };
 
 export const updatePaymentPaypal = (bookingId, paymentId) => {
-  return axios.get('/payments/paypal', {
+  return axios.post('/payments/paypal', {
     bookingId,
     paymentId,
+  });
+};
+
+export const updatePaymentMetaMask = (paymentId, bookingId) => {
+  return axios.post('/payments/meta-mask', {
+    paymentId,
+    bookingId
   });
 };
 

@@ -95,4 +95,13 @@ public class PaymentService {
         bookingRepository.save(booking);
         paymentRepository.save(payment);
     }
+
+    public void updatePaymentMetaMask(BookingRequest request) throws AppException {
+        Booking booking = bookingRepository.findById(request.getBookingId()).orElseThrow(() -> new AppException("Booking not found!"));
+        com.dapp.backend.model.Payment payment = paymentRepository.findById(request.getPaymentId()).orElseThrow(() -> new AppException("Payment not found!"));
+        booking.setStatus(BookingEnum.CONFIRMED);
+        payment.setStatus(PaymentEnum.SUCCESS);
+        bookingRepository.save(booking);
+        paymentRepository.save(payment);
+    }
 }

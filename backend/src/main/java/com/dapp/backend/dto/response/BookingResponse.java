@@ -9,4 +9,5 @@ public class BookingResponse {
     private Long bookingId;
     private MethodPaymentEnum method;
     private String paymentURL;
+    private Double amount;
 }

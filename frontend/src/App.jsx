@@ -54,6 +54,7 @@ const App = () => {
         { index: true, element: <HomePage /> },
         { path: 'market', element: <MarketPage /> },
         { path: 'booking', element: <BookingPage /> },
+        // { path: 'booking', element: <BookingV1 /> },
         { path: 'success', element: <SuccessPage /> },
         {
           path: 'profile',

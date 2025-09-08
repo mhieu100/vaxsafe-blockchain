@@ -101,24 +101,13 @@ public class BookingService {
             response.setMethod(payment.getMethod());
 
             switch (request.getMethod()) {
-//                case "vnpay":
-//                    // TODO: gọi API VNPay backend để tạo URL
-//                    String vnpayUrl = "https://sandbox.vnpayment.vn/payment/tx123";
-//                    response.setRedirectUrl(vnpayUrl);
-//                    break;
-//
                 case PAYPAL:
                     String paypalUrl = paymentService.createPaypalURL(request.getAmount(), response.getBookingId(), response.getPaymentId());
                     response.setPaymentURL(paypalUrl);
                     break;
-//
-//                case "metamask":
-//                    // Với MetaMask thường FE sẽ mở popup ký giao dịch
-//                    // Ở backend bạn chỉ cần trả về địa chỉ ví nhận
-//                    String receiverWallet = "0x1234567890abcdef...";
-//                    response.setWalletAddress(receiverWallet);
-//                    break;
-
+                case METAMASK:
+                    response.setAmount(request.getAmount() / 200000.0);
+                    break;
                 case CASH:
                     payment.setStatus(PaymentEnum.PROCESSING);
                     paymentRepository.save(payment);

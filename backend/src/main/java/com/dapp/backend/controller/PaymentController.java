@@ -4,12 +4,7 @@ import com.dapp.backend.dto.request.BookingRequest;
 import com.dapp.backend.exception.AppException;
 import com.dapp.backend.service.PaymentService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/payments")
@@ -18,8 +13,13 @@ public class PaymentController {
 
     private final PaymentService paymentService;
 
-    @GetMapping("/paypal")
+    @PostMapping("/paypal")
     public void updatePaymentPaypal(@RequestBody BookingRequest request) throws AppException {
         paymentService.updatePaymentPaypal(request);
+    }
+
+    @PostMapping("/meta-mask")
+    public void updatePaymentMetaMask(@RequestBody BookingRequest request) throws AppException {
+        paymentService.updatePaymentMetaMask(request);
     }
 }

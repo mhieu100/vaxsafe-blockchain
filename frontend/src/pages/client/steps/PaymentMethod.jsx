@@ -1,4 +1,5 @@
 import { Card, Form, Input, Row, Col, Alert, message, Divider } from 'antd';
+import { useEffect } from 'react';
 import {
   WalletOutlined,
   CopyOutlined,
@@ -8,57 +9,65 @@ import {
   BankOutlined,
 } from '@ant-design/icons';
 
-const PaymentMethod = ({ form, selectedPayment, setSelectedPayment }) => {
+const PaymentMethod = ({ selectedPayment, setSelectedPayment, form }) => {
+  // Sync form field with selectedPayment when component mounts or selectedPayment changes
+  useEffect(() => {
+    if (selectedPayment) {
+      form.setFieldsValue({ payment: selectedPayment });
+    }
+  }, [selectedPayment, form]);
+
   const paymentMethods = [
     {
       icon: <WalletOutlined className="text-blue-600" />,
       title: 'MetaMask',
       description: 'Thanh toán bằng ETH qua ví MetaMask',
       value: 'METAMASK',
-      category: 'crypto'
+      category: 'crypto',
     },
     {
       icon: <PayCircleOutlined className="text-blue-400" />,
       title: 'PayPal',
       description: 'Thanh toán qua tài khoản PayPal',
       value: 'PAYPAL',
-      category: 'digital'
+      category: 'digital',
     },
     {
       icon: <CreditCardOutlined className="text-purple-600" />,
       title: 'Thẻ ATM',
       description: 'Thẻ ATM nội địa (VNĐ)',
       value: 'ATM',
-      category: 'bank'
+      category: 'bank',
     },
     {
       icon: <BankOutlined className="text-green-600" />,
       title: 'Chuyển khoản',
       description: 'Chuyển khoản ngân hàng',
       value: 'BANK_TRANSFER',
-      category: 'bank'
+      category: 'bank',
     },
     {
       icon: <DollarOutlined className="text-green-600" />,
       title: 'Tiền mặt',
       description: 'Thanh toán khi nhận hàng (COD)',
       value: 'CASH',
-      category: 'cash'
+      category: 'cash',
     },
   ];
 
   // Phân loại payment methods theo category
   const categorizedMethods = {
-    crypto: paymentMethods.filter(method => method.category === 'crypto'),
-    digital: paymentMethods.filter(method => method.category === 'digital'),
-    bank: paymentMethods.filter(method => method.category === 'bank'),
-    cash: paymentMethods.filter(method => method.category === 'cash'),
+    crypto: paymentMethods.filter((method) => method.category === 'crypto'),
+    digital: paymentMethods.filter((method) => method.category === 'digital'),
+    bank: paymentMethods.filter((method) => method.category === 'bank'),
+    cash: paymentMethods.filter((method) => method.category === 'cash'),
   };
 
   const handlePaymentSelect = (value) => {
     setSelectedPayment(value);
-    // CẬP NHẬT QUAN TRỌNG: Đồng bộ giá trị với form
+    // Update the form field value to sync with form validation
     form.setFieldsValue({ payment: value });
+    console.log(value)
   };
 
   const renderPaymentSection = (title, methods) => (
@@ -104,37 +113,31 @@ const PaymentMethod = ({ form, selectedPayment, setSelectedPayment }) => {
         ]}
       >
         <div className="space-y-6">
-          {categorizedMethods.crypto.length > 0 && renderPaymentSection(
-            'Thanh toán tiền điện tử',
-            categorizedMethods.crypto
-          )}
+          {categorizedMethods.crypto.length > 0 &&
+            renderPaymentSection(
+              'Thanh toán tiền điện tử',
+              categorizedMethods.crypto
+            )}
 
-          {categorizedMethods.crypto.length > 0 && categorizedMethods.digital.length > 0 && (
-            <Divider className="my-2" />
-          )}
+          {categorizedMethods.crypto.length > 0 &&
+            categorizedMethods.digital.length > 0 && (
+              <Divider className="my-2" />
+            )}
 
-          {categorizedMethods.digital.length > 0 && renderPaymentSection(
-            'Ví điện tử', 
-            categorizedMethods.digital
-          )}
+          {categorizedMethods.digital.length > 0 &&
+            renderPaymentSection('Ví điện tử', categorizedMethods.digital)}
 
-          {categorizedMethods.digital.length > 0 && categorizedMethods.bank.length > 0 && (
-            <Divider className="my-2" />
-          )}
+          {categorizedMethods.digital.length > 0 &&
+            categorizedMethods.bank.length > 0 && <Divider className="my-2" />}
 
-          {categorizedMethods.bank.length > 0 && renderPaymentSection(
-            'Ngân hàng', 
-            categorizedMethods.bank
-          )}
+          {categorizedMethods.bank.length > 0 &&
+            renderPaymentSection('Ngân hàng', categorizedMethods.bank)}
 
-          {categorizedMethods.bank.length > 0 && categorizedMethods.cash.length > 0 && (
-            <Divider className="my-2" />
-          )}
+          {categorizedMethods.bank.length > 0 &&
+            categorizedMethods.cash.length > 0 && <Divider className="my-2" />}
 
-          {categorizedMethods.cash.length > 0 && renderPaymentSection(
-            'Khác', 
-            categorizedMethods.cash
-          )}
+          {categorizedMethods.cash.length > 0 &&
+            renderPaymentSection('Khác', categorizedMethods.cash)}
 
           {/* Các phần hiển thị thông tin chi tiết cho từng phương thức */}
           {selectedPayment === 'METAMASK' && (
@@ -161,8 +164,6 @@ const PaymentMethod = ({ form, selectedPayment, setSelectedPayment }) => {
               </Form.Item>
             </div>
           )}
-
-         
 
           {selectedPayment === 'ATM' && (
             <div className="mt-6 bg-gray-50 p-6 rounded-lg">
@@ -227,10 +228,10 @@ const PaymentMethod = ({ form, selectedPayment, setSelectedPayment }) => {
                         required: selectedPayment === 'ATM',
                         message: 'Vui lòng nhập ngày hết hạn',
                       },
-                    {
-                      pattern: /^(0[1-9]|1[0-2])\/([0-9]{2})$/,
-                      message: 'Định dạng phải là MM/YY',
-                    }
+                      {
+                        pattern: /^(0[1-9]|1[0-2])\/([0-9]{2})$/,
+                        message: 'Định dạng phải là MM/YY',
+                      },
                     ]}
                   >
                     <Input placeholder="MM/YY" />
@@ -248,7 +249,7 @@ const PaymentMethod = ({ form, selectedPayment, setSelectedPayment }) => {
                       {
                         pattern: /^[0-9]{3,4}$/,
                         message: 'CVV phải có 3-4 chữ số',
-                      }
+                      },
                     ]}
                   >
                     <Input placeholder="123" type="password" />
@@ -307,12 +308,9 @@ const PaymentMethod = ({ form, selectedPayment, setSelectedPayment }) => {
                 showIcon
                 className="mb-4"
               />
-              <Form.Item
-                label="Ghi chú"
-                name="cashNote"
-              >
-                <Input.TextArea 
-                  placeholder="Ghi chú thêm cho nhân viên (nếu có)" 
+              <Form.Item label="Ghi chú" name="cashNote">
+                <Input.TextArea
+                  placeholder="Ghi chú thêm cho nhân viên (nếu có)"
                   rows={3}
                 />
               </Form.Item>
