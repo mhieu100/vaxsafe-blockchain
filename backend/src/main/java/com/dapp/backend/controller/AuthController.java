@@ -1,8 +1,5 @@
 package com.dapp.backend.controller;
 
-import java.util.List;
-import java.util.stream.Collectors;
-
 import com.dapp.backend.dto.request.LoginRequest;
 import com.dapp.backend.dto.request.RegisterRequest;
 import com.dapp.backend.dto.response.LoginResponse;
@@ -19,13 +16,9 @@ import org.springframework.web.bind.annotation.*;
 
 import com.dapp.backend.annotation.ApiMessage;
 import com.dapp.backend.model.User;
-import com.dapp.backend.dto.mapper.AppointmentMapper;
-import com.dapp.backend.dto.response.AppointmentDto;
 import com.dapp.backend.service.AuthService;
 
-import jakarta.servlet.http.HttpSession;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.web3j.model.VaccineAppointment.Appointment;
 
 @RestController
 @RequestMapping("/auth")

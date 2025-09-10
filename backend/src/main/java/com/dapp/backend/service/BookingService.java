@@ -1,6 +1,7 @@
 package com.dapp.backend.service;
 
-import com.dapp.backend.dto.response.BookingResponse;
+import com.dapp.backend.dto.mapper.BookingMapper;
+import com.dapp.backend.dto.response.*;
 import com.dapp.backend.exception.AppException;
 import com.dapp.backend.model.*;
 import com.dapp.backend.repository.*;
@@ -17,12 +18,18 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
+import org.springframework.security.core.parameters.P;
 import org.springframework.stereotype.Service;
 import org.web3j.model.VaccineAppointment;
 //import org.web3j.model.VaccineAppointment.Appointment;
 import org.web3j.protocol.core.methods.response.TransactionReceipt;
 
 import com.dapp.backend.dto.request.AppointmentRequest;
+
+import static com.dapp.backend.service.PaymentService.EXCHANGE_RATE_TO_USD;
 
 @Service
 @RequiredArgsConstructor
@@ -35,6 +42,7 @@ public class BookingService {
     private final PaymentRepository paymentRepository;
     private final BookingRepository bookingRepository;
     private final PaymentService paymentService;
+
 
 //    public String createAppointmentWithMetaMark(AppointmentRequest request, String walletAddress) throws Exception {
 //        Vaccine vaccine = vaccineRepository.findById(request.getVaccineId()).orElseThrow(() -> new AppException("Vaccine not found!"));
@@ -49,7 +57,7 @@ public class BookingService {
 //
 //    }
 
-        public BookingResponse createBooking(AppointmentRequest request) throws Exception {
+        public ResultResponse createBooking(AppointmentRequest request) throws Exception {
             String email = JwtUtil.getCurrentUserLogin().isPresent() ? JwtUtil.getCurrentUserLogin().get() : "";
             User user = userRepository.findByEmail(email).orElseThrow(() -> new AppException("User not found"));
             Vaccine vaccine = vaccineRepository.findById(request.getVaccineId()).orElseThrow(() -> new AppException("Vaccine not found!"));
@@ -87,15 +95,26 @@ public class BookingService {
             booking.setAppointments(appointments);
             bookingRepository.save(booking);
 
+
+
             Payment payment = new Payment();
             payment.setBooking(booking);
             payment.setAmount(request.getAmount());
             payment.setMethod(request.getMethod());
+
+            if(request.getMethod().toString().equals("PAYPAL")) {
+               payment.setAmount((double) Math.round(request.getAmount() * EXCHANGE_RATE_TO_USD));
+            } else if(request.getMethod().toString().equals("METAMASK")){
+                payment.setAmount((double) Math.round(request.getAmount() / 200000.0));
+            } else {
+                payment.setAmount(request.getAmount());
+            }
+
             payment.setCurrency(request.getMethod().getCurrency());
             payment.setStatus(PaymentEnum.INITIATED);
             paymentRepository.save(payment);
 
-            BookingResponse response = new BookingResponse();
+            ResultResponse response = new ResultResponse();
             response.setBookingId(booking.getId());
             response.setPaymentId(payment.getId());
             response.setMethod(payment.getMethod());
@@ -119,7 +138,23 @@ public class BookingService {
             return response;
     }
 
+    public Pagination getAllBookings(Specification<Booking> specification, Pageable pageable) throws Exception {
+        Page<Booking> page = bookingRepository.findAll(pageable);
+        Pagination pagination = new Pagination();
+        Pagination.Meta meta = new Pagination.Meta();
+        meta.setPage(pageable.getPageNumber() + 1);
+        meta.setPageSize(pageable.getPageSize());
+        meta.setPages(page.getTotalPages());
+        meta.setTotal(page.getTotalElements());
 
+        pagination.setMeta(meta);
+        List<Booking> list = page.getContent();
+
+        List<BookingResponse> result = list.stream().map(BookingMapper::toResponse).toList();
+        pagination.setResult(result);
+
+        return pagination;
+    }
 
 
 //    public Appointment getAppointment(BigInteger id) throws Exception {

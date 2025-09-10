@@ -18,6 +18,8 @@ import com.dapp.backend.model.User;
 import com.dapp.backend.repository.RoleRepository;
 import com.dapp.backend.repository.UserRepository;
 
+import java.util.Objects;
+
 @Service
 @RequiredArgsConstructor
 public class AuthService {
@@ -37,6 +39,8 @@ public class AuthService {
                 .address(user.getAddress())
                 .role(user.getRole().getName())
                 .walletAddress(user.getWalletAddress())
+                .centerName(!Objects.equals(user.getRole().getName(), "DOCTOR") &&
+                        !Objects.equals(user.getRole().getName(), "CASHIER") ? "": user.getCenter().getName() )
                 .build();
     }
 

@@ -23,7 +23,7 @@ public class PaymentService {
     private final BookingRepository bookingRepository;
     private final PaymentRepository paymentRepository;
     private final APIContext apiContext;
-    private static final double EXCHANGE_RATE_TO_USD = 0.000041;
+    public static final double EXCHANGE_RATE_TO_USD = 0.000041;
 
     public String createPaypalURL(Double amount, long bookingId, long paymentId) throws PayPalRESTException {
         Payment payment = createPayment(

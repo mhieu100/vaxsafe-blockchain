@@ -19,6 +19,7 @@ const DataTable = ({
   actionRef,
   dateFormatter = 'string',
   rowSelection,
+  expandable
 }) => {
   return (
     <ProTable
@@ -40,6 +41,7 @@ const DataTable = ({
       actionRef={actionRef}
       dateFormatter={dateFormatter}
       rowSelection={rowSelection}
+      expandable={expandable}
     />
   );
 };

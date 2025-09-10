@@ -361,13 +361,10 @@ const BookingPage = () => {
         } else if (response.data.method === 'METAMASK') {
           const transaction = await sendETH(response.data.amount);
           if (transaction) {
-            const handleUpdate = async () => {
-              await updatePaymentMetaMask(
-                response.data.paymentId,
-                response.data.bookingId
-              );
-            };
-            handleUpdate();
+            await updatePaymentMetaMask(
+              response.data.paymentId,
+              response.data.bookingId
+            );
             navigate(
               '/success?booking=' +
                 response.data.bookingId +

@@ -1,22 +1,22 @@
 package com.dapp.backend.dto.mapper;
-import org.web3j.model.VaccineAppointment.Appointment;
-
-import com.dapp.backend.dto.response.AppointmentDto;
+import com.dapp.backend.dto.response.AppointmentResponse;
+import com.dapp.backend.model.Appointment;
 
 public class AppointmentMapper {
 
-    public static AppointmentDto toDto(Appointment appointment) {
-        AppointmentDto dto = new AppointmentDto();
-        dto.setAppointmentId(appointment.appointmentId);
-        dto.setVaccineName(appointment.vaccineName);
-        dto.setPatientAddress(appointment.patientAddress);
-        dto.setDoctorAddress(appointment.doctorAddress);
-        dto.setCashierAddress(appointment.cashierAddress);
-        dto.setCenterName(appointment.centerName);
-        dto.setDate(appointment.date);
-        dto.setTime(appointment.time);
-        dto.setPrice(appointment.price.intValue());
-        dto.setStatus(appointment.status);
-        return dto;
+    public static AppointmentResponse toResponse(Appointment appointment) {
+        AppointmentResponse response = new AppointmentResponse();
+        response.setId(appointment.getId());
+        response.setDoseNumber(appointment.getDoseNumber());
+        response.setScheduledTime(appointment.getScheduledTime());
+        response.setScheduledDate(appointment.getScheduledDate());
+        response.setStatus(appointment.getStatus());
+        response.setBookingId(appointment.getBooking().getId());
+        response.setVaccineName(appointment.getBooking().getVaccine().getName());
+        response.setCenterName(appointment.getBooking().getCenter().getName());
+        response.setUsername(appointment.getBooking().getUser().getFullName());
+        return response;
     }
+
+
 }

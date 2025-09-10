@@ -60,8 +60,8 @@ export const callAddAppointmentMetaMark = (
   });
 };
 
-export const callAllAppointment = () => {
-  return axios.get('/appointments/all');
+export const callAllBookings = () => {
+  return axios.get('/bookings');
 };
 
 export const callUpdateAppointment = (appointmentId, doctorAddress) => {
@@ -79,15 +79,20 @@ export const callCompleteAppointment = (appointmentId) => {
 };
 
 export const callFetchAppointment = () => {
-  return axios.get(`/appointments`);
+  return axios.get('/appointments');
 };
 
+export const callFetchAppointmentOfCenter = () => {
+  return axios.get('/appointments/center');
+};
+
+
 export const callMySchedule = () => {
-  return axios.get(`/appointments/my-schedule`);
+  return axios.get('/appointments/my-schedule');
 };
 
 export const callVerifyAppointment = (appointmentHash, paymentHash) => {
-  return axios.post(`/appointments/verify`, {
+  return axios.post('/appointments/verify', {
     appointmentHash,
     paymentHash,
   });

@@ -1,27 +1,21 @@
 package com.dapp.backend.controller;
 
 import com.dapp.backend.dto.request.AppointmentRequest;
-import com.dapp.backend.dto.response.BookingResponse;
+import com.dapp.backend.dto.response.Pagination;
+import com.dapp.backend.dto.response.ResultResponse;
+import com.dapp.backend.model.Booking;
 import com.dapp.backend.service.BookingService;
+import com.turkraft.springfilter.boot.Filter;
 import lombok.RequiredArgsConstructor;
 
-import java.math.BigInteger;
-import java.util.List;
-import java.util.stream.Collectors;
-
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.web3j.model.VaccineAppointment.Appointment;
 
 import com.dapp.backend.annotation.ApiMessage;
-import com.dapp.backend.model.Payment;
-import com.dapp.backend.dto.mapper.AppointmentMapper;
-import com.dapp.backend.dto.request.ProcessAppointment;
-import com.dapp.backend.dto.response.AppointmentDto;
 import com.dapp.backend.service.UserService;
 
-import jakarta.servlet.http.HttpSession;
-        
 @RestController
 @RequestMapping("/bookings")
 @RequiredArgsConstructor
@@ -43,8 +37,14 @@ public class BookingController {
 
         @PostMapping
         @ApiMessage("Create a booking")
-        public ResponseEntity<BookingResponse> createBooking(@RequestBody AppointmentRequest request) throws Exception {
+        public ResponseEntity<ResultResponse> createBooking(@RequestBody AppointmentRequest request) throws Exception {
             return ResponseEntity.ok(bookingService.createBooking(request));
+        }
+
+        @GetMapping()
+        @ApiMessage("Get all bookings")
+        public ResponseEntity<Pagination> getAllBookings(@Filter Specification<Booking> specification, Pageable pageable) throws Exception {
+                return ResponseEntity.ok().body(bookingService.getAllBookings(specification, pageable));
         }
 
 //        @GetMapping("/{id}")

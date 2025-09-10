@@ -37,6 +37,7 @@ import StaffVaccinePage from './pages/staff/vaccines';
 import StaffCenterPage from './pages/staff/centers';
 import MySchedulePage from './pages/staff/my-schedule';
 import AppointmentPage from './pages/staff/appointment';
+import BookingMangaer from './pages/admin/booking';
 
 const App = () => {
   const dispatch = useDispatch();
@@ -54,7 +55,6 @@ const App = () => {
         { index: true, element: <HomePage /> },
         { path: 'market', element: <MarketPage /> },
         { path: 'booking', element: <BookingPage /> },
-        // { path: 'booking', element: <BookingV1 /> },
         { path: 'success', element: <SuccessPage /> },
         {
           path: 'profile',
@@ -84,6 +84,10 @@ const App = () => {
         {
           path: 'vaccines',
           element: <VaccinePage />,
+        },
+        {
+          path: 'bookings',
+          element: <BookingMangaer />,
         },
         {
           path: 'users',

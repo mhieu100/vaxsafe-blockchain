@@ -34,7 +34,7 @@ const LayoutStaff = () => {
   const handleLogout = async () => {
     const res = await callLogout();
     if (res && res && +res.statusCode === 200) {
-      disconnect();
+      localStorage.removeItem('access_token');
       dispatch(setLogoutAction({}));
       message.success('Đăng xuất thành công');
       navigate('/');
@@ -128,7 +128,7 @@ const LayoutStaff = () => {
                   </Avatar>
                 </Badge>
                 <div className="hidden md:block">
-                  <div className="text-sm font-medium">{user?.fullname}</div>
+                  <div className="text-sm font-medium">{user?.fullName}</div>
                   <div className="text-xs text-gray-500">
                     {getRole(user?.role)}
                   </div>

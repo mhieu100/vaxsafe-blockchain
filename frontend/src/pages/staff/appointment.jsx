@@ -1,5 +1,5 @@
 /* eslint-disable no-unused-vars */
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useRef, useState } from 'react';
 import queryString from 'query-string';
 import { sfLike } from 'spring-filter-query-builder';
 import { Badge, Button, Space, Tag, Typography } from 'antd';
@@ -7,7 +7,10 @@ import { CloseCircleOutlined, EditOutlined } from '@ant-design/icons';
 
 import DataTable from '../../components/data-table';
 import ModalAppointment from '../../components/modal/modal.appointment';
-import { callFetchAppointment } from '../../config/api.appointment';
+import {
+  callFetchAppointment,
+  callFetchAppointmentOfCenter,
+} from '../../config/api.appointment';
 
 const { Text } = Typography;
 
@@ -17,6 +20,14 @@ const AppointmentPage = () => {
   const reloadTable = () => {
     tableRef?.current?.reload();
   };
+
+  useEffect(() => {
+    const fetch = async () => {
+      const response = await callFetchAppointmentOfCenter();
+      console.log(response);
+    };
+    fetch()
+  }, []);
 
   const [dataInit, setDataInit] = useState(null);
   const [openModal, setOpenModal] = useState(false);
@@ -62,8 +73,8 @@ const AppointmentPage = () => {
       sorter: true,
     },
     {
-      title: 'Địa chỉ bệnh nhân',
-      dataIndex: 'patientAddress',
+      title: 'Bệnh nhân',
+      dataIndex: 'username',
       render: (text) => (
         <Text copyable ellipsis style={{ maxWidth: 150 }}>
           {text}
@@ -103,16 +114,16 @@ const AppointmentPage = () => {
       dataIndex: 'status',
       sorter: true,
       render: (status) => {
-        return <Tag color={getStatusColor(status)}>
-          {getStatusText(status)}
-        </Tag>;
+        return (
+          <Tag color={getStatusColor(status)}>{getStatusText(status)}</Tag>
+        );
       },
     },
     {
       title: 'Thao tác',
       hideInSearch: true,
       width: 50,
-      render: (_value, entity) => (
+      render: (_value, entity) =>
         entity.status === 0 ? (
           <Space>
             <EditOutlined
@@ -126,8 +137,7 @@ const AppointmentPage = () => {
               }}
             />
           </Space>
-        ) : null
-      ),
+        ) : null,
     },
   ];
 
@@ -139,7 +149,8 @@ const AppointmentPage = () => {
       filter: '',
     };
 
-    if (clone.vaccineName) q.filter = `${sfLike('vaccineName', clone.vaccineName)}`;
+    if (clone.vaccineName)
+      q.filter = `${sfLike('vaccineName', clone.vaccineName)}`;
     if (clone.centerName) {
       q.filter = clone.vaccineName
         ? q.filter + ' and ' + `${sfLike('centerName', clone.centerName)}`
@@ -153,14 +164,14 @@ const AppointmentPage = () => {
 
   return (
     <>
-      <DataTable
+      {/* <DataTable
         actionRef={tableRef}
         headerTitle='Danh sách lịch hẹn'
         rowKey='appointId'
         columns={columns}
         request={async (params, sort, filter) => {
           const query = buildQuery(params, sort, filter);
-          return callFetchAppointment(query);
+          return callFetchAppointmentOfCenter(query);
         }}
         scroll={{ x: true }}
         pagination={{
@@ -168,7 +179,7 @@ const AppointmentPage = () => {
           showTotal: (total) => `Tổng ${total} lịch hẹn`,
         }}
         rowSelection={false}
-      />
+      /> */}
       <ModalAppointment
         openModal={openModal}
         setOpenModal={setOpenModal}

@@ -14,6 +14,7 @@ import {
   LogoutOutlined,
   SafetyCertificateOutlined,
   MenuOutlined,
+  BoxPlotOutlined,
 } from '@ant-design/icons';
 
 import { useDispatch, useSelector } from 'react-redux';
@@ -30,7 +31,7 @@ const LayoutAdmin = () => {
   const { disconnect } = useDisconnect();
   const navigate = useNavigate();
   const user = useSelector((state) => state.account.user);
-
+  console.log(user);
   const location = useLocation();
   const [activeMenu, setActiveMenu] = useState('');
   const [collapsed, setCollapsed] = useState(false);
@@ -42,7 +43,7 @@ const LayoutAdmin = () => {
   const handleLogout = async () => {
     const res = await callLogout();
     if (res && res && +res.statusCode === 200) {
-      disconnect();
+      localStorage.removeItem('access_token');
       dispatch(setLogoutAction({}));
       message.success('Đăng xuất thành công');
       navigate('/');
@@ -86,6 +87,11 @@ const LayoutAdmin = () => {
       key: '/admin/centers',
       icon: <BankOutlined />,
       label: 'Cơ sở tiêm chủng',
+    },
+    {
+      key: '/admin/bookings',
+      icon: <BoxPlotOutlined />,
+      label: 'Booking',
     },
     {
       key: '/admin/appointments',

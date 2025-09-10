@@ -80,7 +80,7 @@ const StaffDashboard = () => {
 
   return (
     <div className="p-6">
-      <Title level={2}>Xin chào, {user.fullname}</Title>
+      <Title level={2}>Xin chào, {user.fullName.toUpperCase()}</Title>
       <Text type="secondary" className="mb-6 block">
         {user.role === 'DOCTOR' ? 'Bác sĩ' : 'Nhân viên thu ngân'} tại{' '}
         {user.centerName}
@@ -91,7 +91,7 @@ const StaffDashboard = () => {
           <Card bordered={false}>
             <Statistic
               title="Lịch hẹn hôm nay"
-              value={5}
+              value={200}
               prefix={<CalendarOutlined />}
             />
           </Card>
@@ -99,7 +99,7 @@ const StaffDashboard = () => {
         <Col xs={24} sm={12} lg={6}>
           <Card bordered={false}>
             <Statistic
-              title="Bệnh nhân đã tiêm"
+              title="Số đơn đã xác nhận"
               value={120}
               prefix={<UserOutlined />}
             />
@@ -108,20 +108,18 @@ const StaffDashboard = () => {
         <Col xs={24} sm={12} lg={6}>
           <Card bordered={false}>
             <Statistic
-              title="Loại vaccine"
-              value={15}
-              prefix={<MedicineBoxOutlined />}
+              title="Số đơn bị hủy"
+              value={10}
+              prefix={<UserOutlined />}
             />
           </Card>
         </Col>
         <Col xs={24} sm={12} lg={6}>
           <Card bordered={false}>
             <Statistic
-              title="Tiêm chủng hoàn thành"
-              value={98}
-              suffix="%"
-              precision={2}
-              prefix={<CheckCircleOutlined />}
+              title="Số đơn chờ xử lý"
+              value={70}
+              prefix={<MedicineBoxOutlined />}
             />
           </Card>
         </Col>
@@ -154,11 +152,7 @@ const StaffDashboard = () => {
         </Col>
 
         <Col xs={24} lg={8}>
-          <Card
-            title="Tiêm chủng gần đây"
-            bordered={false}
-            className="h-full"
-          >
+          <Card title="Tiêm chủng gần đây" bordered={false} className="h-full">
             <List
               dataSource={recentVaccinations}
               renderItem={(item) => (
