@@ -4,7 +4,8 @@ import { useDispatch, useSelector } from 'react-redux';
 import { fetchBooking } from '../../redux/slice/bookingSlice';
 import { sfLike } from 'spring-filter-query-builder';
 import queryString from 'query-string';
-import { Table } from 'antd';
+import { Table, Tag } from 'antd';
+import { getColorStatus } from '../../utils/status';
 
 const BookingManager = () => {
   const tableRef = useRef();
@@ -94,8 +95,8 @@ const BookingManager = () => {
       },
     },
     {
-      title: 'Họ tên',
-      dataIndex: 'username',
+      title: 'Bệnh nhân',
+      dataIndex: 'patientName',
       hideInSearch: true,
     },
     {
@@ -117,6 +118,13 @@ const BookingManager = () => {
       title: 'Trạng thái',
       dataIndex: 'status',
       hideInSearch: true,
+      render: (text) => {
+        return (
+          <Tag bordered={false} color={getColorStatus(text)}>
+            {text}
+          </Tag>
+        );
+      },
     },
   ];
 
@@ -128,9 +136,6 @@ const BookingManager = () => {
     />
   );
 
-  console.log(isFetching);
-  console.log(meta);
-  console.log(bookings);
   return (
     <>
       <DataTable

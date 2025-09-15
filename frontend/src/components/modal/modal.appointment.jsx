@@ -1,7 +1,6 @@
 import { useEffect, useState } from 'react';
-import { CheckSquareOutlined } from '@ant-design/icons';
-import { Col, Form, message, notification, Row } from 'antd';
-import { FooterToolbar, ModalForm, ProFormSelect, ProFormText } from '@ant-design/pro-components';
+import { Form, message, notification } from 'antd';
+import { ModalForm, ProFormSelect } from '@ant-design/pro-components';
 import dayjs from 'dayjs';
 import customParseFormat from 'dayjs/plugin/customParseFormat';
 
@@ -18,9 +17,10 @@ const ModalAppointment = (props) => {
   const [animation, setAnimation] = useState('open');
   const [listDoctor, setListDoctor] = useState([]);
 
+  console.log(dataInit)
   useEffect(() => {
     fetchDoctor();
-  }, []); 
+  }, []);
 
   const fetchDoctor = async () => {
     const res = await callFetchDoctor();
@@ -29,12 +29,12 @@ const ModalAppointment = (props) => {
     }
   };
 
-  // Handle form submission
   const submitAppointment = async (valuesForm) => {
-    const { walletAddress } = valuesForm;
-    const res = await callUpdateAppointment(dataInit.appointmentId, walletAddress);
+    const { doctorId } = valuesForm;
+    const res = await callUpdateAppointment(dataInit.id, doctorId);
 
     if (res) {
+      console.log(res)
       message.success('Appointment updated successfully');
       handleReset();
       reloadTable();
@@ -78,50 +78,22 @@ const ModalAppointment = (props) => {
           form={form}
           onFinish={submitAppointment}
           initialValues={dataInit}
-          submitter={{
-            render: (_, dom) => <FooterToolbar>{dom}</FooterToolbar>,
-            submitButtonProps: {
-              icon: <CheckSquareOutlined />,
-            },
-            searchConfig: {
-              resetText: 'Cancel',
-              submitText: <>Update</>,
-            },
-          }}
         >
-          <Row gutter={16}>
-            <Col span={12}>
-              <ProFormText label="Vaccine Name" name="vaccineName" disabled />
-            </Col>
-            <Col span={12}>
-              <ProFormText label="Patient Wallet" name="patientAddress" disabled />
-            </Col>
-            <Col span={12}>
-              <ProFormText label="Appointment Date" name="date" disabled />
-            </Col>
-            <Col span={12}>
-              <ProFormText label="Appointment Time" name="time" disabled />
-            </Col>
-           
-            <Col span={12}>
-              <ProFormSelect
-                width="100%"
-                name="walletAddress"
-                label="Assign Doctor"
-                placeholder="Select Doctor"
-                options={listDoctor.map((doctor) => ({
-                  label: doctor.fullname,
-                  value: doctor.walletAddress,
-                }))}
-                rules={[
-                  {
-                    required: true,
-                    message: 'Please select a doctor!',
-                  },
-                ]}
-              />
-            </Col>
-          </Row>
+          <ProFormSelect
+            name="doctorId"
+            label="Assign Doctor"
+            placeholder="Select Doctor"
+            options={listDoctor.map((doctor) => ({
+              label: doctor.doctorName,
+              value: doctor.id,
+            }))}
+            rules={[
+              {
+                required: true,
+                message: 'Please select a doctor!',
+              },
+            ]}
+          />
         </ModalForm>
       )}
     </>

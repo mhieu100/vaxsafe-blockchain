@@ -11,52 +11,28 @@ import {
   callFetchAppointment,
   callFetchAppointmentOfCenter,
 } from '../../config/api.appointment';
+import { useDispatch, useSelector } from 'react-redux';
+import { fetchAppointment } from '../../redux/slice/appointmentSlice';
+import { getColorStatus } from '../../utils/status';
 
 const { Text } = Typography;
 
 const AppointmentPage = () => {
   const tableRef = useRef();
 
+  const isFetching = useSelector((state) => state.appointment.isFetching);
+  const meta = useSelector((state) => state.appointment.meta);
+  const appointments = useSelector((state) => state.appointment.result);
+  const dispatch = useDispatch();
+
   const reloadTable = () => {
     tableRef?.current?.reload();
   };
 
-  useEffect(() => {
-    const fetch = async () => {
-      const response = await callFetchAppointmentOfCenter();
-      console.log(response);
-    };
-    fetch()
-  }, []);
+  console.log(appointments);
 
   const [dataInit, setDataInit] = useState(null);
   const [openModal, setOpenModal] = useState(false);
-
-  const getStatusColor = (status) => {
-    switch (status) {
-      case 0:
-        return 'orange';
-      case 2:
-        return 'green';
-      case 3:
-        return 'red';
-      default:
-        return 'default';
-    }
-  };
-
-  const getStatusText = (status) => {
-    switch (status) {
-      case 0:
-        return 'Chờ xác nhận';
-      case 1:
-        return 'Chờ tiêm';
-      case 2:
-        return 'Đã tiêm';
-      default:
-        return 'Đã hủy';
-    }
-  };
 
   const columns = [
     {
@@ -68,69 +44,60 @@ const AppointmentPage = () => {
       hideInSearch: true,
     },
     {
-      title: 'Tên Vaccine',
+      title: 'Vaccine',
       dataIndex: 'vaccineName',
-      sorter: true,
     },
     {
       title: 'Bệnh nhân',
-      dataIndex: 'username',
-      render: (text) => (
-        <Text copyable ellipsis style={{ maxWidth: 150 }}>
-          {text}
-        </Text>
-      ),
+      dataIndex: 'patientName',
     },
     {
-      title: 'Địa chỉ bác sĩ',
-      dataIndex: 'doctorAddress',
+      title: 'Trung tâm',
+      dataIndex: 'centerName',
+    },
+    {
+      title: 'Ngày tiêm',
+      dataIndex: 'scheduledDate',
+    },
+    {
+      title: 'Giờ tiêm',
+      dataIndex: 'scheduledTime',
+    },
+    {
+      title: 'Bác sĩ',
+      dataIndex: 'doctorName',
       render: (text) => {
-        if (text === '0x0000000000000000000000000000000000000000') {
-          return (
-            <Tag icon={<CloseCircleOutlined />} color="error">
-              Chưa phân công
-            </Tag>
-          );
-        }
-        return (
-          <Text copyable ellipsis style={{ maxWidth: 150 }}>
-            {text}
-          </Text>
+        return text ? (
+          <Badge color="green" text={text} />
+        ) : (
+          <Badge color="red" text="Cập nhật" />
         );
       },
     },
     {
-      title: 'Ngày',
-      dataIndex: 'date',
-      sorter: true,
-    },
-    {
-      title: 'Giờ',
-      dataIndex: 'time',
-      sorter: true,
+      title: 'Thu Ngân',
+      dataIndex: 'cashierName',
+      render: (text) => {
+        return text ? (
+          <Badge color="green" text={text} />
+        ) : (
+          <Badge color="red" text="Cập nhật" />
+        );
+      },
     },
     {
       title: 'Trạng thái',
       dataIndex: 'status',
-      sorter: true,
-      render: (status) => {
-        return (
-          <Tag color={getStatusColor(status)}>{getStatusText(status)}</Tag>
-        );
+      render: (text) => {
+        return <Tag color={getColorStatus(text)}>{text}</Tag>;
       },
     },
     {
       title: 'Thao tác',
-      hideInSearch: true,
-      width: 50,
       render: (_value, entity) =>
-        entity.status === 0 ? (
+        entity.status === 'PENDING' ? (
           <Space>
             <EditOutlined
-              style={{
-                fontSize: 20,
-                color: '#ffa500',
-              }}
               onClick={() => {
                 setOpenModal(true);
                 setDataInit(entity);
@@ -164,22 +131,33 @@ const AppointmentPage = () => {
 
   return (
     <>
-      {/* <DataTable
+      <DataTable
         actionRef={tableRef}
-        headerTitle='Danh sách lịch hẹn'
-        rowKey='appointId'
+        headerTitle="Danh sách lịch hẹn"
+        rowKey="id"
+        loading={isFetching}
         columns={columns}
+        dataSource={appointments}
         request={async (params, sort, filter) => {
           const query = buildQuery(params, sort, filter);
-          return callFetchAppointmentOfCenter(query);
+          dispatch(fetchAppointment({ query }));
         }}
         scroll={{ x: true }}
         pagination={{
+          current: meta.page,
+          pageSize: meta.pageSize,
           showSizeChanger: true,
-          showTotal: (total) => `Tổng ${total} lịch hẹn`,
+          total: meta.total,
+          showTotal: (total, range) => {
+            return (
+              <div>
+                {range[0]}-{range[1]} trên tổng số {total} dòng
+              </div>
+            );
+          },
         }}
         rowSelection={false}
-      /> */}
+      />
       <ModalAppointment
         openModal={openModal}
         setOpenModal={setOpenModal}

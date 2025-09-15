@@ -7,10 +7,12 @@ import userReducer from './slice/userSlice';
 import permissionReducer from './slice/permissionSlice';
 import roleReducer from './slice/roleSlice';
 import bookingReducer from './slice/bookingSlice';
+import appointmentReducer from './slice/appointmentSlice';
 
 export const store = configureStore({
   reducer: {
     account: accountReducer,
+    appointment: appointmentReducer,
     booking: bookingReducer,
     center: centerReducer,
     vaccine: vaccineReducer,

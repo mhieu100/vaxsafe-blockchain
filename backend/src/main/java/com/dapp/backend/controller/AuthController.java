@@ -105,10 +105,5 @@ public class AuthController {
 //                .collect(Collectors.toList());
 //        return ResponseEntity.ok().body(dtos);
 //    }
-//
-//    @PostMapping("/logout")
-//    @ApiMessage("Logout account")
-//    public void logoutUser(HttpSession session) {
-//        session.removeAttribute("walletAddress");
-//    }
+
 }

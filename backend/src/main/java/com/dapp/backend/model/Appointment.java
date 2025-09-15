@@ -24,6 +24,14 @@ public class Appointment {
     @JoinColumn(name = "booking_id", nullable = false)
     Booking booking;
 
+    @ManyToOne
+    @JoinColumn(name = "cashier_id")
+    User cashier;
+
+    @ManyToOne
+    @JoinColumn(name = "doctor_id")
+    User doctor;
+
     Integer doseNumber;
     LocalDate scheduledDate;
     LocalTime scheduledTime;

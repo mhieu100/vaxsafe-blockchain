@@ -12,7 +12,7 @@ import java.util.List;
 @Data
 public class BookingResponse {
     Long id;
-    String username;
+    String patientName;
     String vaccineName;
     String centerName;
     Double totalAmount;

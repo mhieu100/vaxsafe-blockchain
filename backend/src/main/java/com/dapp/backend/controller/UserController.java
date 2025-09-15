@@ -42,14 +42,8 @@ public class UserController {
     @GetMapping("/doctors")
     @ApiMessage("Get all doctors of center")
     public ResponseEntity<Pagination> getAllDoctorsOfCenter(@Filter Specification<User> specification,
-            Pageable pageable, HttpSession session) throws AppException {
-
-                String walletAddress = (String) session.getAttribute("walletAddress");
-        String centerName = this.userService.getUserByWalletAddress(walletAddress).get().getCenter().getName();
-        specification = Specification.where(specification).and((root, query, criteriaBuilder) -> criteriaBuilder
-                .equal(root.get("role").get("name"), "DOCTOR")).and(specification).and((root, query, criteriaBuilder) -> criteriaBuilder
-                .equal(root.get("center").get("name"), centerName));
-        return ResponseEntity.ok().body(userService.getAllUsers(specification, pageable));
+            Pageable pageable) throws AppException {
+        return ResponseEntity.ok().body(userService.getAllDoctorsOfCenter(specification, pageable));
     }
 
     @PutMapping("/{walletAddress}")

@@ -22,8 +22,8 @@ public class Booking {
     Long id;
 
     @ManyToOne
-    @JoinColumn(name = "user_id", nullable = false)
-    User user;
+    @JoinColumn(name = "patient_id", nullable = false)
+    User patient;
 
     @ManyToOne
     @JoinColumn(name = "vaccine_id", nullable = false)

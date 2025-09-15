@@ -25,7 +25,7 @@ public class BookingMapper {
         response.setId(booking.getId());
         response.setVaccineName(booking.getVaccine().getName());
         response.setCenterName(booking.getCenter().getName());
-        response.setUsername(booking.getUser().getFullName());
+        response.setPatientName(booking.getPatient().getFullName());
         response.setTotalAmount(booking.getTotalAmount());
         response.setStatus(booking.getStatus());
 

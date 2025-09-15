@@ -38,7 +38,7 @@ export const updatePaymentPaypal = (bookingId, paymentId) => {
 export const updatePaymentMetaMask = (paymentId, bookingId) => {
   return axios.post('/payments/meta-mask', {
     paymentId,
-    bookingId
+    bookingId,
   });
 };
 
@@ -64,9 +64,10 @@ export const callAllBookings = () => {
   return axios.get('/bookings');
 };
 
-export const callUpdateAppointment = (appointmentId, doctorAddress) => {
-  return axios.put(`/appointments/${appointmentId}`, {
-    doctorAddress,
+export const callUpdateAppointment = (appointmentId, doctorId) => {
+  return axios.put('/appointments', {
+    appointmentId,
+    doctorId,
   });
 };
 
@@ -85,7 +86,6 @@ export const callFetchAppointment = () => {
 export const callFetchAppointmentOfCenter = () => {
   return axios.get('/appointments/center');
 };
-
 
 export const callMySchedule = () => {
   return axios.get('/appointments/my-schedule');

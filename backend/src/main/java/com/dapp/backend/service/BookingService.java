@@ -64,7 +64,7 @@ public class BookingService {
             Center center = centerRepository.findById(request.getCenterId()).orElseThrow(() -> new AppException("Center not found!"));
 
             Booking booking = new Booking();
-            booking.setUser(user);
+            booking.setPatient(user);
             booking.setVaccine(vaccine);
             booking.setCenter(center);
             booking.setTotalAmount(request.getAmount());
@@ -88,7 +88,7 @@ public class BookingService {
                 dose.setDoseNumber(doseNumber);
                 dose.setScheduledDate(doseSchedule.getDate());
                 dose.setScheduledTime(doseSchedule.getTime());
-                dose.setStatus(AppointmentEnum.SCHEDULED);
+                dose.setStatus(AppointmentEnum.PENDING);
                 appointments.add(dose);
             }
 

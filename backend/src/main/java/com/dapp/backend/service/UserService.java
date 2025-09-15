@@ -4,7 +4,12 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import com.dapp.backend.dto.mapper.UserMapper;
 import com.dapp.backend.dto.request.ReqUser;
+import com.dapp.backend.dto.response.DoctorResponse;
+import com.dapp.backend.security.JwtUtil;
+import com.dapp.backend.service.spec.AppointmentSpecifications;
+import com.dapp.backend.service.spec.UserSpecifications;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
@@ -49,6 +54,29 @@ public class UserService {
         }
         resUser.setRoleName(user.getRole().getName());
         return resUser;
+    }
+
+    public Pagination getAllDoctorsOfCenter(Specification<User> specification, Pageable pageable) throws AppException {
+
+        String email = JwtUtil.getCurrentUserLogin().isPresent() ? JwtUtil.getCurrentUserLogin().get() : "";
+        User user = userRepository.findByEmail(email).orElseThrow(() -> new AppException("User not found"));
+
+        specification = Specification.where(specification).and(UserSpecifications.findByRole()).and(UserSpecifications.findByCenter(user.getCenter().getName()));
+
+        Page<User> page = userRepository.findAll(specification, pageable);
+        Pagination pagination = new Pagination();
+        Pagination.Meta meta = new Pagination.Meta();
+        meta.setPage(pageable.getPageNumber() + 1);
+        meta.setPageSize(pageable.getPageSize());
+        meta.setPages(page.getTotalPages());
+        meta.setTotal(page.getTotalElements());
+        pagination.setMeta(meta);
+        List<DoctorResponse> list = page.getContent().stream()
+                .map(UserMapper::toResponse).collect(Collectors.toList());
+
+        pagination.setResult(list);
+
+        return pagination;
     }
 
     public Pagination getAllUsers(Specification<User> specification, Pageable pageable) {

@@ -7,7 +7,7 @@ import {
   Space,
   Descriptions,
   Typography,
-  Tag
+  Tag,
 } from 'antd';
 import { EyeOutlined, InfoCircleOutlined } from '@ant-design/icons';
 import { sfLike } from 'spring-filter-query-builder';
@@ -22,7 +22,7 @@ const StaffVaccinePage = () => {
   const tableRef = useRef();
   const [drawerVisible, setDrawerVisible] = useState(false);
   const [selectedVaccine, setSelectedVaccine] = useState(null);
-  
+
   const isFetching = useSelector((state) => state.vaccine.isFetching);
   const meta = useSelector((state) => state.vaccine.meta);
   const vaccines = useSelector((state) => state.vaccine.result);
@@ -97,15 +97,15 @@ const StaffVaccinePage = () => {
       render: (value) => {
         return new Intl.NumberFormat('vi-VN', {
           style: 'currency',
-          currency: 'VND'
+          currency: 'VND',
         }).format(value);
-      }
+      },
     },
     {
       title: 'Tồn kho',
       dataIndex: 'stockQuantity',
       width: 80,
-      hideInSearch: true, 
+      hideInSearch: true,
     },
     {
       title: 'Xem chi tiết',
@@ -113,12 +113,12 @@ const StaffVaccinePage = () => {
       width: 80,
       fixed: 'right',
       render: (_, record) => (
-        <Button 
-          type="primary" 
-          shape="circle" 
-          icon={<EyeOutlined />} 
-          size="small" 
-          onClick={() => showVaccineDetails(record)} 
+        <Button
+          type="primary"
+          shape="circle"
+          icon={<EyeOutlined />}
+          size="small"
+          onClick={() => showVaccineDetails(record)}
         />
       ),
     },
@@ -132,8 +132,7 @@ const StaffVaccinePage = () => {
       filter: '',
     };
 
-    if (clone.name)
-      q.filter = `${sfLike('name', clone.name)}`;
+    if (clone.name) q.filter = `${sfLike('name', clone.name)}`;
     if (clone.manufacturer) {
       q.filter = clone.name
         ? q.filter + ' and ' + `${sfLike('manufacturer', clone.manufacturer)}`
@@ -154,12 +153,15 @@ const StaffVaccinePage = () => {
       sortBy = sort.name === 'ascend' ? 'sort=name,asc' : 'sort=name,desc';
     }
     if (sort && sort.manufacturer) {
-      sortBy = sort.manufacturer === 'ascend' ? 'sort=manufacturer,asc' : 'sort=manufacturer,desc';
+      sortBy =
+        sort.manufacturer === 'ascend'
+          ? 'sort=manufacturer,asc'
+          : 'sort=manufacturer,desc';
     }
     if (sort && sort.price) {
       sortBy = sort.price === 'ascend' ? 'sort=price,asc' : 'sort=price,desc';
     }
-    
+
     temp = `${temp}&${sortBy}`;
 
     return temp;
@@ -169,8 +171,8 @@ const StaffVaccinePage = () => {
     <>
       <DataTable
         actionRef={tableRef}
-        headerTitle='Danh sách Vaccine'
-        rowKey='vaccineId'
+        headerTitle="Danh sách Vaccine"
+        rowKey="vaccineId"
         loading={isFetching}
         columns={columns}
         dataSource={vaccines}
@@ -213,27 +215,49 @@ const StaffVaccinePage = () => {
         {selectedVaccine && (
           <>
             <Descriptions title="Thông tin cơ bản" bordered column={1}>
-              <Descriptions.Item label="Tên vaccine">{selectedVaccine.name}</Descriptions.Item>
-              <Descriptions.Item label="Nhà sản xuất">{selectedVaccine.manufacturer}</Descriptions.Item>
-              <Descriptions.Item label="Quốc gia">{selectedVaccine.country}</Descriptions.Item>
-              <Descriptions.Item label="Loại bệnh">{selectedVaccine.disease}</Descriptions.Item>
-              <Descriptions.Item label="Lịch tiêm">{selectedVaccine.schedule}</Descriptions.Item>
-              <Descriptions.Item label="Hiệu quả">{selectedVaccine.efficacy}%</Descriptions.Item>
-              <Descriptions.Item label="Đối tượng">{selectedVaccine.target}</Descriptions.Item>
-              <Descriptions.Item label="Liều lượng">{selectedVaccine.dosage}</Descriptions.Item>
+              <Descriptions.Item label="Tên vaccine">
+                {selectedVaccine.name}
+              </Descriptions.Item>
+              <Descriptions.Item label="Nhà sản xuất">
+                {selectedVaccine.manufacturer}
+              </Descriptions.Item>
+              <Descriptions.Item label="Quốc gia">
+                {selectedVaccine.country}
+              </Descriptions.Item>
+              <Descriptions.Item label="Loại bệnh">
+                {selectedVaccine.disease}
+              </Descriptions.Item>
+              <Descriptions.Item label="Lịch tiêm">
+                {selectedVaccine.schedule}
+              </Descriptions.Item>
+              <Descriptions.Item label="Hiệu quả">
+                {selectedVaccine.efficacy}%
+              </Descriptions.Item>
+              <Descriptions.Item label="Đối tượng">
+                {selectedVaccine.target}
+              </Descriptions.Item>
+              <Descriptions.Item label="Liều lượng">
+                {selectedVaccine.dosage}
+              </Descriptions.Item>
               <Descriptions.Item label="Giá">
                 {new Intl.NumberFormat('vi-VN', {
                   style: 'currency',
-                  currency: 'VND'
+                  currency: 'VND',
                 }).format(selectedVaccine.price)}
               </Descriptions.Item>
               <Descriptions.Item label="Tồn kho">
-                <span style={{ color: selectedVaccine.stockQuantity < 10 ? 'red' : 'inherit' }}>
-                  {selectedVaccine.stockQuantity} {selectedVaccine.stockQuantity < 10 && "(Sắp hết)"}
+                <span
+                  style={{
+                    color:
+                      selectedVaccine.stockQuantity < 10 ? 'red' : 'inherit',
+                  }}
+                >
+                  {selectedVaccine.stockQuantity}{' '}
+                  {selectedVaccine.stockQuantity < 10 && '(Sắp hết)'}
                 </span>
               </Descriptions.Item>
               <Descriptions.Item label="Số mũi cần tiêm">
-                {selectedVaccine.requiredDoses || "Chưa có thông tin"}
+                {selectedVaccine.requiredDoses || 'Chưa có thông tin'}
               </Descriptions.Item>
             </Descriptions>
 
@@ -242,7 +266,8 @@ const StaffVaccinePage = () => {
               Mô tả
             </Title>
             <Paragraph>
-              {selectedVaccine.description || "Không có mô tả chi tiết cho vaccine này."}
+              {selectedVaccine.description ||
+                'Không có mô tả chi tiết cho vaccine này.'}
             </Paragraph>
           </>
         )}
@@ -251,4 +276,4 @@ const StaffVaccinePage = () => {
   );
 };
 
-export default StaffVaccinePage; 
+export default StaffVaccinePage;

@@ -15,7 +15,9 @@ public class AppointmentResponse {
     LocalTime scheduledTime;
     AppointmentEnum status;
     Long bookingId;
-    String username;
+    String patientName;
+    String cashierName;
+    String doctorName;
     String vaccineName;
     String centerName;
 }
