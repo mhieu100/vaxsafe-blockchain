@@ -86,10 +86,10 @@ public class PaymentService {
     public void updatePaymentPaypal(PaymentRequest request) throws AppException {
         com.dapp.backend.model.Payment payment = paymentRepository.findById(request.getPaymentId()).orElseThrow(() -> new AppException("Payment not found!"));
         if(request.getType() == TypeTransactionEnum.ORDER) {
-            com.dapp.backend.model.Order order = orderRepository.findById(request.getReferenceId()).orElseThrow(() -> new AppException("Order not found!"));
+            com.dapp.backend.model.Order order = orderRepository.findById(Long.parseLong(request.getReferenceId())).orElseThrow(() -> new AppException("Order not found!"));
             order.setStatus(OrderStatus.PROCESSING);
         } else {
-            Booking booking = bookingRepository.findById(request.getReferenceId()).orElseThrow(() -> new AppException("Booking not found!"));
+            Booking booking = bookingRepository.findById(Long.parseLong(request.getReferenceId())).orElseThrow(() -> new AppException("Booking not found!"));
             booking.setStatus(BookingEnum.CONFIRMED);
             bookingRepository.save(booking);
         }
@@ -98,19 +98,11 @@ public class PaymentService {
     }
 
     public void updatePaymentMetaMask(PaymentRequest request) throws AppException {
-        Booking booking = bookingRepository.findById(request.getReferenceId()).orElseThrow(() -> new AppException("Booking not found!"));
+        Booking booking = bookingRepository.findById(Long.parseLong(request.getReferenceId())).orElseThrow(() -> new AppException("Booking not found!"));
         com.dapp.backend.model.Payment payment = paymentRepository.findById(request.getPaymentId()).orElseThrow(() -> new AppException("Payment not found!"));
         booking.setStatus(BookingEnum.CONFIRMED);
         payment.setStatus(PaymentEnum.SUCCESS);
         bookingRepository.save(booking);
         paymentRepository.save(payment);
-    }
-
-    public List<com.dapp.backend.model.Order> getOrders(String walletAddress) {
-        return orderRepository.findAllByWalletAddress(walletAddress);
-    }
-
-    public List<Booking> getBookings(String walletAddress) {
-        return bookingRepository.findAllByWalletAddress(walletAddress);
     }
 }

@@ -1,10 +1,7 @@
 package com.dapp.backend.dto.mapper;
-import com.dapp.backend.dto.response.AppointmentResponse;
 import com.dapp.backend.dto.response.BookingResponse;
 import com.dapp.backend.model.Booking;
-import org.web3j.model.VaccineAppointment.Appointment;
 
-import com.dapp.backend.dto.response.AppointmentDto;
 
 import java.util.List;
 

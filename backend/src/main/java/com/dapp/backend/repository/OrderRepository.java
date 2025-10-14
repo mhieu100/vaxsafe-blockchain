@@ -9,8 +9,6 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 
 @Repository
-public interface OrderRepository extends JpaRepository<Order, String> , JpaSpecificationExecutor<Order> {
+public interface OrderRepository extends JpaRepository<Order, Long> , JpaSpecificationExecutor<Order> {
     List<Order> findAllByUser(User user);
-
-    List<Order> findAllByWalletAddress(String walletAddress);
 }
