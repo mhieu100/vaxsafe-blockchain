@@ -1,4 +1,4 @@
-// package com.dapp.backend.config;
+// package com.dapp.backend.permission;
 // import jakarta.servlet.http.HttpServletRequest;
 // import jakarta.servlet.http.HttpServletResponse;
 // import jakarta.servlet.http.HttpSession;

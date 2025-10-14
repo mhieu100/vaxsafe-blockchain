@@ -8,7 +8,7 @@ import java.time.Instant;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class UploadFileDTO {
+public class UploadFileResponse {
     private String fileName;
     private Instant uploadedAt;
 }

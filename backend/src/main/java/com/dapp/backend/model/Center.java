@@ -40,9 +40,9 @@ public class Center {
     @NotBlank(message = "Giờ làm việc không được trống")
     String workingHours;
 
-    @OneToMany(mappedBy = "center")
-    List<User> doctors;
-
-    @OneToMany(mappedBy = "center")
-    List<User> cashiers;
+//    @OneToMany(mappedBy = "center")
+//    List<User> doctors;
+//
+//    @OneToMany(mappedBy = "center")
+//    List<User> cashiers;
 }

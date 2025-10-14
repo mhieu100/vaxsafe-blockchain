@@ -1,9 +1,9 @@
-package com.dapp.backend.util;
+package com.dapp.backend.enums;
 
 public enum MethodPaymentEnum {
     METAMASK("ETH"),
     PAYPAL("USD"),
-    ATM("VND"),
+    BANK("VND"),
     CASH("VND");
 
     private final String currency;

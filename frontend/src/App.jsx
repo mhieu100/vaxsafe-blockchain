@@ -38,6 +38,10 @@ import StaffCenterPage from './pages/staff/centers';
 import MySchedulePage from './pages/staff/my-schedule';
 import AppointmentPage from './pages/staff/appointment';
 import BookingMangaer from './pages/admin/booking';
+import VaccineRAGSystem from './pages/client/recommend';
+import CartPage from './pages/client/cart';
+import Checkout from './pages/client/checkout';
+import Profile from './pages/auth';
 
 const App = () => {
   const dispatch = useDispatch();
@@ -54,13 +58,27 @@ const App = () => {
       children: [
         { index: true, element: <HomePage /> },
         { path: 'market', element: <MarketPage /> },
+        {
+          path: 'cart',
+          element: <CartPage />,
+        },
         { path: 'booking', element: <BookingPage /> },
         { path: 'success', element: <SuccessPage /> },
+        { path: 'demo', element: <VaccineRAGSystem /> },
+        { path: 'checkout', element: <Checkout /> },
         {
           path: 'profile',
           element: (
             <ProtectedUserRoute>
               <ProfilePage />
+            </ProtectedUserRoute>
+          ),
+        },
+        {
+          path: 'profile_test',
+          element: (
+            <ProtectedUserRoute>
+              <Profile />
             </ProtectedUserRoute>
           ),
         },

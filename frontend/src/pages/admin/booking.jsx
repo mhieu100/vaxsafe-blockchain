@@ -79,6 +79,13 @@ const BookingManager = () => {
     {
       title: 'Trạng thái',
       dataIndex: 'status',
+      render: (text) => {
+        return (
+          <Tag bordered={false} color={getColorStatus(text)}>
+            {text}
+          </Tag>
+        );
+      },
       hideInSearch: true,
     },
   ];

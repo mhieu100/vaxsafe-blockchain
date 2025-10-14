@@ -33,13 +33,6 @@ const PaymentMethod = ({ selectedPayment, setSelectedPayment, form }) => {
       category: 'digital',
     },
     {
-      icon: <CreditCardOutlined className="text-purple-600" />,
-      title: 'Thẻ ATM',
-      description: 'Thẻ ATM nội địa (VNĐ)',
-      value: 'ATM',
-      category: 'bank',
-    },
-    {
       icon: <BankOutlined className="text-green-600" />,
       title: 'Chuyển khoản',
       description: 'Chuyển khoản ngân hàng',

@@ -29,6 +29,25 @@ public class AppointmentController {
     @PutMapping
     @ApiMessage("Update a appointment of cashier")
     public ResponseEntity<AppointmentResponse> updateAppointmentOfCashier(@RequestBody ProcessAppointmentRequest request) throws Exception {
-                return ResponseEntity.ok().body(appointmentService.processAppointment(request));
-        }
+        return ResponseEntity.ok().body(appointmentService.processAppointment(request));
+    }
+
+    @GetMapping("/my-schedules")
+    @ApiMessage("Get all appointments of doctor")
+    public ResponseEntity<Pagination> getAllAppointmentsOfDoctor(@Filter Specification<Appointment> specification, Pageable pageable) throws Exception {
+        return ResponseEntity.ok().body(appointmentService.getAllAppointmentsOfDoctor(specification, pageable));
+    }
+
+    @PutMapping("/{id}/complete")
+    @ApiMessage("Complete a appointment")
+    public ResponseEntity<String> completeAppointment(@PathVariable long id) throws Exception {
+        return ResponseEntity.ok().body(appointmentService.complete(id));
+    }
+
+    @PutMapping("/{id}/cancel")
+    @ApiMessage("Cancel a appointment")
+    public ResponseEntity<String> cancelAppointment(@PathVariable long id) throws Exception {
+        return ResponseEntity.ok().body(appointmentService.cancel(id));
+    }
+
 }

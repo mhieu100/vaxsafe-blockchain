@@ -1,6 +1,6 @@
 package com.dapp.backend.model;
 
-import com.dapp.backend.util.BookingEnum;
+import com.dapp.backend.enums.BookingEnum;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
@@ -19,19 +19,19 @@ public class Booking {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    Long id;
+    private Long bookingId;
 
     @ManyToOne
-    @JoinColumn(name = "patient_id", nullable = false)
+    @JoinColumn(name = "patient_id")
     User patient;
+
+    @ManyToOne
+    @JoinColumn(name = "family_member_id")
+    FamilyMember familyMember;
 
     @ManyToOne
     @JoinColumn(name = "vaccine_id", nullable = false)
     Vaccine vaccine;
-
-    @ManyToOne
-    @JoinColumn(name = "center_id", nullable = false)
-    Center center;
 
     Double totalAmount;
     @Enumerated(EnumType.STRING)

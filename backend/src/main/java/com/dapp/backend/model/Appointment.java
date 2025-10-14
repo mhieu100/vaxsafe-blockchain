@@ -1,6 +1,6 @@
 package com.dapp.backend.model;
 
-import com.dapp.backend.util.AppointmentEnum;
+import com.dapp.backend.enums.AppointmentEnum;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
@@ -31,6 +31,10 @@ public class Appointment {
     @ManyToOne
     @JoinColumn(name = "doctor_id")
     User doctor;
+
+    @ManyToOne
+    @JoinColumn(name = "center_id", nullable = false)
+    Center center;
 
     Integer doseNumber;
     LocalDate scheduledDate;

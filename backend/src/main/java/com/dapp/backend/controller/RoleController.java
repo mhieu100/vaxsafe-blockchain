@@ -34,11 +34,9 @@ public class RoleController {
     @PutMapping("/roles/{id}")
     @ApiMessage("Update a role")
     public ResponseEntity<Role> updateRole(@PathVariable long id ,@Valid @RequestBody Role role) throws AppException {
-        // check id
         if (this.roleService.fetchById(id) == null) {
             throw new AppException("Role với id = " + role.getId() + " không tồn tại");
         }
-        
         return ResponseEntity.ok().body(this.roleService.updateRole(id ,role));
     }
 

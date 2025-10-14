@@ -5,6 +5,7 @@ export const getColorStatus = (status) => {
     case 'SCHEDULED':
       return 'processing';
     case 'CONFIRMED':
+    case 'COMPLETED':
       return 'success';
     case 'CANCELLED':
       return 'error';

@@ -13,7 +13,7 @@ import {
 import VaccineSelection from './steps/VaccineSelection';
 import PaymentMethod from './steps/PaymentMethod';
 import Confirmation from './steps/Confirmation';
-import { callFetchVaccineById } from '../../config/api.vaccine';
+import { callFetchVaccineBySku } from '../../config/api.vaccine';
 import {
   callCreateBooking,
   updatePaymentMetaMask,
@@ -51,19 +51,19 @@ const BookingPage = () => {
 
   useEffect(() => {
     const params = queryString.parse(location.search);
-    if (params.vaccineId) {
-      fetchVaccineById(params.vaccineId);
+    if (params.sku) {
+      fetchVaccineBySku(params.sku);
     }
   }, [location.search]);
 
-  const fetchVaccineById = async (id) => {
+  const fetchVaccineBySku = async (sku) => {
     try {
       setLoading(true);
-      const response = await callFetchVaccineById(id);
+      const response = await callFetchVaccineBySku(sku);
       setSelectedVaccine(response.data);
       setBookingSummary((prev) => ({ ...prev, vaccine: response.data }));
       form.setFieldsValue({
-        vaccine: id,
+        vaccine: sku,
       });
     } catch (error) {
       message.error('Không thể tải thông tin vaccine. Vui lòng thử lại sau.');
@@ -401,7 +401,6 @@ const BookingPage = () => {
   ];
 
   return (
-    <div className="min-h-screen bg-gray-50 pt-16">
       <div className="max-w-7xl mx-auto px-4 py-8 sm:px-6 lg:px-8">
         <div className="mb-6">
           <h1 className="text-2xl font-bold text-gray-900">
@@ -454,7 +453,6 @@ const BookingPage = () => {
           </div>
         </Form>
       </div>
-    </div>
   );
 };
 

@@ -1,12 +1,15 @@
 package com.dapp.backend.service;
 
-import com.dapp.backend.dto.request.BookingRequest;
+import com.dapp.backend.dto.request.PaymentRequest;
+import com.dapp.backend.enums.BookingEnum;
+import com.dapp.backend.enums.OrderStatus;
+import com.dapp.backend.enums.PaymentEnum;
+import com.dapp.backend.enums.TypeTransactionEnum;
 import com.dapp.backend.exception.AppException;
 import com.dapp.backend.model.Booking;
 import com.dapp.backend.repository.BookingRepository;
+import com.dapp.backend.repository.OrderRepository;
 import com.dapp.backend.repository.PaymentRepository;
-import com.dapp.backend.util.BookingEnum;
-import com.dapp.backend.util.PaymentEnum;
 import com.paypal.api.payments.*;
 import com.paypal.base.rest.APIContext;
 import com.paypal.base.rest.PayPalRESTException;
@@ -21,19 +24,20 @@ import java.util.List;
 public class PaymentService {
 
     private final BookingRepository bookingRepository;
+    private final OrderRepository orderRepository;
     private final PaymentRepository paymentRepository;
     private final APIContext apiContext;
     public static final double EXCHANGE_RATE_TO_USD = 0.000041;
 
-    public String createPaypalURL(Double amount, long bookingId, long paymentId) throws PayPalRESTException {
+    public String createPaypalURL(Double amount, Long referenceId, Long paymentId, TypeTransactionEnum type) throws PayPalRESTException {
         Payment payment = createPayment(
                 amount * EXCHANGE_RATE_TO_USD,
                 "USD",
                 "paypal",
                 "sale",
                 "Payment description",
-                "http://localhost:5173/cancel",
-                "http://localhost:5173/success?booking="+bookingId+"&payment="+paymentId
+                "http://localhost:3000/cancel?referenceId="+referenceId+"&type="+type+"&payment="+paymentId,
+                "http://localhost:3000/success?referenceId="+referenceId+"&type="+type+"&payment="+paymentId
         );
         for (Links link : payment.getLinks()) {
             if (link.getRel().equals("approval_url")) {
@@ -79,16 +83,22 @@ public class PaymentService {
         return payment.create(apiContext);
     }
 
-    public Payment executePayment(String paymentId, String payerId) throws PayPalRESTException {
-        Payment payment = new Payment();
-        payment.setId(paymentId);
-        PaymentExecution execution = new PaymentExecution();
-        execution.setPayerId(payerId);
-        return payment.execute(apiContext, execution);
+    public void updatePaymentPaypal(PaymentRequest request) throws AppException {
+        com.dapp.backend.model.Payment payment = paymentRepository.findById(request.getPaymentId()).orElseThrow(() -> new AppException("Payment not found!"));
+        if(request.getType() == TypeTransactionEnum.ORDER) {
+            com.dapp.backend.model.Order order = orderRepository.findById(request.getReferenceId()).orElseThrow(() -> new AppException("Order not found!"));
+            order.setStatus(OrderStatus.PROCESSING);
+        } else {
+            Booking booking = bookingRepository.findById(request.getReferenceId()).orElseThrow(() -> new AppException("Booking not found!"));
+            booking.setStatus(BookingEnum.CONFIRMED);
+            bookingRepository.save(booking);
+        }
+        payment.setStatus(PaymentEnum.SUCCESS);
+        paymentRepository.save(payment);
     }
 
-    public void updatePaymentPaypal(BookingRequest request) throws AppException {
-        Booking booking = bookingRepository.findById(request.getBookingId()).orElseThrow(() -> new AppException("Booking not found!"));
+    public void updatePaymentMetaMask(PaymentRequest request) throws AppException {
+        Booking booking = bookingRepository.findById(request.getReferenceId()).orElseThrow(() -> new AppException("Booking not found!"));
         com.dapp.backend.model.Payment payment = paymentRepository.findById(request.getPaymentId()).orElseThrow(() -> new AppException("Payment not found!"));
         booking.setStatus(BookingEnum.CONFIRMED);
         payment.setStatus(PaymentEnum.SUCCESS);
@@ -96,12 +106,11 @@ public class PaymentService {
         paymentRepository.save(payment);
     }
 
-    public void updatePaymentMetaMask(BookingRequest request) throws AppException {
-        Booking booking = bookingRepository.findById(request.getBookingId()).orElseThrow(() -> new AppException("Booking not found!"));
-        com.dapp.backend.model.Payment payment = paymentRepository.findById(request.getPaymentId()).orElseThrow(() -> new AppException("Payment not found!"));
-        booking.setStatus(BookingEnum.CONFIRMED);
-        payment.setStatus(PaymentEnum.SUCCESS);
-        bookingRepository.save(booking);
-        paymentRepository.save(payment);
+    public List<com.dapp.backend.model.Order> getOrders(String walletAddress) {
+        return orderRepository.findAllByWalletAddress(walletAddress);
+    }
+
+    public List<Booking> getBookings(String walletAddress) {
+        return bookingRepository.findAllByWalletAddress(walletAddress);
     }
 }

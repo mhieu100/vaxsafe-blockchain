@@ -17,7 +17,6 @@ import { ConnectButton, Connector } from '@ant-design/web3';
 
 const HomePage = () => {
   const { address } = useAccount();
-  console.log(address);
 
   const features = [
     {
@@ -72,7 +71,7 @@ const HomePage = () => {
   ];
 
   return (
-    <div className="min-h-screen bg-gray-50 pt-16">
+    <div>
       {/* Hero Section */}
       <section className="relative bg-gradient-to-r from-blue-600 to-blue-800 py-20">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">

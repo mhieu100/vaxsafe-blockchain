@@ -1,14 +1,10 @@
 package com.dapp.backend.model;
 
-import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.persistence.*;
-import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import lombok.experimental.FieldDefaults;
 
 @Entity
@@ -22,24 +18,25 @@ public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     Long id;
+    String avatar;
     String fullName;
+    @Column(unique = true, nullable = false)
     String email;
     String password;
-    String phoneNumber;
-    @JsonFormat(pattern = "yyyy-MM-dd")
-    LocalDate birthday;
-    String address;
-    boolean isDeleted;
-    @ManyToOne
-    @JoinColumn(name = "center_id")
-    Center center;
+    @Column(columnDefinition = "TEXT")
+    String refreshToken;
+    @Column(nullable = true)
+    String walletAddress;
+
     @ManyToOne
     @JoinColumn(name = "role_id")
     Role role;
 
-    @Column(columnDefinition = "TEXT")
-    String refreshToken;
+    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL)
+    Patient patientProfile;
 
-    @Column(nullable = true)
-    String walletAddress;
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<FamilyMember> familyMembers = new ArrayList<>();
+
+    boolean isDeleted;
 }

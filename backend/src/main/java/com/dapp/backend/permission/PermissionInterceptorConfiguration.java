@@ -1,4 +1,4 @@
-// package com.dapp.backend.config;
+// package com.dapp.backend.permission;
 //
 // import org.springframework.context.annotation.Bean;
 // import org.springframework.context.annotation.Configuration;

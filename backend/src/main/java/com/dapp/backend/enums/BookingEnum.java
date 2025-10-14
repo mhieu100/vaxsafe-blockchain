@@ -1,4 +1,4 @@
-package com.dapp.backend.util;
+package com.dapp.backend.enums;
 
 public enum BookingEnum {
     PENDING,

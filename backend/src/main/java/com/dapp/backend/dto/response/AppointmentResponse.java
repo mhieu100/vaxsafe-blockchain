@@ -1,7 +1,6 @@
 package com.dapp.backend.dto.response;
 
-import com.dapp.backend.util.AppointmentEnum;
-
+import com.dapp.backend.enums.AppointmentEnum;
 import lombok.Data;
 
 import java.time.LocalDate;

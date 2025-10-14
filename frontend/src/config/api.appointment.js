@@ -8,6 +8,14 @@ export const callGetAppointment = (hash) => {
   return axios.get(`/appointments/${hash}`);
 };
 
+export const callCreateOrder = (orderData) => {
+  return axios.post('/orders', orderData);
+}
+
+export const callGetOrder = () => {
+  return axios.get('/orders');
+}
+
 export const callCreateBooking = (
   vaccineId,
   centerId,
@@ -88,7 +96,7 @@ export const callFetchAppointmentOfCenter = () => {
 };
 
 export const callMySchedule = () => {
-  return axios.get('/appointments/my-schedule');
+  return axios.get('/appointments/my-schedules');
 };
 
 export const callVerifyAppointment = (appointmentHash, paymentHash) => {

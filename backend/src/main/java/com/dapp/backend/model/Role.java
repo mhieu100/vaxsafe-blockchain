@@ -22,7 +22,7 @@ public class Role {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     Long id;
 
-    @NotBlank(message = "name không được để trống")
+    @Column(unique = true, nullable = false)
     String name;
 
     @ManyToMany(fetch = FetchType.LAZY)
@@ -33,5 +33,4 @@ public class Role {
     @OneToMany(mappedBy = "role", fetch = FetchType.LAZY)
     @JsonIgnore
     List<User> users;
-
 }

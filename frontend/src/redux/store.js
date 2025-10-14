@@ -8,11 +8,32 @@ import permissionReducer from './slice/permissionSlice';
 import roleReducer from './slice/roleSlice';
 import bookingReducer from './slice/bookingSlice';
 import appointmentReducer from './slice/appointmentSlice';
+import cartReducer from './slice/cartSlice';
+
+import storage from 'redux-persist/lib/storage';
+import {
+  persistStore,
+  persistReducer,
+  FLUSH,
+  REHYDRATE,
+  PAUSE,
+  PERSIST,
+  PURGE,
+  REGISTER,
+} from 'redux-persist';
+
+const persistConfig = {
+  key: 'root',
+  storage,
+};
+
+const persistedReducer = persistReducer(persistConfig, cartReducer);
 
 export const store = configureStore({
   reducer: {
     account: accountReducer,
     appointment: appointmentReducer,
+    cart: persistedReducer,
     booking: bookingReducer,
     center: centerReducer,
     vaccine: vaccineReducer,
@@ -20,4 +41,12 @@ export const store = configureStore({
     permission: permissionReducer,
     role: roleReducer,
   },
+  middleware: (getDefaultMiddleware) =>
+    getDefaultMiddleware({
+      serializableCheck: {
+        ignoredActions: [FLUSH, REHYDRATE, PAUSE, PERSIST, PURGE, REGISTER],
+      },
+    }),
 });
+
+export const persistor = persistStore(store);

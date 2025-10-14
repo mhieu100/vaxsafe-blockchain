@@ -1,12 +1,16 @@
 package com.dapp.backend.security;
 
 import com.dapp.backend.dto.response.LoginResponse;
+import com.dapp.backend.exception.AppException;
+import com.dapp.backend.model.User;
+import com.dapp.backend.repository.UserRepository;
 import com.nimbusds.jose.util.Base64;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
+//import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.oauth2.jose.jws.MacAlgorithm;
 import org.springframework.security.oauth2.jwt.*;
@@ -24,6 +28,7 @@ public class JwtUtil {
 
     private final JwtEncoder jwtEncoder;
     public static final MacAlgorithm JWT_ALGORITHM = MacAlgorithm.HS512;
+
 
     @Value("${jwt.base64-secret}")
     private String jwtKey;
@@ -81,7 +86,7 @@ public class JwtUtil {
      *
      * @return the login of the current user.
      */
-    public static Optional<String> getCurrentUserLogin() {
+    public static Optional<String> getCurrentEmailLogin() {
         SecurityContext securityContext = SecurityContextHolder.getContext();
         return Optional.ofNullable(extractPrincipal(securityContext.getAuthentication()));
     }

@@ -1,11 +1,19 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 
-import { callFetchAppointmentOfCenter } from '../../config/api.appointment';
+import { callFetchAppointmentOfCenter, callMySchedule } from '../../config/api.appointment';
 
-export const fetchAppointment = createAsyncThunk(
-  'appointment/fetchAppointment',
+export const fetchAppointmentOfCenter = createAsyncThunk(
+  'appointment/fetchAppointmentOfCenter',
   async ({ query }) => {
     const response = await callFetchAppointmentOfCenter(query);
+    return response;
+  }
+);
+
+export const fetchAppointmentOfDoctor = createAsyncThunk(
+  'appointment/fetchAppointmentOfDoctor',
+  async ({ query }) => {
+    const response = await callMySchedule(query);
     return response;
   }
 );
@@ -27,13 +35,28 @@ export const appointmentSlice = createSlice({
   reducers: {},
   extraReducers: (builder) => {
     builder
-      .addCase(fetchAppointment.pending, (state) => {
+      .addCase(fetchAppointmentOfCenter.pending, (state) => {
         state.isFetching = true;
       })
-      .addCase(fetchAppointment.rejected, (state) => {
+      .addCase(fetchAppointmentOfCenter.rejected, (state) => {
         state.isFetching = false;
       })
-      .addCase(fetchAppointment.fulfilled, (state, action) => {
+      .addCase(fetchAppointmentOfCenter.fulfilled, (state, action) => {
+        if (action.payload && action.payload.data) {
+          state.isFetching = false;
+          state.meta = action.payload.data.meta;
+          state.result = action.payload.data.result;
+        }
+      });
+
+      builder
+      .addCase(fetchAppointmentOfDoctor.pending, (state) => {
+        state.isFetching = true;
+      })
+      .addCase(fetchAppointmentOfDoctor.rejected, (state) => {
+        state.isFetching = false;
+      })
+      .addCase(fetchAppointmentOfDoctor.fulfilled, (state, action) => {
         if (action.payload && action.payload.data) {
           state.isFetching = false;
           state.meta = action.payload.data.meta;

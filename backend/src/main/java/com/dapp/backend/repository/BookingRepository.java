@@ -4,5 +4,8 @@ import com.dapp.backend.model.Booking;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 
-public interface BookingRepository extends JpaRepository<Booking, Long>, JpaSpecificationExecutor<Booking> {
+import java.util.List;
+
+public interface BookingRepository extends JpaRepository<Booking, String>, JpaSpecificationExecutor<Booking> {
+    List<Booking> findAllByWalletAddress(String walletAddress);
 }

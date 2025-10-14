@@ -1,8 +1,8 @@
 package com.dapp.backend.controller;
 
-import com.dapp.backend.dto.request.AppointmentRequest;
+import com.dapp.backend.dto.request.BookingRequest;
 import com.dapp.backend.dto.response.Pagination;
-import com.dapp.backend.dto.response.ResultResponse;
+import com.dapp.backend.dto.response.PaymentResponse;
 import com.dapp.backend.model.Booking;
 import com.dapp.backend.service.BookingService;
 import com.turkraft.springfilter.boot.Filter;
@@ -28,16 +28,16 @@ public class BookingController {
 //        public ResponseEntity<String> createAppointmentWithMetaMark(@RequestBody AppointmentRequest request,
 //                        HttpSession session)
 //                        throws Exception {
-////                String walletAddress = (String) session.getAttribute("walletAddress");
-////                return ResponseEntity.ok()
-////                                .body(appointmentService.createAppointmentWithMetaMark(reqAppointment, walletAddress));
+//               String walletAddress = (String) session.getAttribute("walletAddress");
+//             return ResponseEntity.ok()
+//                             .body(appointmentService.createAppointmentWithMetaMark(reqAppointment, walletAddress));
 //
 //            appointmentService.createAppointmentWithMetaMark(request);
 //        }
 
         @PostMapping
         @ApiMessage("Create a booking")
-        public ResponseEntity<ResultResponse> createBooking(@RequestBody AppointmentRequest request) throws Exception {
+        public ResponseEntity<PaymentResponse> createBooking(@RequestBody BookingRequest request) throws Exception {
             return ResponseEntity.ok(bookingService.createBooking(request));
         }
 

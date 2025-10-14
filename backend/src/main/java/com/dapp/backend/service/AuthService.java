@@ -1,9 +1,14 @@
 package com.dapp.backend.service;
 
+import com.dapp.backend.dto.request.AvatarRequest;
 import com.dapp.backend.dto.request.LoginRequest;
-import com.dapp.backend.dto.request.RegisterRequest;
+import com.dapp.backend.dto.request.RegisterPatientRequest;
 import com.dapp.backend.dto.response.LoginResponse;
+import com.dapp.backend.dto.response.RegisterPatientResponse;
 import com.dapp.backend.exception.AppException;
+import com.dapp.backend.model.Patient;
+import com.dapp.backend.model.Role;
+import com.dapp.backend.repository.PatientRepository;
 import com.dapp.backend.security.JwtUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -18,35 +23,45 @@ import com.dapp.backend.model.User;
 import com.dapp.backend.repository.RoleRepository;
 import com.dapp.backend.repository.UserRepository;
 
-import java.util.Objects;
-
 @Service
 @RequiredArgsConstructor
 public class AuthService {
     private final AuthenticationManagerBuilder authenticationManagerBuilder;
     private final UserRepository userRepository;
+    private final PatientRepository patientRepository;
     private final RoleRepository roleRepository;
     private final PasswordEncoder passwordEncoder;
     private final JwtUtil jwtUtil;
 
-    public LoginResponse.UserLogin toUserLogin(User user) {
+    private LoginResponse.UserLogin toUserLogin(User user) {
+        Patient patient = user.getPatientProfile();
+
         return LoginResponse.UserLogin.builder()
                 .id(user.getId())
+                .avatar(user.getAvatar())
                 .fullName(user.getFullName())
                 .email(user.getEmail())
-                .phoneNumber(user.getPhoneNumber())
-                .birthday(user.getBirthday())
-                .address(user.getAddress())
-                .role(user.getRole().getName())
-                .walletAddress(user.getWalletAddress())
-                .centerName(!Objects.equals(user.getRole().getName(), "DOCTOR") &&
-                        !Objects.equals(user.getRole().getName(), "CASHIER") ? "": user.getCenter().getName() )
+                .role(user.getRole() != null ? user.getRole().getName() : null)
+                .phone(patient != null ? patient.getPhone() : null)
+                .birthday(patient != null ? patient.getBirthday() : null)
+                .gender(patient != null && patient.getGender() != null ? patient.getGender().name() : null)
+                .address(patient != null ? patient.getAddress() : null)
+                .identityNumber(patient != null ? patient.getIdentityNumber() : null)
+                .bloodType(patient != null && patient.getBloodType() != null ? patient.getBloodType().name() : null)
+                .heightCm(patient != null ? patient.getHeightCm() : null)
+                .weightKg(patient != null ? patient.getWeightKg() : null)
+                .occupation(patient != null ? patient.getOccupation() : null)
+                .lifestyleNotes(patient != null ? patient.getLifestyleNotes() : null)
+                .insuranceNumber(patient != null ? patient.getInsuranceNumber() : null)
+                .consentForAIAnalysis(patient != null && patient.isConsentForAIAnalysis())
                 .build();
     }
 
-    public LoginResponse loginPassword(LoginRequest request) throws AppException {
-        UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(
-                request.getUsername(), request.getPassword());
+
+    public LoginResponse login(LoginRequest request) throws AppException {
+        UsernamePasswordAuthenticationToken authenticationToken =
+                new UsernamePasswordAuthenticationToken(request.getUsername(), request.getPassword());
+
         Authentication authentication = authenticationManagerBuilder.getObject().authenticate(authenticationToken);
         SecurityContextHolder.getContext().setAuthentication(authentication);
 
@@ -54,18 +69,81 @@ public class AuthService {
                 .orElseThrow(() -> new AppException("User not found"));
 
         String accessToken = jwtUtil.createAccessToken(request.getUsername());
-        return LoginResponse.builder().accessToken(accessToken).user(toUserLogin(user)).build();
+
+        return LoginResponse.builder()
+                .accessToken(accessToken)
+                .user(toUserLogin(user))
+                .build();
     }
 
-    public User registerUser(RegisterRequest request) throws AppException {
-        if(userRepository.existsByEmail(request.getEmail())) {
-            throw new AppException("Email already exists ");
+
+    public RegisterPatientResponse register(RegisterPatientRequest request) throws AppException {
+        if (userRepository.existsByEmail(request.getUser().getEmail())) {
+            throw new AppException("Email already exists");
         }
-        String hashPassword = passwordEncoder.encode(request.getPassword());
-        return userRepository.save(User.builder().fullName(request.getFullName()).email(request.getEmail()).password(hashPassword).role(roleRepository.findByName("PATIENT")).build());
+
+        if (patientRepository.existsByIdentityNumber(request.getPatientProfile().getIdentityNumber())) {
+            throw new AppException("IdentityNumber already exists");
+        }
+
+        User user = User.builder()
+                .avatar("http://localhost:8080/storage/user/default.png")
+                .fullName(request.getUser().getFullName())
+                .email(request.getUser().getEmail())
+                .password(passwordEncoder.encode(request.getUser().getPassword()))
+                .isDeleted(false)
+                .build();
+
+        Role role = roleRepository.findByName("PATIENT")
+                .orElseThrow(() -> new AppException("Role PATIENT not found"));
+        user.setRole(role);
+
+        Patient patient = Patient.builder()
+                .address(request.getPatientProfile().getAddress())
+                .phone(request.getPatientProfile().getPhone())
+                .birthday(request.getPatientProfile().getBirthday())
+                .gender(request.getPatientProfile().getGender())
+                .identityNumber(request.getPatientProfile().getIdentityNumber())
+                .bloodType(request.getPatientProfile().getBloodType())
+                .heightCm(request.getPatientProfile().getHeightCm())
+                .weightKg(request.getPatientProfile().getWeightKg())
+                .occupation(request.getPatientProfile().getOccupation())
+                .lifestyleNotes(request.getPatientProfile().getLifestyleNotes())
+                .insuranceNumber(request.getPatientProfile().getInsuranceNumber())
+                .consentForAIAnalysis(request.getPatientProfile().isConsentForAIAnalysis())
+                .user(user)
+                .build();
+
+        user.setPatientProfile(patient);
+
+        userRepository.save(user);
+
+        return RegisterPatientResponse.builder()
+                .id(user.getId())
+                .avatar(user.getAvatar())
+                .fullName(user.getFullName())
+                .email(user.getEmail())
+                .role(user.getRole().getName())
+                .patientProfile(RegisterPatientResponse.PatientProfileResponse.builder()
+                        .id(patient.getId())
+                        .address(patient.getAddress())
+                        .phone(patient.getPhone())
+                        .birthday(patient.getBirthday())
+                        .gender(patient.getGender().name())
+                        .identityNumber(patient.getIdentityNumber())
+                        .bloodType(patient.getBloodType().name())
+                        .heightCm(patient.getHeightCm())
+                        .weightKg(patient.getWeightKg())
+                        .occupation(patient.getOccupation())
+                        .lifestyleNotes(patient.getLifestyleNotes())
+                        .insuranceNumber(patient.getInsuranceNumber())
+                        .consentForAIAnalysis(patient.isConsentForAIAnalysis())
+                        .build())
+                .build();
     }
 
-    public LoginResponse refreshToken(String refreshToken) throws AppException {
+
+    public LoginResponse refresh(String refreshToken) throws AppException {
         if (refreshToken.equals("empty")) {
             throw new AppException("Missing refresh token!");
         }
@@ -81,11 +159,15 @@ public class AuthService {
         return LoginResponse.builder().accessToken(newAccessToken).user(toUserLogin(user)).build();
     }
 
-
     public LoginResponse.UserLogin getAccount() throws AppException {
-        String email = JwtUtil.getCurrentUserLogin().isPresent() ? JwtUtil.getCurrentUserLogin().get() : "";
-        User user = userRepository.findByEmail(email).orElseThrow(() -> new AppException("User not found"));
+        User user = getCurrentUserLogin();
         return toUserLogin(user);
+    }
+
+    public void updateAvatar(AvatarRequest request) throws AppException {
+        User user = getCurrentUserLogin();
+        user.setAvatar(request.getUrlAvatar());
+        this.userRepository.save(user);
     }
 
     public void updateUserToken(String token, String email) throws AppException {
@@ -95,9 +177,13 @@ public class AuthService {
     }
 
     public void logout() throws AppException {
-        String email = JwtUtil.getCurrentUserLogin().isPresent() ? JwtUtil.getCurrentUserLogin().get() : "";
-        User user = userRepository.findByEmail(email).orElseThrow(() -> new AppException("User not foud"));
+        User user = getCurrentUserLogin();
         user.setRefreshToken(null);
         this.userRepository.save(user);
+    }
+
+    public User getCurrentUserLogin()throws AppException {
+        String email = JwtUtil.getCurrentEmailLogin().isPresent() ? JwtUtil.getCurrentEmailLogin().get() : "";
+        return userRepository.findByEmail(email).orElseThrow(() -> new AppException("User not found"));
     }
 }

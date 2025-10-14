@@ -74,8 +74,8 @@ export const callFetchVaccine = (query) => {
   return axios.get(`/vaccines?${query}`);
 };
 
-export const callFetchVaccineById = (id) => {
-  return axios.get(`/vaccines/${id}`);
+export const callFetchVaccineBySku = (sku) => {
+  return axios.get(`/vaccines/${sku}`);
 }
 
 export const callDeleteVaccine = (id) => {

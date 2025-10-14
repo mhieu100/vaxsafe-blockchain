@@ -1,9 +1,8 @@
 package com.dapp.backend.model;
 
-
-import com.dapp.backend.util.MethodPaymentEnum;
-import com.dapp.backend.util.PaymentEnum;
-
+import com.dapp.backend.enums.MethodPaymentEnum;
+import com.dapp.backend.enums.PaymentEnum;
+import com.dapp.backend.enums.TypeTransactionEnum;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
@@ -20,9 +19,8 @@ public class Payment {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     Long id;
 
-    @ManyToOne
-    @JoinColumn(name = "booking_id", nullable = false)
-    Booking booking;
+    Long referenceId;
+    TypeTransactionEnum referenceType;
 
     MethodPaymentEnum method;
     Double amount;

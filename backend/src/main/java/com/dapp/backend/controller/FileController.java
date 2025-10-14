@@ -5,6 +5,7 @@ import java.time.Instant;
 import java.util.Arrays;
 import java.util.List;
 
+import com.dapp.backend.dto.response.UploadFileResponse;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -14,7 +15,6 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.dapp.backend.annotation.ApiMessage;
 import com.dapp.backend.exception.StorageException;
-import com.dapp.backend.dto.response.UploadFileDTO;
 import com.dapp.backend.service.FileService;
 
 
@@ -32,12 +32,11 @@ public class FileController {
 
     @PostMapping("/files")
     @ApiMessage("Upload single file")
-    public ResponseEntity<UploadFileDTO> upload(
+    public ResponseEntity<UploadFileResponse> upload(
             @RequestParam(name = "file", required = false) MultipartFile file,
             @RequestParam("folder") String folder
 
     ) throws URISyntaxException, IOException, StorageException {
-        // skip validate
         if (file == null || file.isEmpty()) {
             throw new StorageException("File is empty. Please upload a file.");
         }
@@ -48,14 +47,13 @@ public class FileController {
         if (!isValid) {
             throw new StorageException("Invalid file extension. only allows " + allowedExtensions.toString());
         }
-        // create a directory if not exist
+
         this.fileService.createDirectory(baseURI + folder);
 
-        // store file
         String uploadFile = this.fileService.store(file, folder);
 
-        UploadFileDTO res = new UploadFileDTO(uploadFile, Instant.now());
+        UploadFileResponse response = new UploadFileResponse("http://localhost:8080/storage/" + folder + "/" + uploadFile, Instant.now());
 
-        return ResponseEntity.ok().body(res);
+        return ResponseEntity.ok().body(response);
     }
 }

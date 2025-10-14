@@ -1,39 +1,33 @@
 package com.dapp.backend.service;
 
 import com.dapp.backend.dto.mapper.BookingMapper;
+import com.dapp.backend.dto.request.BookingRequest;
 import com.dapp.backend.dto.response.*;
+import com.dapp.backend.enums.AppointmentEnum;
+import com.dapp.backend.enums.BookingEnum;
+import com.dapp.backend.enums.PaymentEnum;
+import com.dapp.backend.enums.TypeTransactionEnum;
 import com.dapp.backend.exception.AppException;
 import com.dapp.backend.model.*;
 import com.dapp.backend.repository.*;
-import com.dapp.backend.security.JwtUtil;
-import com.dapp.backend.util.AppointmentEnum;
-import com.dapp.backend.util.BookingEnum;
-import com.dapp.backend.util.MethodPaymentEnum;
-import com.dapp.backend.util.PaymentEnum;
-import com.paypal.api.payments.Links;
 import lombok.RequiredArgsConstructor;
 
-import java.math.BigInteger;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
-import org.springframework.security.core.parameters.P;
 import org.springframework.stereotype.Service;
 import org.web3j.model.VaccineAppointment;
 //import org.web3j.model.VaccineAppointment.Appointment;
-import org.web3j.protocol.core.methods.response.TransactionReceipt;
-
-import com.dapp.backend.dto.request.AppointmentRequest;
 
 import static com.dapp.backend.service.PaymentService.EXCHANGE_RATE_TO_USD;
 
 @Service
 @RequiredArgsConstructor
 public class BookingService {
+    private final AuthService authService;
     private final UserRepository userRepository;
     private final VaccineRepository vaccineRepository;
     private final CenterRepository centerRepository;
@@ -42,6 +36,7 @@ public class BookingService {
     private final PaymentRepository paymentRepository;
     private final BookingRepository bookingRepository;
     private final PaymentService paymentService;
+    private final FamilyMemberRepository familyMemberRepository;
 
 
 //    public String createAppointmentWithMetaMark(AppointmentRequest request, String walletAddress) throws Exception {
@@ -57,71 +52,74 @@ public class BookingService {
 //
 //    }
 
-        public ResultResponse createBooking(AppointmentRequest request) throws Exception {
-            String email = JwtUtil.getCurrentUserLogin().isPresent() ? JwtUtil.getCurrentUserLogin().get() : "";
-            User user = userRepository.findByEmail(email).orElseThrow(() -> new AppException("User not found"));
+        public PaymentResponse createBooking(BookingRequest request) throws Exception {
+            User user = authService.getCurrentUserLogin();
             Vaccine vaccine = vaccineRepository.findById(request.getVaccineId()).orElseThrow(() -> new AppException("Vaccine not found!"));
             Center center = centerRepository.findById(request.getCenterId()).orElseThrow(() -> new AppException("Center not found!"));
 
             Booking booking = new Booking();
-            booking.setPatient(user);
+            if (request.getFamilyMemberId() != null) {
+                FamilyMember familyMember = familyMemberRepository.findById(request.getFamilyMemberId()).orElseThrow(() -> new AppException("Family member not found!"));
+                booking.setFamilyMember(familyMember);
+            } else {
+                booking.setPatient(user);
+            }
             booking.setVaccine(vaccine);
-            booking.setCenter(center);
             booking.setTotalAmount(request.getAmount());
             booking.setStatus(BookingEnum.PENDING);
 
+            bookingRepository.save(booking);
 
             List<Appointment> appointments = new ArrayList<>();
             Appointment firstDose = new Appointment();
             firstDose.setBooking(booking);
             firstDose.setDoseNumber(1);
             firstDose.setScheduledDate(request.getFirstDoseDate());
-            firstDose.setScheduledTime(request.getTime());
-            firstDose.setStatus(AppointmentEnum.SCHEDULED);
+            firstDose.setScheduledTime(request.getFirstDoseTime());
+            firstDose.setCenter(center);
+            firstDose.setStatus(AppointmentEnum.PENDING);
             appointments.add(firstDose);
 
             int doseNumber = 1;
-            for(AppointmentRequest.DoseSchedule doseSchedule : request.getDoseSchedules()) {
+            for(BookingRequest.DoseSchedule doseSchedule : request.getDoseSchedules()) {
                 doseNumber++;
                 Appointment dose = new Appointment();
                 dose.setBooking(booking);
                 dose.setDoseNumber(doseNumber);
                 dose.setScheduledDate(doseSchedule.getDate());
                 dose.setScheduledTime(doseSchedule.getTime());
+                dose.setCenter(this.centerRepository.findById(doseSchedule.getCenterId()).orElseThrow(() -> new AppException("Center not found!")));
                 dose.setStatus(AppointmentEnum.PENDING);
                 appointments.add(dose);
             }
 
+            appointmentRepository.saveAll(appointments);
             booking.setAppointments(appointments);
-            bookingRepository.save(booking);
-
-
 
             Payment payment = new Payment();
-            payment.setBooking(booking);
+            payment.setReferenceId(booking.getBookingId());
             payment.setAmount(request.getAmount());
-            payment.setMethod(request.getMethod());
+            payment.setMethod(request.getPaymentMethod());
 
-            if(request.getMethod().toString().equals("PAYPAL")) {
-               payment.setAmount((double) Math.round(request.getAmount() * EXCHANGE_RATE_TO_USD));
-            } else if(request.getMethod().toString().equals("METAMASK")){
+            if(request.getPaymentMethod().toString().equals("PAYPAL")) {
+               payment.setAmount(request.getAmount() * EXCHANGE_RATE_TO_USD);
+            } else if(request.getPaymentMethod().toString().equals("METAMASK")){
                 payment.setAmount((double) Math.round(request.getAmount() / 200000.0));
             } else {
                 payment.setAmount(request.getAmount());
             }
-
-            payment.setCurrency(request.getMethod().getCurrency());
+            payment.setCurrency(request.getPaymentMethod().getCurrency());
             payment.setStatus(PaymentEnum.INITIATED);
             paymentRepository.save(payment);
 
-            ResultResponse response = new ResultResponse();
-            response.setBookingId(booking.getId());
+            PaymentResponse response = new PaymentResponse();
+            response.setReferenceId(booking.getBookingId());
             response.setPaymentId(payment.getId());
             response.setMethod(payment.getMethod());
 
-            switch (request.getMethod()) {
+            switch (request.getPaymentMethod()) {
                 case PAYPAL:
-                    String paypalUrl = paymentService.createPaypalURL(request.getAmount(), response.getBookingId(), response.getPaymentId());
+                    String paypalUrl = paymentService.createPaypalURL(request.getAmount(), response.getReferenceId(), response.getPaymentId(), TypeTransactionEnum.BOOKING);
                     response.setPaymentURL(paypalUrl);
                     break;
                 case METAMASK:

@@ -5,6 +5,8 @@ import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 
 import com.dapp.backend.model.Role;
 
+import java.util.Optional;
+
 public interface RoleRepository extends JpaRepository<Role, Long>, JpaSpecificationExecutor<Role>{
-    Role findByName(String name);
+    Optional<Role> findByName(String name);
 }

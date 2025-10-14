@@ -11,9 +11,9 @@ public class AppointmentMapper {
         response.setScheduledTime(appointment.getScheduledTime());
         response.setScheduledDate(appointment.getScheduledDate());
         response.setStatus(appointment.getStatus());
-        response.setBookingId(appointment.getBooking().getId());
+        response.setBookingId(appointment.getBooking().getBookingId());
         response.setVaccineName(appointment.getBooking().getVaccine().getName());
-        response.setCenterName(appointment.getBooking().getCenter().getName());
+        response.setCenterName(appointment.getCenter().getName());
         response.setPatientName(appointment.getBooking().getPatient().getFullName());
         response.setCashierName(appointment.getCashier().getFullName());
         response.setDoctorName(appointment.getDoctor().getFullName());

@@ -22,9 +22,8 @@ public class BookingMapper {
 
     public static BookingResponse toResponse(Booking booking) {
         BookingResponse response = new BookingResponse();
-        response.setId(booking.getId());
+        response.setId(booking.getBookingId());
         response.setVaccineName(booking.getVaccine().getName());
-        response.setCenterName(booking.getCenter().getName());
         response.setPatientName(booking.getPatient().getFullName());
         response.setTotalAmount(booking.getTotalAmount());
         response.setStatus(booking.getStatus());

@@ -11,13 +11,12 @@ import lombok.experimental.FieldDefaults;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @Data
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class ResUser {
-    String walletAddress;
-    String fullname;
+public class UserResponse {
+    long id;
+    String fullName;
     String email;
-    String phoneNumber;
+    String role;
+    String phone;
     LocalDate birthday;
     String address;
-    String centerName;
-    String roleName;
 }

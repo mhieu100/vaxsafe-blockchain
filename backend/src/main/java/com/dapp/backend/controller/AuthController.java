@@ -1,8 +1,11 @@
 package com.dapp.backend.controller;
 
+import com.dapp.backend.dto.request.AvatarRequest;
 import com.dapp.backend.dto.request.LoginRequest;
-import com.dapp.backend.dto.request.RegisterRequest;
+import com.dapp.backend.dto.request.RegisterPatientRequest;
 import com.dapp.backend.dto.response.LoginResponse;
+import com.dapp.backend.dto.response.RefreshResponse;
+import com.dapp.backend.dto.response.RegisterPatientResponse;
 import com.dapp.backend.exception.AppException;
 import com.dapp.backend.security.JwtUtil;
 import com.dapp.backend.service.BookingService;
@@ -15,7 +18,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import com.dapp.backend.annotation.ApiMessage;
-import com.dapp.backend.model.User;
 import com.dapp.backend.service.AuthService;
 
 import org.springframework.web.bind.annotation.GetMapping;
@@ -32,13 +34,12 @@ public class AuthController {
     @Value("${jwt.refresh-token-validity-in-seconds}")
     private long refreshTokenExpiration;
 
-
     @PostMapping("/login/password")
-    @ApiMessage("Login email password")
-    public ResponseEntity<LoginResponse> loginPassword(@Valid @RequestBody LoginRequest request) throws AppException {
-        LoginResponse response = authService.loginPassword(request);
-        String refreshToken = jwtUtil.createRefreshToken(request.getUsername());
-        authService.updateUserToken(refreshToken, request.getUsername());
+    @ApiMessage("Login patient")
+    public ResponseEntity<LoginResponse> login(@Valid @RequestBody LoginRequest request) throws AppException {
+        LoginResponse response = this.authService.login(request);
+        String refreshToken = this.jwtUtil.createRefreshToken(request.getUsername());
+        this.authService.updateUserToken(refreshToken, request.getUsername());
         ResponseCookie cookie = ResponseCookie
                 .from("refresh_token", refreshToken)
                 .httpOnly(true)
@@ -50,19 +51,17 @@ public class AuthController {
     }
 
     @PostMapping("/register")
-    @ApiMessage("Register new account")
-    public ResponseEntity<User> registerUser(@Valid @RequestBody RegisterRequest request) throws AppException {
-        return ResponseEntity.ok(authService.registerUser(request));
+    @ApiMessage("Register new patient")
+    public ResponseEntity<RegisterPatientResponse> register(@Valid @RequestBody RegisterPatientRequest request) throws AppException {
+        return ResponseEntity.ok(authService.register(request));
     }
 
     @GetMapping("/refresh")
     @ApiMessage("refresh token")
-    public ResponseEntity<LoginResponse> refreshToken(
-            @CookieValue(name = "refresh_token", defaultValue = "empty") String refreshToken) throws AppException {
-        LoginResponse response = this.authService.refreshToken(refreshToken);
-        String newRefreshToken = this.jwtUtil.createRefreshToken(response.getUser().getEmail());
-        authService.updateUserToken(newRefreshToken, response.getUser().getEmail());
-        this.authService.updateUserToken(newRefreshToken, response.getUser().getEmail());
+    public ResponseEntity<RefreshResponse> refresh(@CookieValue(name = "refresh_token", defaultValue = "empty") String refreshToken) throws AppException {
+        LoginResponse login = this.authService.refresh(refreshToken);
+        String newRefreshToken = this.jwtUtil.createRefreshToken(login.getUser().getEmail());
+        this.authService.updateUserToken(newRefreshToken, login.getUser().getEmail());
         ResponseCookie cookie = ResponseCookie
                 .from("refresh_token", newRefreshToken)
                 .httpOnly(true)
@@ -70,9 +69,8 @@ public class AuthController {
                 .path("/")
                 .maxAge(refreshTokenExpiration)
                 .build();
-        return ResponseEntity.ok().header(HttpHeaders.SET_COOKIE, cookie.toString()).body(response);
+        return ResponseEntity.ok().header(HttpHeaders.SET_COOKIE, cookie.toString()).body(RefreshResponse.builder().accessToken(login.getAccessToken()).build());
     }
-
 
     @GetMapping("/account")
     @ApiMessage("Get profile")
@@ -93,6 +91,13 @@ public class AuthController {
                 .maxAge(0)
                 .build();
         return ResponseEntity.ok().header(HttpHeaders.SET_COOKIE, cookie.toString()).build();
+    }
+
+    @PostMapping("/avatar")
+    @ApiMessage("update avatar")
+    public ResponseEntity<Void> updateAvatar(@RequestBody AvatarRequest request) throws AppException {
+        this.authService.updateAvatar(request);
+        return ResponseEntity.ok().build();
     }
 
 //    @GetMapping("/my-appointments")

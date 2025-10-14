@@ -1,8 +1,7 @@
 package com.dapp.backend.dto.response;
 
-
-import com.dapp.backend.util.AppointmentEnum;
-import com.dapp.backend.util.BookingEnum;
+import com.dapp.backend.enums.AppointmentEnum;
+import com.dapp.backend.enums.BookingEnum;
 import lombok.Data;
 
 import java.time.LocalDate;
@@ -15,7 +14,7 @@ public class BookingResponse {
     String patientName;
     String vaccineName;
     String centerName;
-    Double totalAmount;
+    double totalAmount;
     BookingEnum status;
     List<AppointmentResponse> appointments;
 
@@ -25,6 +24,7 @@ public class BookingResponse {
         Integer doseNumber;
         LocalDate scheduledDate;
         LocalTime scheduledTime;
+        String centerName;
         AppointmentEnum status;
     }
 }

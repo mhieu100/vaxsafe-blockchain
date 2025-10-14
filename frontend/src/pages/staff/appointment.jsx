@@ -1,21 +1,15 @@
 /* eslint-disable no-unused-vars */
-import { useEffect, useRef, useState } from 'react';
+import { useRef, useState } from 'react';
 import queryString from 'query-string';
 import { sfLike } from 'spring-filter-query-builder';
 import { Badge, Button, Space, Tag, Typography } from 'antd';
-import { CloseCircleOutlined, EditOutlined } from '@ant-design/icons';
+import { EditOutlined } from '@ant-design/icons';
 
 import DataTable from '../../components/data-table';
 import ModalAppointment from '../../components/modal/modal.appointment';
-import {
-  callFetchAppointment,
-  callFetchAppointmentOfCenter,
-} from '../../config/api.appointment';
 import { useDispatch, useSelector } from 'react-redux';
-import { fetchAppointment } from '../../redux/slice/appointmentSlice';
 import { getColorStatus } from '../../utils/status';
-
-const { Text } = Typography;
+import { fetchAppointmentOfCenter } from '../../redux/slice/appointmentSlice';
 
 const AppointmentPage = () => {
   const tableRef = useRef();
@@ -28,8 +22,6 @@ const AppointmentPage = () => {
   const reloadTable = () => {
     tableRef?.current?.reload();
   };
-
-  console.log(appointments);
 
   const [dataInit, setDataInit] = useState(null);
   const [openModal, setOpenModal] = useState(false);
@@ -97,12 +89,16 @@ const AppointmentPage = () => {
       render: (_value, entity) =>
         entity.status === 'PENDING' ? (
           <Space>
-            <EditOutlined
+            <Button
+              type="primary"
               onClick={() => {
                 setOpenModal(true);
                 setDataInit(entity);
               }}
-            />
+            >
+              <EditOutlined />
+              Xác nhận
+            </Button>
           </Space>
         ) : null,
     },
@@ -140,7 +136,7 @@ const AppointmentPage = () => {
         dataSource={appointments}
         request={async (params, sort, filter) => {
           const query = buildQuery(params, sort, filter);
-          dispatch(fetchAppointment({ query }));
+          dispatch(fetchAppointmentOfCenter({ query }));
         }}
         scroll={{ x: true }}
         pagination={{

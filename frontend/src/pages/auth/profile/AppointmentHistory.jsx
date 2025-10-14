@@ -7,21 +7,24 @@ import {
   CalendarOutlined,
   EnvironmentOutlined,
   InfoCircleOutlined,
-  DownloadOutlined
+  DownloadOutlined,
 } from '@ant-design/icons';
 import dayjs from 'dayjs';
 import { useNavigate } from 'react-router-dom';
 import LoadingTable from '../../../components/share/LoadingTable';
 
-
 /**
  * Component hiển thị lịch sử đăng ký tiêm chủng
- * 
+ *
  * @param {Array} appointments - Danh sách lịch hẹn
  * @param {boolean} loadingAppointments - Trạng thái loading dữ liệu
  * @param {Function} handleCancel - Hàm xử lý khi hủy lịch hẹn
  */
-const AppointmentHistory = ({ appointments, loadingAppointments, handleCancel }) => {
+const AppointmentHistory = ({
+  appointments,
+  loadingAppointments,
+  handleCancel,
+}) => {
   const navigate = useNavigate();
 
   const getStatusColor = (status) => {
@@ -50,8 +53,6 @@ const AppointmentHistory = ({ appointments, loadingAppointments, handleCancel })
     }
   };
 
-
-
   const columns = [
     {
       title: 'Vaccine',
@@ -62,7 +63,7 @@ const AppointmentHistory = ({ appointments, loadingAppointments, handleCancel })
           <MedicineBoxOutlined className="mr-2" />
           {text}
         </div>
-      )
+      ),
     },
     {
       title: 'Cơ sở tiêm chủng',
@@ -73,7 +74,7 @@ const AppointmentHistory = ({ appointments, loadingAppointments, handleCancel })
           <EnvironmentOutlined className="mr-2" />
           {text}
         </div>
-      )
+      ),
     },
     {
       title: 'Ngày tiêm',
@@ -84,7 +85,7 @@ const AppointmentHistory = ({ appointments, loadingAppointments, handleCancel })
           <CalendarOutlined className="mr-2" />
           {dayjs(text).format('DD/MM/YYYY')}
         </div>
-      )
+      ),
     },
     {
       title: 'Giờ tiêm',
@@ -95,31 +96,30 @@ const AppointmentHistory = ({ appointments, loadingAppointments, handleCancel })
           <ClockCircleOutlined className="mr-2" />
           {text}
         </div>
-      )
+      ),
     },
     {
       title: 'Trạng thái',
       dataIndex: 'status',
       key: 'status',
       render: (status) => (
-        <Tag color={getStatusColor(status)}>
-          {getStatusText(status)}
-        </Tag>
-      )
+        <Tag color={getStatusColor(status)}>{getStatusText(status)}</Tag>
+      ),
     },
     {
       title: 'Thao tác',
       key: 'action',
       render: (_, record) => (
         <Space>
-          {record.status === 4 && (
-            <Tag color={"green"}>Đã hoàn tiền</Tag>
-          )}
-          {record.status === 3 && (
-            <Tag color={"red"}>Đợi hoàn tiền</Tag>
-          )}
+          {record.status === 4 && <Tag color="green">Đã hoàn tiền</Tag>}
+          {record.status === 3 && <Tag color="red">Đợi hoàn tiền</Tag>}
           {(record.status === 1 || record.status === 0) && (
-            <Button type="link" danger size="small" onClick={() => handleCancel(record.appointmentId)}>
+            <Button
+              type="link"
+              danger
+              size="small"
+              onClick={() => handleCancel(record.appointmentId)}
+            >
               Hủy
             </Button>
           )}
@@ -128,58 +128,65 @@ const AppointmentHistory = ({ appointments, loadingAppointments, handleCancel })
               type="link"
               size="small"
               icon={<DownloadOutlined />}
-              onClick={() => navigate(`/auth/certificate/${record.appointmentId}`)}
+              onClick={() =>
+                navigate(`/auth/certificate/${record.appointmentId}`)
+              }
             >
               Chứng nhận
             </Button>
           )}
         </Space>
-      )
-    }
+      ),
+    },
   ];
 
   return (
     <div className="space-y-6">
-      {/* Thống kê */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <Card>
-          <Statistic
-            title="Tổng số mũi tiêm"
-            value={appointments.length}
-            prefix={<MedicineBoxOutlined />}
-          />
-        </Card>
-        <Card>
-          <Statistic
-            title="Đã hoàn thành"
-            value={appointments.filter(a => a.status === 2).length}
-            prefix={<CheckCircleOutlined className="text-green-500" />}
-          />
-        </Card>
-        <Card>
-          <Statistic
-            title="Đang chờ"
-            value={appointments.filter(a => a.status === 0 || a.status === 1).length}
-            prefix={<ClockCircleOutlined className="text-orange-500" />}
-          />
-        </Card>
-      </div>
+      {appointments?.length && (
+        <>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <Card>
+              <Statistic
+                title="Tổng số mũi tiêm"
+                value={appointments.length}
+                prefix={<MedicineBoxOutlined />}
+              />
+            </Card>
+            <Card>
+              <Statistic
+                title="Đã hoàn thành"
+                value={appointments.filter((a) => a.status === 2).length}
+                prefix={<CheckCircleOutlined className="text-green-500" />}
+              />
+            </Card>
+            <Card>
+              <Statistic
+                title="Đang chờ"
+                value={
+                  appointments.filter((a) => a.status === 0 || a.status === 1)
+                    .length
+                }
+                prefix={<ClockCircleOutlined className="text-orange-500" />}
+              />
+            </Card>
+          </div>
 
-      {/* Danh sách đăng ký */}
-      <Card title="Danh sách đăng ký">
-        <LoadingTable
-          columns={columns}
-          dataSource={appointments}
-          loading={loadingAppointments}
-          rowCount={5}
-          timeout={1000}
-          pagination={{
-            pageSize: 5,
-            showTotal: (total) => `Tổng ${total} lịch hẹn`
-          }}
-          rowKey="appointmentId"
-        />
-      </Card>
+          <Card title="Danh sách đăng ký">
+            <LoadingTable
+              columns={columns}
+              dataSource={appointments}
+              loading={loadingAppointments}
+              rowCount={5}
+              timeout={1000}
+              pagination={{
+                pageSize: 5,
+                showTotal: (total) => `Tổng ${total} lịch hẹn`,
+              }}
+              rowKey="appointmentId"
+            />
+          </Card>
+        </>
+      )}
 
       {/* Ghi chú */}
       <div className="bg-blue-50 p-4 rounded-lg">
@@ -190,7 +197,9 @@ const AppointmentHistory = ({ appointments, loadingAppointments, handleCancel })
             <ul className="text-sm text-blue-600 list-disc list-inside space-y-1">
               <li>Vui lòng đến đúng giờ theo lịch hẹn</li>
               <li>Mang theo CMND/CCCD khi đến tiêm</li>
-              <li>Thông báo cho nhân viên y tế nếu có bất kỳ vấn đề sức khỏe</li>
+              <li>
+                Thông báo cho nhân viên y tế nếu có bất kỳ vấn đề sức khỏe
+              </li>
             </ul>
           </div>
         </div>
@@ -199,4 +208,4 @@ const AppointmentHistory = ({ appointments, loadingAppointments, handleCancel })
   );
 };
 
-export default AppointmentHistory; 
+export default AppointmentHistory;

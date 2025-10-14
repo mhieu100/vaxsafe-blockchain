@@ -20,9 +20,13 @@ public class VaccineService {
         this.vaccineRepository = vaccineRepository;
     }
 
-    public Vaccine getVaccineById(Long id) throws AppException {
-        return vaccineRepository.findById(id)
-                .orElseThrow(() -> new AppException("Vaccine not found with id: " + id));
+    public List<String> getAllCountries() {
+        return vaccineRepository.findDistinctCountries();
+    }
+
+    public Vaccine getVaccineBySku(String slug) throws AppException {
+        return vaccineRepository.findBySlug(slug)
+                .orElseThrow(() -> new AppException("Vaccine not found"));
     }
 
     public Pagination getAllVaccines(Specification<Vaccine> specification, Pageable pageable) {
@@ -45,34 +49,34 @@ public class VaccineService {
         return pagination;
     }
 
-    public Vaccine createVaccine(Vaccine vaccine) throws AppException {
-        if (vaccineRepository.existsByName(vaccine.getName())) {
-            throw new AppException("Vaccine already exists with name: " + vaccine.getName());
-        }
-        vaccine.setDeleted(false);
-        return vaccineRepository.save(vaccine);
-    }
+//    public Vaccine createVaccine(Vaccine vaccine) throws AppException {
+//        if (vaccineRepository.existsByName(vaccine.getName())) {
+//            throw new AppException("Vaccine already exists with name: " + vaccine.getName());
+//        }
+//        vaccine.setDeleted(false);
+//        return vaccineRepository.save(vaccine);
+//    }
 
-    public Vaccine updateVaccine(Long id, Vaccine vaccine) throws AppException {
-        Vaccine existingVaccine = vaccineRepository.findById(id)
-                .orElseThrow(() -> new AppException("Vaccine not found with id: " + id));
-        
-        if (!existingVaccine.getName().equals(vaccine.getName()) && 
-            vaccineRepository.existsByName(vaccine.getName())) {
-            throw new AppException("Vaccine already exists with name: " + vaccine.getName());
-        }
-        
-        vaccine.setVaccineId(id);
-        vaccine.setDeleted(existingVaccine.isDeleted());
-        return vaccineRepository.save(vaccine);
-    }
-
-    public void deleteVaccine(Long id) throws AppException {
-        Vaccine vaccine = vaccineRepository.findById(id)
-                .orElseThrow(() -> new AppException("Vaccine not found with id: " + id));
-        vaccine.setDeleted(true);
-        vaccineRepository.save(vaccine);
-    }
+//    public Vaccine updateVaccine(Long id, Vaccine vaccine) throws AppException {
+//        Vaccine existingVaccine = vaccineRepository.findById(id)
+//                .orElseThrow(() -> new AppException("Vaccine not found with id: " + id));
+//
+//        if (!existingVaccine.getName().equals(vaccine.getName()) &&
+//            vaccineRepository.existsByName(vaccine.getName())) {
+//            throw new AppException("Vaccine already exists with name: " + vaccine.getName());
+//        }
+//
+//        vaccine.setVaccineId(id);
+//        vaccine.setDeleted(existingVaccine.isDeleted());
+//        return vaccineRepository.save(vaccine);
+//    }
+//
+//    public void deleteVaccine(Long id) throws AppException {
+//        Vaccine vaccine = vaccineRepository.findById(id)
+//                .orElseThrow(() -> new AppException("Vaccine not found with id: " + id));
+//        vaccine.setDeleted(true);
+//        vaccineRepository.save(vaccine);
+//    }
 
     public List<Vaccine> getVaccinesByName(String name) {
         return vaccineRepository.findAllByName(name);

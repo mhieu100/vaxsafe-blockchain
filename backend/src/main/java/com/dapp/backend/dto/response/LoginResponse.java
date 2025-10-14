@@ -1,14 +1,8 @@
 package com.dapp.backend.dto.response;
 
-
 import java.time.LocalDate;
-
 import com.fasterxml.jackson.annotation.JsonInclude;
-
-import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
+import lombok.*;
 import lombok.experimental.FieldDefaults;
 
 @Data
@@ -21,18 +15,27 @@ public class LoginResponse {
     @Data
     @JsonInclude(JsonInclude.Include.NON_NULL)
     @AllArgsConstructor
+    @NoArgsConstructor
     @Builder
     @FieldDefaults(level = AccessLevel.PRIVATE)
     public static class UserLogin {
         Long id;
+        String avatar;
         String fullName;
         String email;
-        String phoneNumber;
+        String phone;
         LocalDate birthday;
+        String gender;
         String address;
-        boolean isDeleted;
-        String centerName;
+        String identityNumber;
+        String bloodType;
+        Double heightCm;
+        Double weightKg;
+        String occupation;
+        String lifestyleNotes;
+        String insuranceNumber;
+        boolean consentForAIAnalysis;
+
         String role;
-        String walletAddress;
     }
 }

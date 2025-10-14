@@ -1,5 +1,6 @@
 package com.dapp.backend.controller;
-import com.dapp.backend.dto.request.ReqUser;
+import com.dapp.backend.dto.request.UserRequest;
+import com.dapp.backend.dto.response.UserResponse;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.ResponseEntity;
@@ -15,11 +16,9 @@ import com.dapp.backend.annotation.ApiMessage;
 import com.dapp.backend.exception.AppException;
 import com.dapp.backend.model.User;
 import com.dapp.backend.dto.response.Pagination;
-import com.dapp.backend.dto.response.ResUser;
 import com.dapp.backend.service.UserService;
 import com.turkraft.springfilter.boot.Filter;
 
-import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 
@@ -46,17 +45,16 @@ public class UserController {
         return ResponseEntity.ok().body(userService.getAllDoctorsOfCenter(specification, pageable));
     }
 
-    @PutMapping("/{walletAddress}")
+    @PutMapping
     @ApiMessage("Update a user")
-    public ResponseEntity<ResUser> updateUser(@PathVariable String walletAddress, @Valid @RequestBody ReqUser reqUser)
+    public ResponseEntity<UserResponse> updateUser(@Valid @RequestBody UserRequest request)
             throws AppException {
-                System.out.println("hello");
-        return ResponseEntity.ok().body(userService.updateUser(walletAddress, reqUser));
+        return ResponseEntity.ok().body(userService.updateUser(request));
     }
 
-    @DeleteMapping("/{walletAddress}")
+    @DeleteMapping("/{id}")
     @ApiMessage("Delete a user")
-    public void deleteUser(@PathVariable String walletAddress) throws AppException {
-        userService.deleteUser(walletAddress);
+    public void deleteUser(@PathVariable long id) throws AppException {
+        userService.deleteUser(id);
     }
 }
