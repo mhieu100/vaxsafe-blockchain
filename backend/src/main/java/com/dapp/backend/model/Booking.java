@@ -1,10 +1,13 @@
 package com.dapp.backend.model;
 
 import com.dapp.backend.enums.BookingEnum;
+import com.dapp.backend.enums.OverRallStatus;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
+import org.hibernate.annotations.CreationTimestamp;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -19,7 +22,10 @@ public class Booking {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long bookingId;
+    Long bookingId;
+
+    Integer totalDoses;
+    OverRallStatus overallStatus;
 
     @ManyToOne
     @JoinColumn(name = "patient_id")
@@ -36,6 +42,9 @@ public class Booking {
     Double totalAmount;
     @Enumerated(EnumType.STRING)
     BookingEnum status;
+
+    @CreationTimestamp
+    LocalDateTime createdAt;
 
     @OneToMany(mappedBy = "booking", cascade = CascadeType.ALL)
     List<Appointment> appointments = new ArrayList<>();

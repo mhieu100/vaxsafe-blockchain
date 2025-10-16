@@ -3,10 +3,7 @@ package com.dapp.backend.service;
 import com.dapp.backend.dto.mapper.BookingMapper;
 import com.dapp.backend.dto.request.BookingRequest;
 import com.dapp.backend.dto.response.*;
-import com.dapp.backend.enums.AppointmentEnum;
-import com.dapp.backend.enums.BookingEnum;
-import com.dapp.backend.enums.PaymentEnum;
-import com.dapp.backend.enums.TypeTransactionEnum;
+import com.dapp.backend.enums.*;
 import com.dapp.backend.exception.AppException;
 import com.dapp.backend.model.*;
 import com.dapp.backend.repository.*;
@@ -38,20 +35,6 @@ public class BookingService {
     private final PaymentService paymentService;
     private final FamilyMemberRepository familyMemberRepository;
 
-
-//    public String createAppointmentWithMetaMark(AppointmentRequest request, String walletAddress) throws Exception {
-//        Vaccine vaccine = vaccineRepository.findById(request.getVaccineId()).orElseThrow(() -> new AppException("Vaccine not found!"));
-//        Center center = centerRepository.findById(request.getCenterId()).orElseThrow(() -> new AppException("Center not found!"));
-//
-//        String date = FormatDateTime.convertDateToString(request.getFirstDoseDate());
-//        String time = FormatDateTime.convertTimeToString(request.getTime());
-//
-//        TransactionReceipt receipt = contract.createAppointment(vaccine.getName(), center.getName(), date,
-//                time, walletAddress, BigInteger.valueOf(reqAppointment.getPrice())).send();
-//        return receipt.getTransactionHash();
-//
-//    }
-
         public PaymentResponse createBooking(BookingRequest request) throws Exception {
             User user = authService.getCurrentUserLogin();
             Vaccine vaccine = vaccineRepository.findById(request.getVaccineId()).orElseThrow(() -> new AppException("Vaccine not found!"));
@@ -61,12 +44,15 @@ public class BookingService {
             if (request.getFamilyMemberId() != null) {
                 FamilyMember familyMember = familyMemberRepository.findById(request.getFamilyMemberId()).orElseThrow(() -> new AppException("Family member not found!"));
                 booking.setFamilyMember(familyMember);
+                booking.setPatient(user);
             } else {
                 booking.setPatient(user);
             }
             booking.setVaccine(vaccine);
             booking.setTotalAmount(request.getAmount());
             booking.setStatus(BookingEnum.PENDING);
+            booking.setTotalDoses(request.getDoseSchedules().size() + 1);
+            booking.setOverallStatus(OverRallStatus.PROGRESS);
 
             bookingRepository.save(booking);
 
@@ -154,61 +140,11 @@ public class BookingService {
         return pagination;
     }
 
+    public List<BookingResponse> getBooking() throws AppException {
+        User user = authService.getCurrentUserLogin();
+        return bookingRepository.findAllByPatientAndOverallStatus(user, OverRallStatus.PROGRESS).stream()
+                .map(BookingMapper::toResponse)
+                .toList();
+    }
 
-//    public Appointment getAppointment(BigInteger id) throws Exception {
-//        return contract.getAppointment(id).send();
-//    }
-//
-//    public List<Appointment> getAllAppointments() throws Exception {
-//        return contract.getAllAppointments().send();
-//    }
-//
-//    public List<Appointment> getAppointmentsByDoctor(String doctorAddress) throws Exception {
-//        return contract.getAppointmentsByDoctor(doctorAddress).send();
-//    }
-//
-//    public List<Appointment> getAppointmentsByCenter(String centerName) throws Exception {
-//        return contract.getAppointmentsByCenter(centerName).send();
-//    }
-//
-//    public List<Appointment> getAppointmentsByPatient(String patientAddress) throws Exception {
-//        return contract.getAppointmentsByPatient(patientAddress).send();
-//    }
-//
-//    public String processAppointment(
-//            BigInteger appointmentId,
-//            String doctorAddress,
-//            String cashierAddress) throws Exception {
-//        TransactionReceipt receipt = contract.processAppointment(appointmentId, doctorAddress, cashierAddress).send();
-//        return "Appointment processed. Transaction hash: " +
-//                receipt.getTransactionHash();
-//    }
-//
-//    public String completeAppointment(BigInteger id) throws Exception {
-//        TransactionReceipt receipt = contract.completeAppointment(id).send();
-//        return "Appointment completed. Transaction hash: " +
-//                receipt.getTransactionHash();
-//    }
-//
-//    public String cancelAppointment(String walletAddress,BigInteger id) throws Exception {
-//        TransactionReceipt receipt = contract.cancelAppointment(walletAddress, id).send();
-//        return "Appointment cancelled. Transaction hash: " +
-//                receipt.getTransactionHash();
-//    }
-//
-//    public String refundAppointment(BigInteger id) throws Exception {
-//        TransactionReceipt receipt = contract.refundAppointment(id).send();
-//        return "Appointment refunded. Transaction hash: " +
-//                receipt.getTransactionHash();
-//    }
-//
-//    public String verifyAppointment(Payment payment) throws Exception {
-//        payment.setPaymentDateTime(LocalDateTime.now());
-//        paymentRepository.save(payment);
-//        return "Appointment saved";
-//    }
-//
-//    public Payment verifyAppointment(BigInteger id) throws Exception {
-//        return paymentRepository.findById(id.longValue()).get();
-//    }
 }

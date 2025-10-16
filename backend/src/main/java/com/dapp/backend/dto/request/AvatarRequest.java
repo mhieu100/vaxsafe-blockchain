@@ -4,5 +4,5 @@ import lombok.Data;
 
 @Data
 public class AvatarRequest {
-    String urlAvatar;
+    String avatarUrl;
 }

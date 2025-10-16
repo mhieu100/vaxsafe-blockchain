@@ -3,6 +3,7 @@ package com.dapp.backend.service;
 import com.dapp.backend.dto.request.AvatarRequest;
 import com.dapp.backend.dto.request.LoginRequest;
 import com.dapp.backend.dto.request.RegisterPatientRequest;
+import com.dapp.backend.dto.request.UpdateAccountRequest;
 import com.dapp.backend.dto.response.LoginResponse;
 import com.dapp.backend.dto.response.RegisterPatientResponse;
 import com.dapp.backend.exception.AppException;
@@ -142,6 +143,29 @@ public class AuthService {
                 .build();
     }
 
+    public LoginResponse.UserLogin updateAccount(UpdateAccountRequest request) throws AppException {
+        User user = getCurrentUserLogin();
+        user.setFullName(request.getUser().getFullName());
+
+        Patient patient = user.getPatientProfile();
+        patient.setAddress(request.getPatientProfile().getAddress());
+        patient.setPhone(request.getPatientProfile().getPhone());
+        patient.setBirthday(request.getPatientProfile().getBirthday());
+        patient.setGender(request.getPatientProfile().getGender());
+        patient.setIdentityNumber(request.getPatientProfile().getIdentityNumber());
+        patient.setBloodType(request.getPatientProfile().getBloodType());
+        patient.setHeightCm(request.getPatientProfile().getHeightCm());
+        patient.setWeightKg(request.getPatientProfile().getWeightKg());
+        patient.setOccupation(request.getPatientProfile().getOccupation());
+        patient.setLifestyleNotes(request.getPatientProfile().getLifestyleNotes());
+        patient.setInsuranceNumber(request.getPatientProfile().getInsuranceNumber());
+
+        user.setPatientProfile(patient);
+        userRepository.save(user);
+
+        return toUserLogin(user);
+    }
+
 
     public LoginResponse refresh(String refreshToken) throws AppException {
         if (refreshToken.equals("empty")) {
@@ -164,10 +188,10 @@ public class AuthService {
         return toUserLogin(user);
     }
 
-    public void updateAvatar(AvatarRequest request) throws AppException {
+    public LoginResponse.UserLogin updateAvatar(AvatarRequest request) throws AppException {
         User user = getCurrentUserLogin();
-        user.setAvatar(request.getUrlAvatar());
-        this.userRepository.save(user);
+        user.setAvatar(request.getAvatarUrl());
+        return toUserLogin(this.userRepository.save(user));
     }
 
     public void updateUserToken(String token, String email) throws AppException {

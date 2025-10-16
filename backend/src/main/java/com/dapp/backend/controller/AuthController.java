@@ -3,6 +3,8 @@ package com.dapp.backend.controller;
 import com.dapp.backend.dto.request.AvatarRequest;
 import com.dapp.backend.dto.request.LoginRequest;
 import com.dapp.backend.dto.request.RegisterPatientRequest;
+import com.dapp.backend.dto.request.UpdateAccountRequest;
+import com.dapp.backend.dto.response.BookingResponse;
 import com.dapp.backend.dto.response.LoginResponse;
 import com.dapp.backend.dto.response.RefreshResponse;
 import com.dapp.backend.dto.response.RegisterPatientResponse;
@@ -21,6 +23,8 @@ import com.dapp.backend.annotation.ApiMessage;
 import com.dapp.backend.service.AuthService;
 
 import org.springframework.web.bind.annotation.GetMapping;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/auth")
@@ -72,10 +76,22 @@ public class AuthController {
         return ResponseEntity.ok().header(HttpHeaders.SET_COOKIE, cookie.toString()).body(RefreshResponse.builder().accessToken(login.getAccessToken()).build());
     }
 
+    @PostMapping("/update-account")
+    @ApiMessage("Update account")
+    public ResponseEntity<LoginResponse.UserLogin> update(@Valid @RequestBody UpdateAccountRequest request) throws AppException {
+        return ResponseEntity.ok(authService.updateAccount(request));
+    }
+
     @GetMapping("/account")
     @ApiMessage("Get profile")
-    public ResponseEntity<LoginResponse.UserLogin> getAccount() throws AppException {
+    public ResponseEntity<LoginResponse.UserLogin> getProfile() throws AppException {
         return ResponseEntity.ok(authService.getAccount());
+    }
+
+    @GetMapping("/booking")
+    @ApiMessage("Get booking of user")
+    public ResponseEntity<List<BookingResponse>> getBooking() throws AppException {
+        return ResponseEntity.ok(bookingService.getBooking());
     }
 
     @PostMapping("/logout")
@@ -95,22 +111,9 @@ public class AuthController {
 
     @PostMapping("/avatar")
     @ApiMessage("update avatar")
-    public ResponseEntity<Void> updateAvatar(@RequestBody AvatarRequest request) throws AppException {
-        this.authService.updateAvatar(request);
-        return ResponseEntity.ok().build();
+    public ResponseEntity<LoginResponse.UserLogin> updateAvatar(@RequestBody AvatarRequest request) throws AppException {
+        return ResponseEntity.ok(this.authService.updateAvatar(request));
     }
-
-//    @GetMapping("/my-appointments")
-//    @ApiMessage("Get all appointments of patient")
-//    public ResponseEntity<List<AppointmentDto>> getAllAppointmentsOfUser(HttpSession session) throws Exception {
-//        String walletAddress = (String) session.getAttribute("walletAddress");
-//        List<Appointment> appointments = appointmentService.getAppointmentsByPatient(walletAddress);
-//        List<AppointmentDto> dtos = appointments.stream()
-//                .map(AppointmentMapper::toDto)
-//                .collect(Collectors.toList());
-//        return ResponseEntity.ok().body(dtos);
-//    }
-
 
 
 }
