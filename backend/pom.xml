@@ -58,40 +58,14 @@
 			<scope>runtime</scope>
 		</dependency>
 		<dependency>
-			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-starter-test</artifactId>
-			<scope>test</scope>
-		</dependency>
-        <dependency>
-            <groupId>org.springframework.security</groupId>
-            <artifactId>spring-security-test</artifactId>
-            <scope>test</scope>
-        </dependency>
-		<dependency>
             <groupId>com.turkraft.springfilter</groupId>
             <artifactId>jpa</artifactId>
             <version>3.1.7</version>
         </dependency>
-		<dependency>
-    		<groupId>org.web3j</groupId>
-    		<artifactId>core</artifactId>
-    		<version>4.10.3</version>
-		</dependency>
         <dependency>
             <groupId>com.paypal.sdk</groupId>
             <artifactId>rest-api-sdk</artifactId>
             <version>1.14.0</version>
-        </dependency>
-
-        <dependency>
-            <groupId>org.flywaydb</groupId>
-            <artifactId>flyway-core</artifactId>
-        </dependency>
-
-        <dependency>
-            <groupId>org.flywaydb</groupId>
-            <artifactId>flyway-database-postgresql</artifactId>
-            <version>10.11.0</version>
         </dependency>
 	</dependencies>
 
@@ -109,36 +83,13 @@
 					</excludes>
 				</configuration>
 			</plugin>
-			<plugin>
-            <groupId>org.web3j</groupId>
-            <artifactId>web3j-maven-plugin</artifactId>
-            <version>4.10.3</version>
-            <configuration>
-                <solidityContractFiles>
-                    <solidityContractFile>
-                        <abiFile>${project.basedir}/src/main/resources/AppointmentContract.json</abiFile>
-                        <outputDir>${project.basedir}/src/main/java</outputDir>
-                        <packageName>com.dapp.backend.contract</packageName>
-                    </solidityContractFile>
-                </solidityContractFiles>
-            </configuration>
-            <executions>
-                <execution>
-                    <id>generate-contract-sources</id>
-                    <phase>generate-sources</phase>
-                    <goals>
-                        <goal>generate-sources</goal>
-                    </goals>
-                </execution>
-            </executions>
-        </plugin>
-        <plugin>
-            <groupId>org.apache.maven.plugins</groupId>
-            <artifactId>maven-compiler-plugin</artifactId>
-            <configuration>
-                <release>17</release>
-            </configuration>
-        </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <configuration>
+                    <release>17</release>
+                </configuration>
+            </plugin>
         </plugins>
 	</build>
 

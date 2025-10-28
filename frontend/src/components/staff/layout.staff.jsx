@@ -88,6 +88,12 @@ const LayoutStaff = () => {
       icon: <EditOutlined />,
       roles: ['CASHIER'],
     },
+    {
+      path: '/staff/calendar-view',
+      name: <Link to="/staff/calendar-view">Lịch làm việc</Link>,
+      icon: <CalendarOutlined />,
+      roles: ['CASHIER'],
+    },
   ];
 
   const filterMenuByRole = (menuItems, userRole) => {

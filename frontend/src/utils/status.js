@@ -11,3 +11,13 @@ export const getColorStatus = (status) => {
       return 'error';
   }
 };
+
+export const getStatusBadge = (status) => {
+  const statusConfig = {
+    confirmed: { color: 'success', text: 'Đã xác nhận' },
+    pending: { color: 'warning', text: 'Chờ xác nhận' },
+    completed: { color: 'processing', text: 'Hoàn thành' },
+    cancelled: { color: 'error', text: 'Đã hủy' },
+  };
+  return statusConfig[status] || statusConfig.pending;
+};

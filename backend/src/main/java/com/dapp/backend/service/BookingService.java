@@ -16,8 +16,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
-import org.web3j.model.VaccineAppointment;
-//import org.web3j.model.VaccineAppointment.Appointment;
 
 import static com.dapp.backend.service.PaymentService.EXCHANGE_RATE_TO_USD;
 
@@ -28,7 +26,6 @@ public class BookingService {
     private final UserRepository userRepository;
     private final VaccineRepository vaccineRepository;
     private final CenterRepository centerRepository;
-    private final VaccineAppointment contract;
     private final AppointmentRepository appointmentRepository;
     private final PaymentRepository paymentRepository;
     private final BookingRepository bookingRepository;
@@ -143,6 +140,13 @@ public class BookingService {
     public List<BookingResponse> getBooking() throws AppException {
         User user = authService.getCurrentUserLogin();
         return bookingRepository.findAllByPatientAndOverallStatus(user, OverRallStatus.PROGRESS).stream()
+                .map(BookingMapper::toResponse)
+                .toList();
+    }
+
+    public List<BookingResponse> getHistoryBooking() throws AppException {
+        User user = authService.getCurrentUserLogin();
+        return bookingRepository.findAllByPatient(user).stream()
                 .map(BookingMapper::toResponse)
                 .toList();
     }

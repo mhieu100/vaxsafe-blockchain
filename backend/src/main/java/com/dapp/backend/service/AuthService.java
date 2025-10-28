@@ -7,6 +7,7 @@ import com.dapp.backend.dto.request.UpdateAccountRequest;
 import com.dapp.backend.dto.response.LoginResponse;
 import com.dapp.backend.dto.response.RegisterPatientResponse;
 import com.dapp.backend.exception.AppException;
+import com.dapp.backend.model.Center;
 import com.dapp.backend.model.Patient;
 import com.dapp.backend.model.Role;
 import com.dapp.backend.repository.PatientRepository;
@@ -36,6 +37,7 @@ public class AuthService {
 
     private LoginResponse.UserLogin toUserLogin(User user) {
         Patient patient = user.getPatientProfile();
+        Center center = user.getCenter();
 
         return LoginResponse.UserLogin.builder()
                 .id(user.getId())
@@ -55,6 +57,8 @@ public class AuthService {
                 .lifestyleNotes(patient != null ? patient.getLifestyleNotes() : null)
                 .insuranceNumber(patient != null ? patient.getInsuranceNumber() : null)
                 .consentForAIAnalysis(patient != null && patient.isConsentForAIAnalysis())
+                .centerId(center != null ? center.getCenterId() : null)
+                .centerName(center != null ? center.getName() : null)
                 .build();
     }
 

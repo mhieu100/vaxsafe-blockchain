@@ -7,6 +7,7 @@ import com.dapp.backend.dto.response.Pagination;
 import com.dapp.backend.enums.AppointmentEnum;
 import com.dapp.backend.exception.AppException;
 import com.dapp.backend.model.Appointment;
+import com.dapp.backend.model.Center;
 import com.dapp.backend.model.User;
 import com.dapp.backend.repository.AppointmentRepository;
 import com.dapp.backend.repository.UserRepository;
@@ -28,9 +29,16 @@ public class AppointmentService {
     private final AppointmentRepository appointmentRepository;
 
     public Pagination getAllAppointmentOfCenter(Specification<Appointment> specification, Pageable pageable) throws AppException {
+        User user = authService.getCurrentUserLogin();
+        Center center = user.getCenter();
 
-//        User user = authService.getCurrentUserLogin();
-//        specification = Specification.where(specification).and(AppointmentSpecifications.findByCenter(user.getCenter().getName()));
+        if (center == null) {
+            throw new AppException("User is not associated with any center.");
+        }
+
+        Specification<Appointment> centerSpec = AppointmentSpecifications.findByCenter(center.getName());
+        specification = Specification.where(specification).and(centerSpec);
+
         Page<Appointment> page = appointmentRepository.findAll(specification, pageable);
         Pagination pagination = new Pagination();
         Pagination.Meta meta = new Pagination.Meta();
@@ -56,7 +64,6 @@ public class AppointmentService {
         meta.setPageSize(pageable.getPageSize());
         meta.setPages(page.getTotalPages());
         meta.setTotal(page.getTotalElements());
-
         pagination.setMeta(meta);
         List<Appointment> list = page.getContent();
         List<AppointmentResponse> result = list.stream().map(AppointmentMapper::toResponse).toList();

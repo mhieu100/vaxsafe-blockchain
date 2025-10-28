@@ -7,23 +7,27 @@ import customParseFormat from 'dayjs/plugin/customParseFormat';
 import { callFetchDoctor } from '../../config/api.user';
 import { callUpdateAppointment } from '../../config/api.appointment';
 import '../../styles/reset.scss';
+import { useSelector } from 'react-redux';
 
 dayjs.extend(customParseFormat);
 
 const ModalAppointment = (props) => {
+  const user = useSelector((state) => state.account.user);
   const { openModal, setOpenModal, reloadTable, dataInit, setDataInit } = props;
 
   const [form] = Form.useForm();
   const [animation, setAnimation] = useState('open');
   const [listDoctor, setListDoctor] = useState([]);
 
-  console.log(dataInit)
   useEffect(() => {
     fetchDoctor();
   }, []);
 
   const fetchDoctor = async () => {
     const res = await callFetchDoctor();
+    const list = res.data?.result || [];
+    console.log(list)
+    // list.filter((doctor) => doctor. === user.clinicId);
     if (res && res.data) {
       setListDoctor(res.data?.result);
     }
@@ -34,7 +38,7 @@ const ModalAppointment = (props) => {
     const res = await callUpdateAppointment(dataInit.id, doctorId);
 
     if (res) {
-      console.log(res)
+      console.log(res);
       message.success('Appointment updated successfully');
       handleReset();
       reloadTable();

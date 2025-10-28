@@ -39,10 +39,4 @@ public class Center {
     int capacity;
     @NotBlank(message = "Giờ làm việc không được trống")
     String workingHours;
-
-//    @OneToMany(mappedBy = "center")
-//    List<User> doctors;
-//
-//    @OneToMany(mappedBy = "center")
-//    List<User> cashiers;
 }

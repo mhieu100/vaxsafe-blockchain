@@ -91,8 +91,8 @@ export const callFetchAppointment = () => {
   return axios.get('/appointments');
 };
 
-export const callFetchAppointmentOfCenter = () => {
-  return axios.get('/appointments/center');
+export const callFetchAppointmentOfCenter = (query) => {
+  return axios.get(`/appointments/center?${query}`);
 };
 
 export const callMySchedule = () => {

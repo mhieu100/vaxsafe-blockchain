@@ -42,6 +42,7 @@ import VaccineRAGSystem from './pages/client/recommend';
 import CartPage from './pages/client/cart';
 import Checkout from './pages/client/checkout';
 import Profile from './pages/auth';
+import CalendarStaff from './pages/staff/calendar';
 
 const App = () => {
   const dispatch = useDispatch();
@@ -156,6 +157,10 @@ const App = () => {
         {
           path: 'appointments',
           element: <AppointmentPage />,
+        },
+        {
+          path: 'calendar-view',
+          element: <CalendarStaff />,
         },
         {
           path: 'my-schedule',

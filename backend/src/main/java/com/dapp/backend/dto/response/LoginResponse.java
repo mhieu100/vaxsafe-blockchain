@@ -37,5 +37,7 @@ public class LoginResponse {
         boolean consentForAIAnalysis;
 
         String role;
+        Long centerId;
+        String centerName;
     }
 }

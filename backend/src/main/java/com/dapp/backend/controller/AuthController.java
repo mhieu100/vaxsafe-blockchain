@@ -94,6 +94,12 @@ public class AuthController {
         return ResponseEntity.ok(bookingService.getBooking());
     }
 
+    @GetMapping("/history-booking")
+    @ApiMessage("Get history booking of user")
+    public ResponseEntity<List<BookingResponse>> getHistoryBooking() throws AppException {
+        return ResponseEntity.ok(bookingService.getHistoryBooking());
+    }
+
     @PostMapping("/logout")
     @ApiMessage("logout user")
     public ResponseEntity<Void> logout() throws AppException {

@@ -34,7 +34,6 @@ const MySchedulePage = () => {
   const handleComplete = async (id) => {
     if (id) {
       const res = await callCompleteAppointment(id);
-      console.log(res)
       if (res) {
         message.success('Hoàn thành lịch hẹn thành công');
         reloadTable();
@@ -47,7 +46,6 @@ const MySchedulePage = () => {
     }
   };
 
-  console.log(appointments)
   const columns = [
     {
       title: 'STT',
@@ -111,7 +109,7 @@ const MySchedulePage = () => {
       render: (_value, entity) =>
         entity.status === 'SCHEDULED' ? (
           <Space>
-            <Button type="primary" onClick={handleComplete(entity.id)}>
+            <Button type="primary" onClick={() => handleComplete(entity.id)}>
               <CheckOutlined />
               Xác nhận
             </Button>

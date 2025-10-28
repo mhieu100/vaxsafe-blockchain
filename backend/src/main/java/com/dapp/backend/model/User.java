@@ -32,11 +32,15 @@ public class User {
     @JoinColumn(name = "role_id")
     Role role;
 
+    @ManyToOne
+    @JoinColumn(name = "center_id")
+    Center center;
+
     @OneToOne(mappedBy = "user", cascade = CascadeType.ALL)
     Patient patientProfile;
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<FamilyMember> familyMembers = new ArrayList<>();
+    List<FamilyMember> familyMembers = new ArrayList<>();
 
     boolean isDeleted;
 }

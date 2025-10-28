@@ -1,6 +1,7 @@
 package com.dapp.backend.dto.mapper;
 import com.dapp.backend.dto.response.AppointmentResponse;
 import com.dapp.backend.model.Appointment;
+import com.dapp.backend.model.User;
 
 public class AppointmentMapper {
 
@@ -15,8 +16,17 @@ public class AppointmentMapper {
         response.setVaccineName(appointment.getBooking().getVaccine().getName());
         response.setCenterName(appointment.getCenter().getName());
         response.setPatientName(appointment.getBooking().getPatient().getFullName());
-        response.setCashierName(appointment.getCashier().getFullName());
-        response.setDoctorName(appointment.getDoctor().getFullName());
+
+        User cashier = appointment.getCashier();
+        if (cashier != null) {
+            response.setCashierName(cashier.getFullName());
+        }
+
+        User doctor = appointment.getDoctor();
+        if (doctor != null) {
+            response.setDoctorName(doctor.getFullName());
+        }
+
         return response;
     }
 

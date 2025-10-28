@@ -37,7 +37,8 @@ public class UserService {
     }
 
     public Pagination getAllDoctorsOfCenter(Specification<User> specification, Pageable pageable) throws AppException {
-//        specification = Specification.where(specification).and(UserSpecifications.findByRole()).and(UserSpecifications.findByCenter(user.getCenter().getName()));
+        User user = authService.getCurrentUserLogin();
+        specification = Specification.where(specification).and(UserSpecifications.findByRole()).and(UserSpecifications.findByCenter(user.getCenter().getName()));
         specification = Specification.where(specification).and(UserSpecifications.findByRole());
         Page<User> page = userRepository.findAll(specification, pageable);
         Pagination pagination = new Pagination();
