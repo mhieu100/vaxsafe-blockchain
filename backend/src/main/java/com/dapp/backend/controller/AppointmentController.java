@@ -29,7 +29,7 @@ public class AppointmentController {
     @PutMapping
     @ApiMessage("Update a appointment of cashier")
     public ResponseEntity<AppointmentResponse> updateAppointmentOfCashier(@RequestBody ProcessAppointmentRequest request) throws Exception {
-        return ResponseEntity.ok().body(appointmentService.processAppointment(request));
+        return ResponseEntity.ok().body(appointmentService.updateScheduledAppointment(request));
     }
 
     @GetMapping("/my-schedules")

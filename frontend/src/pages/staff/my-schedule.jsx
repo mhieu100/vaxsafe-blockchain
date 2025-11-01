@@ -1,18 +1,13 @@
 /* eslint-disable no-undef */
-import { useEffect, useRef, useState } from 'react';
-import {
-  Badge,
-  Button,
-  Popconfirm,
-  Space,
-  Tag,
-  message,
-  notification,
-} from 'antd';
-import { CheckOutlined } from '@ant-design/icons';
+import { useRef } from 'react';
+import { Badge, Button, Space, Tag, message, notification } from 'antd';
+import { CheckOutlined, CloseOutlined } from '@ant-design/icons';
 
 import DataTable from '../../components/data-table';
-import { callCompleteAppointment } from '../../config/api.appointment';
+import {
+  callCancelAppointment,
+  callCompleteAppointment,
+} from '../../config/api.appointment';
 import queryString from 'query-string';
 import { sfLike } from 'spring-filter-query-builder';
 import { useDispatch, useSelector } from 'react-redux';
@@ -36,6 +31,21 @@ const MySchedulePage = () => {
       const res = await callCompleteAppointment(id);
       if (res) {
         message.success('Hoàn thành lịch hẹn thành công');
+        reloadTable();
+      } else {
+        notification.error({
+          message: res.error,
+          description: res.message,
+        });
+      }
+    }
+  };
+
+  const handleCancel = async (id) => {
+    if (id) {
+      const res = await callCancelAppointment(id);
+      if (res) {
+        message.success('Hủy lịch hẹn thành công');
         reloadTable();
       } else {
         notification.error({
@@ -112,6 +122,10 @@ const MySchedulePage = () => {
             <Button type="primary" onClick={() => handleComplete(entity.id)}>
               <CheckOutlined />
               Xác nhận
+            </Button>
+            <Button type="error" onClick={() => handleCancel(entity.id)}>
+              <CloseOutlined />
+              Hủy lịch hẹn
             </Button>
           </Space>
         ) : null,

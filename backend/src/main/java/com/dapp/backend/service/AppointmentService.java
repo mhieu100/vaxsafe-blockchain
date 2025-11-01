@@ -5,11 +5,14 @@ import com.dapp.backend.dto.request.ProcessAppointmentRequest;
 import com.dapp.backend.dto.response.AppointmentResponse;
 import com.dapp.backend.dto.response.Pagination;
 import com.dapp.backend.enums.AppointmentEnum;
+import com.dapp.backend.enums.BookingEnum;
 import com.dapp.backend.exception.AppException;
 import com.dapp.backend.model.Appointment;
+import com.dapp.backend.model.Booking;
 import com.dapp.backend.model.Center;
 import com.dapp.backend.model.User;
 import com.dapp.backend.repository.AppointmentRepository;
+import com.dapp.backend.repository.BookingRepository;
 import com.dapp.backend.repository.UserRepository;
 import com.dapp.backend.service.spec.AppointmentSpecifications;
 import lombok.RequiredArgsConstructor;
@@ -26,6 +29,7 @@ public class AppointmentService {
 
     private final AuthService authService;
     private final UserRepository userRepository;
+    private final BookingRepository bookingRepository;
     private final AppointmentRepository appointmentRepository;
 
     public Pagination getAllAppointmentOfCenter(Specification<Appointment> specification, Pageable pageable) throws AppException {
@@ -71,21 +75,45 @@ public class AppointmentService {
         return pagination;
     }
 
-    public AppointmentResponse processAppointment(ProcessAppointmentRequest request) throws Exception {
+    private void checkAndUpdateBookingStatus(Booking booking) {
+        List<Appointment> appointments = appointmentRepository.findByBooking(booking);
+
+        if (appointments.stream().allMatch(a -> a.getStatus() == AppointmentEnum.COMPLETED)) {
+            booking.setStatus(BookingEnum.COMPLETED);
+        } else if (appointments.stream().anyMatch(a -> a.getStatus() == AppointmentEnum.CANCELLED)) {
+
+            appointments.stream()
+                    .filter(a -> a.getStatus() == AppointmentEnum.SCHEDULED)
+                    .forEach(a -> {
+                        a.setStatus(AppointmentEnum.CANCELLED);
+                        appointmentRepository.save(a);
+                    });
+
+            booking.setStatus(BookingEnum.CANCELLED);
+
+        }
+
+        bookingRepository.save(booking);
+    }
+
+
+
+    public AppointmentResponse updateScheduledAppointment(ProcessAppointmentRequest request) throws Exception {
         User cashier = authService.getCurrentUserLogin();
         User doctor = userRepository.findById(request.getDoctorId()).orElseThrow(() -> new AppException("Doctor not found"));
         Appointment appointment = appointmentRepository.findById(request.getAppointmentId()).orElseThrow(() -> new AppException("Appointment not found"));
         appointment.setDoctor(doctor);
         appointment.setCashier(cashier);
         appointment.setStatus(AppointmentEnum.SCHEDULED);
-        return AppointmentMapper.toResponse(appointmentRepository.save(appointment));
+        appointmentRepository.save(appointment);
+        return AppointmentMapper.toResponse(appointment);
     }
-
 
     public String complete(long id) throws AppException {
         Appointment appointment = appointmentRepository.findById(id).orElseThrow(() -> new AppException("Appointment not found " + id));
         appointment.setStatus(AppointmentEnum.COMPLETED);
         appointmentRepository.save(appointment);
+        checkAndUpdateBookingStatus(appointment.getBooking());
         return "Appointment update success";
     }
 
@@ -93,6 +121,7 @@ public class AppointmentService {
         Appointment appointment = appointmentRepository.findById(id).orElseThrow(() -> new AppException("Appointment not found " + id));
         appointment.setStatus(AppointmentEnum.CANCELLED);
         appointmentRepository.save(appointment);
+        checkAndUpdateBookingStatus(appointment.getBooking());
         return "Appointment update success";
     }
 }

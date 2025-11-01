@@ -2,7 +2,6 @@ package com.dapp.backend.dto.response;
 
 import com.dapp.backend.enums.AppointmentEnum;
 import com.dapp.backend.enums.BookingEnum;
-import com.dapp.backend.enums.OverRallStatus;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -26,7 +25,6 @@ public class BookingResponse {
     private String vaccineName;
     private Double totalAmount;
     private Integer totalDoses;
-    private OverRallStatus overallStatus;
     private BookingEnum bookingStatus;
     private LocalDateTime createdAt;
     private List<AppointmentResponse> appointments;

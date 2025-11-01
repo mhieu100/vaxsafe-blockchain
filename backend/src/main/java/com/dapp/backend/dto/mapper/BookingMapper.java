@@ -54,7 +54,6 @@ public class BookingMapper {
                 .vaccineName(booking.getVaccine().getName())
                 .totalAmount(booking.getTotalAmount())
                 .totalDoses(booking.getTotalDoses())
-                .overallStatus(booking.getOverallStatus())
                 .bookingStatus(booking.getStatus())
                 .createdAt(booking.getCreatedAt())
                 .appointments(appointmentResponses)

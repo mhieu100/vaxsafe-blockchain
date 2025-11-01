@@ -87,7 +87,7 @@ const AppointmentPage = () => {
     {
       title: 'Thao tác',
       render: (_value, entity) =>
-        entity.status === 'PENDING' ? (
+        entity.status === 'PENDING_SCHEDULE' ? (
           <Space>
             <Button
               type="primary"

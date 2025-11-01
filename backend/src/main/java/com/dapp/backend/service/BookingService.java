@@ -32,7 +32,7 @@ public class BookingService {
     private final PaymentService paymentService;
     private final FamilyMemberRepository familyMemberRepository;
 
-        public PaymentResponse createBooking(BookingRequest request) throws Exception {
+    public PaymentResponse createBooking(BookingRequest request) throws Exception {
             User user = authService.getCurrentUserLogin();
             Vaccine vaccine = vaccineRepository.findById(request.getVaccineId()).orElseThrow(() -> new AppException("Vaccine not found!"));
             Center center = centerRepository.findById(request.getCenterId()).orElseThrow(() -> new AppException("Center not found!"));
@@ -47,11 +47,8 @@ public class BookingService {
             }
             booking.setVaccine(vaccine);
             booking.setTotalAmount(request.getAmount());
-            booking.setStatus(BookingEnum.PENDING);
+            booking.setStatus(BookingEnum.PENDING_PAYMENT);
             booking.setTotalDoses(request.getDoseSchedules().size() + 1);
-            booking.setOverallStatus(OverRallStatus.PROGRESS);
-
-            bookingRepository.save(booking);
 
             List<Appointment> appointments = new ArrayList<>();
             Appointment firstDose = new Appointment();
@@ -60,7 +57,7 @@ public class BookingService {
             firstDose.setScheduledDate(request.getFirstDoseDate());
             firstDose.setScheduledTime(request.getFirstDoseTime());
             firstDose.setCenter(center);
-            firstDose.setStatus(AppointmentEnum.PENDING);
+            firstDose.setStatus(AppointmentEnum.PENDING_SCHEDULE);
             appointments.add(firstDose);
 
             int doseNumber = 1;
@@ -72,12 +69,11 @@ public class BookingService {
                 dose.setScheduledDate(doseSchedule.getDate());
                 dose.setScheduledTime(doseSchedule.getTime());
                 dose.setCenter(this.centerRepository.findById(doseSchedule.getCenterId()).orElseThrow(() -> new AppException("Center not found!")));
-                dose.setStatus(AppointmentEnum.PENDING);
+                dose.setStatus(AppointmentEnum.PENDING_SCHEDULE);
                 appointments.add(dose);
             }
-
-            appointmentRepository.saveAll(appointments);
             booking.setAppointments(appointments);
+            bookingRepository.save(booking);
 
             Payment payment = new Payment();
             payment.setReferenceId(booking.getBookingId());
@@ -119,6 +115,13 @@ public class BookingService {
             return response;
     }
 
+    public List<BookingResponse> getBooking() throws AppException {
+        User user = authService.getCurrentUserLogin();
+        return bookingRepository.findAllByPatientAndStatus(user, BookingEnum.CONFIRMED).stream()
+                .map(BookingMapper::toResponse)
+                .toList();
+    }
+
     public Pagination getAllBookings(Specification<Booking> specification, Pageable pageable) throws Exception {
         Page<Booking> page = bookingRepository.findAll(pageable);
         Pagination pagination = new Pagination();
@@ -135,13 +138,6 @@ public class BookingService {
         pagination.setResult(result);
 
         return pagination;
-    }
-
-    public List<BookingResponse> getBooking() throws AppException {
-        User user = authService.getCurrentUserLogin();
-        return bookingRepository.findAllByPatientAndOverallStatus(user, OverRallStatus.PROGRESS).stream()
-                .map(BookingMapper::toResponse)
-                .toList();
     }
 
     public List<BookingResponse> getHistoryBooking() throws AppException {

@@ -1,7 +1,6 @@
 package com.dapp.backend.model;
 
 import com.dapp.backend.enums.BookingEnum;
-import com.dapp.backend.enums.OverRallStatus;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
@@ -25,7 +24,6 @@ public class Booking {
     Long bookingId;
 
     Integer totalDoses;
-    OverRallStatus overallStatus;
 
     @ManyToOne
     @JoinColumn(name = "patient_id")
@@ -46,6 +44,6 @@ public class Booking {
     @CreationTimestamp
     LocalDateTime createdAt;
 
-    @OneToMany(mappedBy = "booking", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "booking", orphanRemoval = true, cascade = CascadeType.ALL)
     List<Appointment> appointments = new ArrayList<>();
 }

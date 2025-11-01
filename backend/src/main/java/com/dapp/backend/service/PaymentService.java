@@ -1,10 +1,7 @@
 package com.dapp.backend.service;
 
 import com.dapp.backend.dto.request.PaymentRequest;
-import com.dapp.backend.enums.BookingEnum;
-import com.dapp.backend.enums.OrderStatus;
-import com.dapp.backend.enums.PaymentEnum;
-import com.dapp.backend.enums.TypeTransactionEnum;
+import com.dapp.backend.enums.*;
 import com.dapp.backend.exception.AppException;
 import com.dapp.backend.model.Booking;
 import com.dapp.backend.repository.BookingRepository;
@@ -91,6 +88,7 @@ public class PaymentService {
         } else {
             Booking booking = bookingRepository.findById(Long.parseLong(request.getReferenceId())).orElseThrow(() -> new AppException("Booking not found!"));
             booking.setStatus(BookingEnum.CONFIRMED);
+            booking.getAppointments().get(0).setStatus(AppointmentEnum.AWAITING_CHECKIN);
             bookingRepository.save(booking);
         }
         payment.setStatus(PaymentEnum.SUCCESS);

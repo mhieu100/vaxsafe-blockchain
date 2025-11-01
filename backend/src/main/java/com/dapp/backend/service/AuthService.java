@@ -1,9 +1,6 @@
 package com.dapp.backend.service;
 
-import com.dapp.backend.dto.request.AvatarRequest;
-import com.dapp.backend.dto.request.LoginRequest;
-import com.dapp.backend.dto.request.RegisterPatientRequest;
-import com.dapp.backend.dto.request.UpdateAccountRequest;
+import com.dapp.backend.dto.request.*;
 import com.dapp.backend.dto.response.LoginResponse;
 import com.dapp.backend.dto.response.RegisterPatientResponse;
 import com.dapp.backend.exception.AppException;
@@ -35,6 +32,7 @@ public class AuthService {
     private final PasswordEncoder passwordEncoder;
     private final JwtUtil jwtUtil;
 
+
     private LoginResponse.UserLogin toUserLogin(User user) {
         Patient patient = user.getPatientProfile();
         Center center = user.getCenter();
@@ -62,7 +60,6 @@ public class AuthService {
                 .build();
     }
 
-
     public LoginResponse login(LoginRequest request) throws AppException {
         UsernamePasswordAuthenticationToken authenticationToken =
                 new UsernamePasswordAuthenticationToken(request.getUsername(), request.getPassword());
@@ -80,7 +77,6 @@ public class AuthService {
                 .user(toUserLogin(user))
                 .build();
     }
-
 
     public RegisterPatientResponse register(RegisterPatientRequest request) throws AppException {
         if (userRepository.existsByEmail(request.getUser().getEmail())) {
@@ -170,7 +166,6 @@ public class AuthService {
         return toUserLogin(user);
     }
 
-
     public LoginResponse refresh(String refreshToken) throws AppException {
         if (refreshToken.equals("empty")) {
             throw new AppException("Missing refresh token!");
@@ -187,15 +182,26 @@ public class AuthService {
         return LoginResponse.builder().accessToken(newAccessToken).user(toUserLogin(user)).build();
     }
 
-    public LoginResponse.UserLogin getAccount() throws AppException {
-        User user = getCurrentUserLogin();
-        return toUserLogin(user);
-    }
-
     public LoginResponse.UserLogin updateAvatar(AvatarRequest request) throws AppException {
         User user = getCurrentUserLogin();
         user.setAvatar(request.getAvatarUrl());
         return toUserLogin(this.userRepository.save(user));
+    }
+
+    public boolean updatePassword(UpdatePasswordRequest request) throws AppException {
+        User user = userRepository.findByEmail(request.getEmail()).orElseThrow(() -> new AppException("User not found"));
+
+        if (!passwordEncoder.matches(request.getOldPassword(), user.getPassword())) {
+            return false;
+        }
+        user.setPassword(passwordEncoder.encode(request.getNewPassword()));
+        userRepository.save(user);
+        return true;
+    }
+
+    public LoginResponse.UserLogin getAccount() throws AppException {
+        User user = getCurrentUserLogin();
+        return toUserLogin(user);
     }
 
     public void updateUserToken(String token, String email) throws AppException {

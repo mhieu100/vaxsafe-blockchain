@@ -1,9 +1,6 @@
 package com.dapp.backend.controller;
 
-import com.dapp.backend.dto.request.AvatarRequest;
-import com.dapp.backend.dto.request.LoginRequest;
-import com.dapp.backend.dto.request.RegisterPatientRequest;
-import com.dapp.backend.dto.request.UpdateAccountRequest;
+import com.dapp.backend.dto.request.*;
 import com.dapp.backend.dto.response.BookingResponse;
 import com.dapp.backend.dto.response.LoginResponse;
 import com.dapp.backend.dto.response.RefreshResponse;
@@ -52,6 +49,12 @@ public class AuthController {
                 .maxAge(refreshTokenExpiration)
                 .build();
         return ResponseEntity.ok().header(HttpHeaders.SET_COOKIE, cookie.toString()).body(response);
+    }
+
+    @PostMapping("/update-password")
+    @ApiMessage("Update password")
+    public ResponseEntity<Boolean> updatePassword(@Valid @RequestBody UpdatePasswordRequest request) throws AppException {
+        return ResponseEntity.ok(authService.updatePassword(request));
     }
 
     @PostMapping("/register")

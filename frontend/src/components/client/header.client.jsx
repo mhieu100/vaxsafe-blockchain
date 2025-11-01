@@ -131,7 +131,7 @@ const Navbar = () => {
     ...(user?.role === 'ADMIN'
       ? [
           {
-            key: 'system',
+            key: 'admin/dashboard',
             label: 'Trang quản trị',
             icon: <DashboardOutlined />,
             onClick: () => navigate('/admin/dashboard'),
@@ -141,7 +141,7 @@ const Navbar = () => {
     ...(user?.role === 'DOCTOR' || user?.role === 'CASHIER'
       ? [
           {
-            key: 'system',
+            key: 'staff/dashboard',
             label: 'Trang nhân viên',
             icon: <DashboardOutlined />,
             onClick: () => navigate('/staff/dashboard'),
