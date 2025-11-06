@@ -1,8 +1,11 @@
 package com.dapp.backend.service;
 
 import com.dapp.backend.dto.mapper.AppointmentMapper;
+import com.dapp.backend.dto.request.BookingBlcRequest;
+import com.dapp.backend.dto.request.ProcessAppointmentBlcRequest;
 import com.dapp.backend.dto.request.ProcessAppointmentRequest;
 import com.dapp.backend.dto.response.AppointmentResponse;
+import com.dapp.backend.dto.response.BookingBlcResponse;
 import com.dapp.backend.dto.response.Pagination;
 import com.dapp.backend.enums.AppointmentEnum;
 import com.dapp.backend.enums.BookingEnum;
@@ -15,11 +18,16 @@ import com.dapp.backend.repository.AppointmentRepository;
 import com.dapp.backend.repository.BookingRepository;
 import com.dapp.backend.repository.UserRepository;
 import com.dapp.backend.service.spec.AppointmentSpecifications;
+import com.dapp.backend.util.TokenExtractor;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
+import org.springframework.http.*;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
 
 import java.util.List;
 
@@ -31,6 +39,10 @@ public class AppointmentService {
     private final UserRepository userRepository;
     private final BookingRepository bookingRepository;
     private final AppointmentRepository appointmentRepository;
+    private final RestTemplate restTemplate;
+    private final TokenExtractor tokenExtractor;
+    @Value("${blockchainUrl}")
+    private String blockchainUrl;
 
     public Pagination getAllAppointmentOfCenter(Specification<Appointment> specification, Pageable pageable) throws AppException {
         User user = authService.getCurrentUserLogin();
@@ -96,16 +108,30 @@ public class AppointmentService {
         bookingRepository.save(booking);
     }
 
-
-
-    public AppointmentResponse updateScheduledAppointment(ProcessAppointmentRequest request) throws Exception {
+    public AppointmentResponse updateScheduledAppointment(HttpServletRequest request, ProcessAppointmentRequest processAppointmentRequest) throws Exception {
         User cashier = authService.getCurrentUserLogin();
-        User doctor = userRepository.findById(request.getDoctorId()).orElseThrow(() -> new AppException("Doctor not found"));
-        Appointment appointment = appointmentRepository.findById(request.getAppointmentId()).orElseThrow(() -> new AppException("Appointment not found"));
+        User doctor = userRepository.findById(processAppointmentRequest.getDoctorId()).orElseThrow(() -> new AppException("Doctor not found"));
+        Appointment appointment = appointmentRepository.findById(processAppointmentRequest.getAppointmentId()).orElseThrow(() -> new AppException("Appointment not found"));
         appointment.setDoctor(doctor);
         appointment.setCashier(cashier);
         appointment.setStatus(AppointmentEnum.SCHEDULED);
         appointmentRepository.save(appointment);
+
+        ProcessAppointmentBlcRequest processAppointmentBlcRequest = new ProcessAppointmentBlcRequest();
+        processAppointmentBlcRequest.setCashier(cashier.getFullName());
+        processAppointmentBlcRequest.setDoctor(doctor.getFullName());
+
+        String token = tokenExtractor.extractToken(request);
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        headers.set("Authorization", "Bearer " +token);
+
+        HttpEntity<ProcessAppointmentBlcRequest> entity = new HttpEntity<>(processAppointmentBlcRequest, headers);
+
+
+        restTemplate.exchange(blockchainUrl+"/bookings/appointments/"+processAppointmentRequest.getAppointmentId()+"/staff", HttpMethod.PUT, entity,  Void.class );
+
+
         return AppointmentMapper.toResponse(appointment);
     }
 

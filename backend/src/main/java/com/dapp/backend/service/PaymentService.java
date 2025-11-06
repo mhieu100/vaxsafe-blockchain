@@ -4,6 +4,7 @@ import com.dapp.backend.dto.request.PaymentRequest;
 import com.dapp.backend.enums.*;
 import com.dapp.backend.exception.AppException;
 import com.dapp.backend.model.Booking;
+import com.dapp.backend.model.Order;
 import com.dapp.backend.repository.BookingRepository;
 import com.dapp.backend.repository.OrderRepository;
 import com.dapp.backend.repository.PaymentRepository;
@@ -83,13 +84,16 @@ public class PaymentService {
     public void updatePaymentPaypal(PaymentRequest request) throws AppException {
         com.dapp.backend.model.Payment payment = paymentRepository.findById(request.getPaymentId()).orElseThrow(() -> new AppException("Payment not found!"));
         if(request.getType() == TypeTransactionEnum.ORDER) {
-            com.dapp.backend.model.Order order = orderRepository.findById(Long.parseLong(request.getReferenceId())).orElseThrow(() -> new AppException("Order not found!"));
+            Order order = orderRepository.findById(Long.parseLong(request.getReferenceId())).orElseThrow(() -> new AppException("Order not found!"));
             order.setStatus(OrderStatus.PROCESSING);
+            payment.setReferenceType(request.getType());
         } else {
             Booking booking = bookingRepository.findById(Long.parseLong(request.getReferenceId())).orElseThrow(() -> new AppException("Booking not found!"));
             booking.setStatus(BookingEnum.CONFIRMED);
             booking.getAppointments().get(0).setStatus(AppointmentEnum.AWAITING_CHECKIN);
             bookingRepository.save(booking);
+
+            payment.setReferenceType(request.getType());
         }
         payment.setStatus(PaymentEnum.SUCCESS);
         paymentRepository.save(payment);

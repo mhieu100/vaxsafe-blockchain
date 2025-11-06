@@ -8,9 +8,11 @@ import com.dapp.backend.exception.AppException;
 import com.dapp.backend.model.Appointment;
 import com.dapp.backend.service.AppointmentService;
 import com.turkraft.springfilter.boot.Filter;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
+import org.springframework.http.HttpRequest;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -28,8 +30,8 @@ public class AppointmentController {
 
     @PutMapping
     @ApiMessage("Update a appointment of cashier")
-    public ResponseEntity<AppointmentResponse> updateAppointmentOfCashier(@RequestBody ProcessAppointmentRequest request) throws Exception {
-        return ResponseEntity.ok().body(appointmentService.updateScheduledAppointment(request));
+    public ResponseEntity<AppointmentResponse> updateAppointmentOfCashier(HttpServletRequest request, @RequestBody ProcessAppointmentRequest processAppointmentRequest) throws Exception {
+        return ResponseEntity.ok().body(appointmentService.updateScheduledAppointment(request,processAppointmentRequest));
     }
 
     @GetMapping("/my-schedules")

@@ -23,6 +23,8 @@ public class Booking {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     Long bookingId;
 
+    String transactionHash;
+
     Integer totalDoses;
 
     @ManyToOne

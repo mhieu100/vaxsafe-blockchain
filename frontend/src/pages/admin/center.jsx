@@ -57,8 +57,8 @@ const CenterPage = () => {
       hideInSearch: true,
       render: (text) => (
         <img
-          src={'http://localhost:8080/storage/center/' + text}
-          alt='center'
+          src={text}
+          alt="center"
           style={{
             width: '50px',
             height: 'auto',
@@ -112,12 +112,12 @@ const CenterPage = () => {
           />
 
           <Popconfirm
-            placement='leftTop'
-            title='Xác nhận xóa cơ sở'
-            description='Bạn có chắc chắn muốn xóa cơ sở tiêm chủng này?'
+            placement="leftTop"
+            title="Xác nhận xóa cơ sở"
+            description="Bạn có chắc chắn muốn xóa cơ sở tiêm chủng này?"
             onConfirm={() => handleDeleteCompany(entity.centerId)}
-            okText='Xác nhận'
-            cancelText='Hủy'
+            okText="Xác nhận"
+            cancelText="Hủy"
           >
             <span style={{ cursor: 'pointer', margin: '0 10px' }}>
               <DeleteOutlined
@@ -173,8 +173,8 @@ const CenterPage = () => {
     <>
       <DataTable
         actionRef={tableRef}
-        headerTitle='Danh sách cơ sở tiêm chủng'
-        rowKey='centerId'
+        headerTitle="Danh sách cơ sở tiêm chủng"
+        rowKey="centerId"
         loading={isFetching}
         columns={columns}
         dataSource={centers}
@@ -201,7 +201,7 @@ const CenterPage = () => {
           return (
             <Button
               icon={<PlusOutlined />}
-              type='primary'
+              type="primary"
               onClick={() => setOpenModal(true)}
             >
               Thêm mới

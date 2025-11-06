@@ -1,5 +1,5 @@
  
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { v4 as uuidv4 } from 'uuid';
 import {
   FooterToolbar,
@@ -42,6 +42,30 @@ const ModalCenter = (props) => {
   const [previewOpen, setPreviewOpen] = useState(false);
   const [previewImage, setPreviewImage] = useState('');
   const [previewTitle, setPreviewTitle] = useState('');
+
+  useEffect(() => {
+    if (openModal && dataInit?.centerId) {
+      form.setFieldsValue({
+        name: dataInit.name,
+        address: dataInit.address,
+        phoneNumber: dataInit.phoneNumber,
+        capacity: dataInit.capacity,
+        workingHours: dataInit.workingHours,
+      });
+      
+      if (dataInit.image) {
+        setDataLogo([
+          {
+            name: dataInit.image,
+            uid: uuidv4(),
+          },
+        ]);
+      }
+    } else if (openModal && !dataInit) {
+      form.resetFields();
+      setDataLogo([]);
+    }
+  }, [openModal, dataInit, form]);
 
   const getBase64 = (img, callback) => {
     const reader = new FileReader();
@@ -136,7 +160,6 @@ const ModalCenter = (props) => {
     }
   
     if (dataInit?.centerId) {
-      console.log(dataInit)
       const res = await callUpdateCenter(
         dataInit.centerId,
         name,
@@ -146,7 +169,6 @@ const ModalCenter = (props) => {
         workingHours,
         dataLogo[0].name
       );
-      console.log(res)
 
       if (res.data) {
         message.success('Center updated successfully');
@@ -207,7 +229,6 @@ const ModalCenter = (props) => {
             preserve={false}
             form={form}
             onFinish={submitCenter}
-            initialValues={dataInit?.centerId ? dataInit : {}}
             submitter={{
               render: (_, dom) => <FooterToolbar>{dom}</FooterToolbar>,
               submitButtonProps: {
@@ -273,7 +294,7 @@ const ModalCenter = (props) => {
                                 uid: uuidv4(),
                                 name: dataInit?.image ?? '',
                                 status: 'done',
-                                url: `${'http://localhost:8080/'}storage/center/${dataInit?.image}`,
+                                url: `npm run dev${dataInit?.image}`,
                               },
                             ]
                           : []
