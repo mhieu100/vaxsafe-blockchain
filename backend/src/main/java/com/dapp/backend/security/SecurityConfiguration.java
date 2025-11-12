@@ -79,9 +79,8 @@ public class SecurityConfiguration {
     public SecurityFilterChain filterChain(HttpSecurity http, CustomAuthenticationEntryPoint customAuthenticationEntryPoint) throws Exception {
 
         String[] whiteList = {
-                "/", "/auth/login/password", "/auth/refresh", "/auth/register", "/storage/**","/email/**",
+                "/", "/auth/login/password", "/auth/refresh", "/auth/register", "/storage/**","/email/**", "/payments/vnpay/return"
         };
-
         http
                 .csrf(AbstractHttpConfigurer::disable)
                 .cors(Customizer.withDefaults())

@@ -22,7 +22,6 @@ public class BookingBlcRequest {
     int totalDoses;
     List<AppointmentBlcResponse> appointments;
 
-    BookingEnum bookingStatus;
     @Data
     @FieldDefaults(level = AccessLevel.PRIVATE)
     public static class AppointmentBlcResponse {

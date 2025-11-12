@@ -43,6 +43,8 @@ import CartPage from './pages/client/cart';
 import Checkout from './pages/client/checkout';
 import Profile from './pages/auth';
 import CalendarStaff from './pages/staff/calendar';
+import NFTPassportPage from './pages/auth/nft-passport';
+import IPFSManagementPage from './pages/auth/ipfs-management';
 
 const App = () => {
   const dispatch = useDispatch();
@@ -80,6 +82,22 @@ const App = () => {
           element: (
             <ProtectedUserRoute>
               <Profile />
+            </ProtectedUserRoute>
+          ),
+        },
+        {
+          path: 'nft-passport',
+          element: (
+            <ProtectedUserRoute>
+              <NFTPassportPage />
+            </ProtectedUserRoute>
+          ),
+        },
+        {
+          path: 'ipfs-management',
+          element: (
+            <ProtectedUserRoute>
+              <IPFSManagementPage />
             </ProtectedUserRoute>
           ),
         },

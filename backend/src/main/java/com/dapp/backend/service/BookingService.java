@@ -102,7 +102,6 @@ public class BookingService {
         bookingBlcRequest.setVaccine(vaccine.getName());
         bookingBlcRequest.setTotalAmount(booking.getTotalAmount());
         bookingBlcRequest.setTotalDoses(booking.getTotalDoses());
-        bookingBlcRequest.setBookingStatus(booking.getStatus());
 
         bookingBlcRequest.setAppointments(booking.getAppointments().stream().map(this::toBookingBlcRequest).toList());
 
@@ -130,6 +129,8 @@ public class BookingService {
                payment.setAmount(bookingRequest.getAmount() * EXCHANGE_RATE_TO_USD);
             } else if(bookingRequest.getPaymentMethod().toString().equals("METAMASK")){
                 payment.setAmount((double) Math.round(bookingRequest.getAmount() / 200000.0));
+            } else if (bookingRequest.getPaymentMethod().toString().equals("BANK")) {
+                payment.setAmount(bookingRequest.getAmount());
             } else {
                 payment.setAmount(bookingRequest.getAmount());
             }
@@ -143,8 +144,12 @@ public class BookingService {
             paymentResponse.setMethod(payment.getMethod());
 
             switch (bookingRequest.getPaymentMethod()) {
+                case BANK:
+                    String bankUrl = paymentService.createBankUrl(Math.round(bookingRequest.getAmount()), paymentResponse.getReferenceId(), paymentResponse.getPaymentId(), TypeTransactionEnum.BOOKING, request.getRemoteAddr());
+                    paymentResponse.setPaymentURL(bankUrl);
+                    break;
                 case PAYPAL:
-                    String paypalUrl = paymentService.createPaypalURL(bookingRequest.getAmount(), paymentResponse.getReferenceId(), paymentResponse.getPaymentId(), TypeTransactionEnum.BOOKING);
+                    String paypalUrl = paymentService.createPaypalUrl(bookingRequest.getAmount(), paymentResponse.getReferenceId(), paymentResponse.getPaymentId(), TypeTransactionEnum.BOOKING);
                     paymentResponse.setPaymentURL(paypalUrl);
                     break;
                 case METAMASK:
@@ -152,6 +157,7 @@ public class BookingService {
                     break;
                 case CASH:
                     payment.setStatus(PaymentEnum.PROCESSING);
+                    payment.setReferenceType(TypeTransactionEnum.BOOKING);
                     paymentRepository.save(payment);
                     booking.setStatus(BookingEnum.CONFIRMED);
                     bookingRepository.save(booking);

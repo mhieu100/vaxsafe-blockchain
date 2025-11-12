@@ -77,7 +77,7 @@ public class OrderService {
 
         switch (request.getPaymentMethod()) {
             case PAYPAL:
-                String paypalUrl = paymentService.createPaypalURL(request.getTotalAmount(), response.getReferenceId(), response.getPaymentId(), TypeTransactionEnum.ORDER);
+                String paypalUrl = paymentService.createPaypalUrl(request.getTotalAmount(), response.getReferenceId(), response.getPaymentId(), TypeTransactionEnum.ORDER);
                 response.setPaymentURL(paypalUrl);
                 break;
             case METAMASK:

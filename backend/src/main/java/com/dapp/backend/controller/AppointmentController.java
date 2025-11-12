@@ -42,14 +42,14 @@ public class AppointmentController {
 
     @PutMapping("/{id}/complete")
     @ApiMessage("Complete a appointment")
-    public ResponseEntity<String> completeAppointment(@PathVariable long id) throws Exception {
-        return ResponseEntity.ok().body(appointmentService.complete(id));
+    public ResponseEntity<String> completeAppointment(HttpServletRequest request, @PathVariable long id) throws Exception {
+        return ResponseEntity.ok().body(appointmentService.complete(request, id));
     }
 
     @PutMapping("/{id}/cancel")
     @ApiMessage("Cancel a appointment")
-    public ResponseEntity<String> cancelAppointment(@PathVariable long id) throws Exception {
-        return ResponseEntity.ok().body(appointmentService.cancel(id));
+    public ResponseEntity<String> cancelAppointment(HttpServletRequest request, @PathVariable long id) throws Exception {
+        return ResponseEntity.ok().body(appointmentService.cancel(request, id));
     }
 
 }

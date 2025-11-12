@@ -49,6 +49,126 @@ body {
     color: white;
 }
 
+/* NFT Vaccine Passport Styles */
+
+.nft-certificate-card {
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+.nft-certificate-card::before {
+    content: '';
+    position: absolute;
+    top: -2px;
+    left: -2px;
+    right: -2px;
+    bottom: -2px;
+    background: linear-gradient(135deg,
+        rgba(139, 92, 246, 0.3),
+        rgba(59, 130, 246, 0.3),
+        rgba(16, 185, 129, 0.3)
+    );
+    border-radius: 16px;
+    z-index: -1;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.nft-certificate-card:hover::before {
+    opacity: 1;
+}
+
+.nft-certificate-card:hover {
+    transform: translateY(-8px) scale(1.02);
+    box-shadow: 0 20px 40px -10px rgba(0, 0, 0, 0.15);
+}
+
+.nft-detail-modal .ant-modal-header {
+    background: linear-gradient(135deg,
+        rgba(139, 92, 246, 0.1),
+        rgba(59, 130, 246, 0.1)
+    );
+    border-bottom: 2px solid rgba(139, 92, 246, 0.2);
+}
+
+.nft-detail-modal .ant-tabs-tab.ant-tabs-tab-active .ant-tabs-tab-btn {
+    color: #8b5cf6;
+}
+
+.nft-detail-modal .ant-tabs-ink-bar {
+    background: linear-gradient(90deg, #8b5cf6, #3b82f6);
+    height: 3px;
+}
+
+/* Glassmorphism effect */
+.glass-card {
+    background: rgba(255, 255, 255, 0.7);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+/* NFT Shimmer animation */
+@keyframes nft-shimmer {
+    0% {
+        background-position: -1000px 0;
+    }
+    100% {
+        background-position: 1000px 0;
+    }
+}
+
+.nft-shimmer {
+    animation: nft-shimmer 3s infinite;
+    background: linear-gradient(
+        to right,
+        transparent 0%,
+        rgba(255, 255, 255, 0.3) 50%,
+        transparent 100%
+    );
+    background-size: 1000px 100%;
+}
+
+/* Web3 gradient text */
+.web3-gradient-text {
+    background: linear-gradient(135deg, #8b5cf6, #3b82f6, #10b981);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    animation: gradient-shift 3s ease infinite;
+    background-size: 200% 200%;
+}
+
+@keyframes gradient-shift {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+}
+
+/* Blockchain verification badge */
+.blockchain-verified {
+    position: relative;
+    display: inline-block;
+}
+
+.blockchain-verified::after {
+    content: '✓';
+    position: absolute;
+    top: -5px;
+    right: -5px;
+    width: 18px;
+    height: 18px;
+    background: linear-gradient(135deg, #10b981, #059669);
+    border-radius: 50%;
+    color: white;
+    font-size: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 2px 8px rgba(16, 185, 129, 0.4);
+}
+
 .leaflet-container {
     height: 300px;
     width: 100%;

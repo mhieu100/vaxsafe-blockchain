@@ -129,25 +129,61 @@ public class AppointmentService {
         HttpEntity<ProcessAppointmentBlcRequest> entity = new HttpEntity<>(processAppointmentBlcRequest, headers);
 
 
-        restTemplate.exchange(blockchainUrl+"/bookings/appointments/"+processAppointmentRequest.getAppointmentId()+"/staff", HttpMethod.PUT, entity,  Void.class );
+        restTemplate.exchange(blockchainUrl+"/bookings/appointments/"+processAppointmentRequest.getAppointmentId()+"/assign-staff", HttpMethod.PUT, entity,  Void.class );
 
 
         return AppointmentMapper.toResponse(appointment);
     }
 
-    public String complete(long id) throws AppException {
+    public String complete(HttpServletRequest request, long id) throws AppException {
         Appointment appointment = appointmentRepository.findById(id).orElseThrow(() -> new AppException("Appointment not found " + id));
         appointment.setStatus(AppointmentEnum.COMPLETED);
         appointmentRepository.save(appointment);
         checkAndUpdateBookingStatus(appointment.getBooking());
+
+        String token = tokenExtractor.extractToken(request);
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        headers.set("Authorization", "Bearer " + token);
+
+        HttpEntity<Void> entity = new HttpEntity<>(headers);
+
+        restTemplate.exchange(
+                blockchainUrl + "/bookings/appointments/"
+                        + id
+                        + "/completed",
+                HttpMethod.PUT,
+                entity,
+                Void.class
+        );
+
+
         return "Appointment update success";
     }
 
-    public String cancel(long id) throws AppException {
+    public String cancel(HttpServletRequest request, long id) throws AppException {
         Appointment appointment = appointmentRepository.findById(id).orElseThrow(() -> new AppException("Appointment not found " + id));
         appointment.setStatus(AppointmentEnum.CANCELLED);
         appointmentRepository.save(appointment);
         checkAndUpdateBookingStatus(appointment.getBooking());
+        String token = tokenExtractor.extractToken(request);
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        headers.set("Authorization", "Bearer " + token);
+
+        HttpEntity<Void> entity = new HttpEntity<>(headers);
+
+        restTemplate.exchange(
+                blockchainUrl + "/bookings/appointments/"
+                        + id
+                        + "/cancelled",
+                HttpMethod.PUT,
+                entity,
+                Void.class
+        );
+
         return "Appointment update success";
     }
 }
