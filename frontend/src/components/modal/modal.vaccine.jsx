@@ -1,9 +1,6 @@
 import { useEffect, useState } from 'react';
-import { v4 as uuidv4 } from 'uuid';
 import {
   CheckSquareOutlined,
-  LoadingOutlined,
-  PlusOutlined,
 } from '@ant-design/icons';
 import {
   FooterToolbar,
@@ -15,61 +12,21 @@ import {
 } from '@ant-design/pro-components';
 import {
   Col,
-  ConfigProvider,
   Form,
   message,
-  Modal,
   notification,
   Row,
-  Upload,
-  InputNumber,
 } from 'antd';
-import enUS from 'antd/es/calendar/locale/en_US';
 
 import { callCreateVaccine, callUpdateVaccine } from '../../config/api.vaccine';
-import { callUploadSingleFile } from '../../config/api.file';
 
 import '../../styles/reset.scss';
 
 const ModalVaccine = (props) => {
   const { openModal, setOpenModal, reloadTable, dataInit, setDataInit } = props;
-  const [loadingUpload, setLoadingUpload] = useState(false);
   const [form] = Form.useForm();
   const [value, setValue] = useState('');
   const [animation, setAnimation] = useState('open');
-
-
-  const [previewOpen, setPreviewOpen] = useState(false);
-  const [previewImage, setPreviewImage] = useState('');
-  const [previewTitle, setPreviewTitle] = useState('');
-
-  const getBase64 = (img, callback) => {
-    const reader = new FileReader();
-    reader.addEventListener('load', () => callback(reader.result));
-    reader.readAsDataURL(img);
-  };
-
-  const handlePreview = async (file) => {
-    if (!file.originFileObj) {
-      setPreviewImage(file.url);
-      setPreviewOpen(true);
-      setPreviewTitle(
-        file.name || file.url.substring(file.url.lastIndexOf('/') + 1)
-      );
-      return;
-    }
-    getBase64(file.originFileObj, (url) => {
-      setPreviewImage(url);
-      setPreviewOpen(true);
-      setPreviewTitle(
-        file.name || file.url.substring(file.url.lastIndexOf('/') + 1)
-      );
-    });
-  };
-
- 
-
- 
 
 
 
@@ -89,32 +46,38 @@ const ModalVaccine = (props) => {
       name,
       manufacturer,
       country,
-      disease,
-      schedule,
-      efficacy,
-      target,
-      dosage,
+      image,
       price,
-      stockQuantity,
-      requiredDoses,
+      stock,
+      descriptionShort,
+      description,
+      dosesRequired,
+      duration,
+      injection,
+      preserve,
+      contraindications,
     } = valuesForm;
 
-    if (dataInit?.vaccineId) {
-      const res = await callUpdateVaccine(
-        dataInit.vaccineId,
-        name,
-        value,
-        manufacturer,
-        country,
-        disease,
-        schedule,
-        efficacy,
-        target,
-        dosage,
-        price,
-        stockQuantity,
-        requiredDoses
-      );
+    // Prepare data matching backend VaccineRequest
+    // Slug will be auto-generated in backend from name
+    const vaccineData = {
+      name,
+      manufacturer,
+      country,
+      image: image || '',
+      price: parseInt(price),
+      stock: parseInt(stock),
+      descriptionShort: descriptionShort || '',
+      description: description || value,
+      dosesRequired: parseInt(dosesRequired),
+      duration: parseInt(duration),
+      injection: injection || [],
+      preserve: preserve || [],
+      contraindications: contraindications || [],
+    };
+
+    if (dataInit?.id) {
+      const res = await callUpdateVaccine(dataInit.id, vaccineData);
       if (res.data) {
         message.success('Cập nhật vaccine thành công');
         handleReset();
@@ -126,21 +89,7 @@ const ModalVaccine = (props) => {
         });
       }
     } else {
-    
-      const res = await callCreateVaccine(
-        name,
-        value,
-        manufacturer,
-        country,
-        disease,
-        schedule,
-        efficacy,
-        target,
-        dosage,
-        price,
-        stockQuantity,
-        requiredDoses
-      );
+      const res = await callCreateVaccine(vaccineData);
       if (res.data) {
         message.success('Tạo vaccine thành công');
         handleReset();
@@ -155,10 +104,18 @@ const ModalVaccine = (props) => {
   };
 
   useEffect(() => {
-    if (dataInit?.vaccineId && dataInit?.description) {
-      setValue(dataInit.description);
+    if (openModal && dataInit?.id) {
+      // Set form values when editing
+      form.setFieldsValue({
+        ...dataInit,
+      });
+      setValue(dataInit.description || '');
+    } else if (openModal && !dataInit) {
+      // Reset form when creating new
+      form.resetFields();
+      setValue('');
     }
-  }, [dataInit]);
+  }, [dataInit, openModal, form]);
 
   return (
     <>
@@ -167,7 +124,7 @@ const ModalVaccine = (props) => {
           <ModalForm
             title={
               <>
-                {dataInit?.vaccineId ? 'Cập nhật Vaccine' : 'Tạo mới Vaccine'}
+                {dataInit?.id ? 'Cập nhật Vaccine' : 'Tạo mới Vaccine'}
               </>
             }
             open={openModal}
@@ -182,13 +139,12 @@ const ModalVaccine = (props) => {
               maskClosable: false,
               className: `modal-company ${animation}`,
               rootClassName: `modal-company-root ${animation}`,
-              width: 800,
+              width: 900,
             }}
             scrollToFirstError={true}
             preserve={false}
             form={form}
             onFinish={submitVaccine}
-            initialValues={dataInit?.vaccineId ? dataInit : {}}
             submitter={{
               render: (_, dom) => <FooterToolbar>{dom}</FooterToolbar>,
               submitButtonProps: {
@@ -196,7 +152,7 @@ const ModalVaccine = (props) => {
               },
               searchConfig: {
                 resetText: 'Hủy',
-                submitText: <>{dataInit?.vaccineId ? 'Cập nhật' : 'Tạo mới'}</>,
+                submitText: <>{dataInit?.id ? 'Cập nhật' : 'Tạo mới'}</>,
               },
             }}
           >
@@ -227,49 +183,9 @@ const ModalVaccine = (props) => {
               </Col>
               <Col span={12}>
                 <ProFormText
-                  label="Loại bệnh"
-                  name="disease"
-                  rules={[{ required: true, message: 'Vui lòng không để trống' }]}
-                  placeholder="Loại bệnh..."
-                />
-              </Col>
-              <Col span={12}>
-                <ProFormText
-                  label="Lịch tiêm"
-                  name="schedule"
-                  rules={[{ required: true, message: 'Vui lòng không để trống' }]}
-                  placeholder="Lịch tiêm chủng..."
-                />
-              </Col>
-              <Col span={12}>
-                <ProFormDigit
-                  label="Hiệu quả (%)"
-                  name="efficacy"
-                  min={0}
-                  max={100}
-                  rules={[{ required: true, message: 'Vui lòng không để trống' }]}
-                  placeholder="Hiệu quả (%)..."
-                  fieldProps={{
-                    precision: 0,
-                    formatter: (value) => `${value}%`,
-                    parser: (value) => value.replace('%', ''),
-                  }}
-                />
-              </Col>
-              <Col span={12}>
-                <ProFormText
-                  label="Đối tượng"
-                  name="target"
-                  rules={[{ required: true, message: 'Vui lòng không để trống' }]}
-                  placeholder="Đối tượng tiêm chủng..."
-                />
-              </Col>
-              <Col span={12}>
-                <ProFormText
-                  label="Liều lượng"
-                  name="dosage"
-                  rules={[{ required: true, message: 'Vui lòng không để trống' }]}
-                  placeholder="Liều lượng..."
+                  label="Hình ảnh (URL)"
+                  name="image"
+                  placeholder="URL hình ảnh..."
                 />
               </Col>
               <Col span={12}>
@@ -287,18 +203,50 @@ const ModalVaccine = (props) => {
               <Col span={12}>
                 <ProFormDigit
                   label="Số lượng tồn kho"
-                  name="stockQuantity"
+                  name="stock"
                   min={0}
                   rules={[{ required: true, message: 'Vui lòng không để trống' }]}
                   placeholder="Số lượng..."
                 />
               </Col>
-             
-
-          
+              <Col span={12}>
+                <ProFormDigit
+                  label="Số liều cần thiết"
+                  name="dosesRequired"
+                  min={1}
+                  rules={[{ required: true, message: 'Vui lòng không để trống' }]}
+                  placeholder="Số liều..."
+                />
+              </Col>
+              <Col span={24}>
+                <ProFormDigit
+                  label="Thời hạn hiệu lực (ngày)"
+                  name="duration"
+                  min={0}
+                  rules={[{ required: true, message: 'Vui lòng không để trống' }]}
+                  placeholder="Số ngày hiệu lực..."
+                />
+              </Col>
 
               <ProCard
-                title="Mô tả"
+                title="Mô tả ngắn"
+                headStyle={{ color: '#d81921' }}
+                style={{ marginBottom: 20 }}
+                headerBordered
+                size="small"
+                bordered
+              >
+                <Col span={24}>
+                  <ProFormTextArea
+                    name="descriptionShort"
+                    placeholder="Nhập mô tả ngắn gọn..."
+                    rows={3}
+                  />
+                </Col>
+              </ProCard>
+
+              <ProCard
+                title="Mô tả chi tiết"
                 headStyle={{ color: '#d81921' }}
                 style={{ marginBottom: 20 }}
                 headerBordered
@@ -308,7 +256,7 @@ const ModalVaccine = (props) => {
                 <Col span={24}>
                   <ProFormTextArea
                     name="description"
-                    placeholder="Nhập mô tả vaccine..."
+                    placeholder="Nhập mô tả chi tiết vaccine..."
                     value={value}
                     onChange={(e) => setValue(e.target.value)}
                     rows={6}
@@ -317,15 +265,6 @@ const ModalVaccine = (props) => {
               </ProCard>
             </Row>
           </ModalForm>
-          <Modal
-            open={previewOpen}
-            title={previewTitle}
-            footer={null}
-            onCancel={() => setPreviewOpen(false)}
-            style={{ zIndex: 1500 }}
-          >
-            <img alt="example" style={{ width: '100%' }} src={previewImage} />
-          </Modal>
         </>
       )}
     </>

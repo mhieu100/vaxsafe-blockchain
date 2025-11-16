@@ -60,13 +60,26 @@ const VaccinePage = () => {
       hideInSearch: true,
     },
     {
+      title: 'Hình ảnh',
+      dataIndex: 'image',
+      width: 80,
+      hideInSearch: true,
+      render: (text) => (
+        <img 
+          src={text || '/placeholder-vaccine.png'} 
+          alt="vaccine" 
+          style={{ width: 50, height: 50, objectFit: 'cover', borderRadius: 4 }}
+        />
+      ),
+    },
+    {
       title: 'Tên',
       dataIndex: 'name',
       sorter: true,
       width: 150,
       render: (text) => (
         <Tooltip title={text}>
-          {text.length > 20 ? text.slice(0, 20) + '...' : text}
+          {text?.length > 20 ? text.slice(0, 20) + '...' : text}
         </Tooltip>
       ),
     },
@@ -75,6 +88,11 @@ const VaccinePage = () => {
       dataIndex: 'manufacturer',
       sorter: true,
       width: 120,
+      render: (text) => (
+        <Tooltip title={text}>
+          {text?.length > 20 ? text.slice(0, 20) + '...' : text}
+        </Tooltip>
+      ),
     },
     {
       title: 'Quốc gia',
@@ -83,54 +101,9 @@ const VaccinePage = () => {
       hideInSearch: true,
     },
     {
-      title: 'Bệnh',
-      dataIndex: 'disease',
-      width: 120,
-      render: (text) => (
-        <Tooltip title={text}>
-          {text.length > 20 ? text.slice(0, 20) + '...' : text}
-        </Tooltip>
-      ),
-    },
-    {
-      title: 'Lịch tiêm',
-      dataIndex: 'schedule',
-      width: 120,
-      hideInSearch: true,
-      render: (text) => (
-        <Tooltip title={text}>
-          {text.length > 20 ? text.slice(0, 20) + '...' : text}
-        </Tooltip>
-      ),
-    },
-    {
-      title: 'Hiệu quả',
-      dataIndex: 'efficacy',
-      width: 100,
-      hideInSearch: true,
-      render: (text) => text + '%',
-    },
-    {
-      title: 'Đối tượng',
-      dataIndex: 'target',
-      width: 120,
-      hideInSearch: true,
-      render: (text) => (
-        <Tooltip title={text}>
-          {text.length > 20 ? text.slice(0, 20) + '...' : text}
-        </Tooltip>
-      ),
-    },
-    {
-      title: 'Liều lượng',
-      dataIndex: 'dosage',
-      width: 100,
-      hideInSearch: true,
-    },
-    {
       title: 'Giá',
       dataIndex: 'price',
-      width: 100,
+      width: 120,
       hideInSearch: true,
       sorter: true,
       render: (value) => {
@@ -142,25 +115,40 @@ const VaccinePage = () => {
     },
     {
       title: 'Tồn kho',
-      dataIndex: 'stockQuantity',
+      dataIndex: 'stock',
       width: 80,
-      hideInSearch: true, 
+      hideInSearch: true,
+      align: 'center',
     },
     {
-      title: 'Mô tả',
-      dataIndex: 'description',
+      title: 'Số liều cần thiết',
+      dataIndex: 'dosesRequired',
+      width: 100,
+      hideInSearch: true,
+      align: 'center',
+    },
+    {
+      title: 'Thời hạn (ngày)',
+      dataIndex: 'duration',
+      width: 100,
+      hideInSearch: true,
+      align: 'center',
+    },
+    {
+      title: 'Mô tả ngắn',
+      dataIndex: 'descriptionShort',
       width: 200,
       hideInSearch: true,
       render: (text) => (
         <Tooltip title={text}>
-          {text.length > 50 ? text.slice(0, 50) + '...' : text}
+          {text?.length > 50 ? text.slice(0, 50) + '...' : text}
         </Tooltip>
       ),
     },
     {
       title: 'Thao tác',
       hideInSearch: true,
-      width: 80,
+      width: 100,
       fixed: 'right',
       render: (_value, entity) => (
         <Space>
@@ -179,7 +167,7 @@ const VaccinePage = () => {
             placement='leftTop'
             title='Xóa Vaccine'
             description='Bạn có chắc chắn muốn xóa vaccine này?'
-            onConfirm={() => handleDeleteVaccine(entity.vaccineId)}
+            onConfirm={() => handleDeleteVaccine(entity.id)}
             okText='Xác nhận'
             cancelText='Hủy'
           >
@@ -212,11 +200,6 @@ const VaccinePage = () => {
         ? q.filter + ' and ' + `${sfLike('manufacturer', clone.manufacturer)}`
         : `${sfLike('manufacturer', clone.manufacturer)}`;
     }
-    if (clone.disease) {
-      q.filter = q.filter
-        ? `${q.filter} and ${sfLike('disease', clone.disease)}`
-        : `${sfLike('disease', clone.disease)}`;
-    }
 
     if (!q.filter) delete q.filter;
 
@@ -233,7 +216,9 @@ const VaccinePage = () => {
       sortBy = sort.price === 'ascend' ? 'sort=price,asc' : 'sort=price,desc';
     }
     
-    temp = `${temp}&${sortBy}`;
+    if (sortBy) {
+      temp = `${temp}&${sortBy}`;
+    }
 
     return temp;
   };
@@ -243,7 +228,7 @@ const VaccinePage = () => {
       <DataTable
         actionRef={tableRef}
         headerTitle='Danh sách Vaccine'
-        rowKey='vaccineId'
+        rowKey='id'
         loading={isFetching}
         columns={columns}
         dataSource={vaccines}

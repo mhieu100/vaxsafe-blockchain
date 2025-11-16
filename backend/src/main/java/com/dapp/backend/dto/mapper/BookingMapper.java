@@ -25,7 +25,7 @@ public class BookingMapper {
                 .doseNumber(appointment.getDoseNumber())
                 .scheduledDate(appointment.getScheduledDate())
                 .scheduledTime(appointment.getScheduledTime())
-                .centerId(appointment.getCenter().getCenterId())
+                .centerId(appointment.getCenter().getId())
                 .centerName(appointment.getCenter().getName())
                 .doctorId(doctor != null ? doctor.getId() : null)
                 .doctorName(doctor != null ? doctor.getFullName() : null)

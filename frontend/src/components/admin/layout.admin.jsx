@@ -1,4 +1,4 @@
-import { Link, Outlet, useLocation, useNavigate } from 'react-router-dom';
+import { Outlet, useLocation, useNavigate } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import {
   CalendarOutlined,
@@ -8,18 +8,14 @@ import {
   TeamOutlined,
   SafetyOutlined,
   KeyOutlined,
-  EditOutlined,
   BankOutlined,
-  HistoryOutlined,
   LogoutOutlined,
   SafetyCertificateOutlined,
-  MenuOutlined,
   BoxPlotOutlined,
 } from '@ant-design/icons';
 
 import { useDispatch, useSelector } from 'react-redux';
 
-import { useDisconnect } from 'wagmi';
 import { Avatar, Badge, Dropdown, message, Menu, Layout } from 'antd';
 import { setLogoutAction } from '../../redux/slice/accountSlide';
 import { callLogout } from '../../config/api.auth';
@@ -28,10 +24,8 @@ const { Header, Sider, Content } = Layout;
 
 const LayoutAdmin = () => {
   const dispatch = useDispatch();
-  const { disconnect } = useDisconnect();
   const navigate = useNavigate();
   const user = useSelector((state) => state.account.user);
-  console.log(user);
   const location = useLocation();
   const [activeMenu, setActiveMenu] = useState('');
   const [collapsed, setCollapsed] = useState(false);
@@ -92,11 +86,6 @@ const LayoutAdmin = () => {
       key: '/admin/bookings',
       icon: <BoxPlotOutlined />,
       label: 'Booking',
-    },
-    {
-      key: '/admin/appointments',
-      icon: <CalendarOutlined />,
-      label: 'Lịch hẹn tiêm chủng',
     },
     {
       key: '/admin/permissions',

@@ -32,6 +32,26 @@ const ModalUser = (props) => {
     fetchCenter();
   }, []);
 
+  useEffect(() => {
+    if (openModal && dataInit?.id) {
+      // Map data from API response to form fields
+      form.setFieldsValue({
+        fullName: dataInit.fullName,
+        email: dataInit.email,
+        phoneNumber: dataInit.patientProfile?.phone || '',
+        birthday: dataInit.patientProfile?.birthday 
+          ? dayjs(dataInit.patientProfile.birthday, dateFormat) 
+          : null,
+        address: dataInit.patientProfile?.address || '',
+        centerName: dataInit.center?.name || '',
+        role: dataInit.role?.name || '',
+      });
+      setRole(dataInit.role?.name);
+    } else if (openModal && !dataInit) {
+      form.resetFields();
+      setRole(null);
+    }
+  }, [openModal, dataInit, form]);
 
   const fetchCenter = async () => {
     const res = await callFetchCenter();
@@ -41,14 +61,14 @@ const ModalUser = (props) => {
   };
 
   const submitUser = async (valuesForm) => {
-    const { fullname, email, phoneNumber, birthday, address, centerName } = valuesForm;
+    const { fullName, email, phoneNumber, birthday, address, centerName } = valuesForm;
 
     try {
       if (dataInit?.walletAddress) {
         // Update user
         const res = await callUpdateUser(
           dataInit.walletAddress,
-          fullname,
+          fullName,
           email,
           phoneNumber,
           birthday,
@@ -110,7 +130,6 @@ const ModalUser = (props) => {
           preserve={false}
           form={form}
           onFinish={submitUser}
-          initialValues={dataInit}
           submitter={{
             render: (_, dom) => <FooterToolbar>{dom}</FooterToolbar>,
             submitButtonProps: {
@@ -126,7 +145,7 @@ const ModalUser = (props) => {
             <Col span={12}>
               <ProFormText
                 label="User Name"
-                name="fullname"
+                name="fullName"
                 rules={[{ required: true, message: 'Please do not leave blank' }]}
                 placeholder="Enter user name..."
               />
@@ -152,7 +171,6 @@ const ModalUser = (props) => {
                 name="birthday"
                 label="Birthday"
                 placeholder="Enter birthday..."
-                value={dataInit?.birthday ? dayjs(dataInit.birthday, dateFormat) : null}
                 width="100%"
               />
             </Col>
@@ -168,7 +186,7 @@ const ModalUser = (props) => {
               />
             </Col>
             <Col span={12}>
-              {dataInit?.userId ? null : (
+              {dataInit?.id ? null : (
                 <ProFormSelect
                   width="100%"
                   onChange={(value) => setRole(value)}
@@ -185,7 +203,8 @@ const ModalUser = (props) => {
               )}
             </Col>
             <Col span={12}>
-              {role === 'DOCTOR' || role === 'CASHIER' || dataInit?.role === 'DOCTOR' || dataInit?.role === 'CASHIER' ? (
+              {role === 'DOCTOR' || role === 'CASHIER' || 
+               dataInit?.role?.name === 'DOCTOR' || dataInit?.role?.name === 'CASHIER' ? (
                 <ProFormSelect
                   width="100%"
                   options={

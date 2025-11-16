@@ -1,4 +1,5 @@
 package com.dapp.backend.controller;
+
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.HttpStatus;
@@ -13,10 +14,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.dapp.backend.annotation.ApiMessage;
+import com.dapp.backend.dto.request.CenterRequest;
+import com.dapp.backend.dto.response.CenterResponse;
+import com.dapp.backend.dto.response.Pagination;
 import com.dapp.backend.exception.AppException;
 import com.dapp.backend.model.Center;
-import com.dapp.backend.dto.response.Pagination;
-import com.dapp.backend.dto.response.ResCenter;
 import com.dapp.backend.service.CenterService;
 import com.turkraft.springfilter.boot.Filter;
 
@@ -30,37 +32,40 @@ public class CenterController {
 
     private final CenterService centerService;
 
-    @GetMapping("/{id}")
-    @ApiMessage("Get a center by id")
-    public ResponseEntity<ResCenter> getCenterById(@PathVariable Long id) throws AppException {
-        return ResponseEntity.ok().body(centerService.getCenterById(id));
+    @GetMapping("/{slug}")
+    @ApiMessage("Get center by slug")
+    public ResponseEntity<CenterResponse> getCenterBySlug(@PathVariable String slug) throws AppException {
+        return ResponseEntity.ok().body(centerService.getCenterDetailBySlug(slug));
     }
 
     @GetMapping
     @ApiMessage("Get all centers")
-    public ResponseEntity<Pagination> getAllCenters(@Filter Specification<Center> specification,
+    public ResponseEntity<Pagination> getAllCenters(
+            @Filter Specification<Center> specification,
             Pageable pageable) {
         return ResponseEntity.ok().body(centerService.getAllCenters(specification, pageable));
     }
 
     @PostMapping
     @ApiMessage("Create a new center")
-    public ResponseEntity<Center> createVaccine(@Valid @RequestBody Center center)
+    public ResponseEntity<CenterResponse> createCenter(@Valid @RequestBody CenterRequest request)
             throws AppException {
         return ResponseEntity.status(HttpStatus.CREATED)
-                .body(centerService.createCenter(center));
+                .body(centerService.createCenter(request));
     }
 
     @PutMapping("/{id}")
     @ApiMessage("Update a center")
-    public ResponseEntity<ResCenter> updateCenter(@PathVariable Long id,
-            @Valid @RequestBody Center center) throws AppException {
-        return ResponseEntity.ok().body(centerService.updateCenter(id, center));
+    public ResponseEntity<CenterResponse> updateCenter(
+            @PathVariable Long id,
+            @Valid @RequestBody CenterRequest request) throws AppException {
+        return ResponseEntity.ok().body(centerService.updateCenter(id, request));
     }
 
     @DeleteMapping("/{id}")
     @ApiMessage("Delete a center")
-    public void deleteVaccine(@PathVariable Long id) throws AppException {
+    public ResponseEntity<Void> deleteCenter(@PathVariable Long id) throws AppException {
         centerService.deleteCenter(id);
+        return ResponseEntity.noContent().build();
     }
 }

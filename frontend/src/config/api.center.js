@@ -1,49 +1,23 @@
 import axios from './axios-customize';
 
 /**
- *
-Module Center
+ * Center API Module
  */
 
-export const callCreateCenter = (
-  name,
-  address,
-  phoneNumber,
-  capacity,
-  workingHours,
-  image
-) => {
-  return axios.post('/centers', {
-    name,
-    address,
-    phoneNumber,
-    capacity,
-    workingHours,
-    image,
-  });
+export const callCreateCenter = (data) => {
+  return axios.post('/centers', data);
 };
 
-export const callUpdateCenter = (
-  centerId,
-  name,
-  address,
-  phoneNumber,
-  capacity,
-  workingHours,
-  image
-) => {
-  return axios.put(`/centers/${centerId}`, {
-    name,
-    address,
-    phoneNumber,
-    capacity,
-    workingHours,
-    image,
-  });
+export const callUpdateCenter = (id, data) => {
+  return axios.put(`/centers/${id}`, data);
 };
 
 export const callFetchCenter = (query) => {
   return axios.get(`/centers?${query}`);
+};
+
+export const callFetchCenterBySlug = (slug) => {
+  return axios.get(`/centers/${slug}`);
 };
 
 export const callDeleteCenter = (id) => {

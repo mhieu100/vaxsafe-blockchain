@@ -121,15 +121,13 @@ public class AppointmentService {
         processAppointmentBlcRequest.setCashier(cashier.getFullName());
         processAppointmentBlcRequest.setDoctor(doctor.getFullName());
 
-        String token = tokenExtractor.extractToken(request);
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.APPLICATION_JSON);
-        headers.set("Authorization", "Bearer " +token);
-
-        HttpEntity<ProcessAppointmentBlcRequest> entity = new HttpEntity<>(processAppointmentBlcRequest, headers);
-
-
-        restTemplate.exchange(blockchainUrl+"/bookings/appointments/"+processAppointmentRequest.getAppointmentId()+"/assign-staff", HttpMethod.PUT, entity,  Void.class );
+//        String token = tokenExtractor.extractToken(request);
+//        HttpHeaders headers = new HttpHeaders();
+//        headers.setContentType(MediaType.APPLICATION_JSON);
+//        headers.set("Authorization", "Bearer " +token);
+//
+//        HttpEntity<ProcessAppointmentBlcRequest> entity = new HttpEntity<>(processAppointmentBlcRequest, headers);
+//        restTemplate.exchange(blockchainUrl+"/bookings/appointments/"+processAppointmentRequest.getAppointmentId()+"/assign-staff", HttpMethod.PUT, entity,  Void.class );
 
 
         return AppointmentMapper.toResponse(appointment);
@@ -147,16 +145,8 @@ public class AppointmentService {
         headers.setContentType(MediaType.APPLICATION_JSON);
         headers.set("Authorization", "Bearer " + token);
 
-        HttpEntity<Void> entity = new HttpEntity<>(headers);
-
-        restTemplate.exchange(
-                blockchainUrl + "/bookings/appointments/"
-                        + id
-                        + "/completed",
-                HttpMethod.PUT,
-                entity,
-                Void.class
-        );
+//        HttpEntity<Void> entity = new HttpEntity<>(headers);
+//        restTemplate.exchange(blockchainUrl + "/bookings/appointments/" + id + "/completed", HttpMethod.PUT, entity, Void.class);
 
 
         return "Appointment update success";
@@ -173,16 +163,8 @@ public class AppointmentService {
         headers.setContentType(MediaType.APPLICATION_JSON);
         headers.set("Authorization", "Bearer " + token);
 
-        HttpEntity<Void> entity = new HttpEntity<>(headers);
-
-        restTemplate.exchange(
-                blockchainUrl + "/bookings/appointments/"
-                        + id
-                        + "/cancelled",
-                HttpMethod.PUT,
-                entity,
-                Void.class
-        );
+//        HttpEntity<Void> entity = new HttpEntity<>(headers);
+//        restTemplate.exchange(blockchainUrl + "/bookings/appointments/" + id + "/cancelled", HttpMethod.PUT, entity, Void.class);
 
         return "Appointment update success";
     }

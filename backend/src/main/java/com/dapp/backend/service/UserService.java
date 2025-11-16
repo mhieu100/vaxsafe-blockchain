@@ -1,7 +1,6 @@
 package com.dapp.backend.service;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 import com.dapp.backend.dto.mapper.UserMapper;
@@ -26,15 +25,6 @@ import lombok.RequiredArgsConstructor;
 public class UserService {
     private final AuthService authService;
     private final UserRepository userRepository;
-
-    public UserResponse convertToResponse(User user) {
-        UserResponse response = new UserResponse();
-        response.setId(user.getId());
-        response.setFullName(user.getFullName());
-        response.setEmail(user.getEmail());
-        response.setRole(user.getRole().getName());
-        return response;
-    }
 
     public Pagination getAllDoctorsOfCenter(Specification<User> specification, Pageable pageable) throws AppException {
         User user = authService.getCurrentUserLogin();
@@ -65,8 +55,12 @@ public class UserService {
         meta.setPages(pageUser.getTotalPages());
         meta.setTotal(pageUser.getTotalElements());
         pagination.setMeta(meta);
+
+        // Use the new comprehensive mapper
         List<UserResponse> listUsers = pageUser.getContent().stream()
-                .map(this::convertToResponse).collect(Collectors.toList());
+                .map(UserMapper::toUserResponse)
+                .collect(Collectors.toList());
+
         pagination.setResult(listUsers);
         return pagination;
     }
@@ -77,8 +71,8 @@ public class UserService {
         user.setEmail(request.getEmail());
         user.setFullName(request.getFullName());
 
-        return convertToResponse(userRepository.save(user));
-
+        // Use the new comprehensive mapper
+        return UserMapper.toUserResponse(userRepository.save(user));
     }
 
     public void deleteUser(long id) throws AppException {

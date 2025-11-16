@@ -13,7 +13,7 @@ import {
 import VaccineSelection from './steps/VaccineSelection';
 import PaymentMethod from './steps/PaymentMethod';
 import Confirmation from './steps/Confirmation';
-import { callFetchVaccineBySku } from '../../config/api.vaccine';
+import { callFetchVaccineBySlug } from '../../config/api.vaccine';
 import {
   callCreateBooking,
   updatePaymentMetaMask,
@@ -59,7 +59,7 @@ const BookingPage = () => {
   const fetchVaccineBySku = async (sku) => {
     try {
       setLoading(true);
-      const response = await callFetchVaccineBySku(sku);
+      const response = await callFetchVaccineBySlug(sku);
       setSelectedVaccine(response.data);
       setBookingSummary((prev) => ({ ...prev, vaccine: response.data }));
       form.setFieldsValue({

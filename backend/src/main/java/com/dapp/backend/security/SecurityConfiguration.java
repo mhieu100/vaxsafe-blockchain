@@ -79,7 +79,7 @@ public class SecurityConfiguration {
     public SecurityFilterChain filterChain(HttpSecurity http, CustomAuthenticationEntryPoint customAuthenticationEntryPoint) throws Exception {
 
         String[] whiteList = {
-                "/", "/auth/login/password", "/auth/refresh", "/auth/register", "/storage/**","/email/**", "/payments/vnpay/return"
+                "/", "/auth/login/password", "/auth/refresh", "/auth/register", "/storage/**","/email/**", "/payments/vnpay/return", "/payments/paypal/success", "/payments/paypal/cancel"
         };
         http
                 .csrf(AbstractHttpConfigurer::disable)
@@ -88,6 +88,9 @@ public class SecurityConfiguration {
                         authz -> authz
                                 .requestMatchers(whiteList).permitAll()
                                 .requestMatchers(HttpMethod.GET, "/vaccines/**").permitAll()
+                                .requestMatchers(HttpMethod.POST, "/vaccines/**").authenticated()
+                                .requestMatchers(HttpMethod.PUT, "/vaccines/**").authenticated()
+                                .requestMatchers(HttpMethod.DELETE, "/vaccines/**").authenticated()
                                 .anyRequest().authenticated())
                 .oauth2ResourceServer((oauth2) -> oauth2.jwt(jwt -> jwt
                                 .jwtAuthenticationConverter(jwtAuthenticationConverter()))

@@ -115,7 +115,7 @@ const CenterPage = () => {
             placement="leftTop"
             title="Xác nhận xóa cơ sở"
             description="Bạn có chắc chắn muốn xóa cơ sở tiêm chủng này?"
-            onConfirm={() => handleDeleteCompany(entity.centerId)}
+            onConfirm={() => handleDeleteCompany(entity.id)}
             okText="Xác nhận"
             cancelText="Hủy"
           >
@@ -174,7 +174,7 @@ const CenterPage = () => {
       <DataTable
         actionRef={tableRef}
         headerTitle="Danh sách cơ sở tiêm chủng"
-        rowKey="centerId"
+        rowKey="id"
         loading={isFetching}
         columns={columns}
         dataSource={centers}

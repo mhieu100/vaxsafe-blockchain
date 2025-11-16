@@ -18,4 +18,5 @@ public class FamilyMemberResponse {
     private String phone;
     private Gender gender;
     private long parentId;
+    private String identityNumber;
 }

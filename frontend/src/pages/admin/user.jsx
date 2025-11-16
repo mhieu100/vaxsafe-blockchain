@@ -1,7 +1,7 @@
-import { Badge, Button, message, notification, Popconfirm, Space } from 'antd';
+import { Badge, message, notification, Popconfirm, Space } from 'antd';
 import { useRef, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { DeleteOutlined, EditOutlined, PlusOutlined } from '@ant-design/icons';
+import { DeleteOutlined, EditOutlined } from '@ant-design/icons';
 import { sfLike } from 'spring-filter-query-builder';
 import queryString from 'query-string';
 
@@ -58,7 +58,7 @@ const UserPage = () => {
     },
     {
       title: 'Họ tên',
-      dataIndex: 'fullname',
+      dataIndex: 'fullName',
       sorter: true,
     },
     {
@@ -68,26 +68,27 @@ const UserPage = () => {
     },
     {
       title: 'Điện thoại',
-      dataIndex: 'phoneNumber',
+      dataIndex: ['patientProfile', 'phone'],
       hideInSearch: true,
     },
     {
       title: 'Địa chỉ',
-      dataIndex: 'address',
+      dataIndex: ['patientProfile', 'address'],
       sorter: true,
     },
     {
       title: 'Cơ sở',
-      dataIndex: 'centerName',
+      dataIndex: ['center', 'name'],
       hideInSearch: true,
     },
     {
       title: 'Vai trò',
-      dataIndex: 'role',
+      dataIndex: ['role', 'name'],
       hideInSearch: true,
       render: (_value, entity) => {
+        const roleName = entity?.role?.name || '';
         let color;
-        switch (entity.role) {
+        switch (roleName) {
           case 'ADMIN':
             color = '#faad14';
             break;
@@ -100,12 +101,12 @@ const UserPage = () => {
           default:
             color = '#d9d9d9';
         }
-        return <Badge count={entity.role} showZero color={color} />;
+        return <Badge count={roleName} showZero color={color} />;
       },
     },
     {
       title: 'Ngày sinh',
-      dataIndex: 'birthday',
+      dataIndex: ['patientProfile', 'birthday'],
       hideInSearch: true,
     },
     {
@@ -129,7 +130,7 @@ const UserPage = () => {
             placement='leftTop'
             title='Xác nhận xóa người dùng'
             description='Bạn có chắc chắn muốn xóa người dùng này?'
-            onConfirm={() => handleDeleteUser(entity.userId)}
+            onConfirm={() => handleDeleteUser(entity.id)}
             okText='Xác nhận'
             cancelText='Hủy'
           >
@@ -155,16 +156,16 @@ const UserPage = () => {
       filter: '',
     };
 
-    if (clone.fullname) q.filter = `${sfLike('fullname', clone.fullname)}`;
+    if (clone.fullName) q.filter = `${sfLike('fullName', clone.fullName)}`;
     if (clone.email) {
-      q.filter = clone.fullname
+      q.filter = clone.fullName
         ? q.filter + ' and ' + `${sfLike('email', clone.email)}`
         : `${sfLike('email', clone.email)}`;
     }
     if (clone.address) {
       q.filter = q.filter
-        ? `${q.filter} and ${sfLike('address', clone.address)}`
-        : `${sfLike('address', clone.address)}`;
+        ? `${q.filter} and ${sfLike('patientProfile.address', clone.address)}`
+        : `${sfLike('patientProfile.address', clone.address)}`;
     }
 
     if (!q.filter) delete q.filter;
@@ -172,15 +173,15 @@ const UserPage = () => {
     let temp = queryString.stringify(q);
 
     let sortBy = '';
-    if (sort && sort.fullname) {
+    if (sort && sort.fullName) {
       sortBy =
-        sort.fullname === 'ascend' ? 'sort=fullname,asc' : 'sort=fullname,desc';
+        sort.fullName === 'ascend' ? 'sort=fullName,asc' : 'sort=fullName,desc';
     }
     if (sort && sort.email) {
       sortBy = sort.email === 'ascend' ? 'sort=email,asc' : 'sort=email,desc';
     }
     if (sort && sort.address) {
-      sortBy = sort.address === 'ascend' ? 'sort=address,asc' : 'sort=address,desc';
+      sortBy = sort.address === 'ascend' ? 'sort=patientProfile.address,asc' : 'sort=patientProfile.address,desc';
     }
     temp = `${temp}&${sortBy}`;
 
@@ -192,7 +193,7 @@ const UserPage = () => {
       <DataTable
         actionRef={tableRef}
         headerTitle='Danh sách người dùng'
-        rowKey='userId'
+        rowKey='id'
         loading={isFetching}
         columns={columns}
         dataSource={users}

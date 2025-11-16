@@ -13,7 +13,7 @@ import java.io.IOException;
 public class IgnoreExpiredJwtFilter extends OncePerRequestFilter {
 
     private static final String[] WHITE_LIST = {
-            "/", "/auth/login/password", "/auth/refresh", "/auth/register", "/storage/**", "/email/**", "/payments/vnpay/return"
+            "/", "/auth/login/password", "/auth/refresh", "/auth/register", "/storage/**", "/email/**", "/payments/vnpay/return", "/payments/paypal/success", "/payments/paypal/cancel"
     };
 
     private final AntPathMatcher pathMatcher = new AntPathMatcher();

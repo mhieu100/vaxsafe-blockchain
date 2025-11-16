@@ -44,7 +44,7 @@ const ModalCenter = (props) => {
   const [previewTitle, setPreviewTitle] = useState('');
 
   useEffect(() => {
-    if (openModal && dataInit?.centerId) {
+    if (openModal && dataInit?.id) {
       form.setFieldsValue({
         name: dataInit.name,
         address: dataInit.address,
@@ -159,16 +159,17 @@ const ModalCenter = (props) => {
       return;
     }
   
-    if (dataInit?.centerId) {
-      const res = await callUpdateCenter(
-        dataInit.centerId,
-        name,
-        address,
-        phoneNumber,
-        capacity,
-        workingHours,
-        dataLogo[0].name
-      );
+    const centerData = {
+      name,
+      address,
+      phoneNumber,
+      capacity: parseInt(capacity),
+      workingHours,
+      image: dataLogo[0].name,
+    };
+
+    if (dataInit?.id) {
+      const res = await callUpdateCenter(dataInit.id, centerData);
 
       if (res.data) {
         message.success('Center updated successfully');
@@ -181,14 +182,7 @@ const ModalCenter = (props) => {
         });
       }
     } else {
-      const res = await callCreateCenter(
-        name,
-        address,
-        phoneNumber,
-        capacity,
-        workingHours,
-        dataLogo[0].name
-      );
+      const res = await callCreateCenter(centerData);
       if (res.data) {
         message.success('Center created successfully');
         handleReset();
@@ -209,7 +203,7 @@ const ModalCenter = (props) => {
           <ModalForm
             title={
               <>
-                {dataInit?.centerId ? 'Update Center' : 'Create New Center'}
+                {dataInit?.id ? 'Update Center' : 'Create New Center'}
               </>
             }
             open={openModal}
@@ -236,7 +230,7 @@ const ModalCenter = (props) => {
               },
               searchConfig: {
                 resetText: 'Cancel',
-                submitText: <>{dataInit?.centerId ? 'Update' : 'Create'}</>,
+                submitText: <>{dataInit?.id ? 'Update' : 'Create'}</>,
               },
             }}
           >
@@ -288,13 +282,13 @@ const ModalCenter = (props) => {
                       onRemove={(file) => handleRemoveFile(file)}
                       onPreview={handlePreview}
                       defaultFileList={
-                        dataInit?.centerId
+                        dataInit?.id
                           ? [
                               {
                                 uid: uuidv4(),
                                 name: dataInit?.image ?? '',
                                 status: 'done',
-                                url: `npm run dev${dataInit?.image}`,
+                                url: `${import.meta.env.VITE_BACKEND_URL}/storage/center/${dataInit?.image}`,
                               },
                             ]
                           : []

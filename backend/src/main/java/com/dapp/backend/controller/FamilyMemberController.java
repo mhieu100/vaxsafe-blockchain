@@ -13,7 +13,6 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
 
 @RestController
 @RequestMapping("/api/family-members")
@@ -21,7 +20,6 @@ import java.util.List;
 public class FamilyMemberController {
 
     private final FamilyMemberService familyMemberService;
-
 
     @PostMapping
     public ResponseEntity<FamilyMemberResponse> addFamilyMember(@RequestBody FamilyMemberRequest request) throws AppException {

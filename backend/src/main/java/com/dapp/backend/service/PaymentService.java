@@ -138,9 +138,10 @@ public class PaymentService {
                 "paypal",
                 "sale",
                 "Payment description",
-                "http://localhost:3000/cancel?referenceId="+referenceId+"&type="+type+"&payment="+paymentId,
-                "http://localhost:3000/success?referenceId="+referenceId+"&type="+type+"&payment="+paymentId
+                "http://localhost:8080/payments/paypal/cancel?referenceId="+referenceId+"&type="+type+"&payment="+paymentId,
+                "http://localhost:8080/payments/paypal/success?referenceId="+referenceId+"&type="+type+"&payment="+paymentId
         );
+
         for (Links link : payment.getLinks()) {
             if (link.getRel().equals("approval_url")) {
                 return  link.getHref();
@@ -185,7 +186,7 @@ public class PaymentService {
         return payment.create(apiContext);
     }
 
-    public void updatePaymentPaypal(PaymentRequest request) throws AppException {
+    public void successPayment(PaymentRequest request) throws AppException {
         com.dapp.backend.model.Payment payment = paymentRepository.findById(request.getPaymentId()).orElseThrow(() -> new AppException("Payment not found!"));
         if(request.getType() == TypeTransactionEnum.ORDER) {
             Order order = orderRepository.findById(Long.parseLong(request.getReferenceId())).orElseThrow(() -> new AppException("Order not found!"));
@@ -199,6 +200,22 @@ public class PaymentService {
             payment.setReferenceType(request.getType());
         }
         payment.setStatus(PaymentEnum.SUCCESS);
+        paymentRepository.save(payment);
+    }
+
+    public void cancelPayment(PaymentRequest request) throws AppException {
+        com.dapp.backend.model.Payment payment = paymentRepository.findById(request.getPaymentId()).orElseThrow(() -> new AppException("Payment not found!"));
+        if(request.getType() == TypeTransactionEnum.ORDER) {
+            Order order = orderRepository.findById(Long.parseLong(request.getReferenceId())).orElseThrow(() -> new AppException("Order not found!"));
+            order.setStatus(OrderStatus.CANCELLED);
+            payment.setReferenceType(request.getType());
+        } else {
+            Booking booking = bookingRepository.findById(Long.parseLong(request.getReferenceId())).orElseThrow(() -> new AppException("Booking not found!"));
+            booking.setStatus(BookingEnum.CANCELLED);
+            bookingRepository.save(booking);
+            payment.setReferenceType(request.getType());
+        }
+        payment.setStatus(PaymentEnum.FAILED);
         paymentRepository.save(payment);
     }
 

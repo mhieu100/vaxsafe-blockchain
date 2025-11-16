@@ -29,10 +29,8 @@ import static com.dapp.backend.service.PaymentService.EXCHANGE_RATE_TO_USD;
 @RequiredArgsConstructor
 public class BookingService {
     private final AuthService authService;
-    private final UserRepository userRepository;
     private final VaccineRepository vaccineRepository;
     private final CenterRepository centerRepository;
-    private final AppointmentRepository appointmentRepository;
     private final PaymentRepository paymentRepository;
     private final BookingRepository bookingRepository;
     private final PaymentService paymentService;
@@ -57,14 +55,19 @@ public class BookingService {
             User user = authService.getCurrentUserLogin();
             Vaccine vaccine = vaccineRepository.findById(bookingRequest.getVaccineId()).orElseThrow(() -> new AppException("Vaccine not found!"));
             Center center = centerRepository.findById(bookingRequest.getCenterId()).orElseThrow(() -> new AppException("Center not found!"));
+            BookingBlcRequest bookingBlcRequest = new BookingBlcRequest();
 
             Booking booking = new Booking();
             if (bookingRequest.getFamilyMemberId() != null) {
                 FamilyMember familyMember = familyMemberRepository.findById(bookingRequest.getFamilyMemberId()).orElseThrow(() -> new AppException("Family member not found!"));
                 booking.setFamilyMember(familyMember);
                 booking.setPatient(user);
+                bookingBlcRequest.setPatient(familyMember.getFullName());
+                bookingBlcRequest.setIdentityNumber(familyMember.getIdentityNumber());
             } else {
                 booking.setPatient(user);
+                bookingBlcRequest.setPatient(user.getFullName());
+                bookingBlcRequest.setIdentityNumber(user.getPatientProfile().getIdentityNumber());
             }
             booking.setVaccine(vaccine);
             booking.setTotalAmount(bookingRequest.getAmount());
@@ -96,9 +99,7 @@ public class BookingService {
             booking.setAppointments(appointments);
             bookingRepository.save(booking);
 
-        BookingBlcRequest bookingBlcRequest = new BookingBlcRequest();
-        bookingBlcRequest.setPatient(user.getFullName());
-        bookingBlcRequest.setIdentityNumber(user.getPatientProfile().getIdentityNumber());
+
         bookingBlcRequest.setVaccine(vaccine.getName());
         bookingBlcRequest.setTotalAmount(booking.getTotalAmount());
         bookingBlcRequest.setTotalDoses(booking.getTotalDoses());
@@ -112,13 +113,13 @@ public class BookingService {
 
         HttpEntity<BookingBlcRequest> entity = new HttpEntity<>(bookingBlcRequest, headers);
 
-        ResponseEntity<BookingBlcResponse> response =
-                restTemplate.exchange(blockchainUrl+"/bookings/create", HttpMethod.POST, entity, BookingBlcResponse.class);
+//        ResponseEntity<BookingBlcResponse> response =
+//                restTemplate.exchange(blockchainUrl+"/bookings/create", HttpMethod.POST, entity, BookingBlcResponse.class);
 
-        if(response.getBody().isSuccess()) {
-            booking.setTransactionHash(response.getBody().getTransactionHash());
+//        if(response.getBody().isSuccess()) {
+//            booking.setTransactionHash(response.getBody().getTransactionHash());
             bookingRepository.save(booking);
-        }
+//        }
 
             Payment payment = new Payment();
             payment.setReferenceId(booking.getBookingId());

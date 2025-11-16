@@ -36,6 +36,7 @@ public class FamilyMemberService {
         entity.setRelationship(request.getRelationship());
         entity.setPhone(request.getPhone());
         entity.setGender(request.getGender());
+        entity.setIdentityNumber(request.getIdentityNumber());
         return entity;
     }
 
@@ -47,6 +48,7 @@ public class FamilyMemberService {
         response.setRelationship(entity.getRelationship());
         response.setPhone(entity.getPhone());
         response.setGender(entity.getGender());
+        response.setIdentityNumber(entity.getIdentityNumber());
         response.setParentId(entity.getUser().getId());
         return response;
     }

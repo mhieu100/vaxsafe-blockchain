@@ -25,6 +25,9 @@ public class FamilyMember {
     String relationship;
     String phone;
 
+    @Column(unique = true)
+    String identityNumber;
+
     @Enumerated(EnumType.STRING)
     Gender gender;
 

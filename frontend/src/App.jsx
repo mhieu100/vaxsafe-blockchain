@@ -1,7 +1,6 @@
 import {
   createBrowserRouter,
   RouterProvider,
-  useNavigate,
 } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { useEffect } from 'react';
@@ -22,7 +21,6 @@ import ProfilePage from './pages/auth/profile';
 import ProtectedUserRoute from './components/share/protected-route/user-protected';
 import PermissionPage from './pages/admin/permission';
 import RolePage from './pages/admin/role';
-import AppointmentManagementPage from './pages/admin/appointment';
 
 import SuccessPage from './pages/client/success';
 import HomePage from './pages/client/home';
@@ -141,10 +139,6 @@ const App = () => {
         {
           path: 'roles',
           element: <RolePage />,
-        },
-        {
-          path: 'appointments',
-          element: <AppointmentManagementPage />,
         },
       ],
     },
