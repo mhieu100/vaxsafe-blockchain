@@ -31,6 +31,16 @@ public class RoleController {
         return ResponseEntity.ok(this.roleService.getRoles(spec, pageable));
     }
 
+    @GetMapping("/roles/{id}")
+    @ApiMessage("Get a role by id")
+    public ResponseEntity<Role> getRole(@PathVariable long id) throws AppException {
+        Role role = this.roleService.fetchById(id);
+        if (role == null) {
+            throw new AppException("Role với id = " + id + " không tồn tại");
+        }
+        return ResponseEntity.ok(role);
+    }
+
     @PutMapping("/roles/{id}")
     @ApiMessage("Update a role")
     public ResponseEntity<Role> updateRole(@PathVariable long id ,@Valid @RequestBody Role role) throws AppException {

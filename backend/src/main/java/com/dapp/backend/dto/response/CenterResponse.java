@@ -15,7 +15,7 @@ import java.time.LocalDateTime;
 @Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class CenterResponse {
-    Long id;
+    Long centerId;
     String slug;
     String name;
     String image;

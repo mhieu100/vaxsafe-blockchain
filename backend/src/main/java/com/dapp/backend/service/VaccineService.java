@@ -12,6 +12,7 @@ import com.dapp.backend.dto.response.Pagination;
 import com.dapp.backend.dto.response.VaccineResponse;
 import com.dapp.backend.dto.mapper.VaccineMapper;
 import com.dapp.backend.repository.VaccineRepository;
+import com.dapp.backend.service.spec.VaccineSpecifications;
 
 
 @Service
@@ -94,7 +95,12 @@ public class VaccineService {
     }
 
     public Pagination getAllVaccines(Specification<Vaccine> specification, Pageable pageable) {
-        Page<Vaccine> pageVaccine = vaccineRepository.findAll(specification, pageable);
+        // Use VaccineSpecifications to filter out soft-deleted records
+        Specification<Vaccine> finalSpec = specification != null 
+            ? specification.and(VaccineSpecifications.notDeleted()) 
+            : VaccineSpecifications.notDeleted();
+        
+        Page<Vaccine> pageVaccine = vaccineRepository.findAll(finalSpec, pageable);
         Pagination pagination = new Pagination();
         Pagination.Meta meta = new Pagination.Meta();
         meta.setPage(pageable.getPageNumber() + 1);
@@ -143,7 +149,7 @@ public class VaccineService {
                 .orElseThrow(() -> new AppException("Vaccine not found with id: " + id));
 
         // Soft delete
-        vaccine.setDeleted(true);
+        vaccine.setIsDeleted(true);
         vaccineRepository.save(vaccine);
     }
 

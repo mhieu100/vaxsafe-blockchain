@@ -11,6 +11,18 @@ import lombok.experimental.FieldDefaults;
 @Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class DoctorResponse {
-    Long id;
+    Long doctorId;
+    Long userId;
     String doctorName;
+    String email;
+    String avatar;
+    String licenseNumber;
+    String specialization;
+    Integer consultationDuration;
+    Integer maxPatientsPerDay;
+    Boolean isAvailable;
+    
+    // Center information
+    Long centerId;
+    String centerName;
 }

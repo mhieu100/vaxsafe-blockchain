@@ -1,7 +1,4 @@
-import {
-  createBrowserRouter,
-  RouterProvider,
-} from 'react-router-dom';
+import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { useEffect } from 'react';
 
@@ -31,18 +28,17 @@ import CertificatePage from './pages/auth/certificate/[id]';
 // Staff pages
 import LayoutStaff from './components/staff/layout.staff';
 import StaffDashboard from './pages/staff/dashboard';
-import StaffVaccinePage from './pages/staff/vaccines';
-import StaffCenterPage from './pages/staff/centers';
 import MySchedulePage from './pages/staff/my-schedule';
-import AppointmentPage from './pages/staff/appointment';
-import BookingMangaer from './pages/admin/booking';
+import PendingAppointmentPage from './pages/staff/pending-appointment';
 import VaccineRAGSystem from './pages/client/recommend';
 import CartPage from './pages/client/cart';
 import Checkout from './pages/client/checkout';
 import Profile from './pages/auth';
-import CalendarStaff from './pages/staff/calendar';
+import CalendarView from './pages/staff/calendar-view';
 import NFTPassportPage from './pages/auth/nft-passport';
 import IPFSManagementPage from './pages/auth/ipfs-management';
+import DoctorSchedule from './pages/staff/doctor-schedule';
+import DoctorDashboard from './pages/staff/doctor-dashboard';
 
 const App = () => {
   const dispatch = useDispatch();
@@ -120,10 +116,7 @@ const App = () => {
           path: 'vaccines',
           element: <VaccinePage />,
         },
-        {
-          path: 'bookings',
-          element: <BookingMangaer />,
-        },
+
         {
           path: 'users',
           element: <UserPage />,
@@ -159,20 +152,20 @@ const App = () => {
           element: <StaffDashboard />,
         },
         {
-          path: 'vaccines',
-          element: <StaffVaccinePage />,
+          path: 'dashboard-doctor',
+          element: <DoctorDashboard />,
         },
         {
-          path: 'centers',
-          element: <StaffCenterPage />,
-        },
-        {
-          path: 'appointments',
-          element: <AppointmentPage />,
+          path: 'pending-appointments',
+          element: <PendingAppointmentPage />,
         },
         {
           path: 'calendar-view',
-          element: <CalendarStaff />,
+          element: <CalendarView />,
+        },
+        {
+          path: 'doctor-schedule',
+          element: <DoctorSchedule />,
         },
         {
           path: 'my-schedule',

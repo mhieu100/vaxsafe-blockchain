@@ -11,6 +11,10 @@ public class AppointmentMapper {
         response.setDoseNumber(appointment.getDoseNumber());
         response.setScheduledTime(appointment.getScheduledTime());
         response.setScheduledDate(appointment.getScheduledDate());
+        response.setDesiredDate(appointment.getDesiredDate());
+        response.setDesiredTime(appointment.getDesiredTime());
+        response.setRescheduleReason(appointment.getRescheduleReason());
+        response.setRescheduledAt(appointment.getRescheduledAt());
         response.setStatus(appointment.getStatus());
         response.setBookingId(appointment.getBooking().getBookingId());
         response.setVaccineName(appointment.getBooking().getVaccine().getName());

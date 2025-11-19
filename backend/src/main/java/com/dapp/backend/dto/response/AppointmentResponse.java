@@ -4,6 +4,7 @@ import com.dapp.backend.enums.AppointmentEnum;
 import lombok.Data;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.LocalTime;
 
 @Data
@@ -12,6 +13,10 @@ public class AppointmentResponse {
     Integer doseNumber;
     LocalDate scheduledDate;
     LocalTime scheduledTime;
+    LocalDate desiredDate;
+    LocalTime desiredTime;
+    String rescheduleReason;
+    LocalDateTime rescheduledAt;
     AppointmentEnum status;
     Long bookingId;
     String patientName;

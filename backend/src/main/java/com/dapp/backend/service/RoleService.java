@@ -45,6 +45,10 @@ public class RoleService {
 
     public Role updateRole(long id, Role role) {
         Role roleDB = this.fetchById(id);
+        if (roleDB == null) {
+            return null;
+        }
+        
         // check permissions
         if (role.getPermissions() != null) {
             List<Long> reqPermissions = role.getPermissions()
@@ -53,9 +57,15 @@ public class RoleService {
 
             List<Permission> dbPermissions = this.permissionRepository.findByIdIn(reqPermissions);
             roleDB.setPermissions(dbPermissions);
+        } else {
+            // If permissions is null, clear all permissions
+            roleDB.setPermissions(null);
         }
 
-        roleDB.setName(role.getName());
+        if (role.getName() != null && !role.getName().isEmpty()) {
+            roleDB.setName(role.getName());
+        }
+        
         roleDB = this.roleRepository.save(roleDB);
         return roleDB;
     }

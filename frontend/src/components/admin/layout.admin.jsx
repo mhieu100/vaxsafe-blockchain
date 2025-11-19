@@ -1,7 +1,6 @@
 import { Outlet, useLocation, useNavigate } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import {
-  CalendarOutlined,
   UserOutlined,
   MedicineBoxOutlined,
   DashboardOutlined,
@@ -81,11 +80,6 @@ const LayoutAdmin = () => {
       key: '/admin/centers',
       icon: <BankOutlined />,
       label: 'Cơ sở tiêm chủng',
-    },
-    {
-      key: '/admin/bookings',
-      icon: <BoxPlotOutlined />,
-      label: 'Booking',
     },
     {
       key: '/admin/permissions',

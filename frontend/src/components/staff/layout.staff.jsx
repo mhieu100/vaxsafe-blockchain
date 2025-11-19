@@ -14,14 +14,12 @@ import {
 import { useDispatch, useSelector } from 'react-redux';
 
 import { ProLayout } from '@ant-design/pro-components';
-import { useDisconnect } from 'wagmi';
 import { Avatar, Badge, Dropdown, message } from 'antd';
 import { setLogoutAction } from '../../redux/slice/accountSlide';
 import { callLogout } from '../../config/api.auth';
 
 const LayoutStaff = () => {
   const dispatch = useDispatch();
-  const { disconnect } = useDisconnect();
   const navigate = useNavigate();
   const user = useSelector((state) => state.account.user);
 
@@ -62,29 +60,29 @@ const LayoutStaff = () => {
       path: '/staff/dashboard',
       icon: <DashboardOutlined />,
       name: <Link to="/staff/dashboard">Bảng điều khiển</Link>,
-      roles: ['DOCTOR', 'CASHIER'],
+      roles: ['CASHIER'],
     },
-    {
-      path: '/staff/vaccines',
-      icon: <MedicineBoxOutlined />,
-      name: <Link to="/staff/vaccines">Vaccine</Link>,
-      roles: ['DOCTOR', 'CASHIER'],
-    },
-    {
-      path: '/staff/centers',
-      icon: <BankOutlined />,
-      name: <Link to="/staff/centers">Cơ sở tiêm chủng</Link>,
-      roles: ['DOCTOR', 'CASHIER'],
+     {
+      path: '/staff/dashboard-doctor',
+      icon: <DashboardOutlined />,
+      name: <Link to="/staff/dashboard-doctor">Bảng điều khiển</Link>,
+      roles: ['DOCTOR'],
     },
     {
       path: '/staff/my-schedule',
       icon: <CalendarOutlined />,
-      name: <Link to="/staff/my-schedule">Lịch làm việc</Link>,
+      name: <Link to="/staff/my-schedule">Lịch của tôi</Link>,
       roles: ['DOCTOR'],
     },
     {
-      path: '/staff/appointments',
-      name: <Link to="/staff/appointments">Quản lý lịch hẹn</Link>,
+      path: '/staff/pending-appointments',
+      name: <Link to="/staff/pending-appointments">Quản lý lịch hẹn</Link>,
+      icon: <EditOutlined />,
+      roles: ['CASHIER'],
+    },
+    {
+      path: '/staff/doctor-schedule',
+      name: <Link to="/staff/doctor-schedule">Lịch bác sĩ</Link>,
       icon: <EditOutlined />,
       roles: ['CASHIER'],
     },
@@ -92,7 +90,7 @@ const LayoutStaff = () => {
       path: '/staff/calendar-view',
       name: <Link to="/staff/calendar-view">Lịch làm việc</Link>,
       icon: <CalendarOutlined />,
-      roles: ['CASHIER'],
+      roles: ['CASHIER', 'DOCTOR'],
     },
   ];
 

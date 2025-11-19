@@ -12,7 +12,7 @@ public class CenterMapper {
     public static CenterResponse toResponse(Center center) {
         if (center == null) return null;
         return CenterResponse.builder()
-                .id(center.getId())
+                .centerId(center.getCenterId())
                 .slug(center.getSlug())
                 .name(center.getName())
                 .image(center.getImage())

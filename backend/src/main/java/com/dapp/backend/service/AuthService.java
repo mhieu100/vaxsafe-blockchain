@@ -55,7 +55,7 @@ public class AuthService {
                 .lifestyleNotes(patient != null ? patient.getLifestyleNotes() : null)
                 .insuranceNumber(patient != null ? patient.getInsuranceNumber() : null)
                 .consentForAIAnalysis(patient != null && patient.isConsentForAIAnalysis())
-                .centerId(center != null ? center.getId() : null)
+                .centerId(center != null ? center.getCenterId() : null)
                 .centerName(center != null ? center.getName() : null)
                 .build();
     }

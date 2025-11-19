@@ -25,7 +25,7 @@ public class Role {
     @Column(unique = true, nullable = false)
     String name;
 
-    @ManyToMany(fetch = FetchType.LAZY)
+    @ManyToMany(fetch = FetchType.EAGER)
     @JsonIgnoreProperties(value = { "roles" })
     @JoinTable(name = "permission_role", joinColumns = @JoinColumn(name = "role_id"), inverseJoinColumns = @JoinColumn(name = "permission_id"))
     List<Permission> permissions;

@@ -6,6 +6,8 @@ export const fetchAppointmentOfCenter = createAsyncThunk(
   'appointment/fetchAppointmentOfCenter',
   async ({ query }) => {
     const response = await callFetchAppointmentOfCenter(query);
+    console.log(response)
+    
     return response;
   }
 );

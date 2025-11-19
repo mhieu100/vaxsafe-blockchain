@@ -28,10 +28,9 @@ const CenterPage = () => {
   const handleDeleteCompany = async (id) => {
     if (id) {
       const res = await callDeleteCenter(id);
-      if (res && +res.statusCode === 200) {
-        message.success('Xóa cơ sở tiêm chủng thành công');
-        reloadTable();
-      } else {
+      message.success('Xóa cơ sở tiêm chủng thành công');
+      reloadTable();
+      if (res) {
         notification.error({
           message: 'Đã xảy ra lỗi',
           description: res.message,
@@ -115,7 +114,7 @@ const CenterPage = () => {
             placement="leftTop"
             title="Xác nhận xóa cơ sở"
             description="Bạn có chắc chắn muốn xóa cơ sở tiêm chủng này?"
-            onConfirm={() => handleDeleteCompany(entity.id)}
+            onConfirm={() => handleDeleteCompany(entity.centerId)}
             okText="Xác nhận"
             cancelText="Hủy"
           >
@@ -174,7 +173,7 @@ const CenterPage = () => {
       <DataTable
         actionRef={tableRef}
         headerTitle="Danh sách cơ sở tiêm chủng"
-        rowKey="id"
+        rowKey="centerId"
         loading={isFetching}
         columns={columns}
         dataSource={centers}

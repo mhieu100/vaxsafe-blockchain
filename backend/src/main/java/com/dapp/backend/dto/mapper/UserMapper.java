@@ -103,7 +103,7 @@ public class UserMapper {
         }
 
         return UserResponse.CenterInfo.builder()
-                .centerId(center.getId())
+                .centerId(center.getCenterId())
                 .name(center.getName())
                 .image(center.getImage())
                 .address(center.getAddress())
@@ -118,7 +118,7 @@ public class UserMapper {
      */
     public static DoctorResponse toResponse(User user) {
         return DoctorResponse.builder()
-                .id(user.getId())
+                .doctorId(user.getId())
                 .doctorName(user.getFullName())
                 .build();
     }

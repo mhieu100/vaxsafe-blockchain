@@ -2,17 +2,19 @@ package com.dapp.backend.controller;
 
 import com.dapp.backend.annotation.ApiMessage;
 import com.dapp.backend.dto.request.ProcessAppointmentRequest;
+import com.dapp.backend.dto.request.RescheduleAppointmentRequest;
 import com.dapp.backend.dto.response.AppointmentResponse;
 import com.dapp.backend.dto.response.Pagination;
+import com.dapp.backend.dto.response.RescheduleAppointmentResponse;
 import com.dapp.backend.exception.AppException;
 import com.dapp.backend.model.Appointment;
 import com.dapp.backend.service.AppointmentService;
 import com.turkraft.springfilter.boot.Filter;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
-import org.springframework.http.HttpRequest;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -44,6 +46,14 @@ public class AppointmentController {
     @ApiMessage("Complete a appointment")
     public ResponseEntity<String> completeAppointment(HttpServletRequest request, @PathVariable long id) throws Exception {
         return ResponseEntity.ok().body(appointmentService.complete(request, id));
+    }
+
+    @PutMapping("/reschedule")
+    @ApiMessage("Reschedule an appointment")
+    public ResponseEntity<RescheduleAppointmentResponse> rescheduleAppointment(
+            @RequestBody @Valid RescheduleAppointmentRequest request) throws AppException {
+        RescheduleAppointmentResponse response = appointmentService.rescheduleAppointment(request);
+        return ResponseEntity.ok(response);
     }
 
     @PutMapping("/{id}/cancel")

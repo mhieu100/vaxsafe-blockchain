@@ -15,6 +15,7 @@ import com.dapp.backend.dto.response.Pagination;
 import com.dapp.backend.exception.AppException;
 import com.dapp.backend.model.Center;
 import com.dapp.backend.repository.CenterRepository;
+import com.dapp.backend.service.spec.CenterSpecifications;
 
 import lombok.RequiredArgsConstructor;
 
@@ -62,7 +63,7 @@ public class CenterService {
                 break; // Slug is unique
             }
 
-            if (excludeId != null && existing.get().getId().equals(excludeId)) {
+            if (excludeId != null && existing.get().getCenterId().equals(excludeId)) {
                 break; // It's the same center being updated
             }
 
@@ -89,7 +90,12 @@ public class CenterService {
     }
 
     public Pagination getAllCenters(Specification<Center> specification, Pageable pageable) {
-        Page<Center> pageCenter = centerRepository.findAll(specification, pageable);
+        // Use CenterSpecifications to filter out soft-deleted records
+        Specification<Center> finalSpec = specification != null 
+            ? specification.and(CenterSpecifications.notDeleted()) 
+            : CenterSpecifications.notDeleted();
+        
+        Page<Center> pageCenter = centerRepository.findAll(finalSpec, pageable);
         Pagination pagination = new Pagination();
         Pagination.Meta meta = new Pagination.Meta();
         meta.setPage(pageable.getPageNumber() + 1);
@@ -143,7 +149,7 @@ public class CenterService {
                 .orElseThrow(() -> new AppException("Center not found with id: " + id));
 
         // Soft delete
-        center.setDeleted(true);
+        center.setIsDeleted(true);
         centerRepository.save(center);
     }
 

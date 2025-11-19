@@ -1,4 +1,3 @@
- 
 import { useEffect, useState } from 'react';
 import { v4 as uuidv4 } from 'uuid';
 import {
@@ -24,10 +23,7 @@ import {
 } from '@ant-design/icons';
 import enUS from 'antd/es/calendar/locale/en_US';
 
-import {
-  callCreateCenter,
-  callUpdateCenter,
-} from '../../config/api.center';
+import { callCreateCenter, callUpdateCenter } from '../../config/api.center';
 import { callUploadSingleFile } from '../../config/api.file';
 
 import '../../styles/reset.scss';
@@ -44,7 +40,7 @@ const ModalCenter = (props) => {
   const [previewTitle, setPreviewTitle] = useState('');
 
   useEffect(() => {
-    if (openModal && dataInit?.id) {
+    if (openModal && dataInit?.centerId) {
       form.setFieldsValue({
         name: dataInit.name,
         address: dataInit.address,
@@ -52,7 +48,7 @@ const ModalCenter = (props) => {
         capacity: dataInit.capacity,
         workingHours: dataInit.workingHours,
       });
-      
+
       if (dataInit.image) {
         setDataLogo([
           {
@@ -94,7 +90,7 @@ const ModalCenter = (props) => {
   const handleRemoveFile = () => {
     setDataLogo([]);
   };
-  
+
   const handleChange = (info) => {
     if (info.file.status === 'uploading') {
       setLoadingUpload(true);
@@ -105,11 +101,12 @@ const ModalCenter = (props) => {
     if (info.file.status === 'error') {
       setLoadingUpload(false);
       message.error(
-        info?.file?.error?.event?.message ?? 'An error occurred while uploading the file.'
+        info?.file?.error?.event?.message ??
+          'An error occurred while uploading the file.'
       );
     }
   };
-  
+
   const beforeUpload = (file) => {
     const isJpgOrPng = file.type === 'image/jpeg' || file.type === 'image/png';
     if (!isJpgOrPng) {
@@ -121,7 +118,7 @@ const ModalCenter = (props) => {
     }
     return isJpgOrPng && isLt2M;
   };
-  
+
   const handleUploadFileLogo = async ({ file, onSuccess, onError }) => {
     const res = await callUploadSingleFile(file, 'center');
     if (res && res.data) {
@@ -140,25 +137,25 @@ const ModalCenter = (props) => {
       }
     }
   };
-  
+
   const handleReset = async () => {
     form.resetFields();
     setDataInit(null);
-  
+
     setAnimation('close');
     await new Promise((r) => setTimeout(r, 400));
     setOpenModal(false);
     setAnimation('open');
   };
-  
+
   const submitCenter = async (valuesForm) => {
     const { name, address, phoneNumber, capacity, workingHours } = valuesForm;
-  
+
     if (dataLogo.length === 0) {
       message.error('Please upload a Logo image');
       return;
     }
-  
+
     const centerData = {
       name,
       address,
@@ -168,8 +165,8 @@ const ModalCenter = (props) => {
       image: dataLogo[0].name,
     };
 
-    if (dataInit?.id) {
-      const res = await callUpdateCenter(dataInit.id, centerData);
+    if (dataInit?.centerId) {
+      const res = await callUpdateCenter(dataInit.centerId, centerData);
 
       if (res.data) {
         message.success('Center updated successfully');
@@ -195,16 +192,14 @@ const ModalCenter = (props) => {
       }
     }
   };
-  
+
   return (
     <>
       {openModal && (
         <>
           <ModalForm
             title={
-              <>
-                {dataInit?.id ? 'Update Center' : 'Create New Center'}
-              </>
+              <>{dataInit?.centerId ? 'Update Center' : 'Create New Center'}</>
             }
             open={openModal}
             modalProps={{
@@ -230,50 +225,62 @@ const ModalCenter = (props) => {
               },
               searchConfig: {
                 resetText: 'Cancel',
-                submitText: <>{dataInit?.id ? 'Update' : 'Create'}</>,
+                submitText: <>{dataInit?.centerId ? 'Update' : 'Create'}</>,
               },
             }}
           >
             <Row gutter={16}>
               <Col span={12}>
                 <ProFormText
-                  label='Center Name'
-                  name='name'
-                  rules={[{ required: true, message: 'Please do not leave blank' }]}
-                  placeholder='Enter center name...'
+                  label="Center Name"
+                  name="name"
+                  rules={[
+                    { required: true, message: 'Please do not leave blank' },
+                  ]}
+                  placeholder="Enter center name..."
                 />
               </Col>
               <Col span={12}>
                 <ProFormText
-                  label='Phone Number'
-                  name='phoneNumber'
-                  rules={[{ required: true, message: 'Please do not leave blank' }]}
-                  placeholder='Center phone number...'
+                  label="Phone Number"
+                  name="phoneNumber"
+                  rules={[
+                    { required: true, message: 'Please do not leave blank' },
+                  ]}
+                  placeholder="Center phone number..."
                 />
               </Col>
               <Col span={12}>
                 <ProFormText
-                  label='Capacity'
-                  name='capacity'
-                  rules={[{ required: true, message: 'Please do not leave blank' }]}
-                  placeholder='Enter capacity...'
+                  label="Capacity"
+                  name="capacity"
+                  rules={[
+                    { required: true, message: 'Please do not leave blank' },
+                  ]}
+                  placeholder="Enter capacity..."
                 />
               </Col>
               <Col span={12}>
                 <ProFormText
-                  label='Working Hours'
-                  name='workingHours'
-                  rules={[{ required: true, message: 'Please do not leave blank' }]}
-                  placeholder='Center working hours...'
+                  label="Working Hours"
+                  name="workingHours"
+                  rules={[
+                    { required: true, message: 'Please do not leave blank' },
+                  ]}
+                  placeholder="Center working hours..."
                 />
               </Col>
               <Col span={8}>
-                <Form.Item labelCol={{ span: 24 }} label='Logo Image' name='logo'>
+                <Form.Item
+                  labelCol={{ span: 24 }}
+                  label="Logo Image"
+                  name="logo"
+                >
                   <ConfigProvider locale={enUS}>
                     <Upload
-                      name='logo'
-                      listType='picture-card'
-                      className='avatar-uploader'
+                      name="logo"
+                      listType="picture-card"
+                      className="avatar-uploader"
                       maxCount={1}
                       multiple={false}
                       customRequest={handleUploadFileLogo}
@@ -282,13 +289,13 @@ const ModalCenter = (props) => {
                       onRemove={(file) => handleRemoveFile(file)}
                       onPreview={handlePreview}
                       defaultFileList={
-                        dataInit?.id
+                        dataInit?.centerId
                           ? [
                               {
                                 uid: uuidv4(),
                                 name: dataInit?.image ?? '',
                                 status: 'done',
-                                url: `${import.meta.env.VITE_BACKEND_URL}/storage/center/${dataInit?.image}`,
+                                url: dataInit?.image,
                               },
                             ]
                           : []
@@ -302,13 +309,15 @@ const ModalCenter = (props) => {
                   </ConfigProvider>
                 </Form.Item>
               </Col>
-  
+
               <Col span={16}>
                 <ProFormTextArea
-                  label='Address'
-                  name='address'
-                  rules={[{ required: true, message: 'Please do not leave blank' }]}
-                  placeholder='Enter company address...'
+                  label="Address"
+                  name="address"
+                  rules={[
+                    { required: true, message: 'Please do not leave blank' },
+                  ]}
+                  placeholder="Enter company address..."
                   fieldProps={{
                     autoSize: { minRows: 4 },
                   }}
@@ -323,7 +332,7 @@ const ModalCenter = (props) => {
             onCancel={() => setPreviewOpen(false)}
             style={{ zIndex: 1500 }}
           >
-            <img alt='example' style={{ width: '100%' }} src={previewImage} />
+            <img alt="example" style={{ width: '100%' }} src={previewImage} />
           </Modal>
         </>
       )}

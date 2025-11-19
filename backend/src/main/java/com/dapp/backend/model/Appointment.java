@@ -6,6 +6,7 @@ import lombok.*;
 import lombok.experimental.FieldDefaults;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.LocalTime;
 
 @Entity
@@ -32,6 +33,10 @@ public class Appointment {
     @JoinColumn(name = "doctor_id")
     User doctor;
 
+    @OneToOne
+    @JoinColumn(name = "slot_id")
+    DoctorAvailableSlot slot;
+
     @ManyToOne
     @JoinColumn(name = "center_id", nullable = false)
     Center center;
@@ -39,6 +44,12 @@ public class Appointment {
     Integer doseNumber;
     LocalDate scheduledDate;
     LocalTime scheduledTime;
+
+    // Fields for reschedule functionality
+    LocalDate desiredDate;
+    LocalTime desiredTime;
+    String rescheduleReason;
+    LocalDateTime rescheduledAt;
 
     @Enumerated(EnumType.STRING)
     AppointmentEnum status;

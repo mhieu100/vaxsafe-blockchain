@@ -153,6 +153,7 @@ const RolePage = () => {
         listPermissions={listPermissions}
         singleRole={singleRole}
         setSingleRole={setSingleRole}
+        reloadTable={() => tableRef?.current?.reload()}
       />
     </>
   );

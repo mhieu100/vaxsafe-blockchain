@@ -36,7 +36,7 @@ const VaccinePage = () => {
   const handleDeleteVaccine = async (id) => {
     if (id) {
       const res = await callDeleteVaccine(id);
-      if (res && +res.statusCode === 200) {
+      if (res && (res.statusCode === 200 || res.statusCode === 204)) {
         message.success('Xóa vaccine thành công');
         reloadTable();
       } else {

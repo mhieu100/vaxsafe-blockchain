@@ -4,9 +4,11 @@ import com.dapp.backend.dto.mapper.AppointmentMapper;
 import com.dapp.backend.dto.request.BookingBlcRequest;
 import com.dapp.backend.dto.request.ProcessAppointmentBlcRequest;
 import com.dapp.backend.dto.request.ProcessAppointmentRequest;
+import com.dapp.backend.dto.request.RescheduleAppointmentRequest;
 import com.dapp.backend.dto.response.AppointmentResponse;
 import com.dapp.backend.dto.response.BookingBlcResponse;
 import com.dapp.backend.dto.response.Pagination;
+import com.dapp.backend.dto.response.RescheduleAppointmentResponse;
 import com.dapp.backend.enums.AppointmentEnum;
 import com.dapp.backend.enums.BookingEnum;
 import com.dapp.backend.exception.AppException;
@@ -27,8 +29,12 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.*;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestTemplate;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.List;
 
 @Service
@@ -112,6 +118,17 @@ public class AppointmentService {
         User cashier = authService.getCurrentUserLogin();
         User doctor = userRepository.findById(processAppointmentRequest.getDoctorId()).orElseThrow(() -> new AppException("Doctor not found"));
         Appointment appointment = appointmentRepository.findById(processAppointmentRequest.getAppointmentId()).orElseThrow(() -> new AppException("Appointment not found"));
+
+        // If appointment is in PENDING_APPROVAL status (rescheduled), apply the desired date/time
+        if (appointment.getStatus() == AppointmentEnum.PENDING_APPROVAL) {
+            if (appointment.getDesiredDate() != null) {
+                appointment.setScheduledDate(appointment.getDesiredDate());
+            }
+            if (appointment.getDesiredTime() != null) {
+                appointment.setScheduledTime(appointment.getDesiredTime());
+            }
+        }
+
         appointment.setDoctor(doctor);
         appointment.setCashier(cashier);
         appointment.setStatus(AppointmentEnum.SCHEDULED);
@@ -167,5 +184,64 @@ public class AppointmentService {
 //        restTemplate.exchange(blockchainUrl + "/bookings/appointments/" + id + "/cancelled", HttpMethod.PUT, entity, Void.class);
 
         return "Appointment update success";
+    }
+
+    @Transactional
+    public RescheduleAppointmentResponse rescheduleAppointment(RescheduleAppointmentRequest request) throws AppException {
+        // Get current user
+        User currentUser = authService.getCurrentUserLogin();
+
+        // Get appointment
+        Appointment appointment = appointmentRepository.findById(request.getAppointmentId())
+                .orElseThrow(() -> new AppException("Appointment not found"));
+
+        // Verify user owns this appointment (check through booking)
+        Booking booking = appointment.getBooking();
+        boolean isOwner = false;
+
+        if (booking.getPatient() != null && booking.getPatient().getId().equals(currentUser.getId())) {
+            isOwner = true;
+        } else if (booking.getFamilyMember() != null &&
+                   booking.getFamilyMember().getUser().getId().equals(currentUser.getId())) {
+            isOwner = true;
+        }
+
+        if (!isOwner) {
+            throw new AppException("You can only reschedule your own appointments");
+        }
+
+        // Check if appointment can be rescheduled
+        if (appointment.getStatus() == AppointmentEnum.COMPLETED) {
+            throw new AppException("Cannot reschedule completed appointments");
+        }
+
+        if (appointment.getStatus() == AppointmentEnum.CANCELLED) {
+            throw new AppException("Cannot reschedule cancelled appointments");
+        }
+
+        // Store old date and time
+        LocalDate oldDate = appointment.getScheduledDate();
+        LocalTime oldTime = appointment.getScheduledTime();
+
+        // Update appointment with desired date/time
+        appointment.setDesiredDate(request.getDesiredDate());
+        appointment.setDesiredTime(request.getDesiredTime());
+        appointment.setRescheduleReason(request.getReason());
+        appointment.setRescheduledAt(LocalDateTime.now());
+
+        // Change status to PENDING_APPROVAL for cashier review
+        appointment.setStatus(AppointmentEnum.PENDING_APPROVAL);
+
+        appointmentRepository.save(appointment);
+
+        return RescheduleAppointmentResponse.builder()
+                .appointmentId(appointment.getId())
+                .oldDate(oldDate)
+                .oldTime(oldTime)
+                .newDate(request.getDesiredDate())
+                .newTime(request.getDesiredTime())
+                .status(AppointmentEnum.PENDING_APPROVAL)
+                .message("Reschedule request submitted successfully. Waiting for cashier approval and doctor reassignment.")
+                .build();
     }
 }

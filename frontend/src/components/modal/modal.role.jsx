@@ -31,11 +31,13 @@ const ModalRole = (props) => {
 
     if (permissions) {
       for (const key in permissions) {
+        // Only process numeric keys (permission IDs), not module names
         if (key.match(/^[1-9][0-9]*$/) && permissions[key] === true) {
-          checkedPermissions.push({ id: key });
+          checkedPermissions.push({ id: parseInt(key, 10) });
         }
       }
     }
+    
     if (singleRole?.id) {
       //update
       const role = {

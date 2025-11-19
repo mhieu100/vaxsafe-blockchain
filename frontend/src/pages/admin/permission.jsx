@@ -39,7 +39,7 @@ const PermissionPage = () => {
   const handleDeletePermission = async (id) => {
     if (id) {
       const res = await callDeletePermission(id);
-      if (res && +res.statusCode === 200) {
+      if (res && (res.statusCode === 200 || res.statusCode === 204)) {
         message.success('Permission deleted successfully');
         reloadTable();
       } else {
