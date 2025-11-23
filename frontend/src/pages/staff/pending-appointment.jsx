@@ -37,9 +37,8 @@ import {
 
 import DataTable from '../../components/data-table';
 import AssignAppointmentModal from '../../components/modal/AssignAppointmentModal';
-import { useDispatch, useSelector } from 'react-redux';
 import { getColorStatus } from '../../utils/status';
-import { fetchAppointmentOfCenter } from '../../redux/slice/appointmentSlice';
+import { useAppointmentStore } from '../../stores/useAppointmentStore';
 import dayjs from 'dayjs';
 
 const { Title, Text } = Typography;
@@ -48,10 +47,10 @@ const { Option } = Select;
 const PendingAppointmentPage = () => {
   const tableRef = useRef();
 
-  const isFetching = useSelector((state) => state.appointment.isFetching);
-  const meta = useSelector((state) => state.appointment.meta);
-  const appointments = useSelector((state) => state.appointment.result);
-  const dispatch = useDispatch();
+  const isFetching = useAppointmentStore((state) => state.isFetching);
+  const meta = useAppointmentStore((state) => state.meta);
+  const appointments = useAppointmentStore((state) => state.result);
+  const fetchAppointmentOfCenter = useAppointmentStore((state) => state.fetchAppointmentOfCenter);
   const [openAssignModal, setOpenAssignModal] = useState(false);
   const [selectedAppointment, setSelectedAppointment] = useState(null);
 
@@ -470,7 +469,7 @@ const PendingAppointmentPage = () => {
           dataSource={appointments}
           request={async (params, sort, filter) => {
             const query = buildQuery(params, sort, filter);
-            dispatch(fetchAppointmentOfCenter({ query }));
+            fetchAppointmentOfCenter(query);
           }}
           scroll={{ x: 1500 }}
           pagination={{

@@ -1,5 +1,4 @@
 import { useState, useEffect } from 'react';
-import { useSelector } from 'react-redux';
 import {
   Card,
   Row,
@@ -36,11 +35,12 @@ import {
 } from '@ant-design/icons';
 import dayjs from 'dayjs';
 import { callGetTodayAppointments } from '../../config/api.appointment';
+import { useAccountStore } from '../../stores/useAccountStore';
 
 const { Title, Text } = Typography;
 
 const DoctorDashboard = () => {
-  const user = useSelector((state) => state.account.user);
+  const user = useAccountStore((state) => state.user);
   const [viewMode, setViewMode] = useState('today');
   const [detailModalOpen, setDetailModalOpen] = useState(false);
   const [selectedAppointment, setSelectedAppointment] = useState(null);

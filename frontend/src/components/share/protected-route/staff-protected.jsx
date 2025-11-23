@@ -1,14 +1,14 @@
 import { Navigate } from 'react-router-dom';
 import PropTypes from 'prop-types';
-import { useSelector } from 'react-redux';
 import { useEffect, useState } from 'react';
 
 import Loading from '../loading';
 import NotPermitted from './not-permitted';
+import { useAccountStore } from '../../../stores/useAccountStore';
 
 // Staff role-based route protection (only DOCTOR and CASHIER can access)
 const StaffRoleRoute = (props) => {
-  const user = useSelector((state) => state.account.user);
+  const user = useAccountStore((state) => state.user);
 
   if (user.role === 'DOCTOR' || user.role === 'CASHIER') {
     return <>{props.children}</>;
@@ -18,8 +18,8 @@ const StaffRoleRoute = (props) => {
 };
 
 const ProtectedStaffRoute = (props) => {
-  const isAuthenticated = useSelector((state) => state.account.isAuthenticated);
-  const isLoading = useSelector((state) => state.account.isLoading);
+  const isAuthenticated = useAccountStore((state) => state.isAuthenticated);
+  const isLoading = useAccountStore((state) => state.isLoading);
 
   const [redirectToLogin, setRedirectToLogin] = useState(false);
 

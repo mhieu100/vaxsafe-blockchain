@@ -1,5 +1,4 @@
 import { useRef, useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
 import {
   Button,
   message,
@@ -14,7 +13,7 @@ import queryString from 'query-string';
 
 import { callDeleteVaccine } from '../../config/api.vaccine';
 import DataTable from '../../components/data-table';
-import { fetchVaccine } from '../../redux/slice/vaccineSlice';
+import { useVaccineStore } from '../../stores/useVaccineStore';
 import ModalVaccine from '../../components/modal/modal.vaccine';
 
 const VaccinePage = () => {
@@ -25,10 +24,10 @@ const VaccinePage = () => {
 
   const [dataInit, setDataInit] = useState([]);
 
-  const isFetching = useSelector((state) => state.vaccine.isFetching);
-  const meta = useSelector((state) => state.vaccine.meta);
-  const vaccines = useSelector((state) => state.vaccine.result);
-  const dispatch = useDispatch();
+  const isFetching = useVaccineStore((state) => state.isFetching);
+  const meta = useVaccineStore((state) => state.meta);
+  const vaccines = useVaccineStore((state) => state.result);
+  const fetchVaccine = useVaccineStore((state) => state.fetchVaccine);
 
 
   const [openModal, setOpenModal] = useState(false);
@@ -233,7 +232,7 @@ const VaccinePage = () => {
         dataSource={vaccines}
         request={async (params, sort, filter) => {
           const query = buildQuery(params, sort, filter);
-          dispatch(fetchVaccine({ query }));
+          fetchVaccine(query);
         }}
         pagination={{
           current: meta.page,

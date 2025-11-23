@@ -69,6 +69,12 @@ export default [
         node: {
           extensions: ['.js', '.jsx'], // Hỗ trợ resolve import cho .js và .jsx
         },
+        alias: {
+          map: [
+            ['@', './src'],
+          ],
+          extensions: ['.js', '.jsx'],
+        },
       },
     },
     plugins: {
@@ -94,8 +100,10 @@ export default [
         'warn',
         { allowConstantExport: true },
       ], // Cảnh báo khi export không phải là component
-      'import/no-unresolved': 'error', // Báo lỗi khi import không thể resolve
-      'import/no-extraneous-dependencies': 'error', // Báo lỗi khi import dependencies không cần thiết
+      'import/no-extraneous-dependencies': 'off', // Tắt rule này vì có false positive với react-i18next
+      'import/no-unresolved': ['error', {
+        ignore: ['^react-i18next$', '^i18next$']
+      }], // Báo lỗi khi import không thể resolve, bỏ qua react-i18next
       // 'import/order': [
       //   'error',
       //   {

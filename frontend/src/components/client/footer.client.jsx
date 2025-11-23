@@ -1,24 +1,26 @@
-import React from 'react';
 import {
   TwitterOutlined,
   LinkedinOutlined,
   GithubOutlined,
-  SafetyOutlined,
+  SafetyCertificateOutlined,
 } from '@ant-design/icons';
 import { Link } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 
 const Footer = () => {
+  const { t } = useTranslation('common');
+
   return (
     <footer className="bg-gray-50">
       <div className="max-w-7xl mx-auto px-4 py-12 sm:px-6 lg:px-8">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
           <div>
             <div className="flex items-center">
-              <SafetyOutlined className="text-blue-600 text-xl mr-2" />
-              <span className="text-lg font-bold text-gray-900">VaxChain</span>
+              <SafetyCertificateOutlined className="text-blue-600 text-xl mr-2" />
+              <span className="text-lg font-bold text-gray-900">SafeVax</span>
             </div>
             <p className="mt-4 text-sm text-gray-500">
-              Bảo vệ sức khỏe toàn cầu thông qua công nghệ blockchain.
+              {t('footer.protecting')}
             </p>
             <div className="mt-4 flex space-x-4">
               <a href="#" className="text-gray-400 hover:text-gray-500">
@@ -32,9 +34,10 @@ const Footer = () => {
               </a>
             </div>
           </div>
+
           <div>
             <h3 className="text-sm font-semibold text-gray-900 uppercase tracking-wider">
-              Giải pháp
+              {t('footer.solutions')}
             </h3>
             <ul className="mt-4 space-y-2">
               <li>
@@ -42,7 +45,7 @@ const Footer = () => {
                   to="/individual"
                   className="text-sm text-gray-500 hover:text-blue-600"
                 >
-                  Cho cá nhân
+                  {t('footer.forIndividuals')}
                 </Link>
               </li>
               <li>
@@ -50,7 +53,7 @@ const Footer = () => {
                   to="/healthcare"
                   className="text-sm text-gray-500 hover:text-blue-600"
                 >
-                  Cho y tế
+                  {t('footer.forHealthcare')}
                 </Link>
               </li>
               <li>
@@ -58,7 +61,7 @@ const Footer = () => {
                   to="/government"
                   className="text-sm text-gray-500 hover:text-blue-600"
                 >
-                  Cho chính phủ
+                  {t('footer.forGovernment')}
                 </Link>
               </li>
               <li>
@@ -66,14 +69,15 @@ const Footer = () => {
                   to="/travel"
                   className="text-sm text-gray-500 hover:text-blue-600"
                 >
-                  Cho du lịch
+                  {t('footer.forTravel')}
                 </Link>
               </li>
             </ul>
           </div>
+
           <div>
             <h3 className="text-sm font-semibold text-gray-900 uppercase tracking-wider">
-              Tài nguyên
+              {t('footer.resources')}
             </h3>
             <ul className="mt-4 space-y-2">
               <li>
@@ -81,7 +85,7 @@ const Footer = () => {
                   to="/docs"
                   className="text-sm text-gray-500 hover:text-blue-600"
                 >
-                  Tài liệu
+                  {t('footer.documentation')}
                 </Link>
               </li>
               <li>
@@ -89,7 +93,7 @@ const Footer = () => {
                   to="/api"
                   className="text-sm text-gray-500 hover:text-blue-600"
                 >
-                  API
+                  {t('footer.api')}
                 </Link>
               </li>
               <li>
@@ -97,7 +101,7 @@ const Footer = () => {
                   to="/blog"
                   className="text-sm text-gray-500 hover:text-blue-600"
                 >
-                  Blog
+                  {t('footer.blog')}
                 </Link>
               </li>
               <li>
@@ -105,14 +109,15 @@ const Footer = () => {
                   to="/support"
                   className="text-sm text-gray-500 hover:text-blue-600"
                 >
-                  Hỗ trợ
+                  {t('footer.support')}
                 </Link>
               </li>
             </ul>
           </div>
+
           <div>
             <h3 className="text-sm font-semibold text-gray-900 uppercase tracking-wider">
-              Công ty
+              {t('footer.company')}
             </h3>
             <ul className="mt-4 space-y-2">
               <li>
@@ -120,7 +125,7 @@ const Footer = () => {
                   to="/about"
                   className="text-sm text-gray-500 hover:text-blue-600"
                 >
-                  Về chúng tôi
+                  {t('footer.aboutUs')}
                 </Link>
               </li>
               <li>
@@ -128,7 +133,7 @@ const Footer = () => {
                   to="/careers"
                   className="text-sm text-gray-500 hover:text-blue-600"
                 >
-                  Tuyển dụng
+                  {t('footer.careers')}
                 </Link>
               </li>
               <li>
@@ -136,7 +141,7 @@ const Footer = () => {
                   to="/privacy"
                   className="text-sm text-gray-500 hover:text-blue-600"
                 >
-                  Quyền riêng tư
+                  {t('footer.privacyPolicy')}
                 </Link>
               </li>
               <li>
@@ -144,20 +149,17 @@ const Footer = () => {
                   to="/terms"
                   className="text-sm text-gray-500 hover:text-blue-600"
                 >
-                  Điều khoản
+                  {t('footer.termsOfService')}
                 </Link>
               </li>
             </ul>
           </div>
         </div>
+
         <div className="mt-12 pt-8 border-t border-gray-200 flex flex-col md:flex-row justify-between items-center">
-          <p className="text-sm text-gray-500">
-            © 2025 VaxChain. Đã đăng ký bản quyền.
-          </p>
+          <p className="text-sm text-gray-500">{t('footer.copyright')}</p>
           <div className="mt-4 md:mt-0">
-            <p className="text-xs text-gray-500">
-              Bảo mật sức khỏe bằng công nghệ blockchain
-            </p>
+            <p className="text-xs text-gray-500">{t('footer.slogan')}</p>
           </div>
         </div>
       </div>

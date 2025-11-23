@@ -1,5 +1,4 @@
 import { useRef, useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
 import {
   Badge,
   Button,
@@ -14,7 +13,7 @@ import queryString from 'query-string';
 
 import DataTable from '../../components/data-table';
 import { callDeletePermission } from '../../config/api.permission';
-import { fetchPermission } from '../../redux/slice/permissionSlice';
+import { usePermissionStore } from '../../stores/usePermissionStore';
 import ModalPermission from '../../components/modal/modal.permission';
 import ViewDetailPermission from '../../components/modal/view.permission';
 import { blue, green, orange, red } from '@ant-design/colors';
@@ -27,11 +26,10 @@ const PermissionPage = () => {
 
   const [dataInit, setDataInit] = useState(null);
 
-  const isFetching = useSelector((state) => state.permission.isFetching);
-  const meta = useSelector((state) => state.permission.meta);
-  const permissions = useSelector((state) => state.permission.result);
-
-  const dispatch = useDispatch();
+  const isFetching = usePermissionStore((state) => state.isFetching);
+  const meta = usePermissionStore((state) => state.meta);
+  const permissions = usePermissionStore((state) => state.result);
+  const fetchPermission = usePermissionStore((state) => state.fetchPermission);
 
   const [openModal, setOpenModal] = useState(false);
   const [openViewDetail, setOpenViewDetail] = useState(false);
@@ -191,7 +189,7 @@ const PermissionPage = () => {
         dataSource={permissions}
         request={async (params, sort, filter) => {
           const query = buildQuery(params, sort, filter);
-          dispatch(fetchPermission({ query }));
+          fetchPermission(query);
         }}
         scroll={{ x: true }}
         pagination={{

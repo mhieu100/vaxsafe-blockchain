@@ -13,18 +13,16 @@ import {
   NotificationOutlined,
 } from '@ant-design/icons';
 
-import { useDispatch, useSelector } from 'react-redux';
-
 import { Avatar, Badge, Dropdown, message, Menu, Layout } from 'antd';
-import { setLogoutAction } from '../../redux/slice/accountSlide';
 import { callLogout } from '../../config/api.auth';
+import { useAccountStore } from '../../stores/useAccountStore';
 
 const { Header, Sider, Content } = Layout;
 
 const LayoutAdmin = () => {
-  const dispatch = useDispatch();
   const navigate = useNavigate();
-  const user = useSelector((state) => state.account.user);
+  const user = useAccountStore((state) => state.user);
+  const logout = useAccountStore((state) => state.logout);
   const location = useLocation();
   const [activeMenu, setActiveMenu] = useState('');
   const [collapsed, setCollapsed] = useState(false);
@@ -37,7 +35,7 @@ const LayoutAdmin = () => {
     const res = await callLogout();
     if (res && res && +res.statusCode === 200) {
       localStorage.removeItem('access_token');
-      dispatch(setLogoutAction({}));
+      logout();
       message.success('Đăng xuất thành công');
       navigate('/');
     }

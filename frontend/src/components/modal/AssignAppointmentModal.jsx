@@ -1,5 +1,4 @@
 import { useState, useEffect } from 'react';
-import { useSelector } from 'react-redux';
 import {
   Modal,
   Form,
@@ -35,6 +34,7 @@ import dayjs from 'dayjs';
 import { callUpdateAppointment } from '../../config/api.appointment';
 import { getAvailableSlotsAPI } from '../../config/api.doctor.schedule';
 import { getDoctorsWithScheduleAPI } from '../../config/api.doctor.schedule';
+import { useAccountStore } from '../../stores/useAccountStore';
 
 const { Text } = Typography;
 const { TextArea } = Input;
@@ -56,7 +56,7 @@ const AssignAppointmentModal = ({
   const [availableSlots, setAvailableSlots] = useState([]);
   const [doctors, setDoctors] = useState([]);
 
-  const user = useSelector((state) => state.account.user);
+  const user = useAccountStore((state) => state.user);
 
   // Check if this is a reschedule request
   const isRescheduleRequest = appointment?.status === 'PENDING_APPROVAL';

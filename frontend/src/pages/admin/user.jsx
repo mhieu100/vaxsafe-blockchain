@@ -1,13 +1,12 @@
 import { Badge, message, notification, Popconfirm, Space } from 'antd';
 import { useRef, useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
 import { DeleteOutlined, EditOutlined } from '@ant-design/icons';
 import { sfLike } from 'spring-filter-query-builder';
 import queryString from 'query-string';
 
 import { callDeleteUser } from '../../config/api.user';
 import DataTable from '../../components/data-table';
-import { fetchUser } from '../../redux/slice/userSlice';
+import { useUserStore } from '../../stores/useUserStore';
 import ModalUser from '../../components/modal/modal.user';
 
 const UserPage = () => {
@@ -18,10 +17,10 @@ const UserPage = () => {
 
   const [dataInit, setDataInit] = useState(null);
 
-  const isFetching = useSelector((state) => state.user.isFetching);
-  const meta = useSelector((state) => state.user.meta);
-  const users = useSelector((state) => state.user.result);
-  const dispatch = useDispatch();
+  const isFetching = useUserStore((state) => state.isFetching);
+  const meta = useUserStore((state) => state.meta);
+  const users = useUserStore((state) => state.result);
+  const fetchUser = useUserStore((state) => state.fetchUser);
 
   const [openModal, setOpenModal] = useState(false);
 
@@ -199,7 +198,7 @@ const UserPage = () => {
         dataSource={users}
         request={async (params, sort, filter) => {
           const query = buildQuery(params, sort, filter);
-          dispatch(fetchUser({ query }));
+          fetchUser(query);
         }}
         scroll={{ x: true }}
         pagination={{

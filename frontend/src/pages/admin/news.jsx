@@ -1,5 +1,4 @@
 import { useRef, useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
 import {
   Button,
   message,
@@ -26,7 +25,7 @@ import {
   callUnpublishNews,
 } from '../../config/api.news';
 import DataTable from '../../components/data-table';
-import { fetchNews } from '../../redux/slice/newsSlice';
+import { useNewsStore } from '../../stores/useNewsStore';
 import ModalNews from '../../components/modal/modal.news';
 
 const NewsPage = () => {
@@ -37,10 +36,10 @@ const NewsPage = () => {
 
   const [dataInit, setDataInit] = useState([]);
 
-  const isFetching = useSelector((state) => state.news.isFetching);
-  const meta = useSelector((state) => state.news.meta);
-  const news = useSelector((state) => state.news.result);
-  const dispatch = useDispatch();
+  const isFetching = useNewsStore((state) => state.isFetching);
+  const meta = useNewsStore((state) => state.meta);
+  const news = useNewsStore((state) => state.result);
+  const fetchNews = useNewsStore((state) => state.fetchNews);
 
   const [openModal, setOpenModal] = useState(false);
 
@@ -298,7 +297,7 @@ const NewsPage = () => {
 
   const handleSearch = (params, sort, filter) => {
     const query = buildQuery(params, sort, filter);
-    dispatch(fetchNews({ query }));
+    fetchNews(query);
   };
 
   return (

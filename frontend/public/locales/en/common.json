@@ -1,0 +1,70 @@
+{
+  "header": {
+    "home": "Home",
+    "vaccines": "Vaccines",
+    "searchPlaceholder": "Search...",
+    "wishlist": "Wishlist",
+    "cart": "Cart",
+    "login": "Login",
+    "register": "Register"
+  },
+  "footer": {
+    "solutions": "Solutions",
+    "resources": "Resources",
+    "company": "Company",
+    "forIndividuals": "For Individuals",
+    "forHealthcare": "For Healthcare",
+    "forGovernment": "For Government",
+    "forTravel": "For Travel",
+    "documentation": "Documentation",
+    "api": "API",
+    "blog": "Blog",
+    "support": "Support",
+    "aboutUs": "About Us",
+    "careers": "Careers",
+    "privacyPolicy": "Privacy Policy",
+    "termsOfService": "Terms of Service",
+    "copyright": "© 2025 SafeVax. All rights reserved.",
+    "slogan": "Securing health through innovation",
+    "protecting": "Protecting global health through innovative vaccine solutions."
+  },
+  "user": {
+    "profile": "Profile",
+    "logout": "Logout",
+    "logoutSuccess": "Logout success"
+  },
+  "hero": {
+    "title": "Smart Vaccination Management Platform",
+    "subtitle": "Using Blockchain technology to ensure transparency and safety in the vaccination process",
+    "viewVaccines": "View Vaccines",
+    "learnMore": "Learn More",
+    "certificate": {
+      "title": "Vaccination Certificate",
+      "id": "ID",
+      "fullName": "Full Name",
+      "dob": "Date of Birth",
+      "vaccine": "Vaccine",
+      "doses": "Doses",
+      "blockchainHash": "Blockchain Hash",
+      "verification": "Blockchain Verification"
+    }
+  },
+  "service": {
+    "title": "Secure Information with Blockchain",
+    "subtitle": "Our decentralized system ensures your vaccination data remains private while still being verifiable by authorized parties.",
+    "features": {
+      "immutableData": {
+        "title": "Immutable Data",
+        "description": "Once recorded on the blockchain, your vaccination data cannot be altered or deleted, preventing fraud."
+      },
+      "instantVerification": {
+        "title": "Instant Verification",
+        "description": "Authorized parties can verify your vaccination status within seconds without compromising privacy."
+      },
+      "globalAccess": {
+        "title": "Global Access",
+        "description": "Your digital vaccine passport works everywhere, recognized across borders and healthcare systems."
+      }
+    }
+  }
+}

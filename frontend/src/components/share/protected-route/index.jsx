@@ -1,15 +1,15 @@
 import { Navigate } from 'react-router-dom';
 // eslint-disable-next-line import/no-extraneous-dependencies
 import PropTypes from 'prop-types';
-import { useSelector } from 'react-redux';
 import { useEffect, useState } from 'react';
 
 import Loading from '../loading';
+import { useAccountStore } from '../../../stores/useAccountStore';
 
 import NotPermitted from './not-permitted';
 
 const RoleBaseRoute = (props) => {
-  const user = useSelector((state) => state.account.user);
+  const user = useAccountStore((state) => state.user);
 
   if (
     user.role === 'ADMIN') {
@@ -20,8 +20,8 @@ const RoleBaseRoute = (props) => {
 };
 
 const ProtectedRoute = (props) => {
-  const isAuthenticated = useSelector((state) => state.account.isAuthenticated);
-  const isLoading = useSelector((state) => state.account.isLoading);
+  const isAuthenticated = useAccountStore((state) => state.isAuthenticated);
+  const isLoading = useAccountStore((state) => state.isLoading);
 
   const [redirectToLogin, setRedirectToLogin] = useState(false);
 

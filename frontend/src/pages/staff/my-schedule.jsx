@@ -10,17 +10,16 @@ import {
 } from '../../config/api.appointment';
 import queryString from 'query-string';
 import { sfLike } from 'spring-filter-query-builder';
-import { useDispatch, useSelector } from 'react-redux';
-import { fetchAppointmentOfDoctor } from '../../redux/slice/appointmentSlice';
+import { useAppointmentStore } from '../../stores/useAppointmentStore';
 import { getColorStatus } from '../../utils/status';
 
 const MySchedulePage = () => {
   const tableRef = useRef();
 
-  const isFetching = useSelector((state) => state.appointment.isFetching);
-  const meta = useSelector((state) => state.appointment.meta);
-  const appointments = useSelector((state) => state.appointment.result);
-  const dispatch = useDispatch();
+  const isFetching = useAppointmentStore((state) => state.isFetching);
+  const meta = useAppointmentStore((state) => state.meta);
+  const appointments = useAppointmentStore((state) => state.result);
+  const fetchAppointmentOfDoctor = useAppointmentStore((state) => state.fetchAppointmentOfDoctor);
 
   const reloadTable = () => {
     tableRef?.current?.reload();
@@ -187,7 +186,7 @@ const MySchedulePage = () => {
         dataSource={appointments}
         request={async (params, sort, filter) => {
           const query = buildQuery(params, sort, filter);
-          dispatch(fetchAppointmentOfDoctor({ query }));
+          fetchAppointmentOfDoctor(query);
         }}
         scroll={{ x: true }}
         pagination={{

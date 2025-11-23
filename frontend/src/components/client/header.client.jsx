@@ -3,55 +3,54 @@ import {
   Layout,
   Menu,
   Avatar,
-  Dropdown,
   Button,
   Drawer,
   message,
   Badge,
   Space,
+  Input,
 } from 'antd';
 import {
   UserOutlined,
   HeartOutlined,
   MenuOutlined,
-  WechatWorkOutlined,
   SafetyCertificateOutlined,
-  RobotOutlined,
   ShoppingCartOutlined,
   HomeOutlined,
   ShoppingOutlined,
-  CalendarOutlined,
-  DashboardOutlined,
   LogoutOutlined,
-  SearchOutlined,
+  DashboardOutlined,
 } from '@ant-design/icons';
 import { useNavigate, useLocation, Link } from 'react-router-dom';
-import { useDispatch, useSelector } from 'react-redux';
-
-import { callLogout } from '../../config/api.auth';
-import { setLogoutAction } from '../../redux/slice/accountSlide';
+import { useTranslation } from 'react-i18next';
+import { useAccountStore } from '../../stores/useAccountStore';
+import useCartStore from '../../stores/useCartStore';
+import authService from '../../services/auth.service';
+import DropdownUser from '../dropdown/DropdownUser';
+import LanguageSelect from '../share/LanguageSwitcher';
 
 const { Header: AntHeader } = Layout;
+const { Search } = Input;
 
 const Navbar = () => {
-  const dispatch = useDispatch();
-  const { itemCount } = useSelector((state) => state.cart);
+  const { t } = useTranslation('common');
+  const itemCount = useCartStore((state) => state.totalQuantity());
 
-  const isAuthenticated = useSelector((state) => state.account.isAuthenticated);
-  const user = useSelector((state) => state.account.user);
+  const isAuthenticated = useAccountStore((state) => state.isAuthenticated);
+  const user = useAccountStore((state) => state.user);
+  const logout = useAccountStore((state) => state.logout);
   const navigate = useNavigate();
   const location = useLocation();
 
   const [mobileMenuVisible, setMobileMenuVisible] = useState(false);
-  const [searchVisible, setSearchVisible] = useState(false);
   const [searchValue, setSearchValue] = useState('');
 
   const handleLogout = async () => {
-    const res = await callLogout();
+    const res = await authService.logout();
     if (res && res && +res.statusCode === 200) {
       localStorage.removeItem('access_token');
-      dispatch(setLogoutAction({}));
-      message.success('Đăng xuất thành công');
+      logout();
+      message.success(t('user.logoutSuccess'));
       navigate('/');
     }
   };
@@ -62,8 +61,7 @@ const Navbar = () => {
 
   const handleMobileUserMenuClick = async ({ key }) => {
     if (key === 'logout') {
-      navigate('/');
-      message.success('Logged out successfully!');
+      await handleLogout();
     } else {
       navigate(`/${key}`);
     }
@@ -79,10 +77,9 @@ const Navbar = () => {
     setMobileMenuVisible(false);
   };
 
-  const handleSearch = () => {
-    if (searchValue.trim()) {
-      navigate(`/search?q=${encodeURIComponent(searchValue)}`);
-      setSearchVisible(false);
+  const onSearch = (value) => {
+    if (value.trim()) {
+      navigate(`/search?q=${encodeURIComponent(value)}`);
       setSearchValue('');
     }
   };
@@ -91,40 +88,19 @@ const Navbar = () => {
     {
       key: '/',
       icon: <HomeOutlined />,
-      label: 'Trang chủ',
+      label: t('header.home'),
     },
     {
-      key: 'market-menu',
+      key: '/vaccine',
       icon: <ShoppingOutlined />,
-      label: 'Vaccine',
-      children: [
-        {
-          key: '/market',
-          label: 'Danh sách vaccine',
-        },
-      ],
-    },
-    {
-      key: 'booking-menu',
-      icon: <CalendarOutlined />,
-      label: 'Đặt lịch',
-      children: [
-        {
-          key: '/booking',
-          label: 'Đặt lịch mới',
-        },
-        {
-          key: '/profile',
-          label: 'Lịch sử đặt',
-        },
-      ],
+      label: t('header.vaccines'),
     },
   ];
 
   const userMenuItems = [
     {
       key: 'profile',
-      label: 'Thông tin cá nhân',
+      label: t('user.profile'),
       icon: <UserOutlined />,
       onClick: () => navigate('/profile'),
     },
@@ -153,7 +129,7 @@ const Navbar = () => {
     },
     {
       key: 'logout',
-      label: 'Đăng xuất',
+      label: t('user.logout'),
       icon: <LogoutOutlined />,
       onClick: handleLogout,
       danger: true,
@@ -162,141 +138,81 @@ const Navbar = () => {
 
   return (
     <>
-      <AntHeader className="sticky top-0 z-50 bg-white px-4 shadow-sm md:px-6">
-        <div className="mx-auto flex h-full max-w-6xl items-center justify-between">
-          {/* Logo và menu chính cho desktop */}
-          <div className="flex items-center">
-            <div
-              className="mr-4 cursor-pointer text-xl font-bold text-blue-600 md:text-2xl"
-              onClick={() => navigate('/')}
+      <AntHeader className="sticky top-0 z-50 !bg-white px-4 shadow-sm md:px-6">
+        <div className="mx-auto flex h-full max-w-[1220px] items-center justify-between">
+          <div className="flex items-center gap-8">
+            <Link
+              to="/"
+              className="flex cursor-pointer items-center gap-2 text-xl font-bold text-blue-600 md:text-2xl"
             >
-              <Link to="/" className="flex items-center gap-2">
-                <SafetyCertificateOutlined className="text-xl md:text-2xl text-brand-primary" />
-                <span className="hidden text-lg font-bold text-gray-900 sm:block md:text-xl">
-                  VaxChain
-                </span>
-              </Link>
-            </div>
+              <SafetyCertificateOutlined className="text-xl md:text-2xl text-brand-primary" />
+              <span className="hidden text-lg font-bold text-gray-900 sm:block md:text-xl">
+                SafeVax
+              </span>
+            </Link>
 
-            {/* Menu desktop */}
             <Menu
               mode="horizontal"
-              selectedKeys={[location.pathname]}
-              items={menuItems}
               onClick={handleMenuClick}
-              style={{ border: 'none', background: 'transparent' }}
+              selectedKeys={[location.pathname?.split('?')?.[0] ?? '']}
+              items={menuItems}
+              style={{
+                border: 'none',
+                background: 'transparent',
+                minWidth: '300px',
+              }}
               className="hidden lg:flex"
             />
           </div>
 
-          {/* Phần bên phải: Tìm kiếm, nút action và user */}
           <div className="flex items-center gap-2 md:gap-4">
-            {/* Thanh tìm kiếm cho desktop */}
             <div className="hidden md:flex md:items-center">
-              <div className="relative">
-                <input
-                  type="text"
-                  placeholder="Tìm kiếm..."
-                  value={searchValue}
-                  onChange={(e) => setSearchValue(e.target.value)}
-                  onKeyPress={(e) => e.key === 'Enter' && handleSearch()}
-                  className="w-40 rounded-lg border border-gray-300 py-1.5 pl-3 pr-10 text-sm transition-all focus:w-52 focus:outline-none focus:ring-2 focus:ring-blue-500 lg:w-52"
-                />
-                <Button
-                  icon={<SearchOutlined />}
-                  type="text"
-                  onClick={handleSearch}
-                  className="absolute right-1 top-1/2 -translate-y-1/2 transform"
-                />
-              </div>
+              <Search
+                placeholder={t('header.searchPlaceholder')}
+                allowClear
+                onSearch={onSearch}
+                style={{ width: 250 }}
+              />
             </div>
 
-            {/* Các nút action */}
-            <Space.Compact className="hidden sm:flex">
-              <Button
-                icon={<HeartOutlined />}
-                size="middle"
-                onClick={() => navigate('/wishlist')}
-                className="hidden border-none shadow-none hover:bg-slate-100 md:flex"
-                title="Wishlist"
-              />
-              <Button
-                icon={<WechatWorkOutlined />}
-                size="middle"
-                onClick={() => navigate('/chat')}
-                className="hidden border-none shadow-none hover:bg-slate-100 md:flex"
-                title="Chat"
-              />
-              <Button
-                icon={<RobotOutlined />}
-                size="middle"
-                onClick={() => navigate('/chat/ai')}
-                className="hidden border-none shadow-none hover:bg-slate-100 md:flex"
-                title="AI Chat"
-              />
-            </Space.Compact>
+            <Space className="hidden sm:flex">
+              <LanguageSelect />
 
-            <Badge count={itemCount} size="small" className="mr-1 md:mr-0">
-              <Button
-                icon={<ShoppingCartOutlined />}
-                size="middle"
-                onClick={() => navigate('/cart')}
-                className="border-none shadow-none hover:bg-slate-100"
-                title="Giỏ hàng"
-              />
-            </Badge>
-
-            {/* Nút tìm kiếm cho mobile */}
-            <Button
-              icon={<SearchOutlined />}
-              size="middle"
-              onClick={() => setSearchVisible(true)}
-              className="flex border-none shadow-none hover:bg-slate-100 md:hidden"
-              title="Tìm kiếm"
-            />
-
-            {isAuthenticated ? (
-              <>
-                <Dropdown
-                  menu={{ items: userMenuItems }}
-                  placement="bottomRight"
-                  className="hidden md:block"
-                >
-                  <Avatar
-                    src={
-                      user?.avatar ||
-                      'https://imgs.search.brave.com/kRzOEK2P26KHgRlY94E5DGE517Q4IJTULPg_lFWXLSU/rs:fit:500:0:1:0/g:ce/aHR0cHM6Ly90aHlw/aXguY29tL3dwLWNv/bnRlbnQvdXBsb2Fk/cy8yMDIxLzEwL2Fu/aW1lLWF2YXRhci1w/cm9maWxlLXBpY3R1/cmUtdGh5cGl4LTI0/LTcwMHg3MDAuanBn'
-                    }
-                    icon={<UserOutlined />}
-                    className="cursor-pointer"
-                    size="default"
-                  />
-                </Dropdown>
-                <span className="ml-1 hidden text-sm font-medium text-gray-700 lg:block">
-                  {user?.name}
-                </span>
-              </>
-            ) : (
-              <div className="hidden md:flex md:items-center md:gap-2">
+              <Badge count={itemCount} size="small" className="mr-1 md:mr-0">
                 <Button
-                  onClick={() => navigate('/login')}
-                  className="text-sm"
+                  icon={<ShoppingCartOutlined />}
                   size="middle"
-                >
-                  Đăng nhập
-                </Button>
-                <Button
-                  type="primary"
-                  onClick={() => navigate('/register')}
-                  className="bg-blue-600 text-sm hover:bg-blue-700"
-                  size="middle"
-                >
-                  Đăng ký
-                </Button>
-              </div>
-            )}
+                  onClick={() => navigate('/cart')}
+                  className="border-none shadow-none hover:bg-slate-100"
+                  title={t('header.cart')}
+                />
+              </Badge>
+            </Space>
 
-            {/* Nút menu mobile */}
+            <div className="hidden md:flex md:items-center md:gap-2">
+              {!isAuthenticated ? (
+                <>
+                  <Button
+                    onClick={() => navigate('/login')}
+                    className="text-sm"
+                    size="middle"
+                  >
+                    {t('header.login')}
+                  </Button>
+                  <Button
+                    type="primary"
+                    onClick={() => navigate('/register')}
+                    className="bg-blue-600 text-sm hover:bg-blue-700"
+                    size="middle"
+                  >
+                    {t('header.register')}
+                  </Button>
+                </>
+              ) : (
+                <DropdownUser />
+              )}
+            </div>
+
             <Button
               icon={<MenuOutlined />}
               size="middle"
@@ -306,36 +222,6 @@ const Navbar = () => {
             />
           </div>
         </div>
-
-        {/* Thanh tìm kiếm cho mobile (hiển thị khi click) */}
-        {searchVisible && (
-          <div className="absolute left-0 top-full w-full border-t border-gray-200 bg-white p-3 shadow-md md:hidden">
-            <div className="mx-auto flex max-w-6xl items-center">
-              <input
-                type="text"
-                placeholder="Tìm kiếm..."
-                value={searchValue}
-                onChange={(e) => setSearchValue(e.target.value)}
-                onKeyPress={(e) => e.key === 'Enter' && handleSearch()}
-                className="flex-1 rounded-lg border border-gray-300 py-2 pl-3 pr-10 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-                autoFocus
-              />
-              <Button
-                icon={<SearchOutlined />}
-                type="text"
-                onClick={handleSearch}
-                className="ml-2"
-              />
-              <Button
-                type="text"
-                onClick={() => setSearchVisible(false)}
-                className="ml-1"
-              >
-                Hủy
-              </Button>
-            </div>
-          </div>
-        )}
       </AntHeader>
 
       {/* Mobile Menu Drawer */}
@@ -343,7 +229,7 @@ const Navbar = () => {
         title={
           <div className="flex items-center gap-2">
             <SafetyCertificateOutlined className="text-brand-primary" />
-            <span className="font-bold">VaxChain</span>
+            <span className="font-bold">SafeVax</span>
           </div>
         }
         placement="right"
@@ -385,7 +271,7 @@ const Navbar = () => {
                   }}
                   className="bg-blue-600 hover:bg-blue-700"
                 >
-                  Đăng nhập
+                  {t('header.login')}
                 </Button>
                 <Button
                   block
@@ -394,7 +280,7 @@ const Navbar = () => {
                     setMobileMenuVisible(false);
                   }}
                 >
-                  Đăng ký
+                  {t('header.register')}
                 </Button>
               </div>
             )}
@@ -435,27 +321,7 @@ const Navbar = () => {
                 }}
                 block
               >
-                Wishlist
-              </Button>
-              <Button
-                icon={<WechatWorkOutlined />}
-                onClick={() => {
-                  navigate('/chat');
-                  setMobileMenuVisible(false);
-                }}
-                block
-              >
-                Chat
-              </Button>
-              <Button
-                icon={<RobotOutlined />}
-                onClick={() => {
-                  navigate('/chat/ai');
-                  setMobileMenuVisible(false);
-                }}
-                block
-              >
-                AI Chat
+                {t('header.wishlist')}
               </Button>
               <Button
                 icon={<ShoppingCartOutlined />}
@@ -466,7 +332,7 @@ const Navbar = () => {
                 block
               >
                 <Badge count={itemCount} size="small">
-                  Giỏ hàng
+                  {t('header.cart')}
                 </Badge>
               </Button>
             </div>

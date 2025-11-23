@@ -6,13 +6,13 @@ import {
   ProFormSelect,
   ProFormTimePicker,
 } from '@ant-design/pro-components';
-import { useSelector } from 'react-redux';
+import { useNavigate } from 'react-router-dom';
+import { useAccountStore } from '../../stores/useAccountStore';
 
 import '../../styles/reset.scss';
 
 import { callAddAppointmentMetaMark } from '../../config/api.appointment';
 import { callFetchCenter } from '../../config/api.center';
-import { useNavigate } from 'react-router-dom';
 
 const ModalOrder = (props) => {
   const navigate = useNavigate();
@@ -20,7 +20,7 @@ const ModalOrder = (props) => {
   const [animation, setAnimation] = useState('open');
   const { openModal, setOpenModal, vaccine } = props;
   const [form] = Form.useForm();
-  const user = useSelector((state) => state.account.user);
+  const user = useAccountStore((state) => state.user);
 
   const handleReset = async () => {
     form.resetFields();

@@ -1,0 +1,70 @@
+{
+  "header": {
+    "home": "Trang chủ",
+    "vaccines": "Vắc-xin",
+    "searchPlaceholder": "Tìm kiếm...",
+    "wishlist": "Yêu thích",
+    "cart": "Giỏ hàng",
+    "login": "Đăng nhập",
+    "register": "Đăng ký"
+  },
+  "footer": {
+    "solutions": "Giải pháp",
+    "resources": "Tài nguyên",
+    "company": "Công ty",
+    "forIndividuals": "Cho cá nhân",
+    "forHealthcare": "Cho y tế",
+    "forGovernment": "Cho chính phủ",
+    "forTravel": "Cho du lịch",
+    "documentation": "Tài liệu",
+    "api": "API",
+    "blog": "Blog",
+    "support": "Hỗ trợ",
+    "aboutUs": "Về chúng tôi",
+    "careers": "Tuyển dụng",
+    "privacyPolicy": "Chính sách bảo mật",
+    "termsOfService": "Điều khoản dịch vụ",
+    "copyright": "© 2025 SafeVax. Bảo lưu mọi quyền.",
+    "slogan": "Bảo vệ sức khỏe thông qua đổi mới",
+    "protecting": "Bảo vệ sức khỏe toàn cầu thông qua giải pháp vắc-xin sáng tạo."
+  },
+  "user": {
+    "profile": "Hồ sơ",
+    "logout": "Đăng xuất",
+    "logoutSuccess": "Đăng xuất thành công"
+  },
+  "hero": {
+    "title": "Nền tảng Quản lý Tiêm chủng Thông minh",
+    "subtitle": "Sử dụng công nghệ Blockchain để đảm bảo minh bạch và an toàn trong quá trình tiêm chủng",
+    "viewVaccines": "Xem Vắc-xin",
+    "learnMore": "Tìm hiểu thêm",
+    "certificate": {
+      "title": "Giấy chứng nhận Tiêm chủng",
+      "id": "Mã",
+      "fullName": "Họ và tên",
+      "dob": "Ngày sinh",
+      "vaccine": "Vắc-xin",
+      "doses": "Liều",
+      "blockchainHash": "Mã Blockchain",
+      "verification": "Xác thực Blockchain"
+    }
+  },
+  "service": {
+    "title": "Thông tin an toàn với Blockchain",
+    "subtitle": "Hệ thống phi tập trung của chúng tôi đảm bảo dữ liệu tiêm chủng của bạn vẫn riêng tư nhưng vẫn có thể xác minh bởi các bên được phép.",
+    "features": {
+      "immutableData": {
+        "title": "Dữ liệu không thể thay đổi",
+        "description": "Khi đã ghi trên blockchain, dữ liệu tiêm chủng của bạn không thể thay đổi hoặc xóa, ngăn chặn gian lận."
+      },
+      "instantVerification": {
+        "title": "Xác minh ngay lập tức",
+        "description": "Các bên được phép có thể xác minh trạng thái tiêm chủng của bạn trong vài giây mà không làm lộ thông tin riêng tư."
+      },
+      "globalAccess": {
+        "title": "Truy cập toàn cầu",
+        "description": "Hộ chiếu vắc-xin kỹ thuật số của bạn hoạt động ở mọi nơi, được công nhận trên toàn cầu và các hệ thống y tế."
+      }
+    }
+  }
+}

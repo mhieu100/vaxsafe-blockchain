@@ -1,11 +1,10 @@
 import { useEffect, useRef, useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
 import { EditOutlined } from '@ant-design/icons';
 import { sfLike } from 'spring-filter-query-builder';
 import queryString from 'query-string';
 
 import DataTable from '../../components/data-table';
-import { fetchRole } from '../../redux/slice/roleSlice';
+import { useRoleStore } from '../../stores/useRoleStore';
 import { callFetchPermission } from '../../config/api.permission';
 import { groupByPermission } from '../../config/utils';
 import ModalRole from '../../components/modal/modal.role';
@@ -13,10 +12,10 @@ import ModalRole from '../../components/modal/modal.role';
 const RolePage = () => {
   const tableRef = useRef();
 
-  const isFetching = useSelector((state) => state.role.isFetching);
-  const meta = useSelector((state) => state.role.meta);
-  const roles = useSelector((state) => state.role.result);
-  const dispatch = useDispatch();
+  const isFetching = useRoleStore((state) => state.isFetching);
+  const meta = useRoleStore((state) => state.meta);
+  const roles = useRoleStore((state) => state.result);
+  const fetchRole = useRoleStore((state) => state.fetchRole);
 
   const [openModal, setOpenModal] = useState(false);
   const [listPermissions, setListPermissions] = useState();
@@ -108,7 +107,7 @@ const RolePage = () => {
         dataSource={roles}
         request={async (params, sort, filter) => {
           const query = buildQuery(params, sort, filter);
-          dispatch(fetchRole({ query }));
+          fetchRole(query);
         }}
         scroll={{ x: true }}
         pagination={{

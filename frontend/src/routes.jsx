@@ -8,32 +8,36 @@ import LoginPage from './pages/auth/login';
 import LayoutAdmin from './components/admin/layout.admin';
 import ProtectedAdminRoute from './components/share/protected-route';
 import ProtectedStaffRoute from './components/share/protected-route/staff-protected';
+import ProtectedAuthRoute from './components/auth/ProtectedAuthRoute';
 import VaccinePage from './pages/admin/vaccine';
 import CenterPage from './pages/admin/center';
 import UserPage from './pages/admin/user';
-import ProfilePage from './pages/auth/profile';
+import AuthProfilePage from './pages/auth/profile';
+import UserProfilePage from './pages/private/ProfilePage';
 import ProtectedUserRoute from './components/share/protected-route/user-protected';
 import PermissionPage from './pages/admin/permission';
 import RolePage from './pages/admin/role';
-import SuccessPage from './pages/client/success';
-import HomePage from './pages/client/home';
-import MarketPage from './pages/client/market';
-import BookingPage from './pages/client/booking';
-import CertificatePage from './pages/auth/certificate/[id]';
 
 // Staff pages
 import LayoutStaff from './components/staff/layout.staff';
 import StaffDashboard from './pages/staff/dashboard';
 import MySchedulePage from './pages/staff/my-schedule';
 import PendingAppointmentPage from './pages/staff/pending-appointment';
-import VaccineRAGSystem from './pages/client/recommend';
-import CartPage from './pages/client/cart';
-import Checkout from './pages/client/checkout';
-import Profile from './pages/auth';
 import CalendarView from './pages/staff/calendar-view';
 import DoctorSchedule from './pages/staff/doctor-schedule';
 import DoctorDashboard from './pages/staff/doctor-dashboard';
 import NewsPage from './pages/admin/news';
+import HomePage from './pages/client/Home';
+import VaccineDetailPage from './pages/public/VaccineDetailPage';
+import CartPage from './pages/public/CartPage';
+import ForgotPasswordPage from './pages/auth/ForgotPasswordPage';
+import ResetPasswordPage from './pages/auth/ResetPasswordPage';
+import BookingPage from './pages/private/BookingPage';
+import CheckoutPage from './pages/private/CheckoutPage';
+import BlockchainPage from './pages/private/BlockchainPage';
+import SuccessPage from './pages/private/SuccessPage';
+import CancelPage from './pages/private/CancelPage';
+import VaccineListPage from './pages/client/VaccineListPage';
 
 const router = createBrowserRouter([
   {
@@ -42,28 +46,55 @@ const router = createBrowserRouter([
     errorElement: <NotFound />,
     children: [
       { index: true, element: <HomePage /> },
-      { path: 'market', element: <MarketPage /> },
-      {
-        path: 'cart',
-        element: <CartPage />,
-      },
-      { path: 'booking', element: <BookingPage /> },
-      { path: 'success', element: <SuccessPage /> },
-      { path: 'demo', element: <VaccineRAGSystem /> },
-      { path: 'checkout', element: <Checkout /> },
+      { path: 'vaccine', element: <VaccineListPage /> },
+      { path: 'vaccine/:id', element: <VaccineDetailPage /> },
+      { path: 'cart', element: <CartPage /> },
+
       {
         path: 'profile',
         element: (
           <ProtectedUserRoute>
-            <ProfilePage />
+            <UserProfilePage />
           </ProtectedUserRoute>
         ),
       },
       {
-        path: 'profile_test',
+        path: 'booking',
         element: (
           <ProtectedUserRoute>
-            <Profile />
+            <BookingPage />
+          </ProtectedUserRoute>
+        ),
+      },
+      {
+        path: 'checkout',
+        element: (
+          <ProtectedUserRoute>
+            <CheckoutPage />
+          </ProtectedUserRoute>
+        ),
+      },
+      {
+        path: 'blockchain',
+        element: (
+          <ProtectedUserRoute>
+            <BlockchainPage />
+          </ProtectedUserRoute>
+        ),
+      },
+      {
+        path: 'success',
+        element: (
+          <ProtectedUserRoute>
+            <SuccessPage />
+          </ProtectedUserRoute>
+        ),
+      },
+      {
+        path: 'cancel',
+        element: (
+          <ProtectedUserRoute>
+            <CancelPage />
           </ProtectedUserRoute>
         ),
       },
@@ -152,17 +183,39 @@ const router = createBrowserRouter([
   },
 
   {
-    path: '/auth/certificate/:id',
-    element: <CertificatePage />,
-  },
-  {
     path: '/login',
-    element: <LoginPage />,
+    element: (
+      <ProtectedAuthRoute>
+        <LoginPage />
+      </ProtectedAuthRoute>
+    ),
   },
 
   {
     path: '/register',
-    element: <RegisterPage />,
+    element: (
+      <ProtectedAuthRoute>
+        <RegisterPage />
+      </ProtectedAuthRoute>
+    ),
+  },
+
+  {
+    path: '/forgot-password',
+    element: (
+      <ProtectedAuthRoute>
+        <ForgotPasswordPage />
+      </ProtectedAuthRoute>
+    ),
+  },
+
+  {
+    path: '/reset-password',
+    element: (
+      <ProtectedAuthRoute>
+        <ResetPasswordPage />
+      </ProtectedAuthRoute>
+    ),
   },
 ]);
 

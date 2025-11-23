@@ -1,11 +1,10 @@
-import { useDispatch, useSelector } from 'react-redux';
 import { useRef, useState } from 'react';
 import queryString from 'query-string';
 import { sfLike } from 'spring-filter-query-builder';
 import { Button, message, notification, Popconfirm, Space } from 'antd';
 import { DeleteOutlined, EditOutlined, PlusOutlined } from '@ant-design/icons';
 
-import { fetchCenter } from '../../redux/slice/centerSlice';
+import { useCenterStore } from '../../stores/useCenterStore';
 import DataTable from '../../components/data-table';
 import ModalCenter from '../../components/modal/modal.center';
 import { callDeleteCenter } from '../../config/api.center';
@@ -19,10 +18,10 @@ const CenterPage = () => {
 
   const [dataInit, setDataInit] = useState(null);
 
-  const isFetching = useSelector((state) => state.center.isFetching);
-  const meta = useSelector((state) => state.center.meta);
-  const centers = useSelector((state) => state.center.result);
-  const dispatch = useDispatch();
+  const isFetching = useCenterStore((state) => state.isFetching);
+  const meta = useCenterStore((state) => state.meta);
+  const centers = useCenterStore((state) => state.result);
+  const fetchCenter = useCenterStore((state) => state.fetchCenter);
   const [openModal, setOpenModal] = useState(false);
 
   const handleDeleteCompany = async (id) => {
@@ -180,7 +179,7 @@ const CenterPage = () => {
         dataSource={centers}
         request={async (params, sort, filter) => {
           const query = buildQuery(params, sort, filter);
-          dispatch(fetchCenter({ query }));
+          fetchCenter(query);
         }}
         scroll={{ x: true }}
         pagination={{

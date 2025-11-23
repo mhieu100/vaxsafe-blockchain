@@ -7,12 +7,12 @@ import customParseFormat from 'dayjs/plugin/customParseFormat';
 import { callFetchDoctor } from '../../config/api.user';
 import { callUpdateAppointment } from '../../config/api.appointment';
 import '../../styles/reset.scss';
-import { useSelector } from 'react-redux';
+import { useAccountStore } from '../../stores/useAccountStore';
 
 dayjs.extend(customParseFormat);
 
 const ModalAppointment = (props) => {
-  const user = useSelector((state) => state.account.user);
+  const user = useAccountStore((state) => state.user);
   const { openModal, setOpenModal, reloadTable, dataInit, setDataInit } = props;
 
   const [form] = Form.useForm();

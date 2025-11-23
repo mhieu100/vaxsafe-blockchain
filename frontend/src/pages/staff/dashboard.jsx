@@ -16,7 +16,6 @@ import {
   Alert,
   Modal,
 } from 'antd';
-import { useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import dayjs from 'dayjs';
@@ -39,12 +38,13 @@ import {
 import { callGetUrgentAppointments, callGetTodayAppointments } from '../../config/api.appointment';
 import UrgencyGuide from '../../components/UrgencyGuide';
 import ProcessUrgentAppointmentModal from '../../components/modal/ProcessUrgentAppointmentModal';
+import { useAccountStore } from '../../stores/useAccountStore';
 
 const { Title, Text } = Typography;
 
 const StaffDashboard = () => {
   const navigate = useNavigate();
-  const user = useSelector((state) => state.account.user);
+  const user = useAccountStore((state) => state.user);
   const isCashierRole = user?.role === 'CASHIER';
   const isDoctorRole = user?.role === 'DOCTOR';
 

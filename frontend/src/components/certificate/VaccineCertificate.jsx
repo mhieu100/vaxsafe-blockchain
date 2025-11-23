@@ -1,9 +1,10 @@
 import React, { useEffect } from 'react';
 import dayjs from 'dayjs';
 import { QRCodeSVG } from 'qrcode.react';
-import { useSelector } from 'react-redux';
+import { useAccountStore } from '../../stores/useAccountStore';
+
 const VaccineCertificate = ({ data, transactionHash }) => {
-  const user = useSelector((state) => state.account.user);
+  const user = useAccountStore((state) => state.user);
 
   return (
     <div className="bg-gray-50">

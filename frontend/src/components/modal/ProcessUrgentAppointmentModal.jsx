@@ -1,5 +1,4 @@
 import { useState, useEffect } from 'react';
-import { useSelector } from 'react-redux';
 import {
   Modal,
   Form,
@@ -36,6 +35,7 @@ import {
   callGetDoctorAvailableSlots,
   callGetAvailableDoctorsByCenter,
 } from '../../config/api.doctor';
+import { useAccountStore } from '../../stores/useAccountStore';
 
 const { Text } = Typography;
 const { TextArea } = Input;
@@ -55,7 +55,7 @@ const ProcessUrgentAppointmentModal = ({
   const [availableSlots, setAvailableSlots] = useState([]);
   const [doctors, setDoctors] = useState([]);
 
-  const user = useSelector((state) => state.account.user);
+  const user = useAccountStore((state) => state.user);
   const userCenterId = user?.centerId;
 
   // Xác định các giá trị từ appointment (với fallback để tránh lỗi)
