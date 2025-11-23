@@ -13,8 +13,6 @@ import '../../styles/reset.scss';
 import { callAddAppointmentMetaMark } from '../../config/api.appointment';
 import { callFetchCenter } from '../../config/api.center';
 import { useNavigate } from 'react-router-dom';
-// eslint-disable-next-line import/no-named-as-default
-import Web3 from 'web3';
 
 const ModalOrder = (props) => {
   const navigate = useNavigate();
@@ -22,7 +20,6 @@ const ModalOrder = (props) => {
   const [animation, setAnimation] = useState('open');
   const { openModal, setOpenModal, vaccine } = props;
   const [form] = Form.useForm();
-  const web3Instance = new Web3(window.ethereum);
   const user = useSelector((state) => state.account.user);
 
   const handleReset = async () => {
@@ -34,55 +31,18 @@ const ModalOrder = (props) => {
     setAnimation('open');
   };
 
-  const sendETH = async () => {
-    try {
-      const amount = 10;
-      const wallet = '0xef9fDC1e465E658ABfc0625A54fb1859B18d67C8';
-      const amountInWei = web3Instance.utils.toWei(amount, 'ether');
-
-      const tx = {
-        from: user.walletAddress,
-        to: wallet,
-        value: amountInWei,
-        gas: 21000,
-      };
-
-      const receipt = await web3Instance.eth.sendTransaction(tx);
-      return receipt.status; // Return the transaction status directly
-    } catch (error) {
-      console.error('Transaction failed:', error);
-      return false;
-    }
-  };
-
   const submitOrder = async (valuesForm) => {
     const { date, time, center, paymentType } = valuesForm;
 
     if (paymentType === 'METAMASK') {
-      // const transactionSuccess = await sendETH(); // Await here
-
-      // if (transactionSuccess) {
       const res = await callAddAppointmentMetaMark(
         vaccine.vaccineId,
-        user.walletAddress,
+        user.id,
         center,
         date,
         time
       );
       console.log(res);
-      //   if (res.statusCode === 200) {
-      //     message.success('Appointment booked successfully');
-      //     handleReset();
-      //     navigate('/success?transaction=true&paymentId=' + res.data.paymentId);
-      //   } else {
-      //     handleReset();
-      //     navigate('/success?transaction=false');
-      //   }
-      // } else {
-      //   handleReset();
-      //   navigate('/success?transaction=false');
-      //   message.error('Payment transaction failed');
-      // }
     }
   };
 
