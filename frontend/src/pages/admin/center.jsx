@@ -135,37 +135,38 @@ const CenterPage = () => {
   const buildQuery = (params, sort) => {
     const clone = { ...params };
     const q = {
-      page: params.current,
-      size: params.pageSize,
-      filter: '',
+      page: clone.current, // Backend configured for one-indexed pages
+      size: clone.pageSize,
     };
 
-    if (clone.name) q.filter = `${sfLike('name', clone.name)}`;
+    // Build filter
+    const filters = [];
+    if (clone.name) {
+      filters.push(sfLike('name', clone.name));
+    }
     if (clone.address) {
-      q.filter = clone.name
-        ? q.filter + ' and ' + `${sfLike('address', clone.address)}`
-        : `${sfLike('address', clone.address)}`;
+      filters.push(sfLike('address', clone.address));
     }
 
-    if (!q.filter) delete q.filter;
+    if (filters.length > 0) {
+      q.filter = filters.join(' and ');
+    }
 
-    let temp = queryString.stringify(q);
-
-    let sortBy = '';
+    // Build sort
     if (sort && sort.name) {
-      sortBy = sort.name === 'ascend' ? 'sort=name,asc' : 'sort=name,desc';
+      q.sort = `name,${sort.name === 'ascend' ? 'asc' : 'desc'}`;
     }
     if (sort && sort.address) {
-      sortBy =
-        sort.address === 'ascend' ? 'sort=address,asc' : 'sort=address,desc';
+      q.sort = `address,${sort.address === 'ascend' ? 'asc' : 'desc'}`;
     }
     if (sort && sort.capacity) {
-      sortBy =
-        sort.capacity === 'ascend' ? 'sort=capacity,asc' : 'sort=capacity,desc';
+      q.sort = `capacity,${sort.capacity === 'ascend' ? 'asc' : 'desc'}`;
     }
-    temp = `${temp}&${sortBy}`;
+    if (!q.sort) {
+      q.sort = 'name,asc';
+    }
 
-    return temp;
+    return queryString.stringify(q);
   };
 
   return (

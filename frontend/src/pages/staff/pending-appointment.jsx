@@ -15,14 +15,9 @@ import {
   Input,
   Select,
   DatePicker,
-  Modal,
-  Form,
-  TimePicker,
-  Radio,
   message,
   Tooltip,
   Avatar,
-  Divider,
 } from 'antd';
 import {
   EditOutlined,
@@ -41,6 +36,7 @@ import {
 } from '@ant-design/icons';
 
 import DataTable from '../../components/data-table';
+import AssignAppointmentModal from '../../components/modal/AssignAppointmentModal';
 import { useDispatch, useSelector } from 'react-redux';
 import { getColorStatus } from '../../utils/status';
 import { fetchAppointmentOfCenter } from '../../redux/slice/appointmentSlice';
@@ -48,11 +44,9 @@ import dayjs from 'dayjs';
 
 const { Title, Text } = Typography;
 const { Option } = Select;
-const { TextArea } = Input;
 
 const PendingAppointmentPage = () => {
   const tableRef = useRef();
-  const [form] = Form.useForm();
 
   const isFetching = useSelector((state) => state.appointment.isFetching);
   const meta = useSelector((state) => state.appointment.meta);
@@ -60,41 +54,12 @@ const PendingAppointmentPage = () => {
   const dispatch = useDispatch();
   const [openAssignModal, setOpenAssignModal] = useState(false);
   const [selectedAppointment, setSelectedAppointment] = useState(null);
-  const [selectedDoctor, setSelectedDoctor] = useState(null);
-  const [selectedDate, setSelectedDate] = useState(dayjs());
-  const [selectedTimeSlot, setSelectedTimeSlot] = useState(null);
-  const [doctorSchedules, setDoctorSchedules] = useState([]);
-  const [isRescheduleRequest, setIsRescheduleRequest] = useState(false);
 
   // Filter states
   const [searchText, setSearchText] = useState('');
   const [vaccineFilter, setVaccineFilter] = useState('');
   const [dateFilter, setDateFilter] = useState(null);
   const [priorityFilter, setPriorityFilter] = useState('');
-
-  // Mock data for doctors
-  const doctors = [
-    { id: 'BS001', name: 'BS. Nguyễn Văn Minh', specialty: 'Chuyên khoa Nhi' },
-    { id: 'BS002', name: 'BS. Trần Thị Lan', specialty: 'Đa khoa' },
-    { id: 'BS003', name: 'BS. Lê Hoàng Nam', specialty: 'Truyền nhiễm' },
-    { id: 'BS004', name: 'BS. Phạm Thị Hà', specialty: 'Sản Phụ khoa' },
-  ];
-
-  // Mock time slots
-  const mockTimeSlots = [
-    { time: '08:00', available: true },
-    { time: '08:30', available: false },
-    { time: '09:00', available: true },
-    { time: '09:30', available: false },
-    { time: '10:00', available: true },
-    { time: '10:30', available: true },
-    { time: '11:00', available: false },
-    { time: '13:00', available: true },
-    { time: '13:30', available: true },
-    { time: '14:00', available: false },
-    { time: '14:30', available: true },
-    { time: '15:00', available: true },
-  ];
 
   const reloadTable = () => {
     tableRef?.current?.reload();
@@ -113,63 +78,7 @@ const PendingAppointmentPage = () => {
 
   const handleAssignAppointment = (record) => {
     setSelectedAppointment(record);
-    setIsRescheduleRequest(record.status === 'PENDING_APPROVAL');
     setOpenAssignModal(true);
-    form.resetFields();
-    setSelectedDoctor(record.doctorId || null);
-    setSelectedTimeSlot(null);
-    
-    // If reschedule request, pre-fill the desired date
-    if (record.status === 'PENDING_APPROVAL' && record.desiredDate) {
-      const desiredDate = dayjs(record.desiredDate);
-      setSelectedDate(desiredDate);
-      form.setFieldsValue({
-        appointmentDate: desiredDate,
-        doctorId: record.doctorId,
-      });
-      
-      // Load schedule for existing doctor
-      if (record.doctorId) {
-        loadDoctorSchedule(record.doctorId, desiredDate);
-      }
-    } else {
-      setSelectedDate(dayjs());
-    }
-  };
-
-  const handleDoctorChange = (doctorId) => {
-    setSelectedDoctor(doctorId);
-    loadDoctorSchedule(doctorId, selectedDate);
-  };
-
-  const handleDateChange = (date) => {
-    setSelectedDate(date);
-    if (selectedDoctor) {
-      loadDoctorSchedule(selectedDoctor, date);
-    }
-  };
-
-  const loadDoctorSchedule = (doctorId, date) => {
-    // Mock loading schedule - replace with actual API call
-    setDoctorSchedules(mockTimeSlots);
-  };
-
-  const handleConfirmAssign = async () => {
-    try {
-      const values = await form.validateFields();
-
-      if (!selectedTimeSlot) {
-        message.warning('Vui lòng chọn khung giờ!');
-        return;
-      }
-
-      // Mock API call - replace with actual API
-      message.success('Phân công lịch hẹn thành công!');
-      setOpenAssignModal(false);
-      reloadTable();
-    } catch (error) {
-      message.error('Vui lòng điền đầy đủ thông tin!');
-    }
   };
 
   const handleApplyFilters = () => {
@@ -580,277 +489,12 @@ const PendingAppointmentPage = () => {
       </Card>
 
       {/* Assign Modal */}
-      <Modal
-        title={
-          <Space>
-            {isRescheduleRequest ? (
-              <>
-                <EditOutlined style={{ color: '#faad14' }} />
-                <span>Duyệt Yêu Cầu Đổi Lịch</span>
-                <Tag color="warning">PENDING_APPROVAL</Tag>
-              </>
-            ) : (
-              <>
-                <CalendarOutlined style={{ color: '#1890ff' }} />
-                <span>Phân Công Lịch Hẹn</span>
-              </>
-            )}
-          </Space>
-        }
+      <AssignAppointmentModal
         open={openAssignModal}
-        onCancel={() => setOpenAssignModal(false)}
-        width={900}
-        footer={[
-          <Button key="cancel" onClick={() => setOpenAssignModal(false)}>
-            Hủy
-          </Button>,
-          <Button
-            key="submit"
-            type="primary"
-            icon={<CheckCircleOutlined />}
-            onClick={handleConfirmAssign}
-          >
-            {isRescheduleRequest ? 'Xác Nhận Đổi Lịch' : 'Xác Nhận Phân Công'}
-          </Button>,
-        ]}
-      >
-        {selectedAppointment && (
-          <>
-            {/* Appointment Info */}
-            <Card
-              size="small"
-              title={
-                <Space>
-                  <InfoCircleOutlined />
-                  <span>Thông Tin Lịch Hẹn</span>
-                  {isRescheduleRequest && (
-                    <Tag color="warning" icon={<EditOutlined />}>
-                      Yêu cầu đổi lịch
-                    </Tag>
-                  )}
-                </Space>
-              }
-              style={{ 
-                marginBottom: 24,
-                background: isRescheduleRequest ? '#fffbf0' : 'white'
-              }}
-            >
-              <Row gutter={[16, 16]}>
-                <Col span={12}>
-                  <Text type="secondary">Mã lịch hẹn:</Text>
-                  <br />
-                  <Text strong>#{selectedAppointment.id}</Text>
-                </Col>
-                <Col span={12}>
-                  <Text type="secondary">Bệnh nhân:</Text>
-                  <br />
-                  <Text strong>{selectedAppointment.patientName}</Text>
-                </Col>
-                <Col span={12}>
-                  <Text type="secondary">Số điện thoại:</Text>
-                  <br />
-                  <Text strong>{selectedAppointment.phone || 'N/A'}</Text>
-                </Col>
-                <Col span={12}>
-                  <Text type="secondary">Vaccine:</Text>
-                  <br />
-                  <Tag color="blue">{selectedAppointment.vaccineName}</Tag>
-                </Col>
-                
-                {/* Show old schedule if rescheduling */}
-                {isRescheduleRequest && selectedAppointment.scheduledDate && (
-                  <>
-                    <Col span={24}>
-                      <Divider style={{ margin: '12px 0' }} />
-                      <Text strong style={{ color: '#ff4d4f' }}>
-                        Lịch Cũ (Đang muốn đổi):
-                      </Text>
-                    </Col>
-                    <Col span={12}>
-                      <Text type="secondary">Ngày cũ:</Text>
-                      <br />
-                      <Text delete style={{ color: '#999' }}>
-                        {dayjs(selectedAppointment.scheduledDate).format('DD/MM/YYYY')}
-                        {selectedAppointment.scheduledTime && ` - ${selectedAppointment.scheduledTime}`}
-                      </Text>
-                    </Col>
-                    <Col span={12}>
-                      <Text type="secondary">Bác sĩ cũ:</Text>
-                      <br />
-                      <Text delete style={{ color: '#999' }}>
-                        {selectedAppointment.doctorName || 'Chưa có'}
-                      </Text>
-                    </Col>
-                  </>
-                )}
-                
-                <Col span={24}>
-                  <Divider style={{ margin: '12px 0' }} />
-                  <Text strong style={{ color: '#52c41a' }}>
-                    {isRescheduleRequest ? 'Lịch Mới (Yêu cầu):' : 'Thông tin yêu cầu:'}
-                  </Text>
-                </Col>
-                
-                <Col span={12}>
-                  <Text type="secondary">
-                    {isRescheduleRequest ? 'Ngày mới mong muốn:' : 'Ngày mong muốn:'}
-                  </Text>
-                  <br />
-                  <Text strong style={{ color: isRescheduleRequest ? '#52c41a' : '#ff4d4f' }}>
-                    {dayjs(selectedAppointment.desiredDate || selectedAppointment.scheduledDate).format('DD/MM/YYYY')}
-                    {selectedAppointment.desiredTime && ` - ${selectedAppointment.desiredTime}`}
-                  </Text>
-                </Col>
-                
-                <Col span={12}>
-                  <Text type="secondary">
-                    {isRescheduleRequest ? 'Thời gian yêu cầu:' : 'Trung tâm:'}
-                  </Text>
-                  <br />
-                  {isRescheduleRequest ? (
-                    <Text type="warning">
-                      {dayjs(selectedAppointment.rescheduledAt).format('DD/MM/YYYY HH:mm')}
-                    </Text>
-                  ) : (
-                    <Text>{selectedAppointment.centerName}</Text>
-                  )}
-                </Col>
-                
-                {isRescheduleRequest && selectedAppointment.rescheduleReason && (
-                  <Col span={24}>
-                    <Text type="secondary">Lý do đổi lịch:</Text>
-                    <br />
-                    <Text strong style={{ color: '#fa8c16' }}>
-                      {selectedAppointment.rescheduleReason}
-                    </Text>
-                  </Col>
-                )}
-                
-                {!isRescheduleRequest && selectedAppointment.notes && (
-                  <Col span={24}>
-                    <Text type="secondary">Ghi chú:</Text>
-                    <br />
-                    <Text>{selectedAppointment.notes}</Text>
-                  </Col>
-                )}
-              </Row>
-            </Card>
-
-            <Divider />
-
-            {/* Assignment Form */}
-            <Form form={form} layout="vertical">
-              <Form.Item
-                name="doctorId"
-                label={<Text strong>Chọn Bác Sĩ</Text>}
-                rules={[{ required: true, message: 'Vui lòng chọn bác sĩ!' }]}
-              >
-                <Select
-                  placeholder="-- Chọn bác sĩ --"
-                  onChange={handleDoctorChange}
-                  size="large"
-                >
-                  {doctors.map((doctor) => (
-                    <Option key={doctor.id} value={doctor.id}>
-                      <Space>
-                        <UserOutlined />
-                        <span>{doctor.name}</span>
-                        <Text type="secondary" style={{ fontSize: 12 }}>
-                          - {doctor.specialty}
-                        </Text>
-                      </Space>
-                    </Option>
-                  ))}
-                </Select>
-              </Form.Item>
-
-              <Form.Item
-                name="appointmentDate"
-                label={<Text strong>Chọn Ngày</Text>}
-                rules={[{ required: true, message: 'Vui lòng chọn ngày!' }]}
-                initialValue={selectedDate}
-              >
-                <DatePicker
-                  style={{ width: '100%' }}
-                  format="DD/MM/YYYY"
-                  onChange={handleDateChange}
-                  size="large"
-                  disabledDate={(current) =>
-                    current && current < dayjs().startOf('day')
-                  }
-                />
-              </Form.Item>
-
-              {selectedDoctor && doctorSchedules.length > 0 && (
-                <Form.Item label={<Text strong>Chọn Khung Giờ</Text>}>
-                  <div
-                    style={{
-                      maxHeight: 250,
-                      overflowY: 'auto',
-                      border: '1px solid #d9d9d9',
-                      borderRadius: 8,
-                      padding: 16,
-                    }}
-                  >
-                    <Radio.Group
-                      onChange={(e) => setSelectedTimeSlot(e.target.value)}
-                      value={selectedTimeSlot}
-                      style={{ width: '100%' }}
-                    >
-                      <Space
-                        direction="vertical"
-                        style={{ width: '100%' }}
-                        size="middle"
-                      >
-                        {doctorSchedules.map((slot, index) => (
-                          <Radio
-                            key={index}
-                            value={slot.time}
-                            disabled={!slot.available}
-                            style={{
-                              width: '100%',
-                              padding: 12,
-                              background: slot.available
-                                ? '#f6ffed'
-                                : '#fff2e8',
-                              border: `1px solid ${
-                                slot.available ? '#b7eb8f' : '#ffbb96'
-                              }`,
-                              borderRadius: 8,
-                            }}
-                          >
-                            <Space
-                              style={{
-                                width: '100%',
-                                justifyContent: 'space-between',
-                              }}
-                            >
-                              <Space>
-                                <ClockCircleOutlined />
-                                <Text strong>{slot.time}</Text>
-                              </Space>
-                              <Tag color={slot.available ? 'success' : 'error'}>
-                                {slot.available ? 'Trống' : 'Đã đặt'}
-                              </Tag>
-                            </Space>
-                          </Radio>
-                        ))}
-                      </Space>
-                    </Radio.Group>
-                  </div>
-                </Form.Item>
-              )}
-
-              <Form.Item
-                name="notes"
-                label={<Text strong>Ghi Chú Thêm (Tùy chọn)</Text>}
-              >
-                <TextArea rows={3} placeholder="Nhập ghi chú cho bác sĩ..." />
-              </Form.Item>
-            </Form>
-          </>
-        )}
-      </Modal>
+        onClose={() => setOpenAssignModal(false)}
+        appointment={selectedAppointment}
+        onSuccess={reloadTable}
+      />
     </div>
   );
 };

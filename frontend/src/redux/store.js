@@ -9,6 +9,7 @@ import roleReducer from './slice/roleSlice';
 import bookingReducer from './slice/bookingSlice';
 import appointmentReducer from './slice/appointmentSlice';
 import cartReducer from './slice/cartSlice';
+import newsReducer from './slice/newsSlice';
 
 import storage from 'redux-persist/lib/storage';
 import {
@@ -40,6 +41,7 @@ export const store = configureStore({
     user: userReducer,
     permission: permissionReducer,
     role: roleReducer,
+    news: newsReducer,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({

@@ -1,4 +1,5 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { useSelector } from 'react-redux';
 import {
   Card,
   Row,
@@ -15,7 +16,8 @@ import {
   Badge,
   Avatar,
   message,
-  Segmented
+  Segmented,
+  Spin
 } from 'antd';
 import {
   CalendarOutlined,
@@ -33,87 +35,64 @@ import {
   CalendarTwoTone
 } from '@ant-design/icons';
 import dayjs from 'dayjs';
+import { callGetTodayAppointments } from '../../config/api.appointment';
 
 const { Title, Text } = Typography;
 
 const DoctorDashboard = () => {
+  const user = useSelector((state) => state.account.user);
   const [viewMode, setViewMode] = useState('today');
   const [detailModalOpen, setDetailModalOpen] = useState(false);
   const [selectedAppointment, setSelectedAppointment] = useState(null);
+  const [todayAppointments, setTodayAppointments] = useState([]);
+  const [loading, setLoading] = useState(true);
 
-  // Mock doctor info
-  const doctorInfo = {
-    name: 'Nguyễn Văn Minh',
-    specialty: 'Bác sĩ Nhi khoa',
-    rating: 4.8,
-    todayAppointments: 5,
-    weekAppointments: 18,
-    monthCompleted: 45,
-    nextAppointment: {
-      time: '14:00',
-      patient: 'Trần Thị C',
-      vaccine: 'COVID-19'
+  // Fetch today's appointments
+  useEffect(() => {
+    fetchTodayAppointments();
+    // Auto refresh every 2 minutes
+    const interval = setInterval(fetchTodayAppointments, 120000);
+    return () => clearInterval(interval);
+  }, []);
+
+  const fetchTodayAppointments = async () => {
+    try {
+      setLoading(true);
+      const res = await callGetTodayAppointments();
+      if (res && res.data) {
+        setTodayAppointments(res.data);
+      }
+    } catch (err) {
+      console.error('Error fetching today appointments:', err);
+      message.error('Không thể tải danh sách lịch hẹn hôm nay');
+    } finally {
+      setLoading(false);
     }
   };
 
-  // Mock appointments data
-  const [appointments] = useState([
-    {
-      id: 'LH001',
-      time: '08:30 - 09:00',
-      patient: 'Nguyễn Văn B',
-      phone: '0901234567',
-      vaccine: 'COVID-19',
-      vaccineColor: 'red',
-      notes: 'Tiền sử dị ứng thuốc',
-      status: 'completed',
-      urgent: false
-    },
-    {
-      id: 'LH002',
-      time: '09:30 - 10:00',
-      patient: 'Trần Thị C',
-      phone: '0907654321',
-      vaccine: 'Cúm',
-      vaccineColor: 'blue',
-      notes: 'Phụ nữ có thai',
-      status: 'in-progress',
-      urgent: true
-    },
-    {
-      id: 'LH003',
-      time: '10:30 - 11:00',
-      patient: 'Lê Văn D',
-      phone: '0912345678',
-      vaccine: 'Viêm Gan B',
-      vaccineColor: 'green',
-      notes: 'Không có ghi chú',
-      status: 'pending',
-      urgent: false
-    },
-    {
-      id: 'LH004',
-      time: '14:00 - 14:30',
-      patient: 'Phạm Thị E',
-      phone: '0923456789',
-      vaccine: 'HPV',
-      vaccineColor: 'orange',
-      notes: 'Mũi 2/3',
-      status: 'pending',
-      urgent: false
-    },
-    {
-      id: 'LH005',
-      time: '15:30 - 16:00',
-      patient: 'Hoàng Văn F',
-      phone: '0934567890',
-      vaccine: 'Sởi',
-      vaccineColor: 'red',
-      notes: 'Sinh viên',
-      status: 'pending',
-      urgent: false
-    }
-  ]);
+  // Calculate statistics from real data
+  const completedCount = todayAppointments.filter(a => a.status === 'COMPLETED').length;
+  const scheduledCount = todayAppointments.filter(a => a.status === 'SCHEDULED').length;
+  const cancelledCount = todayAppointments.filter(a => a.status === 'CANCELLED').length;
+
+  const nextAppointment = todayAppointments
+    .filter(a => a.status === 'SCHEDULED')
+    .sort((a, b) => a.scheduledTime.localeCompare(b.scheduledTime))[0];
+
+  // Mock doctor info (can be replaced with real data later)
+  const doctorInfo = {
+    name: user?.fullName || 'Bác sĩ',
+    specialty: 'Bác sĩ',
+    rating: 4.8,
+    todayAppointments: todayAppointments.length,
+    weekAppointments: 18,
+    monthCompleted: 45,
+    nextAppointment: nextAppointment ? {
+      time: nextAppointment.scheduledTime,
+      patient: nextAppointment.patientName,
+      vaccine: nextAppointment.vaccineName
+    } : null
+  };
 
   // Weekly statistics
   const weeklyStats = {
@@ -122,16 +101,30 @@ const DoctorDashboard = () => {
     cancelled: { value: 1, total: 18, percentage: 6 }
   };
 
-  // Get status config
+  // Get status config - map backend status to UI
   const getStatusConfig = (status) => {
     const configs = {
-      'completed': { color: 'success', text: 'Hoàn thành', icon: <CheckCircleOutlined /> },
-      'in-progress': { color: 'warning', text: 'Đang tiêm', icon: <ClockCircleOutlined /> },
-      'pending': { color: 'default', text: 'Chờ tiêm', icon: <ClockCircleOutlined /> },
-      'cancelled': { color: 'error', text: 'Đã hủy', icon: <CloseCircleOutlined /> }
+      'COMPLETED': { color: 'success', text: 'Hoàn thành', icon: <CheckCircleOutlined /> },
+      'IN_PROGRESS': { color: 'warning', text: 'Đang tiêm', icon: <ClockCircleOutlined /> },
+      'SCHEDULED': { color: 'default', text: 'Chờ tiêm', icon: <ClockCircleOutlined /> },
+      'CANCELLED': { color: 'error', text: 'Đã hủy', icon: <CloseCircleOutlined /> },
+      'PENDING_APPROVAL': { color: 'warning', text: 'Chờ duyệt', icon: <ClockCircleOutlined /> }
     };
-    return configs[status] || configs.pending;
+    return configs[status] || configs['SCHEDULED'];
   };
+
+  // Map appointment to display format
+  const mapAppointment = (apt) => ({
+    id: apt.id,
+    time: apt.scheduledTime || 'N/A',
+    patient: apt.patientName,
+    phone: apt.patientPhone || 'N/A',
+    vaccine: apt.vaccineName,
+    vaccineColor: 'blue', // Can be dynamic based on vaccine type
+    notes: apt.notes || 'Không có ghi chú',
+    status: apt.status,
+    urgent: apt.status === 'PENDING_APPROVAL' || false
+  });
 
   // Handle view appointment
   const handleViewAppointment = (appointment) => {
@@ -185,11 +178,12 @@ const DoctorDashboard = () => {
   };
 
   // Render appointment card
-  const renderAppointmentCard = (appointment) => {
+  const renderAppointmentCard = (apt) => {
+    const appointment = mapAppointment(apt);
     const statusConfig = getStatusConfig(appointment.status);
-    const isCompleted = appointment.status === 'completed';
-    const isInProgress = appointment.status === 'in-progress';
-    const isPending = appointment.status === 'pending';
+    const isCompleted = appointment.status === 'COMPLETED';
+    const isInProgress = appointment.status === 'IN_PROGRESS';
+    const isPending = appointment.status === 'SCHEDULED';
 
     return (
       <Col xs={24} md={12} key={appointment.id}>
@@ -358,7 +352,7 @@ const DoctorDashboard = () => {
               prefix={<CalendarOutlined />}
             />
             <Text type="secondary" style={{ fontSize: '12px' }}>
-              <ClockCircleOutlined /> Còn 3 lịch chưa hoàn thành
+              <ClockCircleOutlined /> Còn {scheduledCount} lịch chưa hoàn thành
             </Text>
           </Card>
         </Col>
@@ -398,16 +392,27 @@ const DoctorDashboard = () => {
         {/* Next Appointment */}
         <Col xs={12} sm={12} md={6}>
           <Card>
-            <Statistic
-              title="Lịch Tiếp Theo"
-              value={doctorInfo.nextAppointment.time}
-              suffix="hôm nay"
-              valueStyle={{ color: '#faad14', fontSize: '32px' }}
-              prefix={<BellOutlined />}
-            />
-            <Text type="secondary" style={{ fontSize: '12px' }}>
-              <UserOutlined /> {doctorInfo.nextAppointment.patient} - {doctorInfo.nextAppointment.vaccine}
-            </Text>
+            {doctorInfo.nextAppointment ? (
+              <>
+                <Statistic
+                  title="Lịch Tiếp Theo"
+                  value={doctorInfo.nextAppointment.time}
+                  suffix="hôm nay"
+                  valueStyle={{ color: '#faad14', fontSize: '32px' }}
+                  prefix={<BellOutlined />}
+                />
+                <Text type="secondary" style={{ fontSize: '12px' }}>
+                  <UserOutlined /> {doctorInfo.nextAppointment.patient} - {doctorInfo.nextAppointment.vaccine}
+                </Text>
+              </>
+            ) : (
+              <Statistic
+                title="Lịch Tiếp Theo"
+                value="N/A"
+                valueStyle={{ color: '#999', fontSize: '32px' }}
+                prefix={<BellOutlined />}
+              />
+            )}
           </Card>
         </Col>
       </Row>
@@ -422,11 +427,28 @@ const DoctorDashboard = () => {
             </Text>
           </Space>
         }
+        extra={
+          <Button icon={<CalendarOutlined />} onClick={fetchTodayAppointments} loading={loading}>
+            Làm mới
+          </Button>
+        }
         style={{ marginBottom: '24px' }}
       >
-        <Row gutter={[16, 16]}>
-          {appointments.map(appointment => renderAppointmentCard(appointment))}
-        </Row>
+        {loading ? (
+          <div style={{ textAlign: 'center', padding: '60px 0' }}>
+            <Spin size="large" tip="Đang tải lịch hẹn..." />
+          </div>
+        ) : todayAppointments.length === 0 ? (
+          <div style={{ textAlign: 'center', padding: '60px 0' }}>
+            <CheckCircleOutlined style={{ fontSize: 64, color: '#52c41a', marginBottom: 16 }} />
+            <Title level={4}>Không có lịch hẹn hôm nay</Title>
+            <Text type="secondary">Bạn có thể nghỉ ngơi hoặc xem lịch hẹn khác</Text>
+          </div>
+        ) : (
+          <Row gutter={[16, 16]}>
+            {todayAppointments.map(appointment => renderAppointmentCard(appointment))}
+          </Row>
+        )}
       </Card>
 
       {/* Statistics Row */}

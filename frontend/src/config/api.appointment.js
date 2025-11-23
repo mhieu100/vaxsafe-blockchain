@@ -133,3 +133,23 @@ export const callRefundAppointment = (appointmentId) => {
 export const callVerifyId = (id) => {
   return axios.get(`/appointments/${id}/verify`);
 };
+
+/**
+ * Get urgent appointments for cashier dashboard
+ * Returns appointments that need immediate attention:
+ * - Pending reschedule requests
+ * - Appointments without doctor assigned
+ * - Appointments coming soon
+ * - Overdue appointments
+ */
+export const callGetUrgentAppointments = () => {
+  return axios.get('/appointments/urgent');
+};
+
+/**
+ * Get today's appointments for doctor dashboard
+ * Returns all appointments scheduled for today for the logged-in doctor
+ */
+export const callGetTodayAppointments = () => {
+  return axios.get('/appointments/today');
+};

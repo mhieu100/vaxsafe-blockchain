@@ -3,12 +3,11 @@ import { useEffect, useState } from 'react';
 import {
   CalendarOutlined,
   UserOutlined,
-  MedicineBoxOutlined,
   DashboardOutlined,
-  BankOutlined,
   LogoutOutlined,
   EditOutlined,
   SafetyCertificateOutlined,
+  NotificationFilled,
 } from '@ant-design/icons';
 
 import { useDispatch, useSelector } from 'react-redux';

@@ -149,34 +149,35 @@ const PermissionPage = () => {
   const buildQuery = (params, sort) => {
     const clone = { ...params };
     const q = {
-      page: params.current,
-      size: params.pageSize,
-      filter: '',
+      page: clone.current, // Backend configured for one-indexed pages
+      size: clone.pageSize,
     };
 
-    if (clone.apiPath) q.filter = `${sfLike('apiPath', clone.apiPath)}`;
+    // Build filter
+    const filters = [];
+    if (clone.apiPath) {
+      filters.push(sfLike('apiPath', clone.apiPath));
+    }
     if (clone.module) {
-      q.filter = clone.apiPath
-        ? q.filter + ' and ' + `${sfLike('module', clone.module)}`
-        : `${sfLike('module', clone.module)}`;
+      filters.push(sfLike('module', clone.module));
     }
     if (clone.method) {
-      q.filter = clone.apiPath
-        ? q.filter + ' and ' + `${sfLike('method', clone.method)}`
-        : `${sfLike('method', clone.method)}`;
+      filters.push(sfLike('method', clone.method));
     }
-    if (!q.filter) delete q.filter;
 
-    let temp = queryString.stringify(q);
+    if (filters.length > 0) {
+      q.filter = filters.join(' and ');
+    }
 
-    let sortBy = '';
+    // Build sort
     if (sort && sort.apiPath) {
-      sortBy = sort.apiPath === 'ascend' ? 'sort=apiPath,asc' : 'sort=apiPath,desc';
+      q.sort = `apiPath,${sort.apiPath === 'ascend' ? 'asc' : 'desc'}`;
     }
-    
-    temp = `${temp}&${sortBy}`;
+    if (!q.sort) {
+      q.sort = 'apiPath,asc';
+    }
 
-    return temp;
+    return queryString.stringify(q);
   };
 
   return (

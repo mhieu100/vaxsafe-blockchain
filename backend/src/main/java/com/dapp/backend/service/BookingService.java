@@ -126,15 +126,11 @@ public class BookingService {
             payment.setAmount(bookingRequest.getAmount());
             payment.setMethod(bookingRequest.getPaymentMethod());
 
-            if(bookingRequest.getPaymentMethod().toString().equals("PAYPAL")) {
-               payment.setAmount(bookingRequest.getAmount() * EXCHANGE_RATE_TO_USD);
-            } else if(bookingRequest.getPaymentMethod().toString().equals("METAMASK")){
-                payment.setAmount((double) Math.round(bookingRequest.getAmount() / 200000.0));
-            } else if (bookingRequest.getPaymentMethod().toString().equals("BANK")) {
-                payment.setAmount(bookingRequest.getAmount());
-            } else {
-                payment.setAmount(bookingRequest.getAmount());
-            }
+        switch (bookingRequest.getPaymentMethod().toString()) {
+            case "PAYPAL" -> payment.setAmount(bookingRequest.getAmount() * EXCHANGE_RATE_TO_USD);
+            case "METAMASK" -> payment.setAmount((double) Math.round(bookingRequest.getAmount() / 200000.0));
+            default -> payment.setAmount(bookingRequest.getAmount());
+        }
             payment.setCurrency(bookingRequest.getPaymentMethod().getCurrency());
             payment.setStatus(PaymentEnum.INITIATED);
             paymentRepository.save(payment);

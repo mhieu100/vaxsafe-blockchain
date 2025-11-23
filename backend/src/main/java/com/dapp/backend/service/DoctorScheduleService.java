@@ -3,6 +3,7 @@ package com.dapp.backend.service;
 import com.dapp.backend.dto.response.DoctorAvailableSlotResponse;
 import com.dapp.backend.dto.response.DoctorResponse;
 import com.dapp.backend.dto.response.DoctorScheduleResponse;
+import com.dapp.backend.dto.response.DoctorWithScheduleResponse;
 import com.dapp.backend.enums.SlotStatus;
 import com.dapp.backend.exception.AppException;
 import com.dapp.backend.model.*;
@@ -16,6 +17,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -38,6 +40,18 @@ public class DoctorScheduleService {
         return doctorRepository.findByCenter_CenterIdAndIsAvailableTrue(centerId)
             .stream()
             .map(this::toDoctorResponse)
+            .collect(Collectors.toList());
+    }
+    
+    /**
+     * Get all available doctors with today's schedule by center
+     * This is used for doctor-schedule page in frontend
+     */
+    public List<DoctorWithScheduleResponse> getDoctorsWithTodaySchedule(Long centerId, LocalDate date) {
+        List<Doctor> doctors = doctorRepository.findByCenter_CenterIdAndIsAvailableTrue(centerId);
+        
+        return doctors.stream()
+            .map(doctor -> toDoctorWithScheduleResponse(doctor, date))
             .collect(Collectors.toList());
     }
     
@@ -198,6 +212,100 @@ public class DoctorScheduleService {
             .centerId(doctor.getCenter().getCenterId())
             .centerName(doctor.getCenter().getName())
             .build();
+    }
+    
+    private DoctorWithScheduleResponse toDoctorWithScheduleResponse(Doctor doctor, LocalDate date) {
+        // Get all slots for the doctor on the given date
+        List<DoctorAvailableSlot> slots = slotRepository.findDoctorSlotsInRange(
+            doctor.getDoctorId(), date, date);
+        
+        // Calculate statistics
+        int totalSlots = slots.size();
+        int availableSlots = (int) slots.stream()
+            .filter(s -> s.getStatus() == SlotStatus.AVAILABLE)
+            .count();
+        int bookedSlots = (int) slots.stream()
+            .filter(s -> s.getStatus() == SlotStatus.BOOKED)
+            .count();
+        int blockedSlots = (int) slots.stream()
+            .filter(s -> s.getStatus() == SlotStatus.BLOCKED)
+            .count();
+        
+        // Convert slots to responses
+        List<DoctorAvailableSlotResponse> slotResponses = slots.stream()
+            .map(this::toSlotResponse)
+            .collect(Collectors.toList());
+        
+        // Get working hours for today
+        String workingHours = getWorkingHoursForDate(doctor, date);
+        
+        return DoctorWithScheduleResponse.builder()
+            .doctorId(doctor.getDoctorId())
+            .userId(doctor.getUser().getId())
+            .doctorName(doctor.getUser().getFullName())
+            .email(doctor.getUser().getEmail())
+            .avatar(doctor.getUser().getAvatar())
+            .phone(doctor.getUser().getEmail()) // Assuming phone is not stored separately
+            .licenseNumber(doctor.getLicenseNumber())
+            .specialization(doctor.getSpecialization())
+            .consultationDuration(doctor.getConsultationDuration())
+            .maxPatientsPerDay(doctor.getMaxPatientsPerDay())
+            .isAvailable(doctor.getIsAvailable())
+            .centerId(doctor.getCenter().getCenterId())
+            .centerName(doctor.getCenter().getName())
+            .totalSlotsToday(totalSlots)
+            .availableSlotsToday(availableSlots)
+            .bookedSlotsToday(bookedSlots)
+            .blockedSlotsToday(blockedSlots)
+            .todaySchedule(slotResponses)
+            .workingHoursToday(workingHours)
+            .build();
+    }
+    
+    private String getWorkingHoursForDate(Doctor doctor, LocalDate date) {
+        // Check for special schedule first
+        var specialSchedule = specialScheduleRepository
+            .findByDoctor_DoctorIdAndWorkDate(doctor.getDoctorId(), date);
+        
+        if (specialSchedule.isPresent()) {
+            return formatTimeRange(
+                specialSchedule.get().getStartTime(),
+                specialSchedule.get().getEndTime()
+            );
+        }
+        
+        // Get day of week (0=Sunday, 1=Monday, etc.)
+        int dayOfWeek = date.getDayOfWeek().getValue() % 7;
+        
+        // Get all schedules for this day
+        var schedules = doctorScheduleRepository
+            .findActiveDaySchedules(doctor.getDoctorId(), dayOfWeek);
+        
+        if (schedules.isEmpty()) {
+            return "Không có lịch làm việc";
+        }
+        
+        // Find earliest start and latest end time
+        LocalTime earliestStart = schedules.stream()
+            .map(DoctorSchedule::getStartTime)
+            .min(LocalTime::compareTo)
+            .orElse(null);
+        
+        LocalTime latestEnd = schedules.stream()
+            .map(DoctorSchedule::getEndTime)
+            .max(LocalTime::compareTo)
+            .orElse(null);
+        
+        if (earliestStart != null && latestEnd != null) {
+            return formatTimeRange(earliestStart, latestEnd);
+        }
+        
+        return "Không có lịch làm việc";
+    }
+    
+    private String formatTimeRange(LocalTime start, LocalTime end) {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HH:mm");
+        return start.format(formatter) + " - " + end.format(formatter);
     }
     
     private DoctorScheduleResponse toScheduleResponse(DoctorSchedule schedule) {

@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { 
   Card, 
   Row, 
@@ -15,7 +15,8 @@ import {
   List,
   Avatar,
   Tag,
-  message
+  message,
+  Spin
 } from 'antd';
 import {
   CalendarOutlined,
@@ -25,9 +26,11 @@ import {
   CheckCircleOutlined,
   CloseCircleOutlined,
   EyeOutlined,
-  MedicineBoxOutlined
+  MedicineBoxOutlined,
+  LoadingOutlined
 } from '@ant-design/icons';
 import dayjs from 'dayjs';
+import { getDoctorsWithScheduleAPI } from '../../config/api.doctor.schedule';
 
 const { Title, Text } = Typography;
 
@@ -37,107 +40,56 @@ const DoctorSchedule = () => {
   const [selectedDoctor, setSelectedDoctor] = useState(null);
   const [detailModalOpen, setDetailModalOpen] = useState(false);
   const [selectedSlot, setSelectedSlot] = useState(null);
+  const [doctors, setDoctors] = useState([]);
+  const [loading, setLoading] = useState(false);
 
-  // Mock doctors data - should be replaced with API call
-  const [doctors] = useState([
-    {
-      id: 'BS001',
-      name: 'Nguyễn Văn Minh',
-      specialty: 'Nhi',
-      phone: '0912345678',
-      workingHours: '08:00 - 17:00',
-      color: 'blue',
-      availableSlots: 7,
-      bookedSlots: 5,
-      schedule: [
-        { time: '08:00 - 08:30', status: 'available' },
-        { time: '08:30 - 09:00', status: 'booked', patient: 'Nguyễn Văn A', vaccine: 'COVID-19' },
-        { time: '09:00 - 09:30', status: 'available' },
-        { time: '09:30 - 10:00', status: 'booked', patient: 'Trần Thị B', vaccine: 'Cúm' },
-        { time: '10:00 - 10:30', status: 'available' },
-        { time: '10:30 - 11:00', status: 'available' },
-        { time: '11:00 - 11:30', status: 'booked', patient: 'Lê Văn C', vaccine: 'Viêm Gan B' },
-        { time: '13:00 - 13:30', status: 'available' },
-        { time: '13:30 - 14:00', status: 'booked', patient: 'Phạm Thị D', vaccine: 'COVID-19' },
-        { time: '14:00 - 14:30', status: 'available' },
-        { time: '14:30 - 15:00', status: 'booked', patient: 'Võ Văn E', vaccine: 'Viêm Gan A' },
-        { time: '15:00 - 15:30', status: 'available' },
-      ]
-    },
-    {
-      id: 'BS002',
-      name: 'Trần Thị Lan',
-      specialty: 'Đa khoa',
-      phone: '0923456789',
-      workingHours: '08:00 - 17:00',
-      color: 'green',
-      availableSlots: 10,
-      bookedSlots: 2,
-      schedule: [
-        { time: '08:00 - 08:30', status: 'available' },
-        { time: '08:30 - 09:00', status: 'available' },
-        { time: '09:00 - 09:30', status: 'available' },
-        { time: '09:30 - 10:00', status: 'booked', patient: 'Đinh Thị F', vaccine: 'Cúm' },
-        { time: '10:00 - 10:30', status: 'available' },
-        { time: '10:30 - 11:00', status: 'available' },
-        { time: '11:00 - 11:30', status: 'booked', patient: 'Hoàng Văn G', vaccine: 'COVID-19' },
-        { time: '13:00 - 13:30', status: 'available' },
-        { time: '13:30 - 14:00', status: 'available' },
-        { time: '14:00 - 14:30', status: 'available' },
-        { time: '14:30 - 15:00', status: 'available' },
-        { time: '15:00 - 15:30', status: 'available' },
-      ]
-    },
-    {
-      id: 'BS003',
-      name: 'Lê Hoàng Nam',
-      specialty: 'Truyền nhiễm',
-      phone: '0934567890',
-      workingHours: '13:00 - 21:00',
-      color: 'cyan',
-      availableSlots: 12,
-      bookedSlots: 4,
-      schedule: [
-        { time: '13:00 - 13:30', status: 'available' },
-        { time: '13:30 - 14:00', status: 'available' },
-        { time: '14:00 - 14:30', status: 'booked', patient: 'Ngô Thị H', vaccine: 'Viêm Gan B' },
-        { time: '14:30 - 15:00', status: 'available' },
-        { time: '15:00 - 15:30', status: 'booked', patient: 'Phan Văn I', vaccine: 'COVID-19' },
-        { time: '15:30 - 16:00', status: 'available' },
-        { time: '16:00 - 16:30', status: 'available' },
-        { time: '16:30 - 17:00', status: 'booked', patient: 'Dương Thị K', vaccine: 'Cúm' },
-        { time: '17:00 - 17:30', status: 'available' },
-        { time: '17:30 - 18:00', status: 'available' },
-        { time: '18:00 - 18:30', status: 'booked', patient: 'Mai Văn L', vaccine: 'Viêm Gan A' },
-        { time: '18:30 - 19:00', status: 'available' },
-        { time: '19:00 - 19:30', status: 'available' },
-        { time: '19:30 - 20:00', status: 'available' },
-        { time: '20:00 - 20:30', status: 'available' },
-        { time: '20:30 - 21:00', status: 'available' },
-      ]
-    },
-    {
-      id: 'BS004',
-      name: 'Phạm Thị Hà',
-      specialty: 'Sản Phụ khoa',
-      phone: '0945678901',
-      workingHours: '08:00 - 12:00',
-      color: 'orange',
-      availableSlots: 3,
-      bookedSlots: 5,
-      schedule: [
-        { time: '08:00 - 08:30', status: 'booked', patient: 'Cao Thị M', vaccine: 'COVID-19' },
-        { time: '08:30 - 09:00', status: 'booked', patient: 'Tạ Văn N', vaccine: 'Cúm' },
-        { time: '09:00 - 09:30', status: 'available' },
-        { time: '09:30 - 10:00', status: 'booked', patient: 'Đỗ Thị O', vaccine: 'Viêm Gan B' },
-        { time: '10:00 - 10:30', status: 'available' },
-        { time: '10:30 - 11:00', status: 'booked', patient: 'Hồ Văn P', vaccine: 'COVID-19' },
-        { time: '11:00 - 11:30', status: 'available' },
-        { time: '11:30 - 12:00', status: 'booked', patient: 'Lý Thị Q', vaccine: 'Viêm Gan A' },
-      ]
-    },
-  ]);
+  // Fetch doctors with schedule when component mounts or date changes
+  useEffect(() => {
+    fetchDoctorsWithSchedule();
+  }, [selectedDate]);
 
+  const fetchDoctorsWithSchedule = async () => {
+    try {
+      setLoading(true);
+      const dateStr = selectedDate.format('YYYY-MM-DD');
+      const response = await getDoctorsWithScheduleAPI(dateStr);
+      
+      // Transform API response to match component structure
+      const transformedDoctors = response.data.map(doctor => ({
+        id: `BS${String(doctor.doctorId).padStart(3, '0')}`,
+        doctorId: doctor.doctorId,
+        name: doctor.doctorName,
+        specialty: doctor.specialization || 'Đa khoa',
+        phone: doctor.phone || doctor.email,
+        workingHours: doctor.workingHoursToday || '08:00 - 17:00',
+        color: getColorForDoctor(doctor.doctorId),
+        availableSlots: doctor.availableSlotsToday || 0,
+        bookedSlots: doctor.bookedSlotsToday || 0,
+        schedule: (doctor.todaySchedule || []).map(slot => ({
+          slotId: slot.slotId,
+          time: `${slot.startTime} - ${slot.endTime}`,
+          status: slot.status === 'AVAILABLE' ? 'available' : 'booked',
+          patient: slot.appointmentId ? 'Bệnh nhân' : null,
+          vaccine: slot.notes || ''
+        }))
+      }));
+      
+      setDoctors(transformedDoctors);
+    } catch (error) {
+      console.error('Error fetching doctors:', error);
+      message.error('Không thể tải danh sách bác sĩ. Vui lòng thử lại!');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Get color for doctor based on ID
+  const getColorForDoctor = (doctorId) => {
+    const colors = ['blue', 'green', 'cyan', 'orange', 'purple', 'magenta'];
+    return colors[doctorId % colors.length];
+  };
+
+  
   // Calculate summary statistics
   const summary = {
     totalDoctors: doctors.length,
@@ -154,6 +106,12 @@ const DoctorSchedule = () => {
     } else if (mode === 'tomorrow') {
       setSelectedDate(dayjs().add(1, 'day'));
     }
+  };
+
+  // Handle date change
+  const handleDateChange = (date) => {
+    setSelectedDate(date);
+    setViewMode('custom');
   };
 
   // Handle slot click
@@ -257,35 +215,45 @@ const DoctorSchedule = () => {
         </Row>
       </Card>
 
-      {/* Controls */}
-      <Card style={{ marginBottom: '24px' }}>
-        <Row gutter={[16, 16]} align="middle">
-          <Col xs={24} sm={12} md={16}>
-            <Space wrap>
-              <Segmented
-                value={viewMode}
-                onChange={handleViewModeChange}
-                options={[
-                  { label: 'Hôm nay', value: 'today' },
-                  { label: 'Ngày mai', value: 'tomorrow' },
-                  { label: 'Tuần này', value: 'week' },
-                ]}
-              />
-            </Space>
-          </Col>
-          <Col xs={24} sm={12} md={8} style={{ textAlign: 'right' }}>
-            <DatePicker
-              value={selectedDate}
-              onChange={(date) => {
-                setSelectedDate(date);
-                setViewMode('custom');
-              }}
-              format="DD/MM/YYYY"
-              style={{ width: '100%' }}
-            />
-          </Col>
-        </Row>
-      </Card>
+      {/* Loading Spinner */}
+      {loading && (
+        <div style={{ textAlign: 'center', padding: '50px' }}>
+          <Spin size="large" indicator={<LoadingOutlined style={{ fontSize: 48 }} spin />} />
+          <div style={{ marginTop: '16px' }}>
+            <Text type="secondary">Đang tải danh sách bác sĩ...</Text>
+          </div>
+        </div>
+      )}
+
+      {/* Main content - only show when not loading */}
+      {!loading && (
+        <>
+          {/* Controls */}
+          <Card style={{ marginBottom: '24px' }}>
+            <Row gutter={[16, 16]} align="middle">
+              <Col xs={24} sm={12} md={16}>
+                <Space wrap>
+                  <Segmented
+                    value={viewMode}
+                    onChange={handleViewModeChange}
+                    options={[
+                      { label: 'Hôm nay', value: 'today' },
+                      { label: 'Ngày mai', value: 'tomorrow' },
+                      { label: 'Tuần này', value: 'week' },
+                    ]}
+                  />
+                </Space>
+              </Col>
+              <Col xs={24} sm={12} md={8} style={{ textAlign: 'right' }}>
+                <DatePicker
+                  value={selectedDate}
+                  onChange={handleDateChange}
+                  format="DD/MM/YYYY"
+                  style={{ width: '100%' }}
+                />
+              </Col>
+            </Row>
+          </Card>
 
       {/* Current Date Display */}
       <Card 
@@ -304,9 +272,20 @@ const DoctorSchedule = () => {
         </Space>
       </Card>
 
-      {/* Doctors Grid */}
-      <Row gutter={[16, 16]} style={{ marginBottom: '24px' }}>
-        {doctors.map((doctor) => (
+          {/* Doctors Grid */}
+          <Row gutter={[16, 16]} style={{ marginBottom: '24px' }}>
+            {doctors.length === 0 ? (
+              <Col span={24}>
+                <Card style={{ textAlign: 'center', padding: '50px' }}>
+                  <UserOutlined style={{ fontSize: 64, color: '#d9d9d9', marginBottom: 16 }} />
+                  <Title level={4} type="secondary">Không có bác sĩ nào</Title>
+                  <Text type="secondary">
+                    Không tìm thấy bác sĩ nào làm việc tại trung tâm của bạn vào ngày này
+                  </Text>
+                </Card>
+              </Col>
+            ) : (
+              doctors.map((doctor) => (
           <Col key={doctor.id} xs={24} sm={12} lg={6}>
             <Card
               hoverable
@@ -387,7 +366,8 @@ const DoctorSchedule = () => {
               </Button>
             </Card>
           </Col>
-        ))}
+        ))
+      )}
       </Row>
 
       {/* Summary Statistics */}
@@ -434,6 +414,8 @@ const DoctorSchedule = () => {
           </Col>
         </Row>
       </Card>
+        </>
+      )}
 
       {/* Detail Modal */}
       <Modal

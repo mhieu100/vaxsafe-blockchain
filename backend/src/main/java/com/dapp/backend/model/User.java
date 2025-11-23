@@ -39,6 +39,9 @@ public class User {
     @OneToOne(mappedBy = "user", cascade = CascadeType.ALL)
     Patient patientProfile;
 
+    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL)
+    Doctor doctor;
+
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     List<FamilyMember> familyMembers = new ArrayList<>();
 

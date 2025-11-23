@@ -39,6 +39,7 @@ import NFTPassportPage from './pages/auth/nft-passport';
 import IPFSManagementPage from './pages/auth/ipfs-management';
 import DoctorSchedule from './pages/staff/doctor-schedule';
 import DoctorDashboard from './pages/staff/doctor-dashboard';
+import NewsPage from './pages/admin/news';
 
 const App = () => {
   const dispatch = useDispatch();
@@ -113,6 +114,10 @@ const App = () => {
           element: <DashboardPage />,
         },
         {
+          path: 'news',
+          element: <NewsPage />,
+        },
+        {
           path: 'vaccines',
           element: <VaccinePage />,
         },
@@ -155,6 +160,7 @@ const App = () => {
           path: 'dashboard-doctor',
           element: <DoctorDashboard />,
         },
+
         {
           path: 'pending-appointments',
           element: <PendingAppointmentPage />,

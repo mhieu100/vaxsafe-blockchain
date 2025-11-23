@@ -151,41 +151,41 @@ const UserPage = () => {
   const buildQuery = (params, sort) => {
     const clone = { ...params };
     const q = {
-      page: params.current,
-      size: params.pageSize,
-      filter: '',
+      page: clone.current, // Backend configured for one-indexed pages
+      size: clone.pageSize,
     };
 
-    if (clone.fullName) q.filter = `${sfLike('fullName', clone.fullName)}`;
+    // Build filter
+    const filters = [];
+    if (clone.fullName) {
+      filters.push(sfLike('fullName', clone.fullName));
+    }
     if (clone.email) {
-      q.filter = clone.fullName
-        ? q.filter + ' and ' + `${sfLike('email', clone.email)}`
-        : `${sfLike('email', clone.email)}`;
+      filters.push(sfLike('email', clone.email));
     }
     if (clone.address) {
-      q.filter = q.filter
-        ? `${q.filter} and ${sfLike('patientProfile.address', clone.address)}`
-        : `${sfLike('patientProfile.address', clone.address)}`;
+      filters.push(sfLike('patientProfile.address', clone.address));
     }
 
-    if (!q.filter) delete q.filter;
+    if (filters.length > 0) {
+      q.filter = filters.join(' and ');
+    }
 
-    let temp = queryString.stringify(q);
-
-    let sortBy = '';
+    // Build sort
     if (sort && sort.fullName) {
-      sortBy =
-        sort.fullName === 'ascend' ? 'sort=fullName,asc' : 'sort=fullName,desc';
+      q.sort = `fullName,${sort.fullName === 'ascend' ? 'asc' : 'desc'}`;
     }
     if (sort && sort.email) {
-      sortBy = sort.email === 'ascend' ? 'sort=email,asc' : 'sort=email,desc';
+      q.sort = `email,${sort.email === 'ascend' ? 'asc' : 'desc'}`;
     }
     if (sort && sort.address) {
-      sortBy = sort.address === 'ascend' ? 'sort=patientProfile.address,asc' : 'sort=patientProfile.address,desc';
+      q.sort = `patientProfile.address,${sort.address === 'ascend' ? 'asc' : 'desc'}`;
     }
-    temp = `${temp}&${sortBy}`;
+    if (!q.sort) {
+      q.sort = 'fullName,asc';
+    }
 
-    return temp;
+    return queryString.stringify(q);
   };
 
   return (

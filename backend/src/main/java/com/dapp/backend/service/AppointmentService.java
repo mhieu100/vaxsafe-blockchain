@@ -244,4 +244,154 @@ public class AppointmentService {
                 .message("Reschedule request submitted successfully. Waiting for cashier approval and doctor reassignment.")
                 .build();
     }
+
+    /**
+     * Get urgent appointments for cashier dashboard
+     * Returns appointments that need immediate attention
+     */
+    public List<com.dapp.backend.dto.response.UrgentAppointmentDto> getUrgentAppointments() throws AppException {
+        User currentUser = authService.getCurrentUserLogin();
+        Center center = currentUser.getCenter();
+
+        if (center == null) {
+            throw new AppException("User is not associated with any center.");
+        }
+
+        List<com.dapp.backend.dto.response.UrgentAppointmentDto> urgentAppointments = new java.util.ArrayList<>();
+        LocalDate today = LocalDate.now();
+        LocalTime now = LocalTime.now();
+
+        // 1. Appointments with pending reschedule requests (HIGHEST PRIORITY)
+        List<Appointment> rescheduleRequests = appointmentRepository
+                .findByStatusAndDesiredDateIsNotNullAndCenter(AppointmentEnum.PENDING_APPROVAL, center);
+
+        for (Appointment apt : rescheduleRequests) {
+            urgentAppointments.add(buildUrgentDto(apt, "RESCHEDULE_PENDING",
+                    "Yêu cầu đổi lịch chờ phê duyệt", 1));
+        }
+
+        // 2. Scheduled appointments without doctor assigned (within next 24 hours - HIGH PRIORITY)
+        // Get appointments from today to tomorrow (to cover the 24-hour window)
+        // Include both SCHEDULED and PENDING_SCHEDULE status appointments
+        List<Appointment> noDoctorAppointments = appointmentRepository
+                .findAppointmentsWithoutDoctor(
+                        List.of(AppointmentEnum.SCHEDULED, AppointmentEnum.PENDING_SCHEDULE),
+                        today,
+                        today.plusDays(2), // Get today and tomorrow to ensure we capture all within 24h
+                        center
+                );
+
+        LocalDateTime currentDateTime = LocalDateTime.of(today, now);
+        LocalDateTime next24Hours = currentDateTime.plusHours(24);
+
+        for (Appointment apt : noDoctorAppointments) {
+            LocalDateTime appointmentDateTime = LocalDateTime.of(
+                    apt.getScheduledDate(),
+                    apt.getScheduledTime() != null ? apt.getScheduledTime() : LocalTime.MIDNIGHT
+            );
+
+            // Only include if appointment is within the next 24 hours
+            if (appointmentDateTime.isAfter(currentDateTime) && appointmentDateTime.isBefore(next24Hours)) {
+                long hoursUntil = java.time.temporal.ChronoUnit.HOURS.between(currentDateTime, appointmentDateTime);
+                String message = String.format("KHẨN CẤP: Chưa có bác sĩ - còn %d giờ", hoursUntil);
+                urgentAppointments.add(buildUrgentDto(apt, "NO_DOCTOR", message, 1));
+            }
+        }
+
+        // 3. Appointments coming soon (within next 4 hours)
+        LocalTime fourHoursLater = now.plusHours(4);
+        List<Appointment> comingSoonAppointments = appointmentRepository
+                .findAppointmentsComingSoon(
+                        AppointmentEnum.SCHEDULED,
+                        today,
+                        now,
+                        fourHoursLater,
+                        center
+                );
+
+        for (Appointment apt : comingSoonAppointments) {
+            long minutesUntil = java.time.temporal.ChronoUnit.MINUTES.between(
+                    now, apt.getScheduledTime());
+            String message = String.format("Sắp đến giờ hẹn - còn %d phút", minutesUntil);
+            urgentAppointments.add(buildUrgentDto(apt, "COMING_SOON", message, 3));
+        }
+
+        // 4. Overdue appointments (past scheduled time but not completed)
+        List<AppointmentEnum> overdueStatuses = java.util.Arrays.asList(
+                AppointmentEnum.SCHEDULED,
+                AppointmentEnum.PENDING_SCHEDULE,
+                AppointmentEnum.PENDING_APPROVAL
+        );
+        List<Appointment> overdueAppointments = appointmentRepository
+                .findOverdueAppointments(overdueStatuses, today, now, center);
+
+        for (Appointment apt : overdueAppointments) {
+            urgentAppointments.add(buildUrgentDto(apt, "OVERDUE",
+                    "Quá hạn xử lý - cần kiểm tra ngay", 2));
+        }
+
+        // Sort by priority level (1 = highest priority)
+        urgentAppointments.sort(java.util.Comparator.comparingInt(
+                com.dapp.backend.dto.response.UrgentAppointmentDto::getPriorityLevel));
+
+        return urgentAppointments;
+    }
+
+    private com.dapp.backend.dto.response.UrgentAppointmentDto buildUrgentDto(
+            Appointment appointment, String urgencyType, String urgencyMessage, int priorityLevel) {
+
+        Booking booking = appointment.getBooking();
+        User patient = booking.getPatient();
+
+        return com.dapp.backend.dto.response.UrgentAppointmentDto.builder()
+                .id(appointment.getId())
+                .bookingId(booking.getBookingId())
+                .patientName(patient != null ? patient.getFullName() : "N/A")
+                .patientPhone(patient != null && patient.getPatientProfile() != null ?
+                        patient.getPatientProfile().getPhone() : "N/A")
+                .patientEmail(patient != null ? patient.getEmail() : "N/A")
+                .vaccineName(booking.getVaccine() != null ? booking.getVaccine().getName() : "N/A")
+                .doseNumber(appointment.getDoseNumber())
+                .scheduledDate(appointment.getScheduledDate())
+                .scheduledTime(appointment.getScheduledTime())
+                .desiredDate(appointment.getDesiredDate())
+                .desiredTime(appointment.getDesiredTime())
+                .rescheduleReason(appointment.getRescheduleReason())
+                .rescheduledAt(appointment.getRescheduledAt())
+                .doctorName(appointment.getDoctor() != null ? appointment.getDoctor().getFullName() : null)
+                .cashierName(appointment.getCashier() != null ? appointment.getCashier().getFullName() : null)
+                .centerName(appointment.getCenter() != null ? appointment.getCenter().getName() : null)
+                .status(appointment.getStatus())
+                .urgencyType(urgencyType)
+                .urgencyMessage(urgencyMessage)
+                .priorityLevel(priorityLevel)
+                .build();
+    }
+
+    /**
+     * Get today's appointments for doctor dashboard
+     * Returns all appointments scheduled for today for the logged-in doctor
+     */
+    public List<AppointmentResponse> getTodayAppointmentsForDoctor() throws AppException {
+        User currentUser = authService.getCurrentUserLogin();
+
+        // Get doctor entity from current user
+        if (currentUser.getId() == null) {
+            throw new AppException("User is not a doctor");
+        }
+
+        LocalDate today = LocalDate.now();
+
+        // Find all appointments for this doctor on today's date
+        List<Appointment> todayAppointments = appointmentRepository
+                .findByDoctorAndScheduledDateOrderByScheduledTimeAsc(
+                        currentUser.getDoctor(),
+                        today
+                );
+
+        // Convert to response DTOs
+        return todayAppointments.stream()
+                .map(AppointmentMapper::toResponse)
+                .toList();
+    }
 }

@@ -88,6 +88,7 @@ public class SecurityConfiguration {
                         authz -> authz
                                 .requestMatchers(whiteList).permitAll()
                                 .requestMatchers(HttpMethod.GET, "/vaccines/**").permitAll()
+                                .requestMatchers(HttpMethod.GET, "/news/**").permitAll()
                                 .requestMatchers(HttpMethod.POST, "/vaccines/**").authenticated()
                                 .requestMatchers(HttpMethod.PUT, "/vaccines/**").authenticated()
                                 .requestMatchers(HttpMethod.DELETE, "/vaccines/**").authenticated()

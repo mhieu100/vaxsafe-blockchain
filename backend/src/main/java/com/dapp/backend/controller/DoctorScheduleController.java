@@ -3,7 +3,10 @@ package com.dapp.backend.controller;
 import com.dapp.backend.dto.response.DoctorAvailableSlotResponse;
 import com.dapp.backend.dto.response.DoctorResponse;
 import com.dapp.backend.dto.response.DoctorScheduleResponse;
+import com.dapp.backend.dto.response.DoctorWithScheduleResponse;
 import com.dapp.backend.exception.AppException;
+import com.dapp.backend.model.User;
+import com.dapp.backend.repository.UserRepository;
 import com.dapp.backend.service.DoctorScheduleService;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
@@ -11,6 +14,8 @@ import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
@@ -26,6 +31,38 @@ import java.util.Map;
 public class DoctorScheduleController {
 
     DoctorScheduleService doctorScheduleService;
+    UserRepository userRepository;
+
+    /**
+     * Get all doctors with today's schedule in current user's center
+     * For cashier viewing doctor-schedule page
+     * GET /api/v1/doctors/my-center/with-schedule?date=2025-11-23
+     */
+    @GetMapping("/my-center/with-schedule")
+    public ResponseEntity<List<DoctorWithScheduleResponse>> getDoctorsWithScheduleInMyCenter(
+            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date) 
+            throws AppException {
+        
+        // Get current logged-in user
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String userEmail = authentication.getName();
+        
+        User currentUser = userRepository.findByEmail(userEmail)
+            .orElseThrow(() -> new AppException("User not found"));
+        
+        if (currentUser.getCenter() == null) {
+            throw new AppException("User is not assigned to any center");
+        }
+        
+        Long centerId = currentUser.getCenter().getCenterId();
+        LocalDate targetDate = date != null ? date : LocalDate.now();
+        
+        log.info("Getting doctors with schedule for center {} on {}", centerId, targetDate);
+        
+        return ResponseEntity.ok(
+            doctorScheduleService.getDoctorsWithTodaySchedule(centerId, targetDate)
+        );
+    }
 
     /**
      * Get all available doctors by center

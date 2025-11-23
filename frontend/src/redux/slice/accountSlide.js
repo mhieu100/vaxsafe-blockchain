@@ -19,6 +19,7 @@ const initialState = {
     email: '',
     role: '',
     walletAddress: '',
+    centerId: null,
     centerName: '',
   },
 };
@@ -36,6 +37,7 @@ export const accountSlice = createSlice({
       state.user.email = action.payload.email;
       state.user.role = action.payload.role;
       state.user.walletAddress = action.payload.walletAddress;
+      state.user.centerId = action.payload.centerId;
       state.user.centerName = action.payload.centerName;
     },
     setLogoutAction: (state) => {
@@ -60,6 +62,7 @@ export const accountSlice = createSlice({
         state.user.email = action.payload.email;
         state.user.role = action.payload.role;
         state.user.walletAddress = action.payload.walletAddress;
+        state.user.centerId = action.payload.centerId;
         state.user.centerName = action.payload.centerName;
       }
     });

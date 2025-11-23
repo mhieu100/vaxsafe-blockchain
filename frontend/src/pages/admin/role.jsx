@@ -72,49 +72,29 @@ const RolePage = () => {
   const buildQuery = (params, sort) => {
     const clone = { ...params };
     const q = {
-      page: params.current,
-      size: params.pageSize,
-      filter: '',
+      page: clone.current, // Backend configured for one-indexed pages
+      size: clone.pageSize,
     };
 
-    if (clone.name)
-      q.filter = `${sfLike('name', clone.name)}`;
-    if (clone.manufacturer) {
-      q.filter = clone.name
-        ? q.filter + ' and ' + `${sfLike('manufacturer', clone.manufacturer)}`
-        : `${sfLike('manufacturer', clone.manufacturer)}`;
+    // Build filter
+    const filters = [];
+    if (clone.name) {
+      filters.push(sfLike('name', clone.name));
     }
 
-    if (!q.filter) delete q.filter;
+    if (filters.length > 0) {
+      q.filter = filters.join(' and ');
+    }
 
-    let temp = queryString.stringify(q);
-
-    let sortBy = '';
+    // Build sort
     if (sort && sort.name) {
-      sortBy =
-        sort.name === 'ascend'
-          ? 'sort=name,asc'
-          : 'sort=name,desc';
+      q.sort = `name,${sort.name === 'ascend' ? 'asc' : 'desc'}`;
     }
-    if (sort && sort.manufacturer) {
-      sortBy =
-        sort.manufacturer === 'ascend'
-          ? 'sort=manufacturer,asc'
-          : 'sort=manufacturer,desc';
+    if (!q.sort) {
+      q.sort = 'name,asc';
     }
 
-    if (sort && sort.price) {
-      sortBy = sort.price === 'ascend' ? 'sort=price,asc' : 'sort=price,desc';
-    }
-    if (sort && sort.stockQuantity) {
-      sortBy =
-        sort.stockQuantity === 'ascend'
-          ? 'sort=stockQuantity,asc'
-          : 'sort=stockQuantity,desc';
-    }
-    temp = `${temp}&${sortBy}`;
-
-    return temp;
+    return queryString.stringify(q);
   };
 
   return (

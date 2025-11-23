@@ -11,6 +11,7 @@ import {
   LogoutOutlined,
   SafetyCertificateOutlined,
   BoxPlotOutlined,
+  NotificationFilled,
 } from '@ant-design/icons';
 
 import { useDispatch, useSelector } from 'react-redux';
@@ -85,6 +86,11 @@ const LayoutAdmin = () => {
       key: '/admin/permissions',
       icon: <SafetyOutlined />,
       label: 'Quyền hạn',
+    },
+    {
+      key: '/admin/news',
+      icon: <NotificationFilled />,
+      label: 'Tin tức',
     },
     {
       key: '/admin/roles',

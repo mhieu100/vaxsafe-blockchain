@@ -1,0 +1,426 @@
+### News API Testing - VaxSafe Backend
+### Sử dụng REST Client extension trong VS Code
+### Click vào "Send Request" phía trên mỗi request để test
+
+### CONFIGURATION
+@baseUrl = http://localhost:8080
+@contentType = application/json
+# Thay YOUR_ACCESS_TOKEN_HERE bằng token thực tế sau khi login
+@accessToken = YOUR_ACCESS_TOKEN_HERE
+
+###############################################
+# AUTHENTICATION - Lấy Access Token trước
+###############################################
+
+### 0. Login to get Access Token
+# @name login
+POST {{baseUrl}}/auth/login/password
+Content-Type: {{contentType}}
+
+{
+  "username": "hieu@gmail.com",
+  "password": "20112003"
+}
+
+# Sau khi login thành công, copy access_token từ response
+# Paste vào biến @accessToken ở trên
+
+###############################################
+# PUBLIC ENDPOINTS (Không cần token)
+###############################################
+
+### 1. Get All News (Paginated)
+GET {{baseUrl}}/news?page=0&size=10&sort=publishedAt,desc
+Accept: application/json
+
+### 2. Get All News (Page 2)
+GET {{baseUrl}}/news?page=1&size=5
+Accept: application/json
+
+### 3. Get Published News Only
+GET {{baseUrl}}/news/published
+Accept: application/json
+
+### 4. Get Featured News
+GET {{baseUrl}}/news/featured
+Accept: application/json
+
+### 5. Get News by Slug (View Counter +1)
+# Mỗi lần gọi API này, viewCount sẽ tăng 1
+GET {{baseUrl}}/news/slug/loi-ich-cua-vaccine-covid-19
+Accept: application/json
+
+### 6. Get News by Slug - Thói quen tốt
+GET {{baseUrl}}/news/slug/10-thoi-quen-tot-cho-suc-khoe
+Accept: application/json
+
+### 7. Get News by ID
+GET {{baseUrl}}/news/1
+Accept: application/json
+
+### 8. Get All Categories
+GET {{baseUrl}}/news/categories
+Accept: application/json
+
+### 9. Get News by Category - VACCINE_INFO
+GET {{baseUrl}}/news/category/VACCINE_INFO
+Accept: application/json
+
+### 10. Get News by Category - CHILDREN_HEALTH
+GET {{baseUrl}}/news/category/CHILDREN_HEALTH
+Accept: application/json
+
+### 11. Get News by Category - COVID_19
+GET {{baseUrl}}/news/category/COVID_19
+Accept: application/json
+
+###############################################
+# FILTERING EXAMPLES
+###############################################
+
+### 12. Filter by Category (Using Spring Filter)
+GET {{baseUrl}}/news?filter=category:'VACCINE_INFO'
+Accept: application/json
+
+### 13. Filter by Published Status
+GET {{baseUrl}}/news?filter=isPublished:true
+Accept: application/json
+
+### 14. Filter by Featured Status
+GET {{baseUrl}}/news?filter=isFeatured:true
+Accept: application/json
+
+### 15. Search by Title (Contains "vaccine")
+GET {{baseUrl}}/news?filter=title~'*vaccine*'
+Accept: application/json
+
+### 16. Search by Title (Contains "sức khỏe")
+GET {{baseUrl}}/news?filter=title~'*sức khỏe*'
+Accept: application/json
+
+### 17. Complex Filter - Featured AND Published
+GET {{baseUrl}}/news?filter=isFeatured:true and isPublished:true
+Accept: application/json
+
+### 18. Complex Filter - Category AND Featured
+GET {{baseUrl}}/news?filter=category:'VACCINE_INFO' and isFeatured:true
+Accept: application/json
+
+### 19. Filter by View Count (Greater than 300)
+GET {{baseUrl}}/news?filter=viewCount>300
+Accept: application/json
+
+### 20. Filter by Author
+GET {{baseUrl}}/news?filter=author~'*BS*'
+Accept: application/json
+
+### 21. Filter by Tags
+GET {{baseUrl}}/news?filter=tags~'*covid*'
+Accept: application/json
+
+### 22. Multiple Conditions - OR
+GET {{baseUrl}}/news?filter=category:'VACCINE_INFO' or category:'COVID_19'
+Accept: application/json
+
+### 23. Search in Content
+GET {{baseUrl}}/news?filter=content~'*phòng ngừa*'
+Accept: application/json
+
+###############################################
+# SORTING EXAMPLES
+###############################################
+
+### 24. Sort by View Count (Descending)
+GET {{baseUrl}}/news?sort=viewCount,desc&size=10
+Accept: application/json
+
+### 25. Sort by View Count (Ascending)
+GET {{baseUrl}}/news?sort=viewCount,asc&size=10
+Accept: application/json
+
+### 26. Sort by Published Date (Newest first)
+GET {{baseUrl}}/news?filter=isPublished:true&sort=publishedAt,desc&size=10
+Accept: application/json
+
+### 27. Sort by Title (A-Z)
+GET {{baseUrl}}/news?sort=title,asc
+Accept: application/json
+
+### 28. Multiple Sort - Category then View Count
+GET {{baseUrl}}/news?sort=category,asc&sort=viewCount,desc
+Accept: application/json
+
+###############################################
+# PAGINATION + FILTER + SORT COMBINED
+###############################################
+
+### 29. Featured News - Sorted by Views - Page 1
+GET {{baseUrl}}/news?filter=isFeatured:true&sort=viewCount,desc&page=0&size=5
+Accept: application/json
+
+### 30. Published Vaccine News - Sorted by Date
+GET {{baseUrl}}/news?filter=category:'VACCINE_INFO' and isPublished:true&sort=publishedAt,desc
+Accept: application/json
+
+###############################################
+# CREATE NEWS (ADMIN - Cần Token)
+###############################################
+
+### 31. Create News - Basic
+POST {{baseUrl}}/news
+Content-Type: {{contentType}}
+Authorization: Bearer {{accessToken}}
+
+{
+  "title": "Vaccine HPV - Bảo vệ sức khỏe phụ nữ",
+  "shortDescription": "Vaccine HPV giúp phòng ngừa ung thư cổ tử cung và các bệnh liên quan đến virus HPV",
+  "content": "<h2>Vaccine HPV</h2><p>Vaccine HPV (Human Papillomavirus) là một trong những vaccine quan trọng nhất để phòng ngừa ung thư cổ tử cung ở phụ nữ.</p><h3>Lợi ích của vaccine HPV</h3><ul><li>Phòng ngừa ung thư cổ tử cung</li><li>Phòng ngừa u nhú sinh dục</li><li>Giảm nguy cơ ung thư hầu họng</li><li>Bảo vệ lâu dài</li></ul><h3>Ai nên tiêm?</h3><p>Nữ giới từ 9-26 tuổi nên được tiêm vaccine HPV để có hiệu quả bảo vệ tốt nhất.</p>",
+  "category": "VACCINE_INFO",
+  "author": "BS. Nguyễn Thị Hoa",
+  "isFeatured": true,
+  "isPublished": true,
+  "tags": "hpv,vaccine,ung thư,phụ nữ,cổ tử cung",
+  "source": "Bộ Y tế"
+}
+
+### 32. Create News - With Images
+POST {{baseUrl}}/news
+Content-Type: {{contentType}}
+Authorization: Bearer {{accessToken}}
+
+{
+  "title": "Vaccine phòng ngừa viêm gan B - Quan trọng cho mọi lứa tuổi",
+  "shortDescription": "Viêm gan B là bệnh truyền nhiễm nguy hiểm có thể phòng ngừa bằng vaccine an toàn và hiệu quả",
+  "content": "<h2>Viêm gan B</h2><p>Viêm gan B là bệnh truyền nhiễm do virus HBV gây ra, có thể dẫn đến xơ gan và ung thư gan nếu không được điều trị kịp thời.</p><h3>Lợi ích của vaccine</h3><ul><li>Phòng ngừa viêm gan B cấp và mạn</li><li>Giảm nguy cơ xơ gan</li><li>Giảm nguy cơ ung thư gan</li><li>Bảo vệ suốt đời</li></ul><h3>Lịch tiêm</h3><p>Tiêm 3 mũi theo lịch: 0 - 1 - 6 tháng</p>",
+  "thumbnailImage": "http://localhost:8080/storage/news/viem-gan-b-thumb.jpg",
+  "coverImage": "http://localhost:8080/storage/news/viem-gan-b-cover.jpg",
+  "category": "VACCINE_INFO",
+  "author": "PGS.TS Lê Văn Nam",
+  "isFeatured": false,
+  "isPublished": true,
+  "tags": "viêm gan b,vaccine,gan,phòng bệnh,virus",
+  "source": "Viện Vệ sinh Dịch tễ Trung ương"
+}
+
+### 33. Create News - Draft (Not Published)
+POST {{baseUrl}}/news
+Content-Type: {{contentType}}
+Authorization: Bearer {{accessToken}}
+
+{
+  "title": "Bài viết thử nghiệm - Chưa xuất bản",
+  "shortDescription": "Đây là bài viết đang trong quá trình soạn thảo và chưa sẵn sàng xuất bản",
+  "content": "<p>Nội dung đang được cập nhật...</p>",
+  "category": "HEALTH_GENERAL",
+  "author": "Admin Test",
+  "isFeatured": false,
+  "isPublished": false,
+  "tags": "draft,test",
+  "source": null
+}
+
+### 34. Create News - Vietnamese Characters
+POST {{baseUrl}}/news
+Content-Type: {{contentType}}
+Authorization: Bearer {{accessToken}}
+
+{
+  "title": "Phòng ngừa sốt xuất huyết dengue trong mùa mưa",
+  "shortDescription": "Hướng dẫn chi tiết các biện pháp phòng chống dịch sốt xuất huyết hiệu quả",
+  "content": "<h2>Sốt xuất huyết dengue</h2><p>Sốt xuất huyết là bệnh truyền nhiễm cấp tính do virus dengue gây ra, lây truyền qua muỗi Aedes aegypti.</p>",
+  "category": "SEASONAL_DISEASES",
+  "author": "BS. Trần Văn Bình",
+  "isFeatured": false,
+  "isPublished": true,
+  "tags": "sốt xuất huyết,dengue,mùa mưa,muỗi",
+  "source": "Viện Pasteur"
+}
+
+### 35. Create News - Nutrition
+POST {{baseUrl}}/news
+Content-Type: {{contentType}}
+Authorization: Bearer {{accessToken}}
+
+{
+  "title": "Vitamin D - Tầm quan trọng đối với hệ miễn dịch",
+  "shortDescription": "Vitamin D không chỉ quan trọng cho xương khớp mà còn đóng vai trò then chốt trong hệ miễn dịch",
+  "content": "<h2>Vitamin D và Miễn dịch</h2><p>Nghiên cứu cho thấy Vitamin D có vai trò quan trọng trong việc điều hòa và tăng cường hệ miễn dịch.</p><h3>Nguồn cung cấp</h3><ul><li>Ánh nắng mặt trời</li><li>Cá hồi, cá ngừ</li><li>Trứng</li><li>Sữa tăng cường</li></ul>",
+  "category": "NUTRITION",
+  "author": "Ths. Đinh Thị Mai",
+  "isFeatured": true,
+  "isPublished": true,
+  "tags": "vitamin d,miễn dịch,dinh dưỡng,sức khỏe",
+  "source": "Viện Dinh dưỡng Quốc gia"
+}
+
+###############################################
+# UPDATE NEWS (ADMIN - Cần Token)
+###############################################
+
+### 36. Update News by ID
+# Thay {id} bằng ID thực tế
+PUT {{baseUrl}}/news/1
+Content-Type: {{contentType}}
+Authorization: Bearer {{accessToken}}
+
+{
+  "title": "10 Thói quen tốt cho sức khỏe - Cập nhật 2024",
+  "shortDescription": "Khám phá 10 thói quen đơn giản nhưng hiệu quả giúp bạn duy trì sức khỏe tốt mỗi ngày",
+  "content": "<h2>Giới thiệu</h2><p>Sức khỏe là tài sản quý giá nhất của con người. Dưới đây là 10 thói quen đơn giản bạn nên thực hiện hàng ngày.</p><h3>1. Uống đủ nước</h3><p>Uống ít nhất 2 lít nước mỗi ngày.</p>",
+  "category": "HEALTH_GENERAL",
+  "author": "BS. Nguyễn Văn An",
+  "isFeatured": true,
+  "isPublished": true,
+  "tags": "sức khỏe,thói quen,phòng bệnh,2024",
+  "source": "Bộ Y tế"
+}
+
+### 37. Update News - Change to Draft
+PUT {{baseUrl}}/news/2
+Content-Type: {{contentType}}
+Authorization: Bearer {{accessToken}}
+
+{
+  "title": "Lợi ích của Vaccine COVID-19 đối với sức khỏe cộng đồng",
+  "shortDescription": "Vaccine COVID-19 không chỉ bảo vệ bản thân mà còn góp phần bảo vệ cộng đồng",
+  "content": "<h2>Vaccine COVID-19</h2><p>Nội dung...</p>",
+  "category": "VACCINE_INFO",
+  "author": "PGS.TS Trần Thị Hoa",
+  "isFeatured": true,
+  "isPublished": false,
+  "tags": "covid-19,vaccine",
+  "source": "Viện Vệ sinh Dịch tễ"
+}
+
+###############################################
+# PUBLISH / UNPUBLISH (ADMIN - Cần Token)
+###############################################
+
+### 38. Publish News (Draft -> Published)
+# Thay {id} bằng ID của bài draft (ví dụ: 13)
+PATCH {{baseUrl}}/news/13/publish
+Authorization: Bearer {{accessToken}}
+
+### 39. Unpublish News (Published -> Draft)
+PATCH {{baseUrl}}/news/1/unpublish
+Authorization: Bearer {{accessToken}}
+
+### 40. Publish News ID 2
+PATCH {{baseUrl}}/news/2/publish
+Authorization: Bearer {{accessToken}}
+
+###############################################
+# DELETE NEWS (ADMIN - Cần Token)
+###############################################
+
+### 41. Delete News (Soft Delete)
+# Thay {id} bằng ID thực tế
+DELETE {{baseUrl}}/news/13
+Authorization: Bearer {{accessToken}}
+
+### 42. Delete News ID 14 (if exists)
+DELETE {{baseUrl}}/news/14
+Authorization: Bearer {{accessToken}}
+
+###############################################
+# ERROR TESTING
+###############################################
+
+### 43. Get Non-existent News
+GET {{baseUrl}}/news/99999
+Accept: application/json
+
+### 44. Create News - Missing Required Fields
+POST {{baseUrl}}/news
+Content-Type: {{contentType}}
+
+{
+  "shortDescription": "Only description, no title"
+}
+
+### 45. Create News - Invalid Category
+POST {{baseUrl}}/news
+Content-Type: {{contentType}}
+
+{
+  "title": "Test Invalid Category",
+  "content": "Test content",
+  "category": "INVALID_CATEGORY"
+}
+
+### 46. Get News with Invalid Category Filter
+GET {{baseUrl}}/news/category/INVALID_CATEGORY
+Accept: application/json
+
+###############################################
+# VIEW COUNTER TESTING
+###############################################
+
+### 47. Test View Counter - Call 5 times
+# Gọi request này nhiều lần để xem viewCount tăng
+GET {{baseUrl}}/news/slug/loi-ich-cua-vaccine-covid-19
+Accept: application/json
+
+### 48. Check View Count
+GET {{baseUrl}}/news/2
+Accept: application/json
+
+###############################################
+# SPECIFIC USE CASES
+###############################################
+
+### 49. Get Top 5 Most Viewed News
+GET {{baseUrl}}/news?sort=viewCount,desc&size=5
+Accept: application/json
+
+### 50. Get Latest Published News
+GET {{baseUrl}}/news?filter=isPublished:true&sort=publishedAt,desc&size=10
+Accept: application/json
+
+### 51. Get All Vaccine-related News
+GET {{baseUrl}}/news?filter=category:'VACCINE_INFO' or category:'VACCINATION_SCHEDULE'
+Accept: application/json
+
+### 52. Get Children Health News
+GET {{baseUrl}}/news?filter=category:'CHILDREN_HEALTH' and isPublished:true
+Accept: application/json
+
+### 53. Get COVID-19 Related News
+GET {{baseUrl}}/news?filter=category:'COVID_19' or tags~'*covid*'
+Accept: application/json
+
+### 54. Get News for Homepage (Featured + Published + Top 5)
+GET {{baseUrl}}/news?filter=isFeatured:true and isPublished:true&sort=publishedAt,desc&size=5
+Accept: application/json
+
+### 55. Search All Fields
+GET {{baseUrl}}/news?filter=title~'*vaccine*' or content~'*vaccine*' or tags~'*vaccine*'
+Accept: application/json
+
+###############################################
+# ANALYTICS QUERIES
+###############################################
+
+### 56. Count News by Category
+GET {{baseUrl}}/news?filter=category:'VACCINE_INFO'
+Accept: application/json
+
+### 57. Get Low-viewed News (Less than 200 views)
+GET {{baseUrl}}/news?filter=viewCount<200&sort=viewCount,asc
+Accept: application/json
+
+### 58. Get High-viewed News (More than 500 views)
+GET {{baseUrl}}/news?filter=viewCount>500&sort=viewCount,desc
+Accept: application/json
+
+### 59. Get Recently Updated News
+GET {{baseUrl}}/news?sort=updatedAt,desc&size=10
+Accept: application/json
+
+### 60. Get Draft News (Admin view)
+GET {{baseUrl}}/news?filter=isPublished:false
+Accept: application/json
+
+###############################################
+# END OF FILE
+###############################################
