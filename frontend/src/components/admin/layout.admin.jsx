@@ -10,8 +10,7 @@ import {
   BankOutlined,
   LogoutOutlined,
   SafetyCertificateOutlined,
-  BoxPlotOutlined,
-  NotificationFilled,
+  NotificationOutlined,
 } from '@ant-design/icons';
 
 import { useDispatch, useSelector } from 'react-redux';
@@ -89,7 +88,7 @@ const LayoutAdmin = () => {
     },
     {
       key: '/admin/news',
-      icon: <NotificationFilled />,
+      icon: <NotificationOutlined />,
       label: 'Tin tức',
     },
     {
