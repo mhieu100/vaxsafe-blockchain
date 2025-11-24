@@ -64,6 +64,9 @@ export async function updateAvatar(avatarUrl) {
   });
 }
 
+// Alias for consistency
+export const callUpdateAvatar = updateAvatar;
+
 /**
  * Update user account and patient profile
  * @param {object} payload - User and patient profile data to update

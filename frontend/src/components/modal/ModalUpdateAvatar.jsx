@@ -1,23 +1,132 @@
-import { Modal, message } from 'antd';
+import {
+  CameraOutlined,
+  DeleteOutlined,
+  UserOutlined,
+} from '@ant-design/icons';
+import { Avatar, Button, Modal, message, Upload } from 'antd';
+import { useState } from 'react';
+import { useAccountStore } from '../../stores/useAccountStore';
+import { callUploadFile } from '../../services/file.service';
+import { callUpdateAvatar } from '../../services/auth.service';
 
 const ModalUpdateAvatar = ({ open, setOpen }) => {
-  const handleCancel = () => {
-    setOpen(false);
+  const user = useAccountStore((state) => state.user);
+  const fetchAccount = useAccountStore((state) => state.fetchAccount);
+  const [uploading, setUploading] = useState(false);
+  const [removing, setRemoving] = useState(false);
+
+  const handleUpload = async (file) => {
+    try {
+      setUploading(true);
+
+      // Step 1: Upload file to /files
+      const uploadRes = await callUploadFile(file, 'user');
+      if (!uploadRes?.data?.fileName) {
+        throw new Error('Upload failed: no file URL returned');
+      }
+
+      const avatarUrl = uploadRes.data.fileName;
+
+      // Step 2: Update avatar via /auth/avatar
+      const updateRes = await callUpdateAvatar(avatarUrl);
+      if (!updateRes?.data) {
+        throw new Error('Update avatar failed');
+      }
+
+      // Step 3: Refresh user data from server
+      await fetchAccount();
+
+      message.success('Cập nhật ảnh đại diện thành công!');
+      setOpen(false);
+    } catch (error) {
+      console.error('Avatar upload error:', error);
+      message.error(error?.message || 'Không thể cập nhật ảnh đại diện');
+    } finally {
+      setUploading(false);
+    }
   };
 
-  const handleOk = () => {
-    message.info('Avatar update feature coming soon');
-    setOpen(false);
+  const handleRemove = async () => {
+    try {
+      setRemoving(true);
+
+      // Update avatar to default image
+      const updateRes = await callUpdateAvatar(
+        'http://localhost:8080/storage/user/default.png'
+      );
+      if (!updateRes?.data) {
+        throw new Error('Remove avatar failed');
+      }
+
+      // Refresh user data from server
+      await fetchAccount();
+
+      message.success('Đã xóa ảnh đại diện!');
+      setOpen(false);
+    } catch (error) {
+      console.error('Remove avatar error:', error);
+      message.error(error?.message || 'Không thể xóa ảnh đại diện');
+    } finally {
+      setRemoving(false);
+    }
+  };
+
+  const uploadProps = {
+    beforeUpload: (file) => {
+      const isImage = file.type.startsWith('image/');
+      if (!isImage) {
+        message.error('Chỉ được tải lên file ảnh!');
+        return Upload.LIST_IGNORE;
+      }
+      const isLt5M = file.size / 1024 / 1024 < 5;
+      if (!isLt5M) {
+        message.error('Kích thước ảnh phải nhỏ hơn 5MB!');
+        return Upload.LIST_IGNORE;
+      }
+      handleUpload(file);
+      return false; // Prevent auto upload
+    },
+    showUploadList: false,
   };
 
   return (
     <Modal
-      title="Update Avatar"
+      title="Update Profile Picture"
       open={open}
-      onOk={handleOk}
-      onCancel={handleCancel}
+      onCancel={() => setOpen(false)}
+      footer={null}
+      className="avatar-modal"
     >
-      <p>Upload new avatar feature coming soon...</p>
+      <div className="text-center !py-6">
+        <Avatar
+          size={120}
+          src={user?.avatar}
+          icon={<UserOutlined />}
+          className="mb-6"
+        />
+        <div className="!space-y-4 !mt-3">
+          <Upload {...uploadProps}>
+            <Button
+              type="primary"
+              icon={<CameraOutlined />}
+              block
+              loading={uploading}
+              disabled={uploading || removing}
+            >
+              {uploading ? 'Đang tải lên...' : 'Upload New Photo'}
+            </Button>
+          </Upload>
+          <Button
+            icon={<DeleteOutlined />}
+            block
+            onClick={handleRemove}
+            loading={removing}
+            disabled={uploading || removing || !user?.avatar}
+          >
+            Remove Current Photo
+          </Button>
+        </div>
+      </div>
     </Modal>
   );
 };

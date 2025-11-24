@@ -17,3 +17,6 @@ export async function uploadFile(file, folder = 'user') {
     },
   });
 }
+
+// Alias for consistency
+export const callUploadFile = uploadFile;
