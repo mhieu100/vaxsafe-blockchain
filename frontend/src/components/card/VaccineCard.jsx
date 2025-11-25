@@ -6,9 +6,9 @@ import {
 } from '@ant-design/icons';
 import { Badge, Button, Card, Image, message, Rate } from 'antd';
 import { useNavigate } from 'react-router-dom';
-import useCartStore from '../../stores/useCartStore';
-import { formatPrice } from '../../utils/formatPrice';
-import { getImageProps } from '../../utils/imageUtils';
+import useCartStore from '@/stores/useCartStore';
+import { formatPrice } from '@/utils/formatPrice';
+import { getImageProps } from '@/utils/imageUtils';
 
 /**
  * VaccineCard component displays a vaccine in card format with grid view

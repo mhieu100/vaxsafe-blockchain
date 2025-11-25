@@ -21,6 +21,13 @@ public class PaymentController {
 
     @Value("${vnpay.hash-secret}")
     private String hashSecret;
+    
+    @Value("${frontend.success-url}")
+    private String frontendSuccessUrl;
+    
+    @Value("${frontend.cancel-url}")
+    private String frontendCancelUrl;
+    
     private final PaymentService paymentService;
 
     @GetMapping("/paypal/success")
@@ -30,7 +37,7 @@ public class PaymentController {
         paymentRequest.setReferenceId(referenceId);
         paymentRequest.setType(TypeTransactionEnum.valueOf(type));
         paymentService.successPayment(paymentRequest);
-        response.sendRedirect("http://localhost:3000/success");
+        response.sendRedirect(frontendSuccessUrl);
     }
 
     @GetMapping("/paypal/cancel")
@@ -40,7 +47,7 @@ public class PaymentController {
         paymentRequest.setReferenceId(referenceId);
         paymentRequest.setType(TypeTransactionEnum.valueOf(type));
         paymentService.cancelPayment(paymentRequest);
-        response.sendRedirect("http://localhost:3000/cancel");
+        response.sendRedirect(frontendCancelUrl);
     }
 
     @GetMapping("/vnpay/return")
@@ -63,10 +70,10 @@ public class PaymentController {
 
         if ("00".equals(vnpParams.get("vnp_ResponseCode"))) {
             paymentService.successPayment(paymentRequest);
-            redirectUrl = "http://localhost:3000/success";
+            redirectUrl = frontendSuccessUrl;
         } else {
             paymentService.cancelPayment(paymentRequest);
-            redirectUrl = "http://localhost:3000/cancel";
+            redirectUrl = frontendCancelUrl;
         }
         response.sendRedirect(redirectUrl);
     }

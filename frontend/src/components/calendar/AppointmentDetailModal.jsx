@@ -1,6 +1,6 @@
 import { ClockCircleOutlined, MedicineBoxOutlined } from '@ant-design/icons';
 import { Badge, Button, Card, Modal, Space, Tag, Typography } from 'antd';
-import { getStatusBadge } from '../../utils/status';
+import { getStatusBadge } from '@/utils/status';
 
 const { Title, Text } = Typography;
 

@@ -2,10 +2,12 @@ import { createBrowserRouter } from 'react-router-dom';
 import LayoutAdmin from './components/admin/layout.admin';
 import ProtectedAuthRoute from './components/auth/ProtectedAuthRoute';
 import LayoutClient from './components/client/layout.client';
-import NotFound from './components/share/not.found';
-import ProtectedAdminRoute from './components/share/protected-route';
-import ProtectedStaffRoute from './components/share/protected-route/staff-protected';
-import ProtectedUserRoute from './components/share/protected-route/user-protected';
+import { NotFound } from './components/common/feedback';
+import {
+  ProtectedRoute as ProtectedAdminRoute,
+  StaffProtected as ProtectedStaffRoute,
+  UserProtected as ProtectedUserRoute,
+} from './components/common/guards';
 // Staff pages
 import LayoutStaff from './components/staff/layout.staff';
 import CenterPage from './pages/admin/center';
@@ -19,16 +21,16 @@ import ForgotPasswordPage from './pages/auth/ForgotPasswordPage';
 import LoginPage from './pages/auth/login';
 import ResetPasswordPage from './pages/auth/ResetPasswordPage';
 import RegisterPage from './pages/auth/register';
-import HomePage from './pages/client/Home';
-import VaccineListPage from './pages/client/VaccineListPage';
-import BlockchainPage from './pages/private/BlockchainPage';
-import BookingPage from './pages/private/BookingPage';
-import CancelPage from './pages/private/CancelPage';
-import CheckoutPage from './pages/private/CheckoutPage';
-import UserProfilePage from './pages/private/ProfilePage';
-import SuccessPage from './pages/private/SuccessPage';
-import CartPage from './pages/public/CartPage';
-import VaccineDetailPage from './pages/public/VaccineDetailPage';
+import BlockchainPage from './pages/client/BlockchainPage';
+import BookingPage from './pages/client/booking';
+import CancelPage from './pages/client/CancelPage';
+import CheckoutPage from './pages/client/CheckoutPage';
+import CartPage from './pages/client/cart';
+import HomePage from './pages/client/home';
+import UserProfilePage from './pages/client/profile';
+import SuccessPage from './pages/client/SuccessPage';
+import VaccineDetailPage from './pages/client/vaccine-detail';
+import VaccineListPage from './pages/client/vaccine-list';
 import CalendarView from './pages/staff/calendar-view';
 import StaffDashboard from './pages/staff/dashboard';
 import DoctorDashboard from './pages/staff/doctor-dashboard';

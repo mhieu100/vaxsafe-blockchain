@@ -1,6 +1,6 @@
 import dayjs from 'dayjs';
 import { QRCodeSVG } from 'qrcode.react';
-import { useAccountStore } from '../../stores/useAccountStore';
+import { useAccountStore } from '@/stores/useAccountStore';
 
 const VaccineCertificate = ({ data, transactionHash }) => {
   const user = useAccountStore((state) => state.user);

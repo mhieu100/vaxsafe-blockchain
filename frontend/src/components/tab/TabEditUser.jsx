@@ -1,6 +1,6 @@
 import { Button, Col, Form, Input, message, Row, Select, Typography } from 'antd';
 import { useEffect, useState } from 'react';
-import { useAccountStore } from '../../stores/useAccountStore';
+import { useAccountStore } from '@/stores/useAccountStore';
 
 const { Text, Paragraph } = Typography;
 

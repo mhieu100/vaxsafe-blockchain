@@ -13,8 +13,8 @@ import {
 import { Avatar, Badge, Dropdown, Layout, Menu, message } from 'antd';
 import { useEffect, useState } from 'react';
 import { Outlet, useLocation, useNavigate } from 'react-router-dom';
-import { callLogout } from '../../config/api.auth';
-import { useAccountStore } from '../../stores/useAccountStore';
+import { callLogout } from '@/config/api.auth';
+import { useAccountStore } from '@/stores/useAccountStore';
 
 const { Header, Sider, Content } = Layout;
 

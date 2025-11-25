@@ -1,5 +1,5 @@
 import { Navigate } from 'react-router-dom';
-import { useAccountStore } from '../../stores/useAccountStore';
+import { useAccountStore } from '@/stores/useAccountStore';
 
 /**
  * Protected route for authentication pages (login, register, etc.)

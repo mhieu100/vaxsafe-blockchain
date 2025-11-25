@@ -1,12 +1,11 @@
 package com.dapp.backend.controller;
+
 import java.io.IOException;
-import java.net.URISyntaxException;
 import java.time.Instant;
 import java.util.Arrays;
 import java.util.List;
 
 import com.dapp.backend.dto.response.UploadFileResponse;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -15,19 +14,15 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.dapp.backend.annotation.ApiMessage;
 import com.dapp.backend.exception.StorageException;
-import com.dapp.backend.service.FileService;
-
+import com.dapp.backend.service.CloudinaryService;
 
 @RestController
 public class FileController {
 
-    @Value("${upload-file.base-uri}")
-    private String baseURI;
+    private final CloudinaryService cloudinaryService;
 
-    private final FileService fileService;
-
-    public FileController(FileService fileService) {
-        this.fileService = fileService;
+    public FileController(CloudinaryService cloudinaryService) {
+        this.cloudinaryService = cloudinaryService;
     }
 
     @PostMapping("/files")
@@ -35,11 +30,11 @@ public class FileController {
     public ResponseEntity<UploadFileResponse> upload(
             @RequestParam(name = "file", required = false) MultipartFile file,
             @RequestParam("folder") String folder
-
-    ) throws URISyntaxException, IOException, StorageException {
+    ) throws IOException, StorageException {
         if (file == null || file.isEmpty()) {
             throw new StorageException("File is empty. Please upload a file.");
         }
+        
         String fileName = file.getOriginalFilename();
         List<String> allowedExtensions = Arrays.asList("pdf", "jpg", "jpeg", "png", "doc", "docx");
         boolean isValid = allowedExtensions.stream().anyMatch(item -> fileName.toLowerCase().endsWith(item));
@@ -48,11 +43,9 @@ public class FileController {
             throw new StorageException("Invalid file extension. only allows " + allowedExtensions.toString());
         }
 
-        this.fileService.createDirectory(baseURI + folder);
+        String fileUrl = this.cloudinaryService.uploadFile(file, folder);
 
-        String uploadFile = this.fileService.store(file, folder);
-
-        UploadFileResponse response = new UploadFileResponse("http://localhost:8080/storage/" + folder + "/" + uploadFile, Instant.now());
+        UploadFileResponse response = new UploadFileResponse(fileUrl, Instant.now());
 
         return ResponseEntity.ok().body(response);
     }

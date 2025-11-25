@@ -9,8 +9,6 @@ import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.experimental.FieldDefaults;
 
-import java.util.List;
-
 @Entity
 @Table(name = "vaccines")
 @Data
@@ -39,20 +37,15 @@ public class Vaccine extends BaseEntity {
     @Column(name = "manufacturer", length = 1000)
     String manufacturer;
 
-    @ElementCollection
-    @CollectionTable(name = "vaccine_injection", joinColumns = @JoinColumn(name = "vaccine_id"))
-    @Column(name = "injection")
-    List<String> injection;
+    @Column(name = "injection", columnDefinition = "TEXT")
+    String injection;
 
-    @ElementCollection
-    @CollectionTable(name = "vaccine_preserve", joinColumns = @JoinColumn(name = "vaccine_id"))
-    @Column(name = "preserve")
-    List<String> preserve;
+    @Column(name = "preserve", columnDefinition = "TEXT")
+    String preserve;
 
-    @ElementCollection
-    @CollectionTable(name = "vaccine_contraindications", joinColumns = @JoinColumn(name = "vaccine_id"))
-    @Column(name = "contraindication")
-    List<String> contraindications;
+    @Column(name = "contraindications", columnDefinition = "TEXT")
+    String contraindications;
+    
     int dosesRequired;
     int duration;
 }

@@ -54,28 +54,8 @@ public class VnpayUtils {
 
         // Ký lại bằng HMAC SHA512
         String signData = sb.toString();
-        String computedHash = hmacSHA512(secretKey, signData);
+        String computedHash = CryptoUtils.hmacSHA512(secretKey, signData);
 
         return computedHash.equalsIgnoreCase(receivedHash);
-    }
-
-    /**
-     * Hàm tạo HMAC SHA512
-     */
-    private static String hmacSHA512(String key, String data) {
-        try {
-            javax.crypto.Mac hmac512 = javax.crypto.Mac.getInstance("HmacSHA512");
-            javax.crypto.spec.SecretKeySpec secretKey = new javax.crypto.spec.SecretKeySpec(
-                    key.getBytes(StandardCharsets.UTF_8), "HmacSHA512");
-            hmac512.init(secretKey);
-            byte[] bytes = hmac512.doFinal(data.getBytes(StandardCharsets.UTF_8));
-            StringBuilder hash = new StringBuilder(bytes.length * 2);
-            for (byte b : bytes) {
-                hash.append(String.format("%02x", b));
-            }
-            return hash.toString();
-        } catch (Exception e) {
-            throw new RuntimeException("Error while generating HMAC SHA512", e);
-        }
     }
 }

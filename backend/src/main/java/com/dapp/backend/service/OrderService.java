@@ -20,7 +20,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.dapp.backend.service.PaymentService.EXCHANGE_RATE_TO_USD;
+import static com.dapp.backend.service.PaypalService.EXCHANGE_RATE_TO_USD;
 
 @Service
 @RequiredArgsConstructor

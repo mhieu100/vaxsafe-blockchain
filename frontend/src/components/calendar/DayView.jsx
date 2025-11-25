@@ -7,7 +7,7 @@ import {
 } from '@ant-design/icons';
 import { Badge, Button, Card, List, Space, Tag, Typography } from 'antd';
 import dayjs from 'dayjs';
-import { getStatusBadge } from '../../utils/status';
+import { getStatusBadge } from '@/utils/status';
 
 const { Title, Text } = Typography;
 

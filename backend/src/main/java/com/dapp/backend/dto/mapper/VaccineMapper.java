@@ -10,7 +10,8 @@ public class VaccineMapper {
      * Convert Vaccine entity to VaccineResponse DTO
      */
     public static VaccineResponse toResponse(Vaccine v) {
-        if (v == null) return null;
+        if (v == null)
+            return null;
         return VaccineResponse.builder()
                 .id(v.getId())
                 .slug(v.getSlug())
@@ -22,9 +23,6 @@ public class VaccineMapper {
                 .descriptionShort(v.getDescriptionShort())
                 .description(v.getDescription())
                 .manufacturer(v.getManufacturer())
-                .injection(v.getInjection())
-                .preserve(v.getPreserve())
-                .contraindications(v.getContraindications())
                 .dosesRequired(v.getDosesRequired())
                 .duration(v.getDuration())
                 .createdAt(v.getCreatedAt())
@@ -36,7 +34,8 @@ public class VaccineMapper {
      * Convert VaccineRequest to Vaccine entity for creation
      */
     public static Vaccine toEntity(VaccineRequest request) {
-        if (request == null) return null;
+        if (request == null)
+            return null;
         return Vaccine.builder()
                 .slug(request.getSlug())
                 .name(request.getName())
@@ -47,9 +46,6 @@ public class VaccineMapper {
                 .descriptionShort(request.getDescriptionShort())
                 .description(request.getDescription())
                 .manufacturer(request.getManufacturer())
-                .injection(request.getInjection())
-                .preserve(request.getPreserve())
-                .contraindications(request.getContraindications())
                 .dosesRequired(request.getDosesRequired())
                 .duration(request.getDuration())
                 .build();
@@ -59,7 +55,8 @@ public class VaccineMapper {
      * Update existing Vaccine entity with data from VaccineRequest
      */
     public static void updateEntity(Vaccine vaccine, VaccineRequest request) {
-        if (vaccine == null || request == null) return;
+        if (vaccine == null || request == null)
+            return;
 
         // Only set slug if it's provided (not null or empty)
         if (request.getSlug() != null && !request.getSlug().trim().isEmpty()) {
@@ -73,11 +70,8 @@ public class VaccineMapper {
         vaccine.setDescriptionShort(request.getDescriptionShort());
         vaccine.setDescription(request.getDescription());
         vaccine.setManufacturer(request.getManufacturer());
-        vaccine.setInjection(request.getInjection());
-        vaccine.setPreserve(request.getPreserve());
-        vaccine.setContraindications(request.getContraindications());
+
         vaccine.setDosesRequired(request.getDosesRequired());
         vaccine.setDuration(request.getDuration());
     }
 }
-

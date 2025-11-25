@@ -6,9 +6,9 @@ import {
 } from '@ant-design/icons';
 import { Badge, Button, Card, Image, message, Rate, Space, Tag, Typography } from 'antd';
 import { useNavigate } from 'react-router-dom';
-import useCartStore from '../../stores/useCartStore';
-import { formatPrice } from '../../utils/formatPrice';
-import { getImageProps } from '../../utils/imageUtils';
+import useCartStore from '@/stores/useCartStore';
+import { formatPrice } from '@/utils/formatPrice';
+import { getImageProps } from '@/utils/imageUtils';
 
 const { Title, Text } = Typography;
 

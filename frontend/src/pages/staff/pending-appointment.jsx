@@ -34,8 +34,8 @@ import dayjs from 'dayjs';
 import queryString from 'query-string';
 import { useRef, useState } from 'react';
 import { sfLike } from 'spring-filter-query-builder';
-import DataTable from '../../components/data-table';
-import AssignAppointmentModal from '../../components/modal/AssignAppointmentModal';
+import DataTable from '@/components/data-table';
+import { AssignAppointmentModal } from '@/components/modal/appointment';
 import { useAppointmentStore } from '../../stores/useAppointmentStore';
 import { getColorStatus } from '../../utils/status';
 

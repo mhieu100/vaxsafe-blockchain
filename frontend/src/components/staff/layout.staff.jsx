@@ -10,8 +10,8 @@ import { ProLayout } from '@ant-design/pro-components';
 import { Avatar, Badge, Dropdown, message } from 'antd';
 import { useEffect, useState } from 'react';
 import { Link, Outlet, useLocation, useNavigate } from 'react-router-dom';
-import { callLogout } from '../../config/api.auth';
-import { useAccountStore } from '../../stores/useAccountStore';
+import { callLogout } from '@/config/api.auth';
+import { useAccountStore } from '@/stores/useAccountStore';
 
 const LayoutStaff = () => {
   const navigate = useNavigate();

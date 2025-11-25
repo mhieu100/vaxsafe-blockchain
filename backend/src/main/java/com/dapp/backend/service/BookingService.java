@@ -23,7 +23,7 @@ import org.springframework.http.*;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
-import static com.dapp.backend.service.PaymentService.EXCHANGE_RATE_TO_USD;
+import static com.dapp.backend.service.PaypalService.EXCHANGE_RATE_TO_USD;
 
 @Service
 @RequiredArgsConstructor

@@ -13,11 +13,11 @@ import { Avatar, Badge, Button, Drawer, Input, Layout, Menu, message, Space } fr
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
-import authService from '../../services/auth.service';
-import { useAccountStore } from '../../stores/useAccountStore';
-import useCartStore from '../../stores/useCartStore';
+import authService from '@/services/auth.service';
+import { useAccountStore } from '@/stores/useAccountStore';
+import useCartStore from '@/stores/useCartStore';
+import { LanguageSwitcher as LanguageSelect } from '../common/ui';
 import DropdownUser from '../dropdown/DropdownUser';
-import LanguageSelect from '../share/LanguageSwitcher';
 
 const { Header: AntHeader } = Layout;
 const { Search } = Input;

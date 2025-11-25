@@ -1,8 +1,8 @@
 import { CloseCircleOutlined } from '@ant-design/icons';
 import { Badge, message, notification, Popconfirm } from 'antd';
 import { useCallback, useEffect, useRef, useState } from 'react';
-import { callCancelAppointment } from '../../config/api.appointment';
-import { callMyAppointments } from '../../config/api.auth';
+import { callCancelAppointment } from '@/config/api.appointment';
+import { callMyAppointments } from '@/config/api.auth';
 import DataTable from '../data-table';
 
 const History = () => {

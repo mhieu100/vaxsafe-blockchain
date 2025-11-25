@@ -2,8 +2,8 @@ import { LogoutOutlined, UserOutlined } from '@ant-design/icons';
 import { Avatar, Dropdown, message } from 'antd';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
-import authService from '../../services/auth.service';
-import { useAccountStore } from '../../stores/useAccountStore';
+import authService from '@/services/auth.service';
+import { useAccountStore } from '@/stores/useAccountStore';
 
 const DropdownUser = () => {
   const navigate = useNavigate();
