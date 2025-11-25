@@ -1,9 +1,15 @@
-import { Card, Button, Space, Typography, List, Badge } from 'antd';
+import { Badge, Button, Card, List, Space, Typography } from 'antd';
 import dayjs from 'dayjs';
 
 const { Title, Text } = Typography;
 
-const WeekView = ({ selectedDate, setSelectedDate, setViewMode, onAppointmentClick, appointments = {} }) => {
+const WeekView = ({
+  selectedDate,
+  setSelectedDate,
+  setViewMode,
+  onAppointmentClick,
+  appointments = {},
+}) => {
   const weekStart = selectedDate.startOf('isoWeek');
   const weekDays = Array.from({ length: 7 }, (_, i) => weekStart.add(i, 'day'));
 
@@ -25,9 +31,7 @@ const WeekView = ({ selectedDate, setSelectedDate, setViewMode, onAppointmentCli
             Tuần trước
           </Button>
           <Button onClick={() => setSelectedDate(dayjs())}>Hôm nay</Button>
-          <Button onClick={() => setSelectedDate(selectedDate.add(1, 'week'))}>
-            Tuần sau
-          </Button>
+          <Button onClick={() => setSelectedDate(selectedDate.add(1, 'week'))}>Tuần sau</Button>
           <Button onClick={() => setViewMode('month')}>Quay lại tháng</Button>
         </Space>
       }
@@ -37,10 +41,7 @@ const WeekView = ({ selectedDate, setSelectedDate, setViewMode, onAppointmentCli
           const isToday = day.isSame(dayjs(), 'day');
 
           return (
-            <div
-              key={day.format('YYYY-MM-DD')}
-              className={`week-day ${isToday ? 'today' : ''}`}
-            >
+            <div key={day.format('YYYY-MM-DD')} className={`week-day ${isToday ? 'today' : ''}`}>
               <div className="week-day-header">
                 <Text strong>{day.format('ddd')}</Text>
                 <Text className="week-day-date">{day.format('DD')}</Text>

@@ -54,7 +54,7 @@ export const getLatestTransactions = async (numberOfBlocks = 10) => {
       if (blockNumber < 0) break;
 
       const block = await getBlockByNumber(blockNumber);
-      if (block && block.transactions) {
+      if (block?.transactions) {
         transactions.push(...block.transactions);
       }
     }

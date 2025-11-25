@@ -27,4 +27,3 @@ export const callDeleteVaccine = (id) => {
 export const callGetAllCountries = () => {
   return axios.get('/vaccines/countries');
 };
-

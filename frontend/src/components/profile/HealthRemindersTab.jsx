@@ -1,9 +1,5 @@
-import { Typography, Card } from 'antd';
-import {
-  WarningOutlined,
-  ExperimentOutlined,
-  CheckCircleOutlined,
-} from '@ant-design/icons';
+import { CheckCircleOutlined, ExperimentOutlined, WarningOutlined } from '@ant-design/icons';
+import { Card, Typography } from 'antd';
 
 const { Title, Text } = Typography;
 

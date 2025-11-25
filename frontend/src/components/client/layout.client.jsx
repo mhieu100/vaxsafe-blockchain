@@ -1,9 +1,8 @@
-import { Outlet, useLocation } from 'react-router-dom';
-
-import Loading from '../share/loading';
 import { useEffect, useState } from 'react';
-import Navbar from './header.client';
+import { Outlet, useLocation } from 'react-router-dom';
+import Loading from '../share/loading';
 import Footer from './footer.client';
+import Navbar from './header.client';
 
 const LayoutClient = () => {
   const location = useLocation();

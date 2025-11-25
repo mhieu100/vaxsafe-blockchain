@@ -1,10 +1,9 @@
 import { Row } from 'antd';
-
-import { useCartStore } from '../../stores/useCartStore';
 import EmptyCart from '../../components/cart/EmptyCart';
-import TopCartSection from '../../components/cart/TopCartSection';
 import ListItemSection from '../../components/cart/ListItemSection';
 import SummarySection from '../../components/cart/SummarySection';
+import TopCartSection from '../../components/cart/TopCartSection';
+import { useCartStore } from '../../stores/useCartStore';
 
 const CartPage = () => {
   const { items } = useCartStore();

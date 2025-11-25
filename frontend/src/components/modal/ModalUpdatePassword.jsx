@@ -1,8 +1,8 @@
 import { CheckCircleOutlined } from '@ant-design/icons';
-import { Button, Form, Input, Modal, Typography, message } from 'antd';
+import { Button, Form, Input, Modal, message, Typography } from 'antd';
 import { useState } from 'react';
-import { useAccountStore } from '../../stores/useAccountStore';
 import { callChangePassword } from '../../services/auth.service';
+import { useAccountStore } from '../../stores/useAccountStore';
 
 const { Text } = Typography;
 
@@ -37,16 +37,13 @@ const ModalUpdatePassword = ({ open, setOpen }) => {
           securityForm.resetFields();
           setOpen(false);
         } else {
-          message.error(
-            'Failed to update password. Please check your current password.'
-          );
+          message.error('Failed to update password. Please check your current password.');
         }
       } else {
         message.error('Unexpected response format');
       }
     } catch (error) {
-      const errorMessage =
-        error?.message || 'An error occurred while updating password';
+      const errorMessage = error?.message || 'An error occurred while updating password';
       message.error(errorMessage);
       console.error('Change password error:', errorMessage);
     } finally {
@@ -60,13 +57,7 @@ const ModalUpdatePassword = ({ open, setOpen }) => {
   };
 
   return (
-    <Modal
-      title="Security Settings"
-      open={open}
-      onCancel={handleCancel}
-      footer={null}
-      width={600}
-    >
+    <Modal title="Security Settings" open={open} onCancel={handleCancel} footer={null} width={600}>
       <div className="py-4">
         <div className="space-y-6">
           <div className="bg-green-50 border border-green-200 rounded-lg p-4">
@@ -83,11 +74,7 @@ const ModalUpdatePassword = ({ open, setOpen }) => {
             </div>
           </div>
 
-          <Form
-            form={securityForm}
-            layout="vertical"
-            onFinish={handleUpdatePassword}
-          >
+          <Form form={securityForm} layout="vertical" onFinish={handleUpdatePassword}>
             <Form.Item
               label="Current Password"
               name="currentPassword"

@@ -1,31 +1,21 @@
-import { useState } from 'react';
 import {
-  Layout,
-  Menu,
-  Avatar,
-  Button,
-  Drawer,
-  message,
-  Badge,
-  Space,
-  Input,
-} from 'antd';
-import {
-  UserOutlined,
+  DashboardOutlined,
   HeartOutlined,
+  HomeOutlined,
+  LogoutOutlined,
   MenuOutlined,
   SafetyCertificateOutlined,
   ShoppingCartOutlined,
-  HomeOutlined,
   ShoppingOutlined,
-  LogoutOutlined,
-  DashboardOutlined,
+  UserOutlined,
 } from '@ant-design/icons';
-import { useNavigate, useLocation, Link } from 'react-router-dom';
+import { Avatar, Badge, Button, Drawer, Input, Layout, Menu, message, Space } from 'antd';
+import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
+import authService from '../../services/auth.service';
 import { useAccountStore } from '../../stores/useAccountStore';
 import useCartStore from '../../stores/useCartStore';
-import authService from '../../services/auth.service';
 import DropdownUser from '../dropdown/DropdownUser';
 import LanguageSelect from '../share/LanguageSwitcher';
 
@@ -43,7 +33,7 @@ const Navbar = () => {
   const location = useLocation();
 
   const [mobileMenuVisible, setMobileMenuVisible] = useState(false);
-  const [searchValue, setSearchValue] = useState('');
+  const [_searchValue, setSearchValue] = useState('');
 
   const handleLogout = async () => {
     const res = await authService.logout();
@@ -192,11 +182,7 @@ const Navbar = () => {
             <div className="hidden md:flex md:items-center md:gap-2">
               {!isAuthenticated ? (
                 <>
-                  <Button
-                    onClick={() => navigate('/login')}
-                    className="text-sm"
-                    size="middle"
-                  >
+                  <Button onClick={() => navigate('/login')} className="text-sm" size="middle">
                     {t('header.login')}
                   </Button>
                   <Button
@@ -252,12 +238,8 @@ const Navbar = () => {
                   size="large"
                 />
                 <div className="overflow-hidden">
-                  <div className="truncate font-medium">
-                    {user?.name || 'User'}
-                  </div>
-                  <div className="truncate text-sm text-gray-500">
-                    {user?.email}
-                  </div>
+                  <div className="truncate font-medium">{user?.name || 'User'}</div>
+                  <div className="truncate text-sm text-gray-500">{user?.email}</div>
                 </div>
               </div>
             ) : (

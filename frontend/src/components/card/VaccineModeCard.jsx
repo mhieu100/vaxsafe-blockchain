@@ -4,21 +4,11 @@ import {
   HeartOutlined,
   ShoppingCartOutlined,
 } from '@ant-design/icons';
-import {
-  Badge,
-  Button,
-  Card,
-  Image,
-  Rate,
-  Space,
-  Tag,
-  Typography,
-  message,
-} from 'antd';
+import { Badge, Button, Card, Image, message, Rate, Space, Tag, Typography } from 'antd';
 import { useNavigate } from 'react-router-dom';
+import useCartStore from '../../stores/useCartStore';
 import { formatPrice } from '../../utils/formatPrice';
 import { getImageProps } from '../../utils/imageUtils';
-import useCartStore from '../../stores/useCartStore';
 
 const { Title, Text } = Typography;
 
@@ -48,9 +38,15 @@ const VaccineModeCard = ({ vaccine }) => {
       }}
     >
       <div className="flex gap-6">
-        <div
-          className="relative group cursor-pointer"
+        <button
+          type="button"
+          className="relative group cursor-pointer border-none bg-transparent p-0"
           onClick={() => navigate(`/vaccine/${vaccine.slug}`)}
+          onKeyDown={(e) => {
+            if (e.key === 'Enter' || e.key === ' ') {
+              navigate(`/vaccine/${vaccine.slug}`);
+            }
+          }}
         >
           <div className="w-32 h-32 relative">
             <Image
@@ -59,7 +55,7 @@ const VaccineModeCard = ({ vaccine }) => {
               className="rounded-lg group-hover:scale-105 transition-transform"
             />
           </div>
-        </div>
+        </button>
         <div className="flex-1 min-w-0">
           <div className="flex justify-between items-start mb-2">
             <Title
@@ -105,10 +101,7 @@ const VaccineModeCard = ({ vaccine }) => {
               />
             </div>
             <Space>
-              <Button
-                icon={<EyeOutlined />}
-                onClick={() => navigate(`/vaccine/${vaccine.slug}`)}
-              >
+              <Button icon={<EyeOutlined />} onClick={() => navigate(`/vaccine/${vaccine.slug}`)}>
                 View
               </Button>
               <Button

@@ -1,8 +1,8 @@
-import { Card, Result, Button } from 'antd';
-import { useNavigate } from 'react-router-dom';
 import { CheckCircleOutlined } from '@ant-design/icons';
-import { useTranslation } from 'react-i18next';
+import { Button, Card, Result } from 'antd';
 import { useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
+import { useNavigate } from 'react-router-dom';
 
 const SuccessPage = () => {
   const navigate = useNavigate();

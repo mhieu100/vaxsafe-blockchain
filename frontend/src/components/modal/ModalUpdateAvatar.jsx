@@ -1,13 +1,9 @@
-import {
-  CameraOutlined,
-  DeleteOutlined,
-  UserOutlined,
-} from '@ant-design/icons';
+import { CameraOutlined, DeleteOutlined, UserOutlined } from '@ant-design/icons';
 import { Avatar, Button, Modal, message, Upload } from 'antd';
 import { useState } from 'react';
-import { useAccountStore } from '../../stores/useAccountStore';
-import { callUploadFile } from '../../services/file.service';
 import { callUpdateAvatar } from '../../services/auth.service';
+import { callUploadFile } from '../../services/file.service';
+import { useAccountStore } from '../../stores/useAccountStore';
 
 const ModalUpdateAvatar = ({ open, setOpen }) => {
   const user = useAccountStore((state) => state.user);
@@ -51,9 +47,7 @@ const ModalUpdateAvatar = ({ open, setOpen }) => {
       setRemoving(true);
 
       // Update avatar to default image
-      const updateRes = await callUpdateAvatar(
-        'http://localhost:8080/storage/user/default.png'
-      );
+      const updateRes = await callUpdateAvatar('http://localhost:8080/storage/user/default.png');
       if (!updateRes?.data) {
         throw new Error('Remove avatar failed');
       }
@@ -98,12 +92,7 @@ const ModalUpdateAvatar = ({ open, setOpen }) => {
       className="avatar-modal"
     >
       <div className="text-center !py-6">
-        <Avatar
-          size={120}
-          src={user?.avatar}
-          icon={<UserOutlined />}
-          className="mb-6"
-        />
+        <Avatar size={120} src={user?.avatar} icon={<UserOutlined />} className="mb-6" />
         <div className="!space-y-4 !mt-3">
           <Upload {...uploadProps}>
             <Button

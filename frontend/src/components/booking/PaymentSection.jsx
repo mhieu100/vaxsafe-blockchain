@@ -1,9 +1,5 @@
-import { Card, Form, Radio, Button, Alert } from 'antd';
-import {
-  WalletOutlined,
-  BankOutlined,
-  CreditCardOutlined,
-} from '@ant-design/icons';
+import { BankOutlined, CreditCardOutlined, WalletOutlined } from '@ant-design/icons';
+import { Alert, Button, Card, Form, Radio } from 'antd';
 
 const PaymentSection = ({ paymentForm, setCurrentStep, setBookingData }) => {
   const paymentMethods = [
@@ -67,34 +63,27 @@ const PaymentSection = ({ paymentForm, setCurrentStep, setBookingData }) => {
           ]}
           initialValue="CASH"
         >
-          <Radio.Group 
+          <Radio.Group
             className="w-full"
             onChange={(e) => {
               /* eslint-disable no-console */
               console.log('💳 Payment method changed to:', e.target.value);
               /* eslint-enable no-console */
-              setBookingData(prev => ({
+              setBookingData((prev) => ({
                 ...prev,
-                paymentMethod: e.target.value
+                paymentMethod: e.target.value,
               }));
             }}
           >
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               {paymentMethods.map((method) => (
-                <Card
-                  key={method.value}
-                  className="cursor-pointer hover:shadow-lg transition-all"
-                >
+                <Card key={method.value} className="cursor-pointer hover:shadow-lg transition-all">
                   <Radio value={method.value} className="w-full">
                     <div className="flex items-center gap-3">
                       <div className="text-2xl text-blue-500">{method.icon}</div>
                       <div>
-                        <div className="font-semibold text-base">
-                          {method.label}
-                        </div>
-                        <div className="text-sm text-gray-500">
-                          {method.description}
-                        </div>
+                        <div className="font-semibold text-base">{method.label}</div>
+                        <div className="text-sm text-gray-500">{method.description}</div>
                       </div>
                     </div>
                   </Radio>
@@ -109,11 +98,7 @@ const PaymentSection = ({ paymentForm, setCurrentStep, setBookingData }) => {
         <Button onClick={handlePaymentPrev} className="px-8 rounded-lg">
           Quay lại
         </Button>
-        <Button
-          type="primary"
-          onClick={handlePaymentNext}
-          className="px-8 rounded-lg"
-        >
+        <Button type="primary" onClick={handlePaymentNext} className="px-8 rounded-lg">
           Tiếp tục
         </Button>
       </div>

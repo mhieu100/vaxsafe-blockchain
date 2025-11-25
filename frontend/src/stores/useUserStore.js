@@ -17,7 +17,7 @@ const useUserStore = create((set) => ({
     set({ isFetching: true });
     try {
       const response = await callFetchUser(query);
-      if (response && response.data) {
+      if (response?.data) {
         set({
           isFetching: false,
           meta: response.data.meta,

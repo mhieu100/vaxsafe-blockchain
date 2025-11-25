@@ -1,6 +1,7 @@
 /* eslint-disable import/no-extraneous-dependencies */
-import { sfLike, sfGt, sfLt } from 'spring-filter-query-builder';
+
 import queryString from 'query-string';
+import { sfGt, sfLike, sfLt } from 'spring-filter-query-builder';
 
 /**
  * Build query string for API requests with pagination, filtering, and sorting
@@ -11,12 +12,7 @@ import queryString from 'query-string';
  * @param {object} [params.sort={}] - Sort object with field: 'ascend'|'descend'
  * @returns {string} Query string for API request
  */
-export const buildQuery = ({
-  current = 1,
-  pageSize = 10,
-  filters = {},
-  sort = {},
-}) => {
+export const buildQuery = ({ current = 1, pageSize = 10, filters = {}, sort = {} }) => {
   const q = {
     page: current,
     size: pageSize,

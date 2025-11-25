@@ -4,11 +4,11 @@ import {
   HeartOutlined,
   ShoppingCartOutlined,
 } from '@ant-design/icons';
-import { Badge, Button, Card, Image, Rate, message } from 'antd';
+import { Badge, Button, Card, Image, message, Rate } from 'antd';
 import { useNavigate } from 'react-router-dom';
+import useCartStore from '../../stores/useCartStore';
 import { formatPrice } from '../../utils/formatPrice';
 import { getImageProps } from '../../utils/imageUtils';
-import useCartStore from '../../stores/useCartStore';
 
 /**
  * VaccineCard component displays a vaccine in card format with grid view
@@ -77,31 +77,21 @@ const VaccineCard = ({ vaccine }) => {
     >
       <div className="flex flex-col h-full">
         <div className="mb-2">
-          <span className="text-xs uppercase tracking-wide font-medium">
-            {vaccine.country}
-          </span>
+          <span className="text-xs uppercase tracking-wide font-medium">{vaccine.country}</span>
         </div>
 
         <p className="mb-2 flex-grow font-bold">
-          {vaccine.name.length > 20
-            ? `${vaccine.name.slice(0, 20)}...`
-            : vaccine.name}
+          {vaccine.name.length > 20 ? `${vaccine.name.slice(0, 20)}...` : vaccine.name}
         </p>
 
         <div className="mb-3">
-          <Rate
-            disabled
-            defaultValue={vaccine.rating || 4}
-            className="text-sm"
-          />
+          <Rate disabled defaultValue={vaccine.rating || 4} className="text-sm" />
           <span className="ml-2 text-xs">({vaccine.reviews || 128})</span>
         </div>
 
         <div className="flex items-center justify-between mb-3">
           <div className="flex items-center gap-2">
-            <span className="text-blue-600 m-0">
-              {formatPrice(vaccine.price)}
-            </span>
+            <span className="text-blue-600 m-0">{formatPrice(vaccine.price)}</span>
           </div>
           <Badge
             count={vaccine.stock > 0 ? 'In Stock' : 'Out of Stock'}

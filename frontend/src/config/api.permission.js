@@ -5,33 +5,22 @@ import axios from './axios-customize';
 Module Permission
  */
 
-export const callCreatePermission = (
-  name,
-  method,
-  apiPath,
-  module
-) => {
+export const callCreatePermission = (name, method, apiPath, module) => {
   return axios.post('/permissions', {
     name,
     method,
     apiPath,
-    module
+    module,
   });
 };
 
-export const callUpdatePermission = (
-  id,
-  name,
-  method,
-  apiPath,
-  module
-) => {
+export const callUpdatePermission = (id, name, method, apiPath, module) => {
   return axios.put('/permissions', {
     id,
     name,
     method,
     apiPath,
-    module
+    module,
   });
 };
 
@@ -42,4 +31,3 @@ export const callFetchPermission = (query) => {
 export const callDeletePermission = (id) => {
   return axios.delete(`/permissions/${id}`);
 };
-

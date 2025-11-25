@@ -1,51 +1,43 @@
-import { useState, useEffect } from 'react';
 import {
-  Modal,
+  CalendarOutlined,
+  CheckCircleOutlined,
+  ClockCircleOutlined,
+  EditOutlined,
+  InfoCircleOutlined,
+  ReloadOutlined,
+  UserOutlined,
+} from '@ant-design/icons';
+import {
+  Alert,
+  Button,
+  Card,
+  Col,
+  Divider,
+  Empty,
   Form,
   Input,
-  Select,
-  Button,
-  Space,
-  Alert,
-  Descriptions,
-  Tag,
-  Divider,
+  Modal,
   message,
   notification,
-  Spin,
-  Card,
-  Row,
-  Col,
   Radio,
-  Empty,
+  Row,
+  Select,
+  Space,
+  Spin,
+  Tag,
   Typography,
 } from 'antd';
-import {
-  CheckCircleOutlined,
-  CloseCircleOutlined,
-  CalendarOutlined,
-  UserOutlined,
-  InfoCircleOutlined,
-  ClockCircleOutlined,
-  ReloadOutlined,
-  EditOutlined,
-} from '@ant-design/icons';
 import dayjs from 'dayjs';
+import { useEffect, useState } from 'react';
 import { callUpdateAppointment } from '../../config/api.appointment';
-import { getAvailableSlotsAPI } from '../../config/api.doctor.schedule';
-import { getDoctorsWithScheduleAPI } from '../../config/api.doctor.schedule';
+import { getAvailableSlotsAPI, getDoctorsWithScheduleAPI } from '../../config/api.doctor.schedule';
 import { useAccountStore } from '../../stores/useAccountStore';
 
 const { Text } = Typography;
 const { TextArea } = Input;
 const { Option } = Select;
 
-const AssignAppointmentModal = ({
-  open,
-  onClose,
-  appointment,
-  onSuccess,
-}) => {
+const AssignAppointmentModal = ({ open, onClose, appointment, onSuccess }) => {
   const [form] = Form.useForm();
   const [loading, setLoading] = useState(false);
   const [loadingSlots, setLoadingSlots] = useState(false);
@@ -56,7 +48,7 @@ const AssignAppointmentModal = ({
   const [availableSlots, setAvailableSlots] = useState([]);
   const [doctors, setDoctors] = useState([]);
 
-  const user = useAccountStore((state) => state.user);
+  const _user = useAccountStore((state) => state.user);
 
   // Check if this is a reschedule request
   const isRescheduleRequest = appointment?.status === 'PENDING_APPROVAL';
@@ -82,14 +74,14 @@ const AssignAppointmentModal = ({
       });
       fetchDoctors(targetDate.format('YYYY-MM-DD'));
     }
-  }, [open, appointment]);
+  }, [open, fetchDoctors, form.setFieldsValue, getTargetDate]);
 
   // Fetch slots when doctor or date changes
   useEffect(() => {
     if (selectedDoctorId && selectedDate) {
       fetchAvailableSlots(selectedDoctorId, selectedDate.format('YYYY-MM-DD'));
     }
-  }, [selectedDoctorId, selectedDate]);
+  }, [selectedDoctorId, selectedDate, fetchAvailableSlots]);
 
   if (!appointment) return null;
 
@@ -97,7 +89,7 @@ const AssignAppointmentModal = ({
     try {
       setLoadingDoctors(true);
       const res = await getDoctorsWithScheduleAPI(date);
-      if (res && res.data) {
+      if (res?.data) {
         setDoctors(res.data);
       }
     } catch (error) {
@@ -116,7 +108,7 @@ const AssignAppointmentModal = ({
       setLoadingSlots(true);
       const res = await getAvailableSlotsAPI(doctorId, date);
 
-      if (res && res.data) {
+      if (res?.data) {
         setAvailableSlots(res.data);
         setSelectedSlotId(null);
       }
@@ -143,15 +135,15 @@ const AssignAppointmentModal = ({
     }
   };
 
-  const handleDateChange = (date) => {
+  const _handleDateChange = (date) => {
     setSelectedDate(date);
     form.setFieldsValue({ appointmentDate: date });
-    
+
     // Reload doctors with new date
     if (date) {
       fetchDoctors(date.format('YYYY-MM-DD'));
     }
-    
+
     // Clear selected slot when date changes
     setSelectedSlotId(null);
     setAvailableSlots([]);
@@ -172,13 +164,9 @@ const AssignAppointmentModal = ({
         throw new Error('Không tìm thấy thông tin bác sĩ');
       }
 
-      const res = await callUpdateAppointment(
-        appointment.id,
-        selectedDoctor.userId,
-        values.slotId
-      );
+      const res = await callUpdateAppointment(appointment.id, selectedDoctor.userId, values.slotId);
 
-      if (res && res.data) {
+      if (res?.data) {
         message.success(
           isRescheduleRequest
             ? 'Phê duyệt yêu cầu đổi lịch thành công!'
@@ -242,10 +230,7 @@ const AssignAppointmentModal = ({
               <Button
                 icon={<ReloadOutlined />}
                 onClick={() =>
-                  fetchAvailableSlots(
-                    selectedDoctorId,
-                    selectedDate.format('YYYY-MM-DD')
-                  )
+                  fetchAvailableSlots(selectedDoctorId, selectedDate.format('YYYY-MM-DD'))
                 }
               >
                 Tải lại
@@ -280,11 +265,8 @@ const AssignAppointmentModal = ({
                 style={{
                   width: '100%',
                   padding: 12,
-                  background:
-                    slot.status === 'AVAILABLE' ? '#f6ffed' : '#fff2e8',
-                  border: `1px solid ${
-                    slot.status === 'AVAILABLE' ? '#b7eb8f' : '#ffbb96'
-                  }`,
+                  background: slot.status === 'AVAILABLE' ? '#f6ffed' : '#fff2e8',
+                  border: `1px solid ${slot.status === 'AVAILABLE' ? '#b7eb8f' : '#ffbb96'}`,
                   borderRadius: 8,
                 }}
               >
@@ -300,9 +282,7 @@ const AssignAppointmentModal = ({
                       {slot.startTime} - {slot.endTime}
                     </Text>
                   </Space>
-                  <Tag
-                    color={slot.status === 'AVAILABLE' ? 'success' : 'error'}
-                  >
+                  <Tag color={slot.status === 'AVAILABLE' ? 'success' : 'error'}>
                     {slot.status === 'AVAILABLE' ? 'Trống' : 'Đã đặt'}
                   </Tag>
                 </Space>
@@ -407,8 +387,7 @@ const AssignAppointmentModal = ({
                 <br />
                 <Text delete style={{ color: '#999' }}>
                   {dayjs(appointment.scheduledDate).format('DD/MM/YYYY')}
-                  {appointment.scheduledTime &&
-                    ` - ${appointment.scheduledTime}`}
+                  {appointment.scheduledTime && ` - ${appointment.scheduledTime}`}
                 </Text>
               </Col>
               <Col span={12}>
@@ -439,9 +418,7 @@ const AssignAppointmentModal = ({
                 color: isRescheduleRequest ? '#52c41a' : '#ff4d4f',
               }}
             >
-              {dayjs(
-                appointment.desiredDate || appointment.scheduledDate
-              ).format('DD/MM/YYYY')}
+              {dayjs(appointment.desiredDate || appointment.scheduledDate).format('DD/MM/YYYY')}
               {appointment.desiredTime && ` - ${appointment.desiredTime}`}
             </Text>
           </Col>
@@ -515,9 +492,7 @@ const AssignAppointmentModal = ({
                 <Space>
                   <UserOutlined />
                   <span>{doctor.doctorName}</span>
-                  {doctor.specialization && (
-                    <Tag color="blue">{doctor.specialization}</Tag>
-                  )}
+                  {doctor.specialization && <Tag color="blue">{doctor.specialization}</Tag>}
                   <Text type="secondary" style={{ fontSize: 12 }}>
                     ({doctor.availableSlotsToday} slot trống)
                   </Text>

@@ -1,51 +1,46 @@
-import { useState, useEffect } from 'react';
 import {
-  Modal,
+  CalendarOutlined,
+  CheckCircleOutlined,
+  ClockCircleOutlined,
+  CloseCircleOutlined,
+  ExclamationCircleOutlined,
+  ReloadOutlined,
+  UserOutlined,
+} from '@ant-design/icons';
+import {
+  Alert,
+  Button,
+  Card,
+  Col,
+  Descriptions,
+  Divider,
+  Empty,
   Form,
   Input,
-  Select,
-  Button,
-  Space,
-  Alert,
-  Descriptions,
-  Tag,
-  Divider,
+  Modal,
   message,
   notification,
-  Spin,
-  Card,
-  Row,
-  Col,
   Radio,
-  Empty,
+  Row,
+  Select,
+  Space,
+  Spin,
+  Tag,
   Typography,
 } from 'antd';
-import {
-  CheckCircleOutlined,
-  CloseCircleOutlined,
-  CalendarOutlined,
-  UserOutlined,
-  ExclamationCircleOutlined,
-  ClockCircleOutlined,
-  ReloadOutlined,
-} from '@ant-design/icons';
 import dayjs from 'dayjs';
+import { useEffect, useState } from 'react';
 import { callUpdateAppointment } from '../../config/api.appointment';
 import {
-  callGetDoctorAvailableSlots,
   callGetAvailableDoctorsByCenter,
+  callGetDoctorAvailableSlots,
 } from '../../config/api.doctor';
 import { useAccountStore } from '../../stores/useAccountStore';
 
 const { Text } = Typography;
 const { TextArea } = Input;
 
-const ProcessUrgentAppointmentModal = ({
-  open,
-  onClose,
-  appointment,
-  onSuccess,
-}) => {
+const ProcessUrgentAppointmentModal = ({ open, onClose, appointment, onSuccess }) => {
   const [form] = Form.useForm();
   const [loading, setLoading] = useState(false);
   const [loadingSlots, setLoadingSlots] = useState(false);
@@ -60,27 +55,24 @@ const ProcessUrgentAppointmentModal = ({
 
   // Xác định các giá trị từ appointment (với fallback để tránh lỗi)
   const isRescheduleRequest = appointment?.urgencyType === 'RESCHEDULE_PENDING';
-  const needsDoctor =
-    appointment?.urgencyType === 'NO_DOCTOR' || !appointment?.doctorName;
+  const _needsDoctor = appointment?.urgencyType === 'NO_DOCTOR' || !appointment?.doctorName;
 
   // Xác định ngày cần xem lịch
-  const targetDate = isRescheduleRequest
-    ? appointment?.desiredDate
-    : appointment?.scheduledDate;
+  const targetDate = isRescheduleRequest ? appointment?.desiredDate : appointment?.scheduledDate;
 
   // Fetch doctors when modal opens
   useEffect(() => {
     if (open && userCenterId) {
       fetchDoctors();
     }
-  }, [open, userCenterId]);
+  }, [open, userCenterId, fetchDoctors]);
 
   // Fetch slots when doctor or date changes
   useEffect(() => {
     if (selectedDoctorId && targetDate) {
       fetchAvailableSlots(selectedDoctorId, targetDate);
     }
-  }, [selectedDoctorId, targetDate]);
+  }, [selectedDoctorId, targetDate, fetchAvailableSlots]);
 
   // Early return AFTER all hooks
   if (!appointment) return null;
@@ -89,7 +81,7 @@ const ProcessUrgentAppointmentModal = ({
     try {
       setLoadingDoctors(true);
       const res = await callGetAvailableDoctorsByCenter(userCenterId);
-      if (res && res.data) {
+      if (res?.data) {
         setDoctors(res.data);
       }
     } catch (error) {
@@ -109,7 +101,7 @@ const ProcessUrgentAppointmentModal = ({
       const formattedDate = dayjs(date).format('YYYY-MM-DD');
       const res = await callGetDoctorAvailableSlots(doctorId, formattedDate);
 
-      if (res && res.data) {
+      if (res?.data) {
         setAvailableSlots(res.data);
         // Reset selected slot when slots change
         setSelectedSlotId(null);
@@ -131,7 +123,7 @@ const ProcessUrgentAppointmentModal = ({
     form.setFieldsValue({ doctorId });
 
     // Find the selected doctor to get userId (backend needs userId, not doctorId)
-    const selectedDoctor = doctors.find(d => d.doctorId === doctorId);
+    const selectedDoctor = doctors.find((d) => d.doctorId === doctorId);
     if (selectedDoctor) {
       form.setFieldsValue({ userId: selectedDoctor.userId });
     }
@@ -148,7 +140,7 @@ const ProcessUrgentAppointmentModal = ({
       const values = await form.validateFields(['doctorId', 'slotId']);
 
       // Backend expects userId (from users table), not doctorId (from doctors table)
-      const selectedDoctor = doctors.find(d => d.doctorId === values.doctorId);
+      const selectedDoctor = doctors.find((d) => d.doctorId === values.doctorId);
       if (!selectedDoctor) {
         throw new Error('Không tìm thấy thông tin bác sĩ');
       }
@@ -160,7 +152,7 @@ const ProcessUrgentAppointmentModal = ({
         values.slotId
       );
 
-      if (res && res.data) {
+      if (res?.data) {
         message.success('Phê duyệt yêu cầu đổi lịch thành công!');
         onSuccess?.();
         handleClose();
@@ -179,7 +171,7 @@ const ProcessUrgentAppointmentModal = ({
   const handleRejectReschedule = async () => {
     try {
       setLoading(true);
-      const values = await form.validateFields(['rejectReason']);
+      const _values = await form.validateFields(['rejectReason']);
 
       // TODO: Call API to reject reschedule (set status back to SCHEDULED)
       message.info('Tính năng từ chối đang được phát triển');
@@ -198,7 +190,7 @@ const ProcessUrgentAppointmentModal = ({
       const values = await form.validateFields(['doctorId', 'slotId']);
 
       // Backend expects userId (from users table), not doctorId (from doctors table)
-      const selectedDoctor = doctors.find(d => d.doctorId === values.doctorId);
+      const selectedDoctor = doctors.find((d) => d.doctorId === values.doctorId);
       if (!selectedDoctor) {
         throw new Error('Không tìm thấy thông tin bác sĩ');
       }
@@ -209,7 +201,7 @@ const ProcessUrgentAppointmentModal = ({
         values.slotId
       );
 
-      if (res && res.data) {
+      if (res?.data) {
         message.success('Phân công bác sĩ thành công!');
         onSuccess?.();
         handleClose();
@@ -273,9 +265,7 @@ const ProcessUrgentAppointmentModal = ({
               <span>Không có lịch trống trong ngày này</span>
               <Button
                 icon={<ReloadOutlined />}
-                onClick={() =>
-                  fetchAvailableSlots(selectedDoctorId, targetDate)
-                }
+                onClick={() => fetchAvailableSlots(selectedDoctorId, targetDate)}
               >
                 Tải lại
               </Button>
@@ -299,8 +289,7 @@ const ProcessUrgentAppointmentModal = ({
                   size="small"
                   hoverable
                   style={{
-                    borderColor:
-                      selectedSlotId === slot.slotId ? '#1890ff' : '#d9d9d9',
+                    borderColor: selectedSlotId === slot.slotId ? '#1890ff' : '#d9d9d9',
                     cursor: 'pointer',
                   }}
                   onClick={() => handleSlotSelect(slot.slotId)}
@@ -308,8 +297,7 @@ const ProcessUrgentAppointmentModal = ({
                   <Radio value={slot.slotId}>
                     <Space direction="vertical" size={0}>
                       <Text strong>
-                        <ClockCircleOutlined /> {slot.startTime} -{' '}
-                        {slot.endTime}
+                        <ClockCircleOutlined /> {slot.startTime} - {slot.endTime}
                       </Text>
                       <Tag color="green" size="small">
                         {slot.status}
@@ -332,14 +320,12 @@ const ProcessUrgentAppointmentModal = ({
         description={
           <Space direction="vertical" style={{ width: '100%' }}>
             <div>
-              <strong>Lịch cũ:</strong>{' '}
-              {dayjs(appointment.scheduledDate).format('DD/MM/YYYY')} lúc{' '}
+              <strong>Lịch cũ:</strong> {dayjs(appointment.scheduledDate).format('DD/MM/YYYY')} lúc{' '}
               {appointment.scheduledTime}
             </div>
             <div>
               <strong>Lịch mới mong muốn:</strong>{' '}
-              {dayjs(appointment.desiredDate).format('DD/MM/YYYY')} lúc{' '}
-              {appointment.desiredTime}
+              {dayjs(appointment.desiredDate).format('DD/MM/YYYY')} lúc {appointment.desiredTime}
             </div>
             {appointment.rescheduleReason && (
               <div>
@@ -373,9 +359,7 @@ const ProcessUrgentAppointmentModal = ({
                 <Space>
                   <UserOutlined />
                   {doctor.doctorName}
-                  {doctor.specialization && (
-                    <Tag color="blue">{doctor.specialization}</Tag>
-                  )}
+                  {doctor.specialization && <Tag color="blue">{doctor.specialization}</Tag>}
                 </Space>
               </Select.Option>
             ))}
@@ -463,9 +447,7 @@ const ProcessUrgentAppointmentModal = ({
                 <Space>
                   <UserOutlined />
                   {doctor.doctorName}
-                  {doctor.specialization && (
-                    <Tag color="blue">{doctor.specialization}</Tag>
-                  )}
+                  {doctor.specialization && <Tag color="blue">{doctor.specialization}</Tag>}
                 </Space>
               </Select.Option>
             ))}
@@ -531,24 +513,12 @@ const ProcessUrgentAppointmentModal = ({
         <Descriptions.Item label="Họ tên" span={2}>
           <strong>{appointment.patientName}</strong>
         </Descriptions.Item>
-        <Descriptions.Item label="Số điện thoại">
-          {appointment.patientPhone}
-        </Descriptions.Item>
-        <Descriptions.Item label="Email">
-          {appointment.patientEmail}
-        </Descriptions.Item>
-        <Descriptions.Item label="Vaccine">
-          {appointment.vaccineName}
-        </Descriptions.Item>
-        <Descriptions.Item label="Mũi tiêm">
-          Mũi {appointment.doseNumber}
-        </Descriptions.Item>
+        <Descriptions.Item label="Số điện thoại">{appointment.patientPhone}</Descriptions.Item>
+        <Descriptions.Item label="Email">{appointment.patientEmail}</Descriptions.Item>
+        <Descriptions.Item label="Vaccine">{appointment.vaccineName}</Descriptions.Item>
+        <Descriptions.Item label="Mũi tiêm">Mũi {appointment.doseNumber}</Descriptions.Item>
         <Descriptions.Item label="Trạng thái" span={2}>
-          <Tag
-            color={
-              appointment.status === 'PENDING_APPROVAL' ? 'orange' : 'default'
-            }
-          >
+          <Tag color={appointment.status === 'PENDING_APPROVAL' ? 'orange' : 'default'}>
             {appointment.status}
           </Tag>
         </Descriptions.Item>
@@ -557,9 +527,7 @@ const ProcessUrgentAppointmentModal = ({
       <Divider />
 
       {/* Action based on urgency type */}
-      {isRescheduleRequest
-        ? renderRescheduleApproval()
-        : renderDoctorAssignment()}
+      {isRescheduleRequest ? renderRescheduleApproval() : renderDoctorAssignment()}
     </Modal>
   );
 };

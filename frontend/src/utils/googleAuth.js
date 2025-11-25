@@ -14,7 +14,7 @@ const GOOGLE_CLIENT_ID = 'your-google-client-id';
 export const initializeGoogleAuth = () => {
   return new Promise((resolve, reject) => {
     // Check if Google OAuth script is already loaded
-    if (window.google && window.google.accounts) {
+    if (window.google?.accounts) {
       resolve(window.google.accounts.id);
       return;
     }
@@ -26,7 +26,7 @@ export const initializeGoogleAuth = () => {
     script.defer = true;
 
     script.onload = () => {
-      if (window.google && window.google.accounts) {
+      if (window.google?.accounts) {
         // Initialize Google OAuth
         window.google.accounts.id.initialize({
           client_id: GOOGLE_CLIENT_ID,
@@ -59,7 +59,7 @@ const handleGoogleResponse = (response) => {
  */
 export const triggerGoogleLogin = async () => {
   try {
-    const googleAuth = await initializeGoogleAuth();
+    const _googleAuth = await initializeGoogleAuth();
 
     return new Promise((resolve, reject) => {
       // Override the callback for this specific login attempt
@@ -115,7 +115,7 @@ export const decodeGoogleToken = (token) => {
     const jsonPayload = decodeURIComponent(
       atob(base64)
         .split('')
-        .map((c) => '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2))
+        .map((c) => `%${(`00${c.charCodeAt(0).toString(16)}`).slice(-2)}`)
         .join('')
     );
     return JSON.parse(jsonPayload);

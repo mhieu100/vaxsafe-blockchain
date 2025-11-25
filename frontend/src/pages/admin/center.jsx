@@ -1,13 +1,12 @@
-import { useRef, useState } from 'react';
-import queryString from 'query-string';
-import { sfLike } from 'spring-filter-query-builder';
-import { Button, message, notification, Popconfirm, Space } from 'antd';
 import { DeleteOutlined, EditOutlined, PlusOutlined } from '@ant-design/icons';
-
-import { useCenterStore } from '../../stores/useCenterStore';
+import { Button, message, notification, Popconfirm, Space } from 'antd';
+import queryString from 'query-string';
+import { useRef, useState } from 'react';
+import { sfLike } from 'spring-filter-query-builder';
 import DataTable from '../../components/data-table';
 import ModalCenter from '../../components/modal/modal.center';
 import { callDeleteCenter } from '../../config/api.center';
+import { useCenterStore } from '../../stores/useCenterStore';
 
 const CenterPage = () => {
   const tableRef = useRef();
@@ -44,7 +43,7 @@ const CenterPage = () => {
       key: 'index',
       width: 50,
       align: 'center',
-      render: (text, record, index) => {
+      render: (_text, _record, index) => {
         return <>{index + 1 + (meta.page - 1) * meta.pageSize}</>;
       },
       hideInSearch: true,
@@ -152,13 +151,13 @@ const CenterPage = () => {
     }
 
     // Build sort
-    if (sort && sort.name) {
+    if (sort?.name) {
       q.sort = `name,${sort.name === 'ascend' ? 'asc' : 'desc'}`;
     }
-    if (sort && sort.address) {
+    if (sort?.address) {
       q.sort = `address,${sort.address === 'ascend' ? 'asc' : 'desc'}`;
     }
-    if (sort && sort.capacity) {
+    if (sort?.capacity) {
       q.sort = `capacity,${sort.capacity === 'ascend' ? 'asc' : 'desc'}`;
     }
     if (!q.sort) {
@@ -198,11 +197,7 @@ const CenterPage = () => {
         rowSelection={false}
         toolBarRender={() => {
           return (
-            <Button
-              icon={<PlusOutlined />}
-              type="primary"
-              onClick={() => setOpenModal(true)}
-            >
+            <Button icon={<PlusOutlined />} type="primary" onClick={() => setOpenModal(true)}>
               Thêm mới
             </Button>
           );

@@ -26,7 +26,7 @@ export const callGetDoctorSchedules = (doctorId) => {
  */
 export const callGetDoctorAvailableSlots = (doctorId, date) => {
   return axios.get(`/api/v1/doctors/${doctorId}/slots/available`, {
-    params: { date }
+    params: { date },
   });
 };
 
@@ -36,7 +36,7 @@ export const callGetDoctorAvailableSlots = (doctorId, date) => {
  */
 export const callGetAvailableSlotsByCenter = (centerId, date) => {
   return axios.get(`/api/v1/doctors/center/${centerId}/slots/available`, {
-    params: { date }
+    params: { date },
   });
 };
 
@@ -46,7 +46,7 @@ export const callGetAvailableSlotsByCenter = (centerId, date) => {
  */
 export const callGetDoctorSlotsInRange = (doctorId, startDate, endDate) => {
   return axios.get(`/api/v1/doctors/${doctorId}/slots`, {
-    params: { startDate, endDate }
+    params: { startDate, endDate },
   });
 };
 
@@ -57,6 +57,6 @@ export const callGetDoctorSlotsInRange = (doctorId, startDate, endDate) => {
 export const callGenerateDoctorSlots = (doctorId, startDate, endDate) => {
   return axios.post(`/api/v1/doctors/${doctorId}/slots/generate`, {
     startDate,
-    endDate
+    endDate,
   });
 };

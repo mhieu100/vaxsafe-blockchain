@@ -1,45 +1,43 @@
 /* eslint-disable no-unused-vars */
-import { useRef, useState, useEffect } from 'react';
-import queryString from 'query-string';
-import { sfLike } from 'spring-filter-query-builder';
+
 import {
+  CalendarOutlined,
+  CheckCircleOutlined,
+  CheckSquareOutlined,
+  ClearOutlined,
+  ClockCircleOutlined,
+  EditOutlined,
+  FilterOutlined,
+  InfoCircleOutlined,
+  PhoneOutlined,
+  ReloadOutlined,
+  SearchOutlined,
+  UserOutlined,
+} from '@ant-design/icons';
+import {
+  Avatar,
   Badge,
   Button,
-  Space,
-  Tag,
-  Typography,
   Card,
-  Row,
   Col,
-  Statistic,
-  Input,
-  Select,
   DatePicker,
-  message,
+  Input,
+  Row,
+  Select,
+  Space,
+  Statistic,
+  Tag,
   Tooltip,
-  Avatar,
+  Typography,
 } from 'antd';
-import {
-  EditOutlined,
-  ClockCircleOutlined,
-  CalendarOutlined,
-  SearchOutlined,
-  ReloadOutlined,
-  UserOutlined,
-  PhoneOutlined,
-  MedicineBoxOutlined,
-  CheckCircleOutlined,
-  FilterOutlined,
-  ClearOutlined,
-  CheckSquareOutlined,
-  InfoCircleOutlined,
-} from '@ant-design/icons';
-
+import dayjs from 'dayjs';
+import queryString from 'query-string';
+import { useRef, useState } from 'react';
+import { sfLike } from 'spring-filter-query-builder';
 import DataTable from '../../components/data-table';
 import AssignAppointmentModal from '../../components/modal/AssignAppointmentModal';
-import { getColorStatus } from '../../utils/status';
 import { useAppointmentStore } from '../../stores/useAppointmentStore';
-import dayjs from 'dayjs';
+import { getColorStatus } from '../../utils/status';
 
 const { Title, Text } = Typography;
 const { Option } = Select;
@@ -66,9 +64,9 @@ const PendingAppointmentPage = () => {
 
   // Calculate statistics from appointments
   const statistics = {
-    pendingSchedule: appointments.filter(apt => apt.status === 'PENDING_SCHEDULE').length,
-    pendingApproval: appointments.filter(apt => apt.status === 'PENDING_APPROVAL').length,
-    urgent: appointments.filter(apt => {
+    pendingSchedule: appointments.filter((apt) => apt.status === 'PENDING_SCHEDULE').length,
+    pendingApproval: appointments.filter((apt) => apt.status === 'PENDING_APPROVAL').length,
+    urgent: appointments.filter((apt) => {
       const desiredDate = apt.desiredDate || apt.scheduledDate;
       return desiredDate && dayjs(desiredDate).diff(dayjs(), 'day') <= 1;
     }).length,
@@ -146,7 +144,7 @@ const PendingAppointmentPage = () => {
         const timeToShow = record.desiredTime || record.scheduledTime;
         const isUrgent = dayjs(dateToShow).diff(dayjs(), 'day') <= 1;
         const isReschedule = record.status === 'PENDING_APPROVAL';
-        
+
         return (
           <Space direction="vertical" size={0}>
             <Space>
@@ -194,7 +192,7 @@ const PendingAppointmentPage = () => {
       render: (text, record) => {
         const displayText = text || record.notes;
         const isReschedule = record.status === 'PENDING_APPROVAL';
-        
+
         return (
           <Tooltip placement="topLeft" title={displayText}>
             <Space direction="vertical" size={0}>
@@ -218,7 +216,7 @@ const PendingAppointmentPage = () => {
         const isPendingSchedule = record.status === 'PENDING_SCHEDULE';
         const isPendingApproval = record.status === 'PENDING_APPROVAL';
         const needsAction = isPendingSchedule || isPendingApproval;
-        
+
         if (needsAction) {
           return (
             <Space direction="vertical" size="small">
@@ -227,11 +225,15 @@ const PendingAppointmentPage = () => {
                   type={isPendingApproval ? 'default' : 'primary'}
                   icon={isPendingApproval ? <CheckSquareOutlined /> : <CalendarOutlined />}
                   onClick={() => handleAssignAppointment(record)}
-                  style={isPendingApproval ? { 
-                    background: '#fff7e6', 
-                    borderColor: '#ffa940',
-                    color: '#fa8c16'
-                  } : {}}
+                  style={
+                    isPendingApproval
+                      ? {
+                          background: '#fff7e6',
+                          borderColor: '#ffa940',
+                          color: '#fa8c16',
+                        }
+                      : {}
+                  }
                   block
                 >
                   {isPendingApproval ? 'Duyệt Đổi Lịch' : 'Phân Công'}
@@ -245,7 +247,7 @@ const PendingAppointmentPage = () => {
             </Space>
           );
         }
-        
+
         return (
           <Tag color="success" icon={<CheckCircleOutlined />}>
             Đã phân công
@@ -255,7 +257,7 @@ const PendingAppointmentPage = () => {
     },
   ];
 
-  const buildQuery = (params, sort) => {
+  const buildQuery = (params, _sort) => {
     const clone = { ...params };
     const q = {
       page: params.current,
@@ -267,9 +269,7 @@ const PendingAppointmentPage = () => {
     const filters = [];
 
     if (searchText) {
-      filters.push(
-        `(${sfLike('patientName', searchText)} or ${sfLike('id', searchText)})`
-      );
+      filters.push(`(${sfLike('patientName', searchText)} or ${sfLike('id', searchText)})`);
     }
     if (vaccineFilter) {
       filters.push(sfLike('vaccineName', vaccineFilter));
@@ -297,14 +297,9 @@ const PendingAppointmentPage = () => {
             <Title level={2} style={{ margin: 0 }}>
               Lịch Hẹn Chờ Xếp
             </Title>
-            <Text type="secondary">
-              Quản lý và phân công lịch hẹn chưa xếp lịch
-            </Text>
+            <Text type="secondary">Quản lý và phân công lịch hẹn chưa xếp lịch</Text>
           </div>
-          <Badge
-            count={statistics.pending}
-            style={{ backgroundColor: '#faad14' }}
-          />
+          <Badge count={statistics.pending} style={{ backgroundColor: '#faad14' }} />
         </Space>
       </div>
 
@@ -431,11 +426,7 @@ const PendingAppointmentPage = () => {
           </Col>
           <Col xs={24} md={4}>
             <Space>
-              <Button
-                type="primary"
-                icon={<SearchOutlined />}
-                onClick={handleApplyFilters}
-              >
+              <Button type="primary" icon={<SearchOutlined />} onClick={handleApplyFilters}>
                 Áp dụng
               </Button>
               <Button icon={<ClearOutlined />} onClick={handleResetFilters}>

@@ -1,5 +1,5 @@
-import { Modal, Button, Card, Space, Typography, Tag, Badge } from 'antd';
 import { ClockCircleOutlined, MedicineBoxOutlined } from '@ant-design/icons';
+import { Badge, Button, Card, Modal, Space, Tag, Typography } from 'antd';
 import { getStatusBadge } from '../../utils/status';
 
 const { Title, Text } = Typography;
@@ -68,9 +68,9 @@ const AppointmentDetailModal = ({ isOpen, onClose, appointment }) => {
               </div>
               <div>
                 <Text strong>Trạng thái: </Text>
-                <Badge 
-                  status={getStatusBadge(appointment.status).color} 
-                  text={getStatusBadge(appointment.status).text} 
+                <Badge
+                  status={getStatusBadge(appointment.status).color}
+                  text={getStatusBadge(appointment.status).text}
                 />
               </div>
             </Space>

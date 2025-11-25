@@ -1,39 +1,39 @@
-import { useState, useEffect } from 'react';
 import {
-  Card,
-  Row,
-  Col,
-  Statistic,
-  Typography,
-  Space,
-  Button,
-  Tag,
-  Progress,
-  Divider,
-  Modal,
-  Descriptions,
-  Badge,
-  Avatar,
-  message,
-  Segmented,
-  Spin
-} from 'antd';
-import {
+  BellOutlined,
   CalendarOutlined,
-  ClockCircleOutlined,
+  CalendarTwoTone,
   CheckCircleOutlined,
+  ClockCircleOutlined,
+  CloseCircleOutlined,
+  EyeOutlined,
+  MedicineBoxOutlined,
+  PhoneOutlined,
+  PlayCircleOutlined,
+  StarFilled,
   TrophyOutlined,
   UserOutlined,
-  PhoneOutlined,
-  MedicineBoxOutlined,
-  BellOutlined,
-  PlayCircleOutlined,
-  EyeOutlined,
-  CloseCircleOutlined,
-  StarFilled,
-  CalendarTwoTone
 } from '@ant-design/icons';
+import {
+  Avatar,
+  Badge,
+  Button,
+  Card,
+  Col,
+  Descriptions,
+  Divider,
+  Modal,
+  message,
+  Progress,
+  Row,
+  Segmented,
+  Space,
+  Spin,
+  Statistic,
+  Tag,
+  Typography,
+} from 'antd';
 import dayjs from 'dayjs';
+import { useEffect, useState } from 'react';
 import { callGetTodayAppointments } from '../../config/api.appointment';
 import { useAccountStore } from '../../stores/useAccountStore';
 
@@ -53,13 +53,13 @@ const DoctorDashboard = () => {
     // Auto refresh every 2 minutes
     const interval = setInterval(fetchTodayAppointments, 120000);
     return () => clearInterval(interval);
-  }, []);
+  }, [fetchTodayAppointments]);
 
   const fetchTodayAppointments = async () => {
     try {
       setLoading(true);
       const res = await callGetTodayAppointments();
-      if (res && res.data) {
+      if (res?.data) {
         setTodayAppointments(res.data);
       }
     } catch (err) {
@@ -71,12 +71,12 @@ const DoctorDashboard = () => {
   };
 
   // Calculate statistics from real data
-  const completedCount = todayAppointments.filter(a => a.status === 'COMPLETED').length;
-  const scheduledCount = todayAppointments.filter(a => a.status === 'SCHEDULED').length;
-  const cancelledCount = todayAppointments.filter(a => a.status === 'CANCELLED').length;
+  const _completedCount = todayAppointments.filter((a) => a.status === 'COMPLETED').length;
+  const scheduledCount = todayAppointments.filter((a) => a.status === 'SCHEDULED').length;
+  const _cancelledCount = todayAppointments.filter((a) => a.status === 'CANCELLED').length;
 
   const nextAppointment = todayAppointments
-    .filter(a => a.status === 'SCHEDULED')
+    .filter((a) => a.status === 'SCHEDULED')
     .sort((a, b) => a.scheduledTime.localeCompare(b.scheduledTime))[0];
 
   // Mock doctor info (can be replaced with real data later)
@@ -87,30 +87,32 @@ const DoctorDashboard = () => {
     todayAppointments: todayAppointments.length,
     weekAppointments: 18,
     monthCompleted: 45,
-    nextAppointment: nextAppointment ? {
-      time: nextAppointment.scheduledTime,
-      patient: nextAppointment.patientName,
-      vaccine: nextAppointment.vaccineName
-    } : null
+    nextAppointment: nextAppointment
+      ? {
+          time: nextAppointment.scheduledTime,
+          patient: nextAppointment.patientName,
+          vaccine: nextAppointment.vaccineName,
+        }
+      : null,
   };
 
   // Weekly statistics
   const weeklyStats = {
     completed: { value: 15, total: 18, percentage: 83 },
     inProgress: { value: 2, total: 18, percentage: 11 },
-    cancelled: { value: 1, total: 18, percentage: 6 }
+    cancelled: { value: 1, total: 18, percentage: 6 },
   };
 
   // Get status config - map backend status to UI
   const getStatusConfig = (status) => {
     const configs = {
-      'COMPLETED': { color: 'success', text: 'Hoàn thành', icon: <CheckCircleOutlined /> },
-      'IN_PROGRESS': { color: 'warning', text: 'Đang tiêm', icon: <ClockCircleOutlined /> },
-      'SCHEDULED': { color: 'default', text: 'Chờ tiêm', icon: <ClockCircleOutlined /> },
-      'CANCELLED': { color: 'error', text: 'Đã hủy', icon: <CloseCircleOutlined /> },
-      'PENDING_APPROVAL': { color: 'warning', text: 'Chờ duyệt', icon: <ClockCircleOutlined /> }
+      COMPLETED: { color: 'success', text: 'Hoàn thành', icon: <CheckCircleOutlined /> },
+      IN_PROGRESS: { color: 'warning', text: 'Đang tiêm', icon: <ClockCircleOutlined /> },
+      SCHEDULED: { color: 'default', text: 'Chờ tiêm', icon: <ClockCircleOutlined /> },
+      CANCELLED: { color: 'error', text: 'Đã hủy', icon: <CloseCircleOutlined /> },
+      PENDING_APPROVAL: { color: 'warning', text: 'Chờ duyệt', icon: <ClockCircleOutlined /> },
     };
-    return configs[status] || configs['SCHEDULED'];
+    return configs[status] || configs.SCHEDULED;
   };
 
   // Map appointment to display format
@@ -123,7 +125,7 @@ const DoctorDashboard = () => {
     vaccineColor: 'blue', // Can be dynamic based on vaccine type
     notes: apt.notes || 'Không có ghi chú',
     status: apt.status,
-    urgent: apt.status === 'PENDING_APPROVAL' || false
+    urgent: apt.status === 'PENDING_APPROVAL' || false,
   });
 
   // Handle view appointment
@@ -141,7 +143,7 @@ const DoctorDashboard = () => {
       cancelText: 'Hủy',
       onOk: () => {
         message.success(`Đã bắt đầu lịch hẹn ${appointment.id}`);
-      }
+      },
     });
   };
 
@@ -154,7 +156,7 @@ const DoctorDashboard = () => {
       cancelText: 'Hủy',
       onOk: () => {
         message.success(`✓ Đã hoàn thành lịch hẹn ${appointment.id}`);
-      }
+      },
     });
   };
 
@@ -165,7 +167,9 @@ const DoctorDashboard = () => {
       content: (
         <div>
           <p>Bạn có chắc muốn hủy lịch hẹn {appointment.id}?</p>
-          <p>Bệnh nhân: <strong>{appointment.patient}</strong></p>
+          <p>
+            Bệnh nhân: <strong>{appointment.patient}</strong>
+          </p>
         </div>
       ),
       okText: 'Xác nhận hủy',
@@ -173,7 +177,7 @@ const DoctorDashboard = () => {
       cancelText: 'Đóng',
       onOk: () => {
         message.warning(`Đã hủy lịch hẹn ${appointment.id}`);
-      }
+      },
     });
   };
 
@@ -191,17 +195,23 @@ const DoctorDashboard = () => {
           hoverable={!isCompleted}
           style={{
             borderLeft: appointment.urgent ? '4px solid #ff4d4f' : '4px solid #1890ff',
-            height: '100%'
+            height: '100%',
           }}
         >
           <Row justify="space-between" align="top" style={{ marginBottom: '12px' }}>
             <Col>
               <Space direction="vertical" size={0}>
                 <Space>
-                  <ClockCircleOutlined style={{ color: appointment.urgent ? '#ff4d4f' : '#1890ff' }} />
-                  <Text strong style={{ fontSize: '15px' }}>{appointment.time}</Text>
+                  <ClockCircleOutlined
+                    style={{ color: appointment.urgent ? '#ff4d4f' : '#1890ff' }}
+                  />
+                  <Text strong style={{ fontSize: '15px' }}>
+                    {appointment.time}
+                  </Text>
                 </Space>
-                <Title level={5} style={{ margin: '8px 0' }}>{appointment.patient}</Title>
+                <Title level={5} style={{ margin: '8px 0' }}>
+                  {appointment.patient}
+                </Title>
               </Space>
             </Col>
             <Col>
@@ -290,16 +300,16 @@ const DoctorDashboard = () => {
         style={{
           background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
           marginBottom: '24px',
-          borderRadius: '12px'
+          borderRadius: '12px',
         }}
         bodyStyle={{ padding: '30px' }}
       >
         <Row justify="space-between" align="middle">
           <Col>
             <Space>
-              <Avatar 
-                size={64} 
-                icon={<UserOutlined />} 
+              <Avatar
+                size={64}
+                icon={<UserOutlined />}
                 style={{ background: 'rgba(255,255,255,0.3)' }}
               />
               <div>
@@ -317,9 +327,7 @@ const DoctorDashboard = () => {
               <Title level={4} style={{ color: 'white', margin: 0 }}>
                 {dayjs().format('DD MMMM, YYYY')}
               </Title>
-              <Text style={{ color: 'rgba(255,255,255,0.9)' }}>
-                {dayjs().format('dddd')}
-              </Text>
+              <Text style={{ color: 'rgba(255,255,255,0.9)' }}>{dayjs().format('dddd')}</Text>
             </Space>
           </Col>
         </Row>
@@ -327,7 +335,11 @@ const DoctorDashboard = () => {
 
       {/* View Mode Selector */}
       <Card style={{ marginBottom: '24px' }}>
-        <Space size="large" align="center" style={{ width: '100%', justifyContent: 'space-between' }}>
+        <Space
+          size="large"
+          align="center"
+          style={{ width: '100%', justifyContent: 'space-between' }}
+        >
           <Segmented
             value={viewMode}
             onChange={setViewMode}
@@ -402,7 +414,8 @@ const DoctorDashboard = () => {
                   prefix={<BellOutlined />}
                 />
                 <Text type="secondary" style={{ fontSize: '12px' }}>
-                  <UserOutlined /> {doctorInfo.nextAppointment.patient} - {doctorInfo.nextAppointment.vaccine}
+                  <UserOutlined /> {doctorInfo.nextAppointment.patient} -{' '}
+                  {doctorInfo.nextAppointment.vaccine}
                 </Text>
               </>
             ) : (
@@ -446,7 +459,7 @@ const DoctorDashboard = () => {
           </div>
         ) : (
           <Row gutter={[16, 16]}>
-            {todayAppointments.map(appointment => renderAppointmentCard(appointment))}
+            {todayAppointments.map((appointment) => renderAppointmentCard(appointment))}
           </Row>
         )}
       </Card>
@@ -468,11 +481,12 @@ const DoctorDashboard = () => {
                 <Row justify="space-between" style={{ marginBottom: '8px' }}>
                   <Text>Hoàn thành</Text>
                   <Text strong style={{ color: '#52c41a' }}>
-                    {weeklyStats.completed.value}/{weeklyStats.completed.total} ({weeklyStats.completed.percentage}%)
+                    {weeklyStats.completed.value}/{weeklyStats.completed.total} (
+                    {weeklyStats.completed.percentage}%)
                   </Text>
                 </Row>
-                <Progress 
-                  percent={weeklyStats.completed.percentage} 
+                <Progress
+                  percent={weeklyStats.completed.percentage}
                   strokeColor="#52c41a"
                   showInfo={false}
                 />
@@ -482,11 +496,12 @@ const DoctorDashboard = () => {
                 <Row justify="space-between" style={{ marginBottom: '8px' }}>
                   <Text>Đang xử lý</Text>
                   <Text strong style={{ color: '#faad14' }}>
-                    {weeklyStats.inProgress.value}/{weeklyStats.inProgress.total} ({weeklyStats.inProgress.percentage}%)
+                    {weeklyStats.inProgress.value}/{weeklyStats.inProgress.total} (
+                    {weeklyStats.inProgress.percentage}%)
                   </Text>
                 </Row>
-                <Progress 
-                  percent={weeklyStats.inProgress.percentage} 
+                <Progress
+                  percent={weeklyStats.inProgress.percentage}
                   strokeColor="#faad14"
                   showInfo={false}
                 />
@@ -496,11 +511,12 @@ const DoctorDashboard = () => {
                 <Row justify="space-between" style={{ marginBottom: '8px' }}>
                   <Text>Đã hủy</Text>
                   <Text strong style={{ color: '#ff4d4f' }}>
-                    {weeklyStats.cancelled.value}/{weeklyStats.cancelled.total} ({weeklyStats.cancelled.percentage}%)
+                    {weeklyStats.cancelled.value}/{weeklyStats.cancelled.total} (
+                    {weeklyStats.cancelled.percentage}%)
                   </Text>
                 </Row>
-                <Progress 
-                  percent={weeklyStats.cancelled.percentage} 
+                <Progress
+                  percent={weeklyStats.cancelled.percentage}
                   strokeColor="#ff4d4f"
                   showInfo={false}
                 />
@@ -530,19 +546,29 @@ const DoctorDashboard = () => {
 
             <Row gutter={16} style={{ textAlign: 'center' }}>
               <Col span={8}>
-                <Title level={4} style={{ color: '#1890ff', margin: 0 }}>95%</Title>
-                <Text type="secondary" style={{ fontSize: '12px' }}>Tỷ lệ hoàn thành</Text>
+                <Title level={4} style={{ color: '#1890ff', margin: 0 }}>
+                  95%
+                </Title>
+                <Text type="secondary" style={{ fontSize: '12px' }}>
+                  Tỷ lệ hoàn thành
+                </Text>
               </Col>
               <Col span={8}>
                 <Title level={4} style={{ color: '#52c41a', margin: 0 }}>
                   {doctorInfo.rating}
                   <StarFilled style={{ color: '#faad14', fontSize: '20px', marginLeft: '4px' }} />
                 </Title>
-                <Text type="secondary" style={{ fontSize: '12px' }}>Đánh giá TB</Text>
+                <Text type="secondary" style={{ fontSize: '12px' }}>
+                  Đánh giá TB
+                </Text>
               </Col>
               <Col span={8}>
-                <Title level={4} style={{ color: '#13c2c2', margin: 0 }}>2</Title>
-                <Text type="secondary" style={{ fontSize: '12px' }}>Hủy lịch</Text>
+                <Title level={4} style={{ color: '#13c2c2', margin: 0 }}>
+                  2
+                </Title>
+                <Text type="secondary" style={{ fontSize: '12px' }}>
+                  Hủy lịch
+                </Text>
               </Col>
             </Row>
           </Card>
@@ -608,9 +634,9 @@ const DoctorDashboard = () => {
               </Tag>
             </Descriptions.Item>
             <Descriptions.Item label="Trạng thái">
-              <Badge 
-                status={getStatusConfig(selectedAppointment.status).color} 
-                text={getStatusConfig(selectedAppointment.status).text} 
+              <Badge
+                status={getStatusConfig(selectedAppointment.status).color}
+                text={getStatusConfig(selectedAppointment.status).text}
               />
             </Descriptions.Item>
             <Descriptions.Item label="Ghi chú">

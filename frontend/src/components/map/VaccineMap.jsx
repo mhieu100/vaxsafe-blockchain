@@ -1,5 +1,5 @@
-import React, { useEffect, useRef } from 'react';
 import L from 'leaflet';
+import { useEffect, useRef } from 'react';
 import 'leaflet/dist/leaflet.css';
 
 const VaccineMap = ({ center, markers, onSelectCenter }) => {
@@ -14,7 +14,8 @@ const VaccineMap = ({ center, markers, onSelectCenter }) => {
       mapInstanceRef.current = L.map(mapRef.current).setView([10.762622, 106.660172], 13); // Default to Ho Chi Minh City coordinates
 
       L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+        attribution:
+          '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
       }).addTo(mapInstanceRef.current);
     }
 
@@ -22,7 +23,7 @@ const VaccineMap = ({ center, markers, onSelectCenter }) => {
     const clinicIcon = L.divIcon({
       html: '<i class="fas fa-clinic-medical text-blue-600 text-2xl"></i>',
       iconSize: [24, 24],
-      className: 'custom-div-icon'
+      className: 'custom-div-icon',
     });
 
     // Clear existing markers
@@ -44,7 +45,7 @@ const VaccineMap = ({ center, markers, onSelectCenter }) => {
               ${address}
             </div>
           `)
-          .on('click', () => onSelectCenter && onSelectCenter(marker));
+          .on('click', () => onSelectCenter?.(marker));
       });
 
       // Center map on first marker if no center specified
@@ -68,12 +69,8 @@ const VaccineMap = ({ center, markers, onSelectCenter }) => {
   }, [center, markers, onSelectCenter]);
 
   return (
-    <div 
-      ref={mapRef} 
-      className="h-[400px] w-full rounded-lg shadow-sm"
-      style={{ zIndex: 1 }}
-    />
+    <div ref={mapRef} className="h-[400px] w-full rounded-lg shadow-sm" style={{ zIndex: 1 }} />
   );
 };
 
-export default VaccineMap; 
+export default VaccineMap;

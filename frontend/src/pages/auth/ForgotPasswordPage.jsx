@@ -1,13 +1,9 @@
+import { ArrowLeftOutlined, CheckCircleOutlined, MailOutlined } from '@ant-design/icons';
+import { Alert, Button, Card, Divider, Form, Input, Typography } from 'antd';
 import { useState } from 'react';
-import { Card, Form, Input, Button, Typography, Alert, Divider } from 'antd';
-import {
-  MailOutlined,
-  ArrowLeftOutlined,
-  CheckCircleOutlined,
-} from '@ant-design/icons';
-import { useNavigate } from 'react-router-dom';
- 
+
 import { useTranslation } from 'react-i18next';
+import { useNavigate } from 'react-router-dom';
 
 const { Title, Text, Link } = Typography;
 
@@ -78,12 +74,7 @@ const ForgotPasswordPage = () => {
                 {t('auth.didntReceive')}
               </Text>
 
-              <Button
-                type="link"
-                onClick={handleResendEmail}
-                loading={loading}
-                className="w-full"
-              >
+              <Button type="link" onClick={handleResendEmail} loading={loading} className="w-full">
                 {t('auth.resendEmail')}
               </Button>
 
@@ -119,12 +110,7 @@ const ForgotPasswordPage = () => {
             </Text>
           </div>
 
-          <Form
-            form={form}
-            onFinish={handleSubmit}
-            layout="vertical"
-            requiredMark={false}
-          >
+          <Form form={form} onFinish={handleSubmit} layout="vertical" requiredMark={false}>
             <Form.Item
               name="email"
               label={t('auth.emailAddress')}

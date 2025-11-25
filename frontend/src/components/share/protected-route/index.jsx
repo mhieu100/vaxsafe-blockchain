@@ -1,18 +1,16 @@
-import { Navigate } from 'react-router-dom';
 // eslint-disable-next-line import/no-extraneous-dependencies
 import PropTypes from 'prop-types';
 import { useEffect, useState } from 'react';
-
-import Loading from '../loading';
+import { Navigate } from 'react-router-dom';
 import { useAccountStore } from '../../../stores/useAccountStore';
+import Loading from '../loading';
 
 import NotPermitted from './not-permitted';
 
 const RoleBaseRoute = (props) => {
   const user = useAccountStore((state) => state.user);
 
-  if (
-    user.role === 'ADMIN') {
+  if (user.role === 'ADMIN') {
     return <>{props.children}</>;
   } else {
     return <NotPermitted />;
@@ -36,23 +34,17 @@ const ProtectedRoute = (props) => {
   }, [isLoading]);
 
   if (redirectToLogin) {
-    return <Navigate to='/login' replace />;
+    return <Navigate to="/login" replace />;
   }
 
   return (
     <>
       {isLoading === true ? (
         <Loading />
+      ) : isAuthenticated === true ? (
+        <RoleBaseRoute>{props.children}</RoleBaseRoute>
       ) : (
-        <>
-          {isAuthenticated === true ? (
-            <>
-              <RoleBaseRoute>{props.children}</RoleBaseRoute>
-            </>
-          ) : (
-            <Navigate to='/login' replace />
-          )}
-        </>
+        <Navigate to="/login" replace />
       )}
     </>
   );

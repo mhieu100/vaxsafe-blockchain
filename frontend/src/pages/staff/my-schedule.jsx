@@ -1,15 +1,12 @@
 /* eslint-disable no-undef */
-import { useRef } from 'react';
-import { Badge, Button, Space, Tag, message, notification } from 'antd';
-import { CheckOutlined, CloseOutlined } from '@ant-design/icons';
 
-import DataTable from '../../components/data-table';
-import {
-  callCancelAppointment,
-  callCompleteAppointment,
-} from '../../config/api.appointment';
+import { CheckOutlined, CloseOutlined } from '@ant-design/icons';
+import { Badge, Button, message, notification, Space, Tag } from 'antd';
 import queryString from 'query-string';
+import { useRef } from 'react';
 import { sfLike } from 'spring-filter-query-builder';
+import DataTable from '../../components/data-table';
+import { callCancelAppointment, callCompleteAppointment } from '../../config/api.appointment';
 import { useAppointmentStore } from '../../stores/useAppointmentStore';
 import { getColorStatus } from '../../utils/status';
 
@@ -61,7 +58,7 @@ const MySchedulePage = () => {
       key: 'index',
       width: 50,
       align: 'center',
-      render: (text, record, index) => index + 1,
+      render: (_text, _record, index) => index + 1,
       hideInSearch: true,
     },
     {
@@ -88,22 +85,14 @@ const MySchedulePage = () => {
       title: 'Bác sĩ',
       dataIndex: 'doctorName',
       render: (text) => {
-        return text ? (
-          <Badge color="green" text={text} />
-        ) : (
-          <Badge color="red" text="Cập nhật" />
-        );
+        return text ? <Badge color="green" text={text} /> : <Badge color="red" text="Cập nhật" />;
       },
     },
     {
       title: 'Thu Ngân',
       dataIndex: 'cashierName',
       render: (text) => {
-        return text ? (
-          <Badge color="green" text={text} />
-        ) : (
-          <Badge color="red" text="Cập nhật" />
-        );
+        return text ? <Badge color="green" text={text} /> : <Badge color="red" text="Cập nhật" />;
       },
     },
     {
@@ -142,7 +131,7 @@ const MySchedulePage = () => {
     if (clone.name) q.filter = `${sfLike('name', clone.name)}`;
     if (clone.manufacturer) {
       q.filter = clone.name
-        ? q.filter + ' and ' + `${sfLike('manufacturer', clone.manufacturer)}`
+        ? `${q.filter} and ${sfLike('manufacturer', clone.manufacturer)}`
         : `${sfLike('manufacturer', clone.manufacturer)}`;
     }
 
@@ -151,24 +140,19 @@ const MySchedulePage = () => {
     let temp = queryString.stringify(q);
 
     let sortBy = '';
-    if (sort && sort.name) {
+    if (sort?.name) {
       sortBy = sort.name === 'ascend' ? 'sort=name,asc' : 'sort=name,desc';
     }
-    if (sort && sort.manufacturer) {
-      sortBy =
-        sort.manufacturer === 'ascend'
-          ? 'sort=manufacturer,asc'
-          : 'sort=manufacturer,desc';
+    if (sort?.manufacturer) {
+      sortBy = sort.manufacturer === 'ascend' ? 'sort=manufacturer,asc' : 'sort=manufacturer,desc';
     }
 
-    if (sort && sort.price) {
+    if (sort?.price) {
       sortBy = sort.price === 'ascend' ? 'sort=price,asc' : 'sort=price,desc';
     }
-    if (sort && sort.stockQuantity) {
+    if (sort?.stockQuantity) {
       sortBy =
-        sort.stockQuantity === 'ascend'
-          ? 'sort=stockQuantity,asc'
-          : 'sort=stockQuantity,desc';
+        sort.stockQuantity === 'ascend' ? 'sort=stockQuantity,asc' : 'sort=stockQuantity,desc';
     }
     temp = `${temp}&${sortBy}`;
 
@@ -176,35 +160,33 @@ const MySchedulePage = () => {
   };
 
   return (
-    <>
-      <DataTable
-        actionRef={tableRef}
-        headerTitle="Danh sách lịch hẹn hôm nay"
-        rowKey="id"
-        loading={isFetching}
-        columns={columns}
-        dataSource={appointments}
-        request={async (params, sort, filter) => {
-          const query = buildQuery(params, sort, filter);
-          fetchAppointmentOfDoctor(query);
-        }}
-        scroll={{ x: true }}
-        pagination={{
-          current: meta.page,
-          pageSize: meta.pageSize,
-          showSizeChanger: true,
-          total: meta.total,
-          showTotal: (total, range) => {
-            return (
-              <div>
-                {range[0]}-{range[1]} trên tổng số {total} dòng
-              </div>
-            );
-          },
-        }}
-        rowSelection={false}
-      />
-    </>
+    <DataTable
+      actionRef={tableRef}
+      headerTitle="Danh sách lịch hẹn hôm nay"
+      rowKey="id"
+      loading={isFetching}
+      columns={columns}
+      dataSource={appointments}
+      request={async (params, sort, filter) => {
+        const query = buildQuery(params, sort, filter);
+        fetchAppointmentOfDoctor(query);
+      }}
+      scroll={{ x: true }}
+      pagination={{
+        current: meta.page,
+        pageSize: meta.pageSize,
+        showSizeChanger: true,
+        total: meta.total,
+        showTotal: (total, range) => {
+          return (
+            <div>
+              {range[0]}-{range[1]} trên tổng số {total} dòng
+            </div>
+          );
+        },
+      }}
+      rowSelection={false}
+    />
   );
 };
 

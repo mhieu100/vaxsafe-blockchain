@@ -1,7 +1,7 @@
-import { Card, Result, Button } from 'antd';
-import { useNavigate } from 'react-router-dom';
 import { CloseCircleOutlined } from '@ant-design/icons';
+import { Button, Card, Result } from 'antd';
 import { useTranslation } from 'react-i18next';
+import { useNavigate } from 'react-router-dom';
 
 const CancelPage = () => {
   const navigate = useNavigate();
@@ -17,19 +17,10 @@ const CancelPage = () => {
             title="Payment Cancelled"
             subTitle="Thanh toán đã bị hủy. Đơn hàng của bạn chưa được xác nhận. Bạn có thể thử lại hoặc chọn phương thức thanh toán khác."
             extra={[
-              <Button
-                type="primary"
-                key="cart"
-                onClick={() => navigate('/cart')}
-                size="large"
-              >
+              <Button type="primary" key="cart" onClick={() => navigate('/cart')} size="large">
                 Quay lại giỏ hàng
               </Button>,
-              <Button
-                key="checkout"
-                onClick={() => navigate('/checkout')}
-                size="large"
-              >
+              <Button key="checkout" onClick={() => navigate('/checkout')} size="large">
                 Thử lại thanh toán
               </Button>,
               <Button key="home" onClick={() => navigate('/')} size="large">

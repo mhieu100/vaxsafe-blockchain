@@ -1,43 +1,43 @@
 /* eslint-disable react/jsx-key */
+
 import {
-  Card,
-  Col,
-  Row,
-  Statistic,
-  Button,
-  List,
-  Typography,
-  Tag,
-  Space,
-  Badge,
-  Tooltip,
-  Avatar,
-  Spin,
-  Alert,
-  Modal,
-} from 'antd';
-import { useNavigate } from 'react-router-dom';
-import { useEffect, useState } from 'react';
-import dayjs from 'dayjs';
-import {
-  ClockCircleOutlined,
+  CalendarFilled,
   CalendarOutlined,
   CheckCircleOutlined,
+  ClockCircleOutlined,
   CloseCircleOutlined,
+  ExclamationCircleOutlined,
+  InfoCircleOutlined,
+  PhoneOutlined,
+  QuestionCircleOutlined,
+  RiseOutlined,
   ThunderboltOutlined,
   UserOutlined,
-  PhoneOutlined,
-  CalendarFilled,
-  RiseOutlined,
-  InfoCircleOutlined,
   WarningOutlined,
-  ExclamationCircleOutlined,
-  QuestionCircleOutlined,
 } from '@ant-design/icons';
-
-import { callGetUrgentAppointments, callGetTodayAppointments } from '../../config/api.appointment';
-import UrgencyGuide from '../../components/UrgencyGuide';
+import {
+  Alert,
+  Avatar,
+  Badge,
+  Button,
+  Card,
+  Col,
+  List,
+  Modal,
+  Row,
+  Space,
+  Spin,
+  Statistic,
+  Tag,
+  Tooltip,
+  Typography,
+} from 'antd';
+import dayjs from 'dayjs';
+import { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import ProcessUrgentAppointmentModal from '../../components/modal/ProcessUrgentAppointmentModal';
+import UrgencyGuide from '../../components/UrgencyGuide';
+import { callGetTodayAppointments, callGetUrgentAppointments } from '../../config/api.appointment';
 import { useAccountStore } from '../../stores/useAccountStore';
 
 const { Title, Text } = Typography;
@@ -65,7 +65,7 @@ const StaffDashboard = () => {
       const interval = setInterval(fetchUrgentAppointments, 120000);
       return () => clearInterval(interval);
     }
-  }, [isCashierRole]);
+  }, [isCashierRole, fetchUrgentAppointments]);
 
   // Fetch today's appointments for doctor
   useEffect(() => {
@@ -75,13 +75,13 @@ const StaffDashboard = () => {
       const interval = setInterval(fetchTodayAppointments, 120000);
       return () => clearInterval(interval);
     }
-  }, [isDoctorRole]);
+  }, [isDoctorRole, fetchTodayAppointments]);
 
   const fetchUrgentAppointments = async () => {
     try {
       setLoading(true);
       const res = await callGetUrgentAppointments();
-      if (res && res.data) {
+      if (res?.data) {
         setUrgentAppointments(res.data);
         setError(null);
       }
@@ -97,7 +97,7 @@ const StaffDashboard = () => {
     try {
       setLoadingToday(true);
       const res = await callGetTodayAppointments();
-      if (res && res.data) {
+      if (res?.data) {
         setTodayAppointments(res.data);
       }
     } catch (err) {
@@ -108,7 +108,7 @@ const StaffDashboard = () => {
   };
 
   // Mock data for CASHIER - Pending appointments that need scheduling (fallback)
-  const pendingAppointments = [
+  const _pendingAppointments = [
     {
       id: 'LH001',
       patientName: 'Nguyễn Văn B',
@@ -167,7 +167,7 @@ const StaffDashboard = () => {
   ];
 
   // Mock data for DOCTOR - Upcoming appointments
-  const upcomingAppointments = [
+  const _upcomingAppointments = [
     {
       id: 1,
       patientName: 'Nguyễn Văn A',
@@ -194,7 +194,7 @@ const StaffDashboard = () => {
     },
   ];
 
-  const recentVaccinations = [
+  const _recentVaccinations = [
     {
       id: 1,
       patientName: 'Phạm Thị D',
@@ -224,7 +224,7 @@ const StaffDashboard = () => {
     setProcessModalOpen(true);
   };
 
-  const getVaccineColor = (type) => {
+  const _getVaccineColor = (type) => {
     const colors = {
       info: 'blue',
       primary: 'cyan',
@@ -247,11 +247,11 @@ const StaffDashboard = () => {
 
   const getUrgencyColor = (priorityLevel) => {
     const colors = {
-      1: 'red',      // Highest priority
-      2: 'orange',   // High priority
-      3: 'gold',     // Medium priority
-      4: 'blue',     // Low priority
-      5: 'default',  // Lowest priority
+      1: 'red', // Highest priority
+      2: 'orange', // High priority
+      3: 'gold', // Medium priority
+      4: 'blue', // Low priority
+      5: 'default', // Lowest priority
     };
     return colors[priorityLevel] || 'default';
   };
@@ -277,8 +277,11 @@ const StaffDashboard = () => {
             ) : (
               <CalendarFilled style={{ color: '#52c41a' }} />
             )}
-            Dashboard - 
-            <Tag color={isCashierRole ? 'blue' : 'green'} style={{ fontSize: 16, padding: '4px 12px' }}>
+            Dashboard -
+            <Tag
+              color={isCashierRole ? 'blue' : 'green'}
+              style={{ fontSize: 16, padding: '4px 12px' }}
+            >
               {isCashierRole ? 'Nhân viên thu ngân' : 'Bác sĩ'}
             </Tag>
           </Space>
@@ -453,8 +456,8 @@ const StaffDashboard = () => {
                       <Text strong>CỰC KHẨN</Text>
                     </Space>
                     <Text type="secondary" style={{ fontSize: 12 }}>
-                      • Yêu cầu đổi lịch chờ duyệt<br />
-                      • Chưa có bác sĩ (≤ 24h)
+                      • Yêu cầu đổi lịch chờ duyệt
+                      <br />• Chưa có bác sĩ (≤ 24h)
                     </Text>
                   </Space>
                 </Card>
@@ -573,9 +576,13 @@ const StaffDashboard = () => {
                 </div>
               ) : urgentAppointments.length === 0 ? (
                 <div style={{ textAlign: 'center', padding: '40px 0' }}>
-                  <CheckCircleOutlined style={{ fontSize: 48, color: '#52c41a', marginBottom: 16 }} />
+                  <CheckCircleOutlined
+                    style={{ fontSize: 48, color: '#52c41a', marginBottom: 16 }}
+                  />
                   <Title level={4}>Tuyệt vời! Không có lịch hẹn cần xử lý gấp</Title>
-                  <Text type="secondary">Tất cả lịch hẹn đã được xử lý hoặc không có lịch cần ưu tiên</Text>
+                  <Text type="secondary">
+                    Tất cả lịch hẹn đã được xử lý hoặc không có lịch cần ưu tiên
+                  </Text>
                 </div>
               ) : (
                 <List
@@ -614,13 +621,15 @@ const StaffDashboard = () => {
                                 backgroundColor: getUrgencyColor(item.priorityLevel),
                               }}
                               icon={getUrgencyIcon(item.urgencyType)}
-                             />
+                            />
                           </Badge>
                         }
                         title={
                           <Space wrap>
                             <Text strong>#{item.id}</Text>
-                            <Text strong style={{ color: '#1890ff' }}>{item.patientName}</Text>
+                            <Text strong style={{ color: '#1890ff' }}>
+                              {item.patientName}
+                            </Text>
                             <Tag
                               color={getUrgencyColor(item.priorityLevel)}
                               icon={getUrgencyIcon(item.urgencyType)}
@@ -638,13 +647,21 @@ const StaffDashboard = () => {
                             <Space wrap>
                               <PhoneOutlined />
                               <Text type="secondary">{item.patientPhone}</Text>
-                              <Tag color="blue">{item.vaccineName} - Mũi {item.doseNumber}</Tag>
+                              <Tag color="blue">
+                                {item.vaccineName} - Mũi {item.doseNumber}
+                              </Tag>
                             </Space>
 
                             {/* Urgency Message */}
                             <Alert
                               message={item.urgencyMessage}
-                              type={item.priorityLevel === 1 ? 'error' : item.priorityLevel === 2 ? 'warning' : 'info'}
+                              type={
+                                item.priorityLevel === 1
+                                  ? 'error'
+                                  : item.priorityLevel === 2
+                                    ? 'warning'
+                                    : 'info'
+                              }
                               showIcon
                               icon={getUrgencyIcon(item.urgencyType)}
                               style={{ marginTop: 8 }}
@@ -654,14 +671,19 @@ const StaffDashboard = () => {
                             <Space split="|" wrap style={{ marginTop: 8 }}>
                               <Tooltip title="Lịch hiện tại">
                                 <Text style={{ fontSize: 12 }}>
-                                  <CalendarOutlined /> Hẹn: {dayjs(item.scheduledDate).format('DD/MM/YYYY')} {item.scheduledTime}
+                                  <CalendarOutlined /> Hẹn:{' '}
+                                  {dayjs(item.scheduledDate).format('DD/MM/YYYY')}{' '}
+                                  {item.scheduledTime}
                                 </Text>
                               </Tooltip>
 
                               {item.desiredDate && (
                                 <Tooltip title="Ngày mong muốn đổi">
-                                  <Text style={{ fontSize: 12, color: '#ff4d4f', fontWeight: 'bold' }}>
-                                    Muốn đổi: {dayjs(item.desiredDate).format('DD/MM/YYYY')} {item.desiredTime}
+                                  <Text
+                                    style={{ fontSize: 12, color: '#ff4d4f', fontWeight: 'bold' }}
+                                  >
+                                    Muốn đổi: {dayjs(item.desiredDate).format('DD/MM/YYYY')}{' '}
+                                    {item.desiredTime}
                                   </Text>
                                 </Tooltip>
                               )}
@@ -676,7 +698,9 @@ const StaffDashboard = () => {
                                 </Text>
                               )}
 
-                              <Tag color={item.status === 'PENDING_APPROVAL' ? 'orange' : 'default'}>
+                              <Tag
+                                color={item.status === 'PENDING_APPROVAL' ? 'orange' : 'default'}
+                              >
                                 {item.status}
                               </Tag>
                             </Space>
@@ -702,95 +726,112 @@ const StaffDashboard = () => {
           </Col>
         ) : (
           // DOCTOR View - Today's appointments
-          <>
-            <Col xs={24} lg={24}>
-              <Card
-                title={
-                  <Space>
-                    <CalendarOutlined style={{ fontSize: 20 }} />
-                    Lịch hẹn hôm nay - {dayjs().format('DD/MM/YYYY')}
-                  </Space>
-                }
-                extra={
-                  <Button
-                    icon={<ThunderboltOutlined />}
-                    onClick={fetchTodayAppointments}
-                    loading={loadingToday}
-                  >
-                    Làm mới
-                  </Button>
-                }
-                bordered={false}
-              >
-                {loadingToday ? (
-                  <div style={{ textAlign: 'center', padding: '40px 0' }}>
-                    <Spin size="large" tip="Đang tải lịch hẹn hôm nay..." />
-                  </div>
-                ) : todayAppointments.length === 0 ? (
-                  <div style={{ textAlign: 'center', padding: '40px 0' }}>
-                    <CheckCircleOutlined style={{ fontSize: 48, color: '#52c41a', marginBottom: 16 }} />
-                    <Title level={4}>Không có lịch hẹn hôm nay</Title>
-                    <Text type="secondary">Bạn có thể nghỉ ngơi hoặc xem lịch hẹn khác</Text>
-                  </div>
-                ) : (
-                  <List
-                    dataSource={todayAppointments}
-                    renderItem={(item) => (
-                      <List.Item
-                        actions={[
-                          <Tag
-                            color={
-                              item.status === 'COMPLETED' ? 'green' :
-                              item.status === 'SCHEDULED' ? 'blue' :
-                              item.status === 'CANCELLED' ? 'red' : 'orange'
-                            }
-                            icon={
-                              item.status === 'COMPLETED' ? <CheckCircleOutlined /> :
-                              item.status === 'SCHEDULED' ? <ClockCircleOutlined /> :
-                              <CloseCircleOutlined />
-                            }
-                          >
-                            {item.status === 'COMPLETED' ? 'Đã hoàn thành' :
-                             item.status === 'SCHEDULED' ? 'Đã xếp lịch' :
-                             item.status === 'CANCELLED' ? 'Đã hủy' : item.status}
-                          </Tag>,
-                          item.status === 'SCHEDULED' && (
-                            <Button
-                              type="primary"
-                              size="small"
-                              onClick={() => navigate(`/staff/appointments/${item.id}`)}
-                            >
-                              Xem chi tiết
-                            </Button>
-                          ),
-                        ]}
-                      >
-                        <List.Item.Meta
-                          avatar={<Avatar icon={<UserOutlined />} size={48} />}
-                          title={
-                            <Space>
-                              <Text strong style={{ fontSize: 16 }}>{item.patientName}</Text>
-                              <Tag color="blue">{item.vaccineName} - Mũi {item.doseNumber}</Tag>
-                            </Space>
-                          }
-                          description={
-                            <Space direction="vertical" size={4}>
-                              <Text>
-                                <ClockCircleOutlined /> {item.scheduledTime} - {dayjs(item.scheduledDate).format('DD/MM/YYYY')}
-                              </Text>
-                              <Text type="secondary">
-                                <PhoneOutlined /> {item.patientPhone || 'N/A'}
-                              </Text>
-                            </Space>
-                          }
-                        />
-                      </List.Item>
-                    )}
+          <Col xs={24} lg={24}>
+            <Card
+              title={
+                <Space>
+                  <CalendarOutlined style={{ fontSize: 20 }} />
+                  Lịch hẹn hôm nay - {dayjs().format('DD/MM/YYYY')}
+                </Space>
+              }
+              extra={
+                <Button
+                  icon={<ThunderboltOutlined />}
+                  onClick={fetchTodayAppointments}
+                  loading={loadingToday}
+                >
+                  Làm mới
+                </Button>
+              }
+              bordered={false}
+            >
+              {loadingToday ? (
+                <div style={{ textAlign: 'center', padding: '40px 0' }}>
+                  <Spin size="large" tip="Đang tải lịch hẹn hôm nay..." />
+                </div>
+              ) : todayAppointments.length === 0 ? (
+                <div style={{ textAlign: 'center', padding: '40px 0' }}>
+                  <CheckCircleOutlined
+                    style={{ fontSize: 48, color: '#52c41a', marginBottom: 16 }}
                   />
-                )}
-              </Card>
-            </Col>
-          </>
+                  <Title level={4}>Không có lịch hẹn hôm nay</Title>
+                  <Text type="secondary">Bạn có thể nghỉ ngơi hoặc xem lịch hẹn khác</Text>
+                </div>
+              ) : (
+                <List
+                  dataSource={todayAppointments}
+                  renderItem={(item) => (
+                    <List.Item
+                      actions={[
+                        <Tag
+                          color={
+                            item.status === 'COMPLETED'
+                              ? 'green'
+                              : item.status === 'SCHEDULED'
+                                ? 'blue'
+                                : item.status === 'CANCELLED'
+                                  ? 'red'
+                                  : 'orange'
+                          }
+                          icon={
+                            item.status === 'COMPLETED' ? (
+                              <CheckCircleOutlined />
+                            ) : item.status === 'SCHEDULED' ? (
+                              <ClockCircleOutlined />
+                            ) : (
+                              <CloseCircleOutlined />
+                            )
+                          }
+                        >
+                          {item.status === 'COMPLETED'
+                            ? 'Đã hoàn thành'
+                            : item.status === 'SCHEDULED'
+                              ? 'Đã xếp lịch'
+                              : item.status === 'CANCELLED'
+                                ? 'Đã hủy'
+                                : item.status}
+                        </Tag>,
+                        item.status === 'SCHEDULED' && (
+                          <Button
+                            type="primary"
+                            size="small"
+                            onClick={() => navigate(`/staff/appointments/${item.id}`)}
+                          >
+                            Xem chi tiết
+                          </Button>
+                        ),
+                      ]}
+                    >
+                      <List.Item.Meta
+                        avatar={<Avatar icon={<UserOutlined />} size={48} />}
+                        title={
+                          <Space>
+                            <Text strong style={{ fontSize: 16 }}>
+                              {item.patientName}
+                            </Text>
+                            <Tag color="blue">
+                              {item.vaccineName} - Mũi {item.doseNumber}
+                            </Tag>
+                          </Space>
+                        }
+                        description={
+                          <Space direction="vertical" size={4}>
+                            <Text>
+                              <ClockCircleOutlined /> {item.scheduledTime} -{' '}
+                              {dayjs(item.scheduledDate).format('DD/MM/YYYY')}
+                            </Text>
+                            <Text type="secondary">
+                              <PhoneOutlined /> {item.patientPhone || 'N/A'}
+                            </Text>
+                          </Space>
+                        }
+                      />
+                    </List.Item>
+                  )}
+                />
+              )}
+            </Card>
+          </Col>
         )}
       </Row>
 

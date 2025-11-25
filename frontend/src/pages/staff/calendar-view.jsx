@@ -1,18 +1,32 @@
-import { useState, useEffect } from 'react';
-import { Card, Row, Col, Button, Select, Space, Typography, Tag, Badge, Segmented, Modal, Descriptions, message } from 'antd';
-import { 
-  CalendarOutlined, 
-  LeftOutlined, 
+import {
+  CalendarOutlined,
+  ClockCircleOutlined,
+  EditOutlined,
+  LeftOutlined,
+  MedicineBoxOutlined,
+  PhoneOutlined,
   RightOutlined,
   UserOutlined,
-  PhoneOutlined,
-  MedicineBoxOutlined,
-  ClockCircleOutlined,
-  EditOutlined
 } from '@ant-design/icons';
+import {
+  Badge,
+  Button,
+  Card,
+  Col,
+  Descriptions,
+  Modal,
+  message,
+  Row,
+  Segmented,
+  Select,
+  Space,
+  Tag,
+  Typography,
+} from 'antd';
 import dayjs from 'dayjs';
 import isoWeek from 'dayjs/plugin/isoWeek';
 import weekOfYear from 'dayjs/plugin/weekOfYear';
+import { useEffect, useState } from 'react';
 import { callFetchAppointmentOfCenter } from '../../config/api.appointment';
 import { getColorStatus } from '../../utils/status';
 
@@ -43,13 +57,13 @@ const CalendarView = () => {
   useEffect(() => {
     fetchAppointments();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [viewMode, selectedDate, selectedDoctor]);
+  }, [fetchAppointments]);
 
   const fetchAppointments = async () => {
     setLoading(true);
     try {
       let filter = '';
-      
+
       if (viewMode === 'month') {
         const startOfMonth = selectedDate.startOf('month').format('YYYY-MM-DD');
         const endOfMonth = selectedDate.endOf('month').format('YYYY-MM-DD');
@@ -124,7 +138,7 @@ const CalendarView = () => {
 
     // Group appointments by date and time
     const appointmentsByDateTime = {};
-    appointments.forEach(apt => {
+    appointments.forEach((apt) => {
       const date = dayjs(apt.scheduledDate).format('YYYY-MM-DD');
       const time = apt.scheduledTime?.substring(0, 5) || '08:00';
       const key = `${date}-${time}`;
@@ -135,31 +149,35 @@ const CalendarView = () => {
     });
 
     return (
-      <div style={{ 
-        display: 'grid', 
-        gridTemplateColumns: '80px repeat(7, 1fr)',
-        gap: '1px',
-        background: '#e0e0e0',
-        border: '1px solid #e0e0e0'
-      }}>
+      <div
+        style={{
+          display: 'grid',
+          gridTemplateColumns: '80px repeat(7, 1fr)',
+          gap: '1px',
+          background: '#e0e0e0',
+          border: '1px solid #e0e0e0',
+        }}
+      >
         {/* Header Row */}
-        <div style={{ 
-          background: '#f5f5f5', 
-          padding: '15px 8px', 
-          fontWeight: 'bold',
-          textAlign: 'center'
-        }}>
+        <div
+          style={{
+            background: '#f5f5f5',
+            padding: '15px 8px',
+            fontWeight: 'bold',
+            textAlign: 'center',
+          }}
+        >
           Giờ
         </div>
         {weekDays.map((day, idx) => {
           const isToday = day.isSame(dayjs(), 'day');
           return (
-            <div 
+            <div
               key={idx}
-              style={{ 
+              style={{
                 background: isToday ? '#e7f3ff' : '#f5f5f5',
                 padding: '15px 8px',
-                textAlign: 'center'
+                textAlign: 'center',
               }}
             >
               <div style={{ fontWeight: 'bold' }}>{day.format('dd')}</div>
@@ -173,9 +191,9 @@ const CalendarView = () => {
         {/* Time Slots */}
         {timeSlots.map((time) => (
           <>
-            <div 
+            <div
               key={`time-${time}`}
-              style={{ 
+              style={{
                 background: '#f5f5f5',
                 padding: '8px',
                 display: 'flex',
@@ -183,7 +201,7 @@ const CalendarView = () => {
                 justifyContent: 'center',
                 fontWeight: 600,
                 fontSize: '14px',
-                minHeight: '100px'
+                minHeight: '100px',
               }}
             >
               {time}
@@ -194,13 +212,13 @@ const CalendarView = () => {
               const dayAppointments = appointmentsByDateTime[key] || [];
 
               return (
-                <div 
+                <div
                   key={`${time}-${dayIdx}`}
-                  style={{ 
+                  style={{
                     background: 'white',
                     padding: '8px',
                     minHeight: '100px',
-                    position: 'relative'
+                    position: 'relative',
                   }}
                 >
                   {dayAppointments.map((apt, aptIdx) => (
@@ -216,7 +234,7 @@ const CalendarView = () => {
                         fontSize: '12px',
                         cursor: 'pointer',
                         borderLeft: '3px solid rgba(0,0,0,0.2)',
-                        transition: 'all 0.2s'
+                        transition: 'all 0.2s',
                       }}
                       onMouseEnter={(e) => {
                         e.currentTarget.style.transform = 'translateX(2px)';
@@ -227,8 +245,10 @@ const CalendarView = () => {
                         e.currentTarget.style.boxShadow = 'none';
                       }}
                     >
-                      <strong>{apt.scheduledTime?.substring(0, 5)}</strong><br />
-                      {apt.user?.firstName} {apt.user?.lastName}<br />
+                      <strong>{apt.scheduledTime?.substring(0, 5)}</strong>
+                      <br />
+                      {apt.user?.firstName} {apt.user?.lastName}
+                      <br />
                       <small>{apt.vaccine?.name}</small>
                     </div>
                   ))}
@@ -260,7 +280,7 @@ const CalendarView = () => {
                 marginBottom: '2px',
                 background: 'white',
                 cursor: 'pointer',
-                transition: 'background 0.2s'
+                transition: 'background 0.2s',
               }}
               onMouseEnter={(e) => {
                 e.currentTarget.style.background = '#f9f9f9';
@@ -278,14 +298,16 @@ const CalendarView = () => {
                 </Col>
                 <Col span={20}>
                   <Space size="middle" split="|">
-                    <Tag color={getVaccineColor(apt.vaccine?.name)}>
-                      {apt.vaccine?.name}
-                    </Tag>
+                    <Tag color={getVaccineColor(apt.vaccine?.name)}>{apt.vaccine?.name}</Tag>
                     <Space>
                       <UserOutlined />
-                      <Text strong>{apt.user?.firstName} {apt.user?.lastName}</Text>
+                      <Text strong>
+                        {apt.user?.firstName} {apt.user?.lastName}
+                      </Text>
                     </Space>
-                    <Text>BS. {apt.doctor?.firstName} {apt.doctor?.lastName}</Text>
+                    <Text>
+                      BS. {apt.doctor?.firstName} {apt.doctor?.lastName}
+                    </Text>
                     <Space>
                       <PhoneOutlined />
                       <Text type="secondary">{apt.user?.phone}</Text>
@@ -321,7 +343,7 @@ const CalendarView = () => {
 
     // Group appointments by date
     const appointmentsByDate = {};
-    appointments.forEach(apt => {
+    appointments.forEach((apt) => {
       const date = dayjs(apt.scheduledDate).format('YYYY-MM-DD');
       if (!appointmentsByDate[date]) {
         appointmentsByDate[date] = [];
@@ -330,22 +352,24 @@ const CalendarView = () => {
     });
 
     return (
-      <div style={{ 
-        display: 'grid', 
-        gridTemplateColumns: 'repeat(7, 1fr)',
-        gap: '1px',
-        background: '#e0e0e0',
-        border: '1px solid #e0e0e0'
-      }}>
+      <div
+        style={{
+          display: 'grid',
+          gridTemplateColumns: 'repeat(7, 1fr)',
+          gap: '1px',
+          background: '#e0e0e0',
+          border: '1px solid #e0e0e0',
+        }}
+      >
         {/* Header */}
         {['T2', 'T3', 'T4', 'T5', 'T6', 'T7', 'CN'].map((day, idx) => (
-          <div 
+          <div
             key={idx}
-            style={{ 
+            style={{
               background: '#f5f5f5',
               padding: '15px 8px',
               fontWeight: 'bold',
-              textAlign: 'center'
+              textAlign: 'center',
             }}
           >
             {day}
@@ -353,7 +377,7 @@ const CalendarView = () => {
         ))}
 
         {/* Calendar cells */}
-        {weeks.map((week, weekIdx) => (
+        {weeks.map((week, weekIdx) =>
           week.map((day, dayIdx) => {
             const isCurrentMonth = day.month() === selectedDate.month();
             const isToday = day.isSame(dayjs(), 'day');
@@ -369,18 +393,20 @@ const CalendarView = () => {
                   padding: '8px',
                   position: 'relative',
                   border: isToday ? '2px solid #1890ff' : 'none',
-                  cursor: 'pointer'
+                  cursor: 'pointer',
                 }}
                 onClick={() => {
                   setSelectedDate(day);
                   setViewMode('day');
                 }}
               >
-                <div style={{ 
-                  fontWeight: 'bold', 
-                  marginBottom: '8px',
-                  color: isToday ? '#1890ff' : (isCurrentMonth ? '#000' : '#999')
-                }}>
+                <div
+                  style={{
+                    fontWeight: 'bold',
+                    marginBottom: '8px',
+                    color: isToday ? '#1890ff' : isCurrentMonth ? '#000' : '#999',
+                  }}
+                >
                   {day.format('D')}
                 </div>
                 <div>
@@ -394,14 +420,14 @@ const CalendarView = () => {
                         background: getVaccineColor(apt.vaccine?.name),
                         display: 'inline-block',
                         marginRight: '2px',
-                        marginBottom: '2px'
+                        marginBottom: '2px',
                       }}
                     />
                   ))}
                 </div>
                 {dayAppointments.length > 0 && (
-                  <Text 
-                    type="primary" 
+                  <Text
+                    type="primary"
                     style={{ fontSize: '11px', display: 'block', marginTop: '4px' }}
                   >
                     <strong>{dayAppointments.length} lịch</strong>
@@ -410,7 +436,7 @@ const CalendarView = () => {
               </div>
             );
           })
-        ))}
+        )}
       </div>
     );
   };
@@ -435,7 +461,7 @@ const CalendarView = () => {
         style={{
           background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
           marginBottom: '24px',
-          borderRadius: '12px'
+          borderRadius: '12px',
         }}
         bodyStyle={{ padding: '30px' }}
       >
@@ -444,17 +470,13 @@ const CalendarView = () => {
             <Title level={2} style={{ color: 'white', margin: 0 }}>
               <CalendarOutlined /> Lịch Tiêm Chủng
             </Title>
-            <Text style={{ color: 'rgba(255,255,255,0.9)' }}>
-              Xem lịch theo ngày, tuần, tháng
-            </Text>
+            <Text style={{ color: 'rgba(255,255,255,0.9)' }}>Xem lịch theo ngày, tuần, tháng</Text>
           </Col>
           <Col style={{ textAlign: 'right' }}>
             <Title level={4} style={{ color: 'white', margin: 0 }}>
               {dayjs().format('DD MMMM, YYYY')}
             </Title>
-            <Text style={{ color: 'rgba(255,255,255,0.9)' }}>
-              {dayjs().format('dddd')}
-            </Text>
+            <Text style={{ color: 'rgba(255,255,255,0.9)' }}>{dayjs().format('dddd')}</Text>
           </Col>
         </Row>
       </Card>
@@ -476,23 +498,11 @@ const CalendarView = () => {
           </Col>
           <Col xs={24} sm={24} md={10} style={{ textAlign: 'center' }}>
             <Space>
-              <Button 
-                icon={<LeftOutlined />} 
-                onClick={handlePrevious}
-                size="small"
-              />
-              <Button 
-                type="primary" 
-                onClick={handleToday}
-                size="small"
-              >
+              <Button icon={<LeftOutlined />} onClick={handlePrevious} size="small" />
+              <Button type="primary" onClick={handleToday} size="small">
                 Hôm nay
               </Button>
-              <Button 
-                icon={<RightOutlined />} 
-                onClick={handleNext}
-                size="small"
-              />
+              <Button icon={<RightOutlined />} onClick={handleNext} size="small" />
             </Space>
           </Col>
           <Col xs={24} sm={24} md={6} style={{ textAlign: 'right' }}>
@@ -502,7 +512,7 @@ const CalendarView = () => {
               style={{ width: '100%' }}
               size="small"
             >
-              {doctors.map(doc => (
+              {doctors.map((doc) => (
                 <Select.Option key={doc.id} value={doc.id}>
                   {doc.name}
                 </Select.Option>
@@ -539,7 +549,7 @@ const CalendarView = () => {
       </Card>
 
       {/* Current Period Display */}
-      <Card 
+      <Card
         title={
           <Space>
             <CalendarOutlined />
@@ -569,9 +579,9 @@ const CalendarView = () => {
           <Button key="close" onClick={() => setDetailModalOpen(false)}>
             Đóng
           </Button>,
-          <Button 
-            key="edit" 
-            type="primary" 
+          <Button
+            key="edit"
+            type="primary"
             icon={<EditOutlined />}
             onClick={() => message.info('Chức năng chỉnh sửa đang phát triển')}
           >
@@ -588,7 +598,9 @@ const CalendarView = () => {
             <Descriptions.Item label="Bệnh nhân">
               <Space>
                 <UserOutlined />
-                <Text>{selectedAppointment.user?.firstName} {selectedAppointment.user?.lastName}</Text>
+                <Text>
+                  {selectedAppointment.user?.firstName} {selectedAppointment.user?.lastName}
+                </Text>
               </Space>
             </Descriptions.Item>
             <Descriptions.Item label="Số điện thoại">
@@ -606,22 +618,28 @@ const CalendarView = () => {
               <Space>
                 <ClockCircleOutlined />
                 <Text>
-                  {dayjs(selectedAppointment.scheduledDate).format('DD/MM/YYYY')} - {selectedAppointment.scheduledTime?.substring(0, 5)}
+                  {dayjs(selectedAppointment.scheduledDate).format('DD/MM/YYYY')} -{' '}
+                  {selectedAppointment.scheduledTime?.substring(0, 5)}
                 </Text>
               </Space>
             </Descriptions.Item>
             <Descriptions.Item label="Bác sĩ">
               <Space>
                 <MedicineBoxOutlined />
-                <Text>BS. {selectedAppointment.doctor?.firstName} {selectedAppointment.doctor?.lastName}</Text>
+                <Text>
+                  BS. {selectedAppointment.doctor?.firstName} {selectedAppointment.doctor?.lastName}
+                </Text>
               </Space>
             </Descriptions.Item>
             <Descriptions.Item label="Trạng thái">
               <Tag color={getColorStatus(selectedAppointment.status)}>
-                {selectedAppointment.status === 'SCHEDULED' ? 'Đã xếp lịch' : 
-                 selectedAppointment.status === 'COMPLETED' ? 'Đã hoàn thành' :
-                 selectedAppointment.status === 'CANCELLED' ? 'Đã hủy' : 
-                 selectedAppointment.status}
+                {selectedAppointment.status === 'SCHEDULED'
+                  ? 'Đã xếp lịch'
+                  : selectedAppointment.status === 'COMPLETED'
+                    ? 'Đã hoàn thành'
+                    : selectedAppointment.status === 'CANCELLED'
+                      ? 'Đã hủy'
+                      : selectedAppointment.status}
               </Tag>
             </Descriptions.Item>
             <Descriptions.Item label="Ghi chú">

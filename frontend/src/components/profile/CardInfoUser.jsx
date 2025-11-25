@@ -10,28 +10,14 @@ import {
   TrophyOutlined,
   UserOutlined,
 } from '@ant-design/icons';
-import {
-  Avatar,
-  Badge,
-  Button,
-  Card,
-  Skeleton,
-  Statistic,
-  Typography,
-  Tooltip,
-} from 'antd';
+import { Avatar, Badge, Button, Card, Skeleton, Statistic, Tooltip, Typography } from 'antd';
+import dayjs from 'dayjs';
 import { useMemo } from 'react';
 import { useAccountStore } from '../../stores/useAccountStore';
-import dayjs from 'dayjs';
 
 const { Title, Text } = Typography;
 
-const CardInfoUser = ({
-  setOpen,
-  editMode,
-  setEditMode,
-  onOpenSettings,
-}) => {
+const CardInfoUser = ({ setOpen, editMode, setEditMode, onOpenSettings }) => {
   const user = useAccountStore((state) => state.user);
   const isAuthenticated = useAccountStore((state) => state.isAuthenticated);
 
@@ -69,11 +55,7 @@ const CardInfoUser = ({
               className="absolute bottom-2 right-2 bg-white text-gray-600 border-2 border-white shadow-lg hover:bg-blue-50"
             />
             {isAuthenticated && (
-              <Badge
-                status="success"
-                className="absolute top-2 right-2"
-                title="Online"
-              />
+              <Badge status="success" className="absolute top-2 right-2" title="Online" />
             )}
           </div>
 
@@ -82,9 +64,7 @@ const CardInfoUser = ({
               <div>
                 <div className="flex items-center gap-3 mb-2">
                   <Title level={2} className="mb-0 text-gray-800">
-                    {user?.fullName || (
-                      <Skeleton.Input active size="small" className="!w-40" />
-                    )}
+                    {user?.fullName || <Skeleton.Input active size="small" className="!w-40" />}
                   </Title>
                   <Badge count="VIP" style={{ backgroundColor: '#f59e0b' }} />
                 </div>

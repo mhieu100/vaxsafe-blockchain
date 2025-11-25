@@ -8,15 +8,11 @@ const QuickStatsSection = () => {
             <p className="text-gray-600">Users</p>
           </div>
           <div>
-            <span className="text-2xl font-bold text-green-600 block">
-              50
-            </span>
+            <span className="text-2xl font-bold text-green-600 block">50</span>
             <p className="text-gray-600">Vaccines</p>
           </div>
           <div>
-            <span className="text-2xl font-bold text-purple-600 block">
-              30
-            </span>
+            <span className="text-2xl font-bold text-purple-600 block">30</span>
             <p className="text-gray-600">Centers</p>
           </div>
           <div>

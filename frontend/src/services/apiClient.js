@@ -1,6 +1,6 @@
-import axios from 'axios';
 import { notification } from 'antd';
 import { Mutex } from 'async-mutex';
+import axios from 'axios';
 
 const mutex = new Mutex();
 const NO_RETRY_HEADER = 'x-no-retry';
@@ -21,7 +21,7 @@ const handleRefreshToken = async () => {
   return await mutex.runExclusive(async () => {
     try {
       const response = await apiClient.get('/auth/refresh');
-      if (response && response.data && response.data.accessToken) {
+      if (response?.data?.accessToken) {
         return response.data.accessToken;
       }
       return null;
@@ -42,7 +42,7 @@ apiClient.interceptors.request.use(
   (config) => {
     // Get token from localStorage
     const token = localStorage.getItem('access_token');
-    
+
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
     }
@@ -75,13 +75,13 @@ apiClient.interceptors.response.use(
       !originalRequest.headers[NO_RETRY_HEADER]
     ) {
       originalRequest.headers[NO_RETRY_HEADER] = 'true';
-      
+
       const newToken = await handleRefreshToken();
-      
+
       if (newToken) {
         // Update token in localStorage
         localStorage.setItem('access_token', newToken);
-        
+
         // Retry the original request with new token
         originalRequest.headers.Authorization = `Bearer ${newToken}`;
         return apiClient.request(originalRequest);
@@ -92,7 +92,8 @@ apiClient.interceptors.response.use(
     if (error.response && error.response.status === 403) {
       notification.error({
         message: error?.response?.data?.message || 'Forbidden',
-        description: error?.response?.data?.error || 'You do not have permission to access this resource.',
+        description:
+          error?.response?.data?.error || 'You do not have permission to access this resource.',
       });
     }
 

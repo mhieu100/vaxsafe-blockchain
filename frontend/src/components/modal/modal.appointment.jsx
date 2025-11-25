@@ -1,37 +1,36 @@
-import { useEffect, useState } from 'react';
-import { Form, message, notification } from 'antd';
 import { ModalForm, ProFormSelect } from '@ant-design/pro-components';
+import { Form, message, notification } from 'antd';
 import dayjs from 'dayjs';
 import customParseFormat from 'dayjs/plugin/customParseFormat';
-
-import { callFetchDoctor } from '../../config/api.user';
+import { useEffect, useState } from 'react';
 import { callUpdateAppointment } from '../../config/api.appointment';
+import { callFetchDoctor } from '../../config/api.user';
 import '../../styles/reset.scss';
 import { useAccountStore } from '../../stores/useAccountStore';
 
 dayjs.extend(customParseFormat);
 
 const ModalAppointment = (props) => {
-  const user = useAccountStore((state) => state.user);
+  const _user = useAccountStore((state) => state.user);
   const { openModal, setOpenModal, reloadTable, dataInit, setDataInit } = props;
 
   const [form] = Form.useForm();
   const [animation, setAnimation] = useState('open');
   const [listDoctor, setListDoctor] = useState([]);
 
-  useEffect(() => {
-    fetchDoctor();
-  }, []);
-
   const fetchDoctor = async () => {
     const res = await callFetchDoctor();
     const list = res.data?.result || [];
-    console.log(list)
+    console.log(list);
     // list.filter((doctor) => doctor. === user.clinicId);
-    if (res && res.data) {
+    if (res?.data) {
       setListDoctor(res.data?.result);
     }
   };
+
+  useEffect(() => {
+    fetchDoctor();
+  }, [fetchDoctor]);
 
   const submitAppointment = async (valuesForm) => {
     const { doctorId } = valuesForm;

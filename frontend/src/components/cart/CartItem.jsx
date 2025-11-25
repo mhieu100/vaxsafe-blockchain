@@ -1,13 +1,8 @@
- 
-import { useCartStore } from '@/stores/useCartStore';
-import { formatPrice } from '@/utils/formatPrice';
-import {
-  DeleteOutlined,
-  MinusCircleOutlined,
-  PlusCircleOutlined,
-} from '@ant-design/icons';
+import { DeleteOutlined, MinusCircleOutlined, PlusCircleOutlined } from '@ant-design/icons';
 import { Button, Card, Space } from 'antd';
 import { useTranslation } from 'react-i18next';
+import { useCartStore } from '@/stores/useCartStore';
+import { formatPrice } from '@/utils/formatPrice';
 
 const CartItem = ({ item }) => {
   const { t } = useTranslation('common');
@@ -46,12 +41,12 @@ const CartItem = ({ item }) => {
 
           <Space align="center">
             <span>{t('cart.qty')}:</span>
-            <MinusCircleOutlined 
+            <MinusCircleOutlined
               onClick={() => decrease(item.vaccine.id)}
               className="cursor-pointer text-lg hover:text-blue-600"
             />
             <span className="px-2 font-semibold">{item.quantity}</span>
-            <PlusCircleOutlined 
+            <PlusCircleOutlined
               onClick={() => increase(item.vaccine.id)}
               className="cursor-pointer text-lg hover:text-blue-600"
             />

@@ -1,6 +1,6 @@
+import { FacebookOutlined, GoogleOutlined, LockOutlined, UserOutlined } from '@ant-design/icons';
+import { Button, Card, Divider, Form, Input, message, Typography } from 'antd';
 import { useState } from 'react';
-import { Button, Card, Typography, Divider, Form, Input, message } from 'antd';
-import { GoogleOutlined, FacebookOutlined, LockOutlined, UserOutlined } from '@ant-design/icons';
 import { Link, useNavigate } from 'react-router-dom';
 import { callLoginWithPassword } from '../../config/api.auth';
 import useAccountStore from '../../stores/useAccountStore';
@@ -21,23 +21,27 @@ const Login = () => {
     try {
       setIsSubmitting(true);
       const response = await callLoginWithPassword(values.email, values.password);
-      
+
       if (response?.data) {
         const userData = response.data.user;
         const token = response.data.accessToken;
-        
+
         // Store token in localStorage
         localStorage.setItem('token', token);
-        
+
         // Update Zustand store
         setUserLoginInfo(userData);
-        
+
         message.success('Login successful!');
-        
+
         // Navigate based on role
         if (userData.role === 'ADMIN') {
           navigate('/admin');
-        } else if (userData.role === 'STAFF' || userData.role === 'CASHIER' || userData.role === 'DOCTOR') {
+        } else if (
+          userData.role === 'STAFF' ||
+          userData.role === 'CASHIER' ||
+          userData.role === 'DOCTOR'
+        ) {
           navigate('/staff');
         } else {
           navigate('/');

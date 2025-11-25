@@ -20,11 +20,7 @@ const TopCheckoutSection = ({ currentStep, setCurrentStep }) => {
             <LockOutlined /> SSL Encrypted & Secure
           </span>
         </div>
-        <Button
-          icon={<ArrowLeftOutlined />}
-          onClick={() => navigate('/')}
-          className="rounded-lg"
-        >
+        <Button icon={<ArrowLeftOutlined />} onClick={() => navigate('/')} className="rounded-lg">
           Hủy đặt lịch
         </Button>
       </div>

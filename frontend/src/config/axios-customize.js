@@ -1,6 +1,6 @@
-import axiosClient from 'axios';
 import { notification } from 'antd';
 import { Mutex } from 'async-mutex';
+import axiosClient from 'axios';
 
 /**
  * Creates an initial 'axios' instance with custom settings.
@@ -17,20 +17,19 @@ const NO_RETRY_HEADER = 'x-no-retry';
 const handleRefreshToken = async () => {
   return await mutex.runExclusive(async () => {
     const response = await instance.get('/auth/refresh');
-    if (response && response.data) return response.data.accessToken;
+    if (response?.data) return response.data.accessToken;
     else return null;
   });
 };
 
-instance.interceptors.request.use(function (config) {
+instance.interceptors.request.use((config) => {
   if (
     typeof window !== 'undefined' &&
     window &&
     window.localStorage &&
     window.localStorage.getItem('access_token')
   ) {
-    config.headers.Authorization =
-      'Bearer ' + window.localStorage.getItem('access_token');
+    config.headers.Authorization = `Bearer ${window.localStorage.getItem('access_token')}`;
   }
   if (!config.headers.Accept && config.headers['Content-Type']) {
     config.headers.Accept = 'application/json';
@@ -56,7 +55,7 @@ instance.interceptors.response.use(
       const access_token = await handleRefreshToken();
       error.config.headers[NO_RETRY_HEADER] = 'true';
       if (access_token) {
-        error.config.headers['Authorization'] = `Bearer ${access_token}`;
+        error.config.headers.Authorization = `Bearer ${access_token}`;
         localStorage.setItem('access_token', access_token);
         return instance.request(error.config);
       }

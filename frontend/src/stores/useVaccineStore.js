@@ -17,7 +17,7 @@ const useVaccineStore = create((set) => ({
     set({ isFetching: true });
     try {
       const response = await callFetchVaccine(query);
-      if (response && response.data) {
+      if (response?.data) {
         set({
           isFetching: false,
           meta: response.data.meta,

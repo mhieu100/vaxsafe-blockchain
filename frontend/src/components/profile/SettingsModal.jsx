@@ -1,9 +1,5 @@
-import { Modal, Typography, Card, Select, Switch, Button } from 'antd';
-import {
-  BellOutlined,
-  LockOutlined,
-  SafetyOutlined,
-} from '@ant-design/icons';
+import { BellOutlined, LockOutlined, SafetyOutlined } from '@ant-design/icons';
+import { Button, Card, Modal, Select, Switch, Typography } from 'antd';
 
 const { Title, Text } = Typography;
 

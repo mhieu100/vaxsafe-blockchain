@@ -26,9 +26,7 @@ const useCartStore = create(
           // If exists, increase quantity
           set({
             items: items.map((i) =>
-              i.vaccine.id === vaccine.id
-                ? { ...i, quantity: i.quantity + quantity }
-                : i
+              i.vaccine.id === vaccine.id ? { ...i, quantity: i.quantity + quantity } : i
             ),
           });
         } else {
@@ -60,9 +58,7 @@ const useCartStore = create(
         const items = get().items;
 
         set({
-          items: items.map((i) =>
-            i.vaccine.id === id ? { ...i, quantity: i.quantity + 1 } : i
-          ),
+          items: items.map((i) => (i.vaccine.id === id ? { ...i, quantity: i.quantity + 1 } : i)),
         });
       },
 
@@ -81,9 +77,7 @@ const useCartStore = create(
           });
         } else {
           set({
-            items: items.map((i) =>
-              i.vaccine.id === id ? { ...i, quantity: i.quantity - 1 } : i
-            ),
+            items: items.map((i) => (i.vaccine.id === id ? { ...i, quantity: i.quantity - 1 } : i)),
           });
         }
       },
@@ -97,9 +91,7 @@ const useCartStore = create(
 
         const items = get().items;
         set({
-          items: items.map((i) =>
-            i.vaccine.id === vaccineId ? { ...i, quantity } : i
-          ),
+          items: items.map((i) => (i.vaccine.id === vaccineId ? { ...i, quantity } : i)),
         });
       },
 
@@ -109,18 +101,14 @@ const useCartStore = create(
        * Get total quantity of all items
        * @returns {number} Total quantity
        */
-      totalQuantity: () =>
-        get().items.reduce((acc, item) => acc + item.quantity, 0),
+      totalQuantity: () => get().items.reduce((acc, item) => acc + item.quantity, 0),
 
       /**
        * Get total price of all items
        * @returns {number} Total price
        */
       totalPrice: () =>
-        get().items.reduce(
-          (acc, item) => acc + item.vaccine.price * item.quantity,
-          0
-        ),
+        get().items.reduce((acc, item) => acc + item.vaccine.price * item.quantity, 0),
 
       // Computed properties for backward compatibility
       get itemCount() {

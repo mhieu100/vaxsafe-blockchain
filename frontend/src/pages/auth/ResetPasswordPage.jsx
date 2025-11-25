@@ -1,14 +1,14 @@
-import { useState } from 'react';
-import { Card, Form, Input, Button, Typography, Alert, Progress } from 'antd';
 import {
-  LockOutlined,
+  CheckCircleOutlined,
   EyeInvisibleOutlined,
   EyeTwoTone,
-  CheckCircleOutlined,
+  LockOutlined,
 } from '@ant-design/icons';
-import { useNavigate } from 'react-router-dom';
- 
+import { Alert, Button, Card, Form, Input, Progress, Typography } from 'antd';
+import { useState } from 'react';
+
 import { useTranslation } from 'react-i18next';
+import { useNavigate } from 'react-router-dom';
 
 const { Title, Text } = Typography;
 
@@ -121,12 +121,7 @@ const ResetPasswordPage = () => {
             </Text>
           </div>
 
-          <Form
-            form={form}
-            onFinish={handleSubmit}
-            layout="vertical"
-            requiredMark={false}
-          >
+          <Form form={form} onFinish={handleSubmit} layout="vertical" requiredMark={false}>
             <Form.Item
               name="password"
               label={t('auth.newPassword')}
@@ -149,18 +144,14 @@ const ResetPasswordPage = () => {
                 size="large"
                 className="rounded-lg"
                 onChange={handlePasswordChange}
-                iconRender={(visible) =>
-                  visible ? <EyeTwoTone /> : <EyeInvisibleOutlined />
-                }
+                iconRender={(visible) => (visible ? <EyeTwoTone /> : <EyeInvisibleOutlined />)}
               />
             </Form.Item>
 
             {passwordStrength > 0 && (
               <div className="mb-4">
                 <div className="flex justify-between items-center mb-2">
-                  <Text className="text-sm text-gray-600">
-                    {t('auth.passwordStrength')}
-                  </Text>
+                  <Text className="text-sm text-gray-600">{t('auth.passwordStrength')}</Text>
                   <Text
                     className="text-sm font-medium"
                     style={{ color: getStrengthColor(passwordStrength) }}
@@ -188,9 +179,7 @@ const ResetPasswordPage = () => {
                     if (!value || getFieldValue('password') === value) {
                       return Promise.resolve();
                     }
-                    return Promise.reject(
-                      new Error(t('auth.passwordsNotMatch'))
-                    );
+                    return Promise.reject(new Error(t('auth.passwordsNotMatch')));
                   },
                 }),
               ]}
@@ -200,9 +189,7 @@ const ResetPasswordPage = () => {
                 placeholder={t('auth.confirmPasswordPlaceholder')}
                 size="large"
                 className="rounded-lg"
-                iconRender={(visible) =>
-                  visible ? <EyeTwoTone /> : <EyeInvisibleOutlined />
-                }
+                iconRender={(visible) => (visible ? <EyeTwoTone /> : <EyeInvisibleOutlined />)}
               />
             </Form.Item>
 
@@ -237,11 +224,7 @@ const ResetPasswordPage = () => {
           <div className="text-center">
             <Text type="secondary" className="text-sm">
               {t('auth.rememberPassword')}{' '}
-              <Button
-                type="link"
-                onClick={() => navigate('/login')}
-                className="p-0"
-              >
+              <Button type="link" onClick={() => navigate('/login')} className="p-0">
                 {t('auth.backToLogin')}
               </Button>
             </Text>

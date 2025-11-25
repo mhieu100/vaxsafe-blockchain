@@ -10,5 +10,5 @@ export const callFetchRole = (query) => {
 };
 
 export const callUpdateRole = (role, id) => {
-  return axios.put(`/roles/${id}`, { ...role })
-}
+  return axios.put(`/roles/${id}`, { ...role });
+};

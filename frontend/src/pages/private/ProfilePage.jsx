@@ -1,8 +1,8 @@
+import { Card, Col, Row } from 'antd';
 import { useState } from 'react';
-import { Row, Col, Card } from 'antd';
 import { useNavigate } from 'react-router-dom';
-import ModalUpdatePassword from '../../components/modal/ModalUpdatePassword';
 import ModalUpdateAvatar from '../../components/modal/ModalUpdateAvatar';
+import ModalUpdatePassword from '../../components/modal/ModalUpdatePassword';
 import CardInfoUser from '../../components/profile/CardInfoUser';
 import ProfileSidebar from '../../components/profile/ProfileSidebar';
 import ProfileTabs from '../../components/profile/ProfileTabs';
@@ -41,7 +41,6 @@ const ProfilePage = () => {
 
         <Row gutter={[24, 24]} className="mt-6">
           <Col xs={24} lg={6}>
-           
             <ProfileSidebar
               totalVaccines={8}
               upcomingAppointments={2}
@@ -67,15 +66,9 @@ const ProfilePage = () => {
           </Col>
         </Row>
 
-        <ModalUpdateAvatar
-          open={avatarModalVisible}
-          setOpen={setAvatarModalVisible}
-        />
+        <ModalUpdateAvatar open={avatarModalVisible} setOpen={setAvatarModalVisible} />
 
-        <ModalUpdatePassword
-          open={securityModalVisible}
-          setOpen={setSecurityModalVisible}
-        />
+        <ModalUpdatePassword open={securityModalVisible} setOpen={setSecurityModalVisible} />
 
         <SettingsModal
           open={settingsModalVisible}

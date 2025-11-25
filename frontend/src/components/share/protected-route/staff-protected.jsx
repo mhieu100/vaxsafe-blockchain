@@ -1,10 +1,9 @@
-import { Navigate } from 'react-router-dom';
 import PropTypes from 'prop-types';
 import { useEffect, useState } from 'react';
-
+import { Navigate } from 'react-router-dom';
+import { useAccountStore } from '../../../stores/useAccountStore';
 import Loading from '../loading';
 import NotPermitted from './not-permitted';
-import { useAccountStore } from '../../../stores/useAccountStore';
 
 // Staff role-based route protection (only DOCTOR and CASHIER can access)
 const StaffRoleRoute = (props) => {
@@ -34,23 +33,17 @@ const ProtectedStaffRoute = (props) => {
   }, [isLoading]);
 
   if (redirectToLogin) {
-    return <Navigate to='/login' replace />;
+    return <Navigate to="/login" replace />;
   }
 
   return (
     <>
       {isLoading === true ? (
         <Loading />
+      ) : isAuthenticated === true ? (
+        <StaffRoleRoute>{props.children}</StaffRoleRoute>
       ) : (
-        <>
-          {isAuthenticated === true ? (
-            <>
-              <StaffRoleRoute>{props.children}</StaffRoleRoute>
-            </>
-          ) : (
-            <Navigate to='/login' replace />
-          )}
-        </>
+        <Navigate to="/login" replace />
       )}
     </>
   );
@@ -63,4 +56,4 @@ ProtectedStaffRoute.propTypes = {
   children: PropTypes.node,
 };
 
-export default ProtectedStaffRoute; 
+export default ProtectedStaffRoute;

@@ -17,7 +17,7 @@ const useRoleStore = create((set) => ({
     set({ isFetching: true });
     try {
       const response = await callFetchRole(query);
-      if (response && response.data) {
+      if (response?.data) {
         set({
           isFetching: false,
           meta: response.data.meta,

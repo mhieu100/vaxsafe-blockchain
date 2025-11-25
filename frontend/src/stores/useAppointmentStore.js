@@ -17,7 +17,7 @@ const useAppointmentStore = create((set) => ({
     set({ isFetching: true });
     try {
       const response = await callFetchAppointmentOfCenter(query);
-      if (response && response.data) {
+      if (response?.data) {
         set({
           isFetching: false,
           meta: response.data.meta,
@@ -33,7 +33,7 @@ const useAppointmentStore = create((set) => ({
     set({ isFetching: true });
     try {
       const response = await callMySchedule(query);
-      if (response && response.data) {
+      if (response?.data) {
         set({
           isFetching: false,
           meta: response.data.meta,

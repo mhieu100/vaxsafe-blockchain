@@ -1,22 +1,14 @@
-import { useRef, useState } from 'react';
-import {
-  Badge,
-  Button,
-  message,
-  notification,
-  Popconfirm,
-  Space,
-} from 'antd';
+import { blue, green, orange, red } from '@ant-design/colors';
 import { DeleteOutlined, EditOutlined, MenuUnfoldOutlined, PlusOutlined } from '@ant-design/icons';
-import { sfLike } from 'spring-filter-query-builder';
+import { Badge, Button, message, notification, Popconfirm, Space } from 'antd';
 import queryString from 'query-string';
-
+import { useRef, useState } from 'react';
+import { sfLike } from 'spring-filter-query-builder';
 import DataTable from '../../components/data-table';
-import { callDeletePermission } from '../../config/api.permission';
-import { usePermissionStore } from '../../stores/usePermissionStore';
 import ModalPermission from '../../components/modal/modal.permission';
 import ViewDetailPermission from '../../components/modal/view.permission';
-import { blue, green, orange, red } from '@ant-design/colors';
+import { callDeletePermission } from '../../config/api.permission';
+import { usePermissionStore } from '../../stores/usePermissionStore';
 
 const PermissionPage = () => {
   const tableRef = useRef();
@@ -55,7 +47,7 @@ const PermissionPage = () => {
       key: 'index',
       width: 50,
       align: 'center',
-      render: (text, record, index) => {
+      render: (_text, _record, index) => {
         return <>{index + 1 + (meta.page - 1) * meta.pageSize}</>;
       },
       hideInSearch: true,
@@ -123,12 +115,12 @@ const PermissionPage = () => {
           />
 
           <Popconfirm
-            placement='leftTop'
-            title='Confirm delete this permission?'
-            description='Are you sure you want to delete this permission?'
+            placement="leftTop"
+            title="Confirm delete this permission?"
+            description="Are you sure you want to delete this permission?"
             onConfirm={() => handleDeletePermission(entity.id)}
-            okText='Confirm'
-            cancelText='Cancel'
+            okText="Confirm"
+            cancelText="Cancel"
           >
             <span style={{ cursor: 'pointer', margin: '0' }}>
               <DeleteOutlined
@@ -168,7 +160,7 @@ const PermissionPage = () => {
     }
 
     // Build sort
-    if (sort && sort.apiPath) {
+    if (sort?.apiPath) {
       q.sort = `apiPath,${sort.apiPath === 'ascend' ? 'asc' : 'desc'}`;
     }
     if (!q.sort) {
@@ -182,8 +174,8 @@ const PermissionPage = () => {
     <>
       <DataTable
         actionRef={tableRef}
-        headerTitle='Permission List'
-        rowKey='id'
+        headerTitle="Permission List"
+        rowKey="id"
         loading={isFetching}
         columns={columns}
         dataSource={permissions}
@@ -208,11 +200,7 @@ const PermissionPage = () => {
         rowSelection={false}
         toolBarRender={() => {
           return (
-            <Button
-              icon={<PlusOutlined />}
-              type='primary'
-              onClick={() => setOpenModal(true)}
-            >
+            <Button icon={<PlusOutlined />} type="primary" onClick={() => setOpenModal(true)}>
               Add new
             </Button>
           );

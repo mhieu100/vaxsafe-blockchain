@@ -1,12 +1,24 @@
-import { Calendar, Card, Select, Button, Space } from 'antd';
 import { LeftOutlined, RightOutlined } from '@ant-design/icons';
+import { Button, Calendar, Card, Select, Space } from 'antd';
 import dayjs from 'dayjs';
 import CalendarCell from './CalendarCell';
 
-const MonthView = ({ selectedDate, setSelectedDate, setViewMode, onCellClick, appointmentsByDate }) => {
+const MonthView = ({
+  selectedDate,
+  setSelectedDate,
+  setViewMode,
+  onCellClick,
+  appointmentsByDate,
+}) => {
   const cellRender = (current, info) => {
     if (info.type === 'date') {
-      return <CalendarCell value={current} onClick={onCellClick} appointmentsByDate={appointmentsByDate} />;
+      return (
+        <CalendarCell
+          value={current}
+          onClick={onCellClick}
+          appointmentsByDate={appointmentsByDate}
+        />
+      );
     }
     return info.originNode;
   };
@@ -101,15 +113,11 @@ const MonthView = ({ selectedDate, setSelectedDate, setViewMode, onCellClick, ap
                     Hôm nay
                   </Button>
                 </Space>
-                
+
                 {setViewMode && (
                   <Space>
-                    <Button onClick={() => setViewMode('week')}>
-                      Xem theo tuần
-                    </Button>
-                    <Button onClick={() => setViewMode('day')}>
-                      Xem theo ngày
-                    </Button>
+                    <Button onClick={() => setViewMode('week')}>Xem theo tuần</Button>
+                    <Button onClick={() => setViewMode('day')}>Xem theo ngày</Button>
                   </Space>
                 )}
               </Space>

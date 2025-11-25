@@ -1,23 +1,16 @@
-import { useEffect, useState } from 'react';
 import {
   FooterToolbar,
   ModalForm,
   ProCard,
+  ProFormSelect,
+  ProFormSwitch,
   ProFormText,
   ProFormTextArea,
-  ProFormSwitch,
-  ProFormSelect,
 } from '@ant-design/pro-components';
-import {
-  Form,
-  message,
-  notification,
-  Input,
-  Row,
-  Col,
-} from 'antd';
+import { Col, Form, Input, message, notification, Row } from 'antd';
+import { useEffect, useState } from 'react';
 
-import { callCreateNews, callUpdateNews, callGetNewsCategories } from '../../config/api.news';
+import { callCreateNews, callGetNewsCategories, callUpdateNews } from '../../config/api.news';
 
 import '../../styles/reset.scss';
 
@@ -34,8 +27,8 @@ const ModalNews = (props) => {
     const fetchCategories = async () => {
       try {
         const res = await callGetNewsCategories();
-        if (res && res.data) {
-          const categoryOptions = res.data.map(cat => ({
+        if (res?.data) {
+          const categoryOptions = res.data.map((cat) => ({
             label: cat.replace(/_/g, ' '),
             value: cat,
           }));
@@ -129,188 +122,166 @@ const ModalNews = (props) => {
   return (
     <>
       {openModal && (
-        <>
-          <ModalForm
-            title={
-              <>
-                {dataInit?.id ? 'Cập nhật Tin tức' : 'Tạo mới Tin tức'}
-              </>
-            }
-            open={openModal}
-            modalProps={{
-              onCancel: () => {
-                handleReset();
-              },
-              afterClose: () => handleReset(),
-              destroyOnClose: true,
-              footer: null,
-              keyboard: false,
-              maskClosable: false,
-              className: `modal-company ${animation}`,
-              rootClassName: `modal-company-root ${animation}`,
-              width: 1000,
-            }}
-            scrollToFirstError={true}
-            preserve={false}
-            form={form}
-            onFinish={submitNews}
-            submitter={{
-              render: (_, dom) => <FooterToolbar>{dom}</FooterToolbar>,
-              submitButtonProps: {
-                size: 'large',
-              },
-              resetButtonProps: {
-                size: 'large',
-              },
-            }}
+        <ModalForm
+          title={dataInit?.id ? 'Cập nhật Tin tức' : 'Tạo mới Tin tức'}
+          open={openModal}
+          modalProps={{
+            onCancel: () => {
+              handleReset();
+            },
+            afterClose: () => handleReset(),
+            destroyOnClose: true,
+            footer: null,
+            keyboard: false,
+            maskClosable: false,
+            className: `modal-company ${animation}`,
+            rootClassName: `modal-company-root ${animation}`,
+            width: 1000,
+          }}
+          scrollToFirstError={true}
+          preserve={false}
+          form={form}
+          onFinish={submitNews}
+          submitter={{
+            render: (_, dom) => <FooterToolbar>{dom}</FooterToolbar>,
+            submitButtonProps: {
+              size: 'large',
+            },
+            resetButtonProps: {
+              size: 'large',
+            },
+          }}
+        >
+          <ProCard
+            title="Thông tin cơ bản"
+            bordered
+            headerBordered
+            collapsible
+            style={{ marginBlockEnd: 16 }}
           >
-            <ProCard
-              title="Thông tin cơ bản"
-              bordered
-              headerBordered
-              collapsible
-              style={{ marginBlockEnd: 16 }}
-            >
-              <Row gutter={[16, 16]}>
-                <Col span={24}>
-                  <ProFormText
-                    label="Tiêu đề"
-                    name="title"
-                    rules={[
-                      { required: true, message: 'Vui lòng nhập tiêu đề!' },
-                    ]}
-                    placeholder="Nhập tiêu đề tin tức"
-                  />
-                </Col>
-
-                <Col span={24}>
-                  <ProFormTextArea
-                    label="Mô tả ngắn"
-                    name="shortDescription"
-                    rules={[
-                      { required: true, message: 'Vui lòng nhập mô tả ngắn!' },
-                    ]}
-                    placeholder="Nhập mô tả ngắn về nội dung"
-                    fieldProps={{
-                      rows: 3,
-                    }}
-                  />
-                </Col>
-
-                <Col span={12}>
-                  <ProFormSelect
-                    label="Danh mục"
-                    name="category"
-                    rules={[
-                      { required: true, message: 'Vui lòng chọn danh mục!' },
-                    ]}
-                    options={categories}
-                    placeholder="Chọn danh mục"
-                  />
-                </Col>
-
-                <Col span={12}>
-                  <ProFormText
-                    label="Tác giả"
-                    name="author"
-                    placeholder="Nhập tên tác giả"
-                  />
-                </Col>
-
-                <Col span={12}>
-                  <ProFormText
-                    label="Nguồn"
-                    name="source"
-                    placeholder="Nguồn tin tức"
-                  />
-                </Col>
-
-                <Col span={12}>
-                  <ProFormText
-                    label="Tags"
-                    name="tags"
-                    placeholder="Nhập tags (phân cách bằng dấu phẩy)"
-                  />
-                </Col>
-              </Row>
-            </ProCard>
-
-            <ProCard
-              title="Nội dung"
-              bordered
-              headerBordered
-              collapsible
-              style={{ marginBlockEnd: 16 }}
-            >
-              <Form.Item
-                label="Nội dung HTML"
-                name="content"
-                rules={[
-                  { required: true, message: 'Vui lòng nhập nội dung!' },
-                ]}
-              >
-                <TextArea
-                  rows={10}
-                  placeholder="Nhập nội dung HTML của tin tức (có thể sử dụng các thẻ HTML như <h2>, <p>, <ul>, <li>, ...)"
+            <Row gutter={[16, 16]}>
+              <Col span={24}>
+                <ProFormText
+                  label="Tiêu đề"
+                  name="title"
+                  rules={[{ required: true, message: 'Vui lòng nhập tiêu đề!' }]}
+                  placeholder="Nhập tiêu đề tin tức"
                 />
-              </Form.Item>
-            </ProCard>
+              </Col>
 
-            <ProCard
-              title="Hình ảnh"
-              bordered
-              headerBordered
-              collapsible
-              style={{ marginBlockEnd: 16 }}
+              <Col span={24}>
+                <ProFormTextArea
+                  label="Mô tả ngắn"
+                  name="shortDescription"
+                  rules={[{ required: true, message: 'Vui lòng nhập mô tả ngắn!' }]}
+                  placeholder="Nhập mô tả ngắn về nội dung"
+                  fieldProps={{
+                    rows: 3,
+                  }}
+                />
+              </Col>
+
+              <Col span={12}>
+                <ProFormSelect
+                  label="Danh mục"
+                  name="category"
+                  rules={[{ required: true, message: 'Vui lòng chọn danh mục!' }]}
+                  options={categories}
+                  placeholder="Chọn danh mục"
+                />
+              </Col>
+
+              <Col span={12}>
+                <ProFormText label="Tác giả" name="author" placeholder="Nhập tên tác giả" />
+              </Col>
+
+              <Col span={12}>
+                <ProFormText label="Nguồn" name="source" placeholder="Nguồn tin tức" />
+              </Col>
+
+              <Col span={12}>
+                <ProFormText
+                  label="Tags"
+                  name="tags"
+                  placeholder="Nhập tags (phân cách bằng dấu phẩy)"
+                />
+              </Col>
+            </Row>
+          </ProCard>
+
+          <ProCard
+            title="Nội dung"
+            bordered
+            headerBordered
+            collapsible
+            style={{ marginBlockEnd: 16 }}
+          >
+            <Form.Item
+              label="Nội dung HTML"
+              name="content"
+              rules={[{ required: true, message: 'Vui lòng nhập nội dung!' }]}
             >
-              <Row gutter={[16, 16]}>
-                <Col span={12}>
-                  <ProFormText
-                    label="Thumbnail Image URL"
-                    name="thumbnailImage"
-                    placeholder="http://localhost:8080/storage/news/thumbnail.jpg"
-                  />
-                </Col>
+              <TextArea
+                rows={10}
+                placeholder="Nhập nội dung HTML của tin tức (có thể sử dụng các thẻ HTML như <h2>, <p>, <ul>, <li>, ...)"
+              />
+            </Form.Item>
+          </ProCard>
 
-                <Col span={12}>
-                  <ProFormText
-                    label="Cover Image URL"
-                    name="coverImage"
-                    placeholder="http://localhost:8080/storage/news/cover.jpg"
-                  />
-                </Col>
-              </Row>
-            </ProCard>
+          <ProCard
+            title="Hình ảnh"
+            bordered
+            headerBordered
+            collapsible
+            style={{ marginBlockEnd: 16 }}
+          >
+            <Row gutter={[16, 16]}>
+              <Col span={12}>
+                <ProFormText
+                  label="Thumbnail Image URL"
+                  name="thumbnailImage"
+                  placeholder="http://localhost:8080/storage/news/thumbnail.jpg"
+                />
+              </Col>
 
-            <ProCard
-              title="Cài đặt"
-              bordered
-              headerBordered
-              collapsible
-              style={{ marginBlockEnd: 16 }}
-            >
-              <Row gutter={[16, 16]}>
-                <Col span={12}>
-                  <ProFormSwitch
-                    label="Nổi bật"
-                    name="isFeatured"
-                    checkedChildren="Có"
-                    unCheckedChildren="Không"
-                  />
-                </Col>
+              <Col span={12}>
+                <ProFormText
+                  label="Cover Image URL"
+                  name="coverImage"
+                  placeholder="http://localhost:8080/storage/news/cover.jpg"
+                />
+              </Col>
+            </Row>
+          </ProCard>
 
-                <Col span={12}>
-                  <ProFormSwitch
-                    label="Xuất bản"
-                    name="isPublished"
-                    checkedChildren="Công khai"
-                    unCheckedChildren="Nháp"
-                  />
-                </Col>
-              </Row>
-            </ProCard>
-          </ModalForm>
-        </>
+          <ProCard
+            title="Cài đặt"
+            bordered
+            headerBordered
+            collapsible
+            style={{ marginBlockEnd: 16 }}
+          >
+            <Row gutter={[16, 16]}>
+              <Col span={12}>
+                <ProFormSwitch
+                  label="Nổi bật"
+                  name="isFeatured"
+                  checkedChildren="Có"
+                  unCheckedChildren="Không"
+                />
+              </Col>
+
+              <Col span={12}>
+                <ProFormSwitch
+                  label="Xuất bản"
+                  name="isPublished"
+                  checkedChildren="Công khai"
+                  unCheckedChildren="Nháp"
+                />
+              </Col>
+            </Row>
+          </ProCard>
+        </ModalForm>
       )}
     </>
   );

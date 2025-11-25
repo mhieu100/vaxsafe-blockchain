@@ -1,28 +1,24 @@
-import { useEffect, useState, useMemo } from 'react';
+import { CalendarOutlined, TeamOutlined, UserOutlined } from '@ant-design/icons';
 import {
-  Card,
-  Form,
-  DatePicker,
-  Select,
-  Row,
-  Col,
-  Typography,
   Alert,
-  Divider,
-  Radio,
   Button,
+  Card,
+  Col,
+  DatePicker,
+  Divider,
+  Form,
   message,
+  Radio,
+  Row,
+  Select,
+  Typography,
 } from 'antd';
-import {
-  CalendarOutlined,
-  UserOutlined,
-  TeamOutlined,
-} from '@ant-design/icons';
 import locale from 'antd/es/date-picker/locale/vi_VN';
 import dayjs from 'dayjs';
+import { useEffect, useMemo, useState } from 'react';
+import { DEFAULT_PAGE, DEFAULT_PAGE_SIZE } from '../../constants';
 import { useCenter } from '../../hooks/useCenter';
 import { useFamilyMember } from '../../hooks/useFamilyMember';
-import { DEFAULT_PAGE, DEFAULT_PAGE_SIZE } from '../../constants';
 
 const { Text } = Typography;
 
@@ -41,10 +37,7 @@ const AppointmentSection = ({ bookingForm, vaccine, setCurrentStep, setBookingDa
   const { data: centers } = useCenter(filter);
   const { data: families } = useFamilyMember(filter);
 
-  const timeSlots = useMemo(
-    () => ['08:00', '09:00', '10:00', '14:00', '15:00', '16:00'],
-    []
-  );
+  const timeSlots = useMemo(() => ['08:00', '09:00', '10:00', '14:00', '15:00', '16:00'], []);
 
   /* eslint-disable no-console */
   useEffect(() => {
@@ -53,7 +46,7 @@ const AppointmentSection = ({ bookingForm, vaccine, setCurrentStep, setBookingDa
     console.log('⏰ First Dose Time:', firstDoseTime);
     console.log('🏥 First Dose Center:', firstDoseCenterId);
     console.log('💉 Vaccine:', vaccine);
-    
+
     if (!firstDoseDate || !firstDoseTime || !firstDoseCenterId || !vaccine) {
       console.log('⚠️ Missing requirements - skipping calculation');
       console.log('   firstDoseDate:', firstDoseDate);
@@ -65,7 +58,7 @@ const AppointmentSection = ({ bookingForm, vaccine, setCurrentStep, setBookingDa
 
     const { dosesRequired, duration } = vaccine;
     console.log(`📊 Vaccine Info: ${dosesRequired} doses, ${duration} days apart`);
-    
+
     const dates = [firstDoseDate];
 
     // Calculate all subsequent dose dates
@@ -106,22 +99,30 @@ const AppointmentSection = ({ bookingForm, vaccine, setCurrentStep, setBookingDa
       time: form.time,
       centerId: form.centerId,
     }));
-    
+
     bookingForm.setFieldsValue({
       doseSchedules: doseSchedulesValues,
     });
-    
+
     // IMPORTANT: Also update parent BookingPage state so data persists across steps
     if (setBookingData) {
-      setBookingData(prev => ({
+      setBookingData((prev) => ({
         ...prev,
         doseSchedules: doseSchedulesValues,
       }));
     }
-    
+
     console.log('✅ Set form values for doseSchedules:', doseSchedulesValues);
     console.log(`✅ Total schedules created: ${doseSchedulesValues.length}/${dosesRequired}`);
-  }, [firstDoseDate, firstDoseTime, firstDoseCenterId, vaccine, bookingForm, timeSlots, setBookingData]);
+  }, [
+    firstDoseDate,
+    firstDoseTime,
+    firstDoseCenterId,
+    vaccine,
+    bookingForm,
+    timeSlots,
+    setBookingData,
+  ]);
   /* eslint-enable no-console */
 
   const handleDoseDateChange = (index, value) => {
@@ -212,33 +213,33 @@ const AppointmentSection = ({ bookingForm, vaccine, setCurrentStep, setBookingDa
     try {
       // Validate all required fields
       await bookingForm.validateFields();
-      
+
       // Additional validation for dose schedules
       const doseSchedules = bookingForm.getFieldValue('doseSchedules') || [];
       const requiredDoses = vaccine?.dosesRequired || 0;
-      
+
       /* eslint-disable no-console */
       console.log('🔍 Validation Check:');
       console.log('   Current doseSchedules:', doseSchedules);
       console.log('   Required doses:', requiredDoses);
       console.log('   Length match:', doseSchedules.length === requiredDoses);
       /* eslint-enable no-console */
-      
+
       if (doseSchedules.length !== requiredDoses) {
         message.error(`Vui lòng hoàn thành tất cả ${requiredDoses} mũi tiêm`);
         return;
       }
-      
+
       // Check if all doses have required fields
       const hasIncompleteDose = doseSchedules.some(
         (dose) => !dose || !dose.date || !dose.time || !dose.centerId
       );
-      
+
       if (hasIncompleteDose) {
         message.error('Vui lòng điền đầy đủ thông tin cho tất cả các mũi tiêm');
         return;
       }
-      
+
       setCurrentStep(1);
     } catch (error) {
       /* eslint-disable no-console */
@@ -313,14 +314,9 @@ const AppointmentSection = ({ bookingForm, vaccine, setCurrentStep, setBookingDa
                     <p>Vui lòng chọn ngày bắt đầu cho mũi tiêm đầu tiên.</p>
                     <p className="text-sm">
                       Hệ thống sẽ tự động tính toán lịch cho tất cả{' '}
-                      <strong className="text-blue-600">
-                        {vaccine?.dosesRequired} mũi tiêm
-                      </strong>{' '}
+                      <strong className="text-blue-600">{vaccine?.dosesRequired} mũi tiêm</strong>{' '}
                       dựa trên khoảng cách{' '}
-                      <strong className="text-blue-600">
-                        {vaccine?.duration} ngày
-                      </strong>
-                      .
+                      <strong className="text-blue-600">{vaccine?.duration} ngày</strong>.
                     </p>
                   </div>
                 }
@@ -343,9 +339,7 @@ const AppointmentSection = ({ bookingForm, vaccine, setCurrentStep, setBookingDa
               <Row gutter={16}>
                 <Col xs={24} sm={12}>
                   <Form.Item
-                    label={
-                      <span className="font-semibold text-sm">Chọn ngày</span>
-                    }
+                    label={<span className="font-semibold text-sm">Chọn ngày</span>}
                     name="firstDoseDate"
                     rules={[
                       {
@@ -369,9 +363,7 @@ const AppointmentSection = ({ bookingForm, vaccine, setCurrentStep, setBookingDa
 
                 <Col xs={24} sm={12}>
                   <Form.Item
-                    label={
-                      <span className="font-semibold text-sm">Chọn giờ</span>
-                    }
+                    label={<span className="font-semibold text-sm">Chọn giờ</span>}
                     name="firstDoseTime"
                     rules={[
                       {
@@ -400,11 +392,7 @@ const AppointmentSection = ({ bookingForm, vaccine, setCurrentStep, setBookingDa
               <Row gutter={16} className="mt-4">
                 <Col xs={24}>
                   <Form.Item
-                    label={
-                      <span className="font-semibold text-sm">
-                        Chọn địa điểm tiêm
-                      </span>
-                    }
+                    label={<span className="font-semibold text-sm">Chọn địa điểm tiêm</span>}
                     name="firstDoseCenter"
                     rules={[
                       {
@@ -428,14 +416,8 @@ const AppointmentSection = ({ bookingForm, vaccine, setCurrentStep, setBookingDa
                       placeholder="Chọn trung tâm tiêm chủng"
                       showSearch
                       filterOption={(input, option) => {
-                        const center = centers?.result?.find(
-                          (c) => c.centerId === option?.value
-                        );
-                        return (
-                          center?.name
-                            ?.toLowerCase()
-                            ?.includes(input.toLowerCase()) || false
-                        );
+                        const center = centers?.result?.find((c) => c.centerId === option?.value);
+                        return center?.name?.toLowerCase()?.includes(input.toLowerCase()) || false;
                       }}
                     />
                   </Form.Item>
@@ -489,20 +471,14 @@ const AppointmentSection = ({ bookingForm, vaccine, setCurrentStep, setBookingDa
                               </div>
                             }
                             className={`mb-4 transition-all hover:shadow-lg ${
-                              isFirstDose
-                                ? 'border-2 border-blue-300'
-                                : 'border border-gray-200'
+                              isFirstDose ? 'border-2 border-blue-300' : 'border border-gray-200'
                             }`}
                           >
                             <Row gutter={16}>
                               <Col xs={24} sm={12}>
                                 <Form.Item
                                   {...restField}
-                                  label={
-                                    <span className="font-medium">
-                                      Ngày tiêm
-                                    </span>
-                                  }
+                                  label={<span className="font-medium">Ngày tiêm</span>}
                                   name={[name, 'date']}
                                   rules={[
                                     {
@@ -519,9 +495,7 @@ const AppointmentSection = ({ bookingForm, vaccine, setCurrentStep, setBookingDa
                                       return current.day() === 0 || current.day() === 6;
                                     }}
                                     value={doseForm.date}
-                                    onChange={(value) =>
-                                      handleDoseDateChange(index, value)
-                                    }
+                                    onChange={(value) => handleDoseDateChange(index, value)}
                                     format="DD/MM/YYYY"
                                     size="large"
                                   />
@@ -530,11 +504,7 @@ const AppointmentSection = ({ bookingForm, vaccine, setCurrentStep, setBookingDa
                               <Col xs={24} sm={12}>
                                 <Form.Item
                                   {...restField}
-                                  label={
-                                    <span className="font-medium">
-                                      Giờ tiêm
-                                    </span>
-                                  }
+                                  label={<span className="font-medium">Giờ tiêm</span>}
                                   name={[name, 'time']}
                                   rules={[
                                     {
@@ -549,9 +519,7 @@ const AppointmentSection = ({ bookingForm, vaccine, setCurrentStep, setBookingDa
                                       label: time,
                                     }))}
                                     value={doseForm.time}
-                                    onChange={(value) =>
-                                      handleDoseTimeChange(index, value)
-                                    }
+                                    onChange={(value) => handleDoseTimeChange(index, value)}
                                     size="large"
                                     placeholder="Chọn giờ"
                                   />
@@ -587,16 +555,12 @@ const AppointmentSection = ({ bookingForm, vaccine, setCurrentStep, setBookingDa
                                       value: center.centerId,
                                       label: (
                                         <div>
-                                          <div className="font-medium">
-                                            {center.name}
-                                          </div>
+                                          <div className="font-medium">{center.name}</div>
                                         </div>
                                       ),
                                     }))}
                                     value={doseForm.centerId}
-                                    onChange={(value) =>
-                                      handleDoseCenterChange(index, value)
-                                    }
+                                    onChange={(value) => handleDoseCenterChange(index, value)}
                                     size="large"
                                     placeholder={
                                       isFirstDose
@@ -611,8 +575,7 @@ const AppointmentSection = ({ bookingForm, vaccine, setCurrentStep, setBookingDa
                                       return (
                                         center?.name
                                           ?.toLowerCase()
-                                          ?.includes(input.toLowerCase()) ||
-                                        false
+                                          ?.includes(input.toLowerCase()) || false
                                       );
                                     }}
                                   />
@@ -656,11 +619,7 @@ const AppointmentSection = ({ bookingForm, vaccine, setCurrentStep, setBookingDa
 
             <div className="bg-gray-50 p-5 rounded-lg mb-6 border border-gray-200">
               <Form.Item
-                label={
-                  <span className="font-semibold text-base">
-                    Đăng ký lịch cho
-                  </span>
-                }
+                label={<span className="font-semibold text-base">Đăng ký lịch cho</span>}
                 name="bookingFor"
                 rules={[
                   {
@@ -675,7 +634,7 @@ const AppointmentSection = ({ bookingForm, vaccine, setCurrentStep, setBookingDa
                     const value = e.target.value;
                     setBookingFor(value);
                     if (setBookingData) {
-                      setBookingData(prev => ({
+                      setBookingData((prev) => ({
                         ...prev,
                         bookingFor: value,
                         familyMemberId: value === 'self' ? null : prev.familyMemberId,
@@ -687,10 +646,7 @@ const AppointmentSection = ({ bookingForm, vaccine, setCurrentStep, setBookingDa
                 >
                   <Row gutter={[16, 16]}>
                     <Col span={12}>
-                      <Radio.Button
-                        value="self"
-                        className="w-full h-auto py-4 text-center"
-                      >
+                      <Radio.Button value="self" className="w-full h-auto py-4 text-center">
                         <div className="flex flex-col items-center gap-2">
                           <UserOutlined className="text-2xl text-blue-500" />
                           <span className="font-medium">Bản thân</span>
@@ -698,10 +654,7 @@ const AppointmentSection = ({ bookingForm, vaccine, setCurrentStep, setBookingDa
                       </Radio.Button>
                     </Col>
                     <Col span={12}>
-                      <Radio.Button
-                        value="family"
-                        className="w-full h-auto py-4 text-center"
-                      >
+                      <Radio.Button value="family" className="w-full h-auto py-4 text-center">
                         <div className="flex flex-col items-center gap-2">
                           <TeamOutlined className="text-2xl text-green-500" />
                           <span className="font-medium">Người thân</span>
@@ -714,11 +667,7 @@ const AppointmentSection = ({ bookingForm, vaccine, setCurrentStep, setBookingDa
 
               {bookingFor === 'family' && (
                 <Form.Item
-                  label={
-                    <span className="font-semibold text-sm">
-                      Chọn người thân
-                    </span>
-                  }
+                  label={<span className="font-semibold text-sm">Chọn người thân</span>}
                   name="familyMemberId"
                   rules={[
                     {
@@ -741,7 +690,7 @@ const AppointmentSection = ({ bookingForm, vaccine, setCurrentStep, setBookingDa
                     }))}
                     onChange={(value) => {
                       if (setBookingData) {
-                        setBookingData(prev => ({
+                        setBookingData((prev) => ({
                           ...prev,
                           familyMemberId: value,
                         }));
@@ -778,14 +727,9 @@ const AppointmentSection = ({ bookingForm, vaccine, setCurrentStep, setBookingDa
                   </Text>
                   <ul className="text-sm text-gray-700 space-y-1">
                     <li>• Vui lòng mang theo CMND/CCCD khi đến tiêm</li>
-                    <li>
-                      • Đối với trẻ em: Mang theo giấy khai sinh hoặc sổ tiêm
-                      chủng
-                    </li>
+                    <li>• Đối với trẻ em: Mang theo giấy khai sinh hoặc sổ tiêm chủng</li>
                     <li>• Đến trước giờ hẹn 15 phút để làm thủ tục</li>
-                    <li>
-                      • Liên hệ hotline nếu cần thay đổi hoặc hủy lịch hẹn
-                    </li>
+                    <li>• Liên hệ hotline nếu cần thay đổi hoặc hủy lịch hẹn</li>
                   </ul>
                 </div>
               </div>
@@ -794,11 +738,7 @@ const AppointmentSection = ({ bookingForm, vaccine, setCurrentStep, setBookingDa
         </Row>
       </Form>
       <div className="flex justify-end mt-8">
-        <Button
-          type="primary"
-          onClick={handleBookingNext}
-          className="px-8 rounded-lg"
-        >
+        <Button type="primary" onClick={handleBookingNext} className="px-8 rounded-lg">
           Tiếp tục thanh toán
         </Button>
       </div>

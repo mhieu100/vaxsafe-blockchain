@@ -1,13 +1,12 @@
-import { Badge, message, notification, Popconfirm, Space } from 'antd';
-import { useRef, useState } from 'react';
 import { DeleteOutlined, EditOutlined } from '@ant-design/icons';
-import { sfLike } from 'spring-filter-query-builder';
+import { Badge, message, notification, Popconfirm, Space } from 'antd';
 import queryString from 'query-string';
-
-import { callDeleteUser } from '../../config/api.user';
+import { useRef, useState } from 'react';
+import { sfLike } from 'spring-filter-query-builder';
 import DataTable from '../../components/data-table';
-import { useUserStore } from '../../stores/useUserStore';
 import ModalUser from '../../components/modal/modal.user';
+import { callDeleteUser } from '../../config/api.user';
+import { useUserStore } from '../../stores/useUserStore';
 
 const UserPage = () => {
   const tableRef = useRef();
@@ -46,7 +45,7 @@ const UserPage = () => {
       width: 50,
       align: 'center',
       hideInSearch: true,
-      render: (text, record, index) => {
+      render: (_text, _record, index) => {
         return <>{index + 1 + (meta.page - 1) * meta.pageSize}</>;
       },
     },
@@ -126,12 +125,12 @@ const UserPage = () => {
           />
 
           <Popconfirm
-            placement='leftTop'
-            title='Xác nhận xóa người dùng'
-            description='Bạn có chắc chắn muốn xóa người dùng này?'
+            placement="leftTop"
+            title="Xác nhận xóa người dùng"
+            description="Bạn có chắc chắn muốn xóa người dùng này?"
             onConfirm={() => handleDeleteUser(entity.id)}
-            okText='Xác nhận'
-            cancelText='Hủy'
+            okText="Xác nhận"
+            cancelText="Hủy"
           >
             <span style={{ cursor: 'pointer', margin: '0 10px' }}>
               <DeleteOutlined
@@ -171,13 +170,13 @@ const UserPage = () => {
     }
 
     // Build sort
-    if (sort && sort.fullName) {
+    if (sort?.fullName) {
       q.sort = `fullName,${sort.fullName === 'ascend' ? 'asc' : 'desc'}`;
     }
-    if (sort && sort.email) {
+    if (sort?.email) {
       q.sort = `email,${sort.email === 'ascend' ? 'asc' : 'desc'}`;
     }
-    if (sort && sort.address) {
+    if (sort?.address) {
       q.sort = `patientProfile.address,${sort.address === 'ascend' ? 'asc' : 'desc'}`;
     }
     if (!q.sort) {
@@ -191,8 +190,8 @@ const UserPage = () => {
     <>
       <DataTable
         actionRef={tableRef}
-        headerTitle='Danh sách người dùng'
-        rowKey='id'
+        headerTitle="Danh sách người dùng"
+        rowKey="id"
         loading={isFetching}
         columns={columns}
         dataSource={users}
@@ -215,7 +214,6 @@ const UserPage = () => {
           },
         }}
         rowSelection={false}
-      
       />
       <ModalUser
         openModal={openModal}

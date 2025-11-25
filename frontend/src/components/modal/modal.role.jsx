@@ -1,16 +1,11 @@
-import { useState } from 'react';
 import { CheckSquareOutlined } from '@ant-design/icons';
+import { FooterToolbar, ModalForm, ProCard, ProFormText } from '@ant-design/pro-components';
 import { Col, Form, message, notification, Row } from 'antd';
-import {
-  FooterToolbar,
-  ModalForm,
-  ProCard,
-  ProFormText,
-} from '@ant-design/pro-components';
+import { useState } from 'react';
 
 import '../../styles/reset.scss';
-import ModuleApi from './module.api';
 import { callUpdateRole } from '../../config/api.role';
+import ModuleApi from './module.api';
 
 const ModalRole = (props) => {
   const { openModal, setOpenModal, listPermissions, singleRole, reloadTable } = props;
@@ -37,7 +32,7 @@ const ModalRole = (props) => {
         }
       }
     }
-    
+
     if (singleRole?.id) {
       //update
       const role = {

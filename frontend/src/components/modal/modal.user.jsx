@@ -1,6 +1,4 @@
-import { useEffect, useState } from 'react';
 import { CheckSquareOutlined } from '@ant-design/icons';
-import { Col, Form, message, notification, Row } from 'antd';
 import {
   FooterToolbar,
   ModalForm,
@@ -9,8 +7,10 @@ import {
   ProFormText,
   ProFormTextArea,
 } from '@ant-design/pro-components';
+import { Col, Form, message, notification, Row } from 'antd';
 import dayjs from 'dayjs';
 import customParseFormat from 'dayjs/plugin/customParseFormat';
+import { useEffect, useState } from 'react';
 
 import { callUpdateUser } from '../../config/api.user';
 import '../../styles/reset.scss';
@@ -27,10 +27,9 @@ const ModalUser = (props) => {
   const [displayCenter, setDisplayCenter] = useState(null);
   const [role, setRole] = useState();
 
-
   useEffect(() => {
     fetchCenter();
-  }, []);
+  }, [fetchCenter]);
 
   useEffect(() => {
     if (openModal && dataInit?.id) {
@@ -39,8 +38,8 @@ const ModalUser = (props) => {
         fullName: dataInit.fullName,
         email: dataInit.email,
         phoneNumber: dataInit.patientProfile?.phone || '',
-        birthday: dataInit.patientProfile?.birthday 
-          ? dayjs(dataInit.patientProfile.birthday, dateFormat) 
+        birthday: dataInit.patientProfile?.birthday
+          ? dayjs(dataInit.patientProfile.birthday, dateFormat)
           : null,
         address: dataInit.patientProfile?.address || '',
         centerName: dataInit.center?.name || '',
@@ -55,7 +54,7 @@ const ModalUser = (props) => {
 
   const fetchCenter = async () => {
     const res = await callFetchCenter();
-    if (res && res.data) {
+    if (res?.data) {
       setDisplayCenter(res.data.result);
     }
   };
@@ -84,7 +83,7 @@ const ModalUser = (props) => {
             description: res.message,
           });
         }
-      } 
+      }
 
       handleReset();
       reloadTable();
@@ -106,7 +105,6 @@ const ModalUser = (props) => {
     setOpenModal(false);
     setAnimation('open');
   };
-
 
   return (
     <>
@@ -203,19 +201,18 @@ const ModalUser = (props) => {
               )}
             </Col>
             <Col span={12}>
-              {role === 'DOCTOR' || role === 'CASHIER' || 
-               dataInit?.role?.name === 'DOCTOR' || dataInit?.role?.name === 'CASHIER' ? (
+              {role === 'DOCTOR' ||
+              role === 'CASHIER' ||
+              dataInit?.role?.name === 'DOCTOR' ||
+              dataInit?.role?.name === 'CASHIER' ? (
                 <ProFormSelect
                   width="100%"
-                  options={
-                    displayCenter &&
-                    displayCenter.map((center) => {
-                      return {
-                        label: center.name,
-                        value: center.name,
-                      };
-                    })
-                  }
+                  options={displayCenter?.map((center) => {
+                    return {
+                      label: center.name,
+                      value: center.name,
+                    };
+                  })}
                   name="centerName"
                   label="Select Working Center"
                   placeholder="Select role..."

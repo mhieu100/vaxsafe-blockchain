@@ -1,10 +1,10 @@
-import { Card, Spin, Statistic, Row, Col, Typography } from 'antd';
 import {
   BlockOutlined,
   ClockCircleOutlined,
   DatabaseOutlined,
   SafetyCertificateOutlined,
 } from '@ant-design/icons';
+import { Card, Col, Row, Spin, Statistic, Typography } from 'antd';
 
 import { useBlockchainStats } from '../../hooks/useBlockchainStats';
 
@@ -27,9 +27,7 @@ const BlockchainPage = () => {
         <Title level={2} className="mb-2">
           Blockchain Real-time Dashboard
         </Title>
-        <p className="text-gray-600">
-          Theo dõi trạng thái blockchain theo thời gian thực
-        </p>
+        <p className="text-gray-600">Theo dõi trạng thái blockchain theo thời gian thực</p>
       </div>
 
       <Row gutter={[16, 16]}>
@@ -88,22 +86,14 @@ const BlockchainPage = () => {
             >
               <div>
                 <p className="font-semibold">Block #{block.number}</p>
-                <p className="text-sm text-gray-600">
-                  Hash: {block.hash?.slice(0, 20)}...
-                </p>
+                <p className="text-sm text-gray-600">Hash: {block.hash?.slice(0, 20)}...</p>
               </div>
               <div className="text-right">
-                <p className="text-sm text-gray-600">
-                  {block.transactions} transactions
-                </p>
+                <p className="text-sm text-gray-600">{block.transactions} transactions</p>
                 <p className="text-xs text-gray-500">{block.timestamp}</p>
               </div>
             </div>
-          )) || (
-            <p className="text-center text-gray-500 py-8">
-              No blockchain data available
-            </p>
-          )}
+          )) || <p className="text-center text-gray-500 py-8">No blockchain data available</p>}
         </div>
       </Card>
     </div>

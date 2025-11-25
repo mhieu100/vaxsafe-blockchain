@@ -1,9 +1,5 @@
-import { Button, Modal, Spin, Result } from 'antd';
-import {
-  LoadingOutlined,
-  CheckCircleFilled,
-  WalletOutlined,
-} from '@ant-design/icons';
+import { CheckCircleFilled, LoadingOutlined, WalletOutlined } from '@ant-design/icons';
+import { Button, Modal, Result, Spin } from 'antd';
 
 const ModalPayment = ({ visible, status, onClose, ethAmount }) => {
   const getModalContent = () => {
@@ -11,12 +7,8 @@ const ModalPayment = ({ visible, status, onClose, ethAmount }) => {
       case 'preparing':
         return (
           <div className="text-center py-6">
-            <Spin
-              indicator={<LoadingOutlined style={{ fontSize: 36 }} spin />}
-            />
-            <h3 className="mt-4 text-lg font-medium">
-              Đang chuẩn bị giao dịch
-            </h3>
+            <Spin indicator={<LoadingOutlined style={{ fontSize: 36 }} spin />} />
+            <h3 className="mt-4 text-lg font-medium">Đang chuẩn bị giao dịch</h3>
             <p className="mt-2 text-gray-500">Vui lòng đợi trong giây lát...</p>
           </div>
         );
@@ -29,9 +21,7 @@ const ModalPayment = ({ visible, status, onClose, ethAmount }) => {
               Vui lòng xác nhận giao dịch trong ví MetaMask của bạn.
             </p>
             {ethAmount && (
-              <p className="mt-2 text-blue-600 font-semibold">
-                Số tiền: {ethAmount} ETH
-              </p>
+              <p className="mt-2 text-blue-600 font-semibold">Số tiền: {ethAmount} ETH</p>
             )}
             <Spin className="mt-4" />
           </div>
@@ -41,11 +31,7 @@ const ModalPayment = ({ visible, status, onClose, ethAmount }) => {
           <div className="text-center py-6">
             <CheckCircleFilled style={{ fontSize: 48, color: '#52c41a' }} />
             <h3 className="mt-4 text-lg font-medium">Thanh toán thành công!</h3>
-            {ethAmount && (
-              <p className="mt-2 text-blue-600">
-                Đã thanh toán: {ethAmount} ETH
-              </p>
-            )}
+            {ethAmount && <p className="mt-2 text-blue-600">Đã thanh toán: {ethAmount} ETH</p>}
             <p className="mt-2 text-gray-500">Đang xử lý đặt lịch...</p>
             <Spin className="mt-4" />
           </div>
@@ -53,13 +39,9 @@ const ModalPayment = ({ visible, status, onClose, ethAmount }) => {
       case 'processing-booking':
         return (
           <div className="text-center py-6">
-            <Spin
-              indicator={<LoadingOutlined style={{ fontSize: 36 }} spin />}
-            />
+            <Spin indicator={<LoadingOutlined style={{ fontSize: 36 }} spin />} />
             <h3 className="mt-4 text-lg font-medium">Đang xử lý đặt lịch</h3>
-            <p className="mt-2 text-gray-500">
-              Chúng tôi đang xác nhận lịch tiêm chủng của bạn...
-            </p>
+            <p className="mt-2 text-gray-500">Chúng tôi đang xác nhận lịch tiêm chủng của bạn...</p>
           </div>
         );
       case 'success':

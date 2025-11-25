@@ -1,40 +1,39 @@
-import { useState } from 'react';
 import {
-  Typography,
+  CalendarOutlined,
+  DeleteOutlined,
+  EditOutlined,
+  HomeOutlined,
+  MedicineBoxOutlined,
+  MoreOutlined,
+  PhoneOutlined,
+  PlusOutlined,
+  UserOutlined,
+} from '@ant-design/icons';
+import {
+  Alert,
+  Avatar,
   Button,
-  Table,
-  Tag,
-  Modal,
+  Card,
+  DatePicker,
+  Dropdown,
   Form,
   Input,
-  Select,
-  DatePicker,
-  Card,
-  Avatar,
-  Dropdown,
+  Modal,
   message,
-  Spin,
-  Alert,
+  Select,
+  Table,
+  Tag,
+  Typography,
 } from 'antd';
 import dayjs from 'dayjs';
-import {
-  PlusOutlined,
-  EditOutlined,
-  DeleteOutlined,
-  UserOutlined,
-  MoreOutlined,
-  MedicineBoxOutlined,
-  CalendarOutlined,
-  PhoneOutlined,
-  HomeOutlined,
-} from '@ant-design/icons';
+import { useState } from 'react';
+import { DEFAULT_PAGE, DEFAULT_PAGE_SIZE } from '../../constants/index';
 import { useFamilyMember } from '../../hooks/useFamilyMember';
 import {
   callCreateMember,
   callDeleteMember,
   callUpdateMember,
 } from '../../services/family.service';
-import { DEFAULT_PAGE, DEFAULT_PAGE_SIZE } from '../../constants/index';
 
 const { Title, Text } = Typography;
 const { Option } = Select;
@@ -43,7 +42,7 @@ const FamilyManagerTab = () => {
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [editingMember, setEditingMember] = useState(null);
   const [form] = Form.useForm();
-  const [refreshKey, setRefreshKey] = useState(0);
+  const [_refreshKey, setRefreshKey] = useState(0);
 
   const filter = {
     current: DEFAULT_PAGE,
@@ -61,8 +60,7 @@ const FamilyManagerTab = () => {
       emergencyContact: 'Emergency Contact',
       insuranceNumber: 'INS123456789',
       avatar: undefined,
-      vaccinationStatus:
-        index % 3 === 0 ? 'Up to Date' : index % 3 === 1 ? 'Overdue' : 'Partial',
+      vaccinationStatus: index % 3 === 0 ? 'Up to Date' : index % 3 === 1 ? 'Overdue' : 'Partial',
       totalVaccines: Math.floor(Math.random() * 10) + 5,
       lastVaccination: '2024-03-15',
     })) || [];
@@ -95,7 +93,7 @@ const FamilyManagerTab = () => {
       await callDeleteMember(memberId);
       message.success('Family member removed successfully');
       setRefreshKey((prev) => prev + 1);
-    } catch (error) {
+    } catch (_error) {
       message.error('Failed to remove family member. Please try again.');
     }
   };
@@ -105,9 +103,7 @@ const FamilyManagerTab = () => {
       const values = await form.validateFields();
       const apiData = {
         fullName: values.fullName,
-        dateOfBirth: values.dateOfBirth
-          ? values.dateOfBirth.format('YYYY-MM-DD')
-          : '',
+        dateOfBirth: values.dateOfBirth ? values.dateOfBirth.format('YYYY-MM-DD') : '',
         relationship: values.relationship,
         phone: values.phone,
         gender: values.gender,
@@ -128,11 +124,9 @@ const FamilyManagerTab = () => {
       setIsModalVisible(false);
       form.resetFields();
       setRefreshKey((prev) => prev + 1);
-    } catch (error) {
+    } catch (_error) {
       message.error(
-        editingMember
-          ? 'Failed to update family member'
-          : 'Failed to add family member'
+        editingMember ? 'Failed to update family member' : 'Failed to add family member'
       );
     }
   };
@@ -173,12 +167,7 @@ const FamilyManagerTab = () => {
       key: 'fullName',
       render: (text, record) => (
         <div className="flex items-center gap-3">
-          <Avatar
-            size={48}
-            icon={<UserOutlined />}
-            src={record.avatar}
-            className="bg-blue-500"
-          />
+          <Avatar size={48} icon={<UserOutlined />} src={record.avatar} className="bg-blue-500" />
           <div>
             <Title level={5} className="mb-0">
               {text}
@@ -242,11 +231,7 @@ const FamilyManagerTab = () => {
           trigger={['click']}
           placement="bottomRight"
         >
-          <Button
-            type="text"
-            icon={<MoreOutlined />}
-            className="hover:bg-gray-100"
-          />
+          <Button type="text" icon={<MoreOutlined />} className="hover:bg-gray-100" />
         </Dropdown>
       ),
     },
@@ -282,9 +267,7 @@ const FamilyManagerTab = () => {
           <div className="flex items-center justify-between">
             <div>
               <Text type="secondary">Total Members</Text>
-              <div className="text-2xl font-bold text-blue-600">
-                {familyMembers.length}
-              </div>
+              <div className="text-2xl font-bold text-blue-600">{familyMembers.length}</div>
             </div>
             <UserOutlined className="text-3xl text-blue-500" />
           </div>

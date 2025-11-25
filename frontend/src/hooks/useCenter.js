@@ -1,5 +1,5 @@
-import { usePaginatedQuery } from './usePaginatedQuery';
 import { buildQuery } from '../utils/buildQuery';
+import { usePaginatedQuery } from './usePaginatedQuery';
 
 /**
  * Custom hook for fetching vaccination centers with pagination and filtering

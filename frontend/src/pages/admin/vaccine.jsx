@@ -1,20 +1,12 @@
-import { useRef, useState } from 'react';
-import {
-  Button,
-  message,
-  notification,
-  Popconfirm,
-  Space,
-  Tooltip,
-} from 'antd';
 import { DeleteOutlined, EditOutlined, PlusOutlined } from '@ant-design/icons';
-import { sfLike } from 'spring-filter-query-builder';
+import { Button, message, notification, Popconfirm, Space, Tooltip } from 'antd';
 import queryString from 'query-string';
-
-import { callDeleteVaccine } from '../../config/api.vaccine';
+import { useRef, useState } from 'react';
+import { sfLike } from 'spring-filter-query-builder';
 import DataTable from '../../components/data-table';
-import { useVaccineStore } from '../../stores/useVaccineStore';
 import ModalVaccine from '../../components/modal/modal.vaccine';
+import { callDeleteVaccine } from '../../config/api.vaccine';
+import { useVaccineStore } from '../../stores/useVaccineStore';
 
 const VaccinePage = () => {
   const tableRef = useRef();
@@ -28,7 +20,6 @@ const VaccinePage = () => {
   const meta = useVaccineStore((state) => state.meta);
   const vaccines = useVaccineStore((state) => state.result);
   const fetchVaccine = useVaccineStore((state) => state.fetchVaccine);
-
 
   const [openModal, setOpenModal] = useState(false);
 
@@ -53,7 +44,7 @@ const VaccinePage = () => {
       key: 'index',
       width: 50,
       align: 'center',
-      render: (text, record, index) => {
+      render: (_text, _record, index) => {
         return <>{index + 1 + (meta.page - 1) * meta.pageSize}</>;
       },
       hideInSearch: true,
@@ -64,9 +55,9 @@ const VaccinePage = () => {
       width: 80,
       hideInSearch: true,
       render: (text) => (
-        <img 
-          src={text || '/placeholder-vaccine.png'} 
-          alt="vaccine" 
+        <img
+          src={text || '/placeholder-vaccine.png'}
+          alt="vaccine"
           style={{ width: 50, height: 50, objectFit: 'cover', borderRadius: 4 }}
         />
       ),
@@ -77,9 +68,7 @@ const VaccinePage = () => {
       sorter: true,
       width: 150,
       render: (text) => (
-        <Tooltip title={text}>
-          {text?.length > 20 ? text.slice(0, 20) + '...' : text}
-        </Tooltip>
+        <Tooltip title={text}>{text?.length > 20 ? `${text.slice(0, 20)}...` : text}</Tooltip>
       ),
     },
     {
@@ -88,9 +77,7 @@ const VaccinePage = () => {
       sorter: true,
       width: 120,
       render: (text) => (
-        <Tooltip title={text}>
-          {text?.length > 20 ? text.slice(0, 20) + '...' : text}
-        </Tooltip>
+        <Tooltip title={text}>{text?.length > 20 ? `${text.slice(0, 20)}...` : text}</Tooltip>
       ),
     },
     {
@@ -108,9 +95,9 @@ const VaccinePage = () => {
       render: (value) => {
         return new Intl.NumberFormat('vi-VN', {
           style: 'currency',
-          currency: 'VND'
+          currency: 'VND',
         }).format(value);
-      }
+      },
     },
     {
       title: 'Tồn kho',
@@ -139,9 +126,7 @@ const VaccinePage = () => {
       width: 200,
       hideInSearch: true,
       render: (text) => (
-        <Tooltip title={text}>
-          {text?.length > 50 ? text.slice(0, 50) + '...' : text}
-        </Tooltip>
+        <Tooltip title={text}>{text?.length > 50 ? `${text.slice(0, 50)}...` : text}</Tooltip>
       ),
     },
     {
@@ -163,12 +148,12 @@ const VaccinePage = () => {
           />
 
           <Popconfirm
-            placement='leftTop'
-            title='Xóa Vaccine'
-            description='Bạn có chắc chắn muốn xóa vaccine này?'
+            placement="leftTop"
+            title="Xóa Vaccine"
+            description="Bạn có chắc chắn muốn xóa vaccine này?"
             onConfirm={() => handleDeleteVaccine(entity.id)}
-            okText='Xác nhận'
-            cancelText='Hủy'
+            okText="Xác nhận"
+            cancelText="Hủy"
           >
             <span style={{ cursor: 'pointer', margin: '0 10px' }}>
               <DeleteOutlined
@@ -205,13 +190,13 @@ const VaccinePage = () => {
     }
 
     // Build sort
-    if (sort && sort.name) {
+    if (sort?.name) {
       q.sort = `name,${sort.name === 'ascend' ? 'asc' : 'desc'}`;
     }
-    if (sort && sort.manufacturer) {
+    if (sort?.manufacturer) {
       q.sort = `manufacturer,${sort.manufacturer === 'ascend' ? 'asc' : 'desc'}`;
     }
-    if (sort && sort.price) {
+    if (sort?.price) {
       q.sort = `price,${sort.price === 'ascend' ? 'asc' : 'desc'}`;
     }
     if (!q.sort) {
@@ -225,8 +210,8 @@ const VaccinePage = () => {
     <>
       <DataTable
         actionRef={tableRef}
-        headerTitle='Danh sách Vaccine'
-        rowKey='id'
+        headerTitle="Danh sách Vaccine"
+        rowKey="id"
         loading={isFetching}
         columns={columns}
         dataSource={vaccines}
@@ -249,8 +234,8 @@ const VaccinePage = () => {
         }}
         toolBarRender={() => [
           <Button
-            key='button'
-            type='primary'
+            key="button"
+            type="primary"
             onClick={() => {
               setOpenModal(true);
               setDataInit(null);

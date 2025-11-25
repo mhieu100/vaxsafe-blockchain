@@ -1,26 +1,16 @@
-import { useState } from 'react';
 import {
-  Card,
-  Typography,
-  Button,
-  Tag,
-  Divider,
-  QRCode,
-  Space,
-  Timeline,
-  Avatar,
-} from 'antd';
-import {
-  SafetyCertificateOutlined,
+  BlockOutlined,
   CheckCircleFilled,
+  DownloadOutlined,
   LinkOutlined,
   LockOutlined,
   QrcodeOutlined,
-  DownloadOutlined,
+  SafetyCertificateOutlined,
   ShareAltOutlined,
-  BlockOutlined,
   VerifiedOutlined,
 } from '@ant-design/icons';
+import { Avatar, Button, Card, Divider, QRCode, Space, Tag, Timeline, Typography } from 'antd';
+import { useState } from 'react';
 import { useAccountStore } from '../../stores/useAccountStore';
 
 const { Title, Text, Paragraph } = Typography;
@@ -38,8 +28,7 @@ const VaccinePassportTab = () => {
       dose: 2,
       batch: 'PF2024-001-VN',
       provider: 'SafeVax Medical Center',
-      verificationHash:
-        '0x7f9fade1c0d57a7af66ab4ead79fade1c0d57a7af66ab4ead7c2c2eb7b11a91385',
+      verificationHash: '0x7f9fade1c0d57a7af66ab4ead79fade1c0d57a7af66ab4ead7c2c2eb7b11a91385',
       blockNumber: '#2847563',
     },
     {
@@ -49,8 +38,7 @@ const VaccinePassportTab = () => {
       dose: 3,
       batch: 'HB2024-003-VN',
       provider: 'National Vaccination Center',
-      verificationHash:
-        '0x3b9aca00c0d57a7af66ab4ead79fade1c0d57a7af66ab4ead7c2c2eb7b11a91234',
+      verificationHash: '0x3b9aca00c0d57a7af66ab4ead79fade1c0d57a7af66ab4ead7c2c2eb7b11a91234',
       blockNumber: '#2745891',
     },
     {
@@ -60,8 +48,7 @@ const VaccinePassportTab = () => {
       dose: 1,
       batch: 'FLU2023-012-VN',
       provider: 'City General Hospital',
-      verificationHash:
-        '0x9f2fade1c0d57a7af66ab4ead79fade1c0d57a7af66ab4ead7c2c2eb7b11a45678',
+      verificationHash: '0x9f2fade1c0d57a7af66ab4ead79fade1c0d57a7af66ab4ead7c2c2eb7b11a45678',
       blockNumber: '#2698234',
     },
   ];
@@ -110,11 +97,7 @@ const VaccinePassportTab = () => {
                 </Text>
               </div>
             </div>
-            <Tag
-              icon={<CheckCircleFilled />}
-              color="success"
-              className="px-4 py-1 text-base"
-            >
+            <Tag icon={<CheckCircleFilled />} color="success" className="px-4 py-1 text-base">
               Verified
             </Tag>
           </div>
@@ -220,9 +203,7 @@ const VaccinePassportTab = () => {
                   </div>
                   <div className="flex items-center justify-between">
                     <Text type="secondary">Last Updated:</Text>
-                    <Text className="font-mono text-xs">
-                      {vaccineRecords[0]?.date}
-                    </Text>
+                    <Text className="font-mono text-xs">{vaccineRecords[0]?.date}</Text>
                   </div>
                 </Space>
               </Card>
@@ -283,10 +264,7 @@ const VaccinePassportTab = () => {
                         <Text type="secondary" className="text-xs block mb-1">
                           Transaction Hash:
                         </Text>
-                        <Text
-                          className="font-mono text-xs break-all text-purple-600"
-                          copyable
-                        >
+                        <Text className="font-mono text-xs break-all text-purple-600" copyable>
                           {record.verificationHash}
                         </Text>
                       </div>
@@ -331,66 +309,39 @@ const VaccinePassportTab = () => {
               Blockchain Stats
             </Title>
             <Space direction="vertical" className="w-full" size="middle">
-              <Card
-                size="small"
-                className="bg-gradient-to-r from-green-50 to-green-100"
-              >
+              <Card size="small" className="bg-gradient-to-r from-green-50 to-green-100">
                 <div className="flex items-center justify-between">
                   <div>
                     <Text type="secondary" className="text-xs">
                       Verified Records
                     </Text>
-                    <div className="text-2xl font-bold text-green-600">
-                      {vaccineRecords.length}
-                    </div>
+                    <div className="text-2xl font-bold text-green-600">{vaccineRecords.length}</div>
                   </div>
-                  <Avatar
-                    size={48}
-                    icon={<CheckCircleFilled />}
-                    className="bg-green-500"
-                  />
+                  <Avatar size={48} icon={<CheckCircleFilled />} className="bg-green-500" />
                 </div>
               </Card>
 
-              <Card
-                size="small"
-                className="bg-gradient-to-r from-purple-50 to-purple-100"
-              >
+              <Card size="small" className="bg-gradient-to-r from-purple-50 to-purple-100">
                 <div className="flex items-center justify-between">
                   <div>
                     <Text type="secondary" className="text-xs">
                       Chain Confirmations
                     </Text>
-                    <div className="text-2xl font-bold text-purple-600">
-                      1,247
-                    </div>
+                    <div className="text-2xl font-bold text-purple-600">1,247</div>
                   </div>
-                  <Avatar
-                    size={48}
-                    icon={<LinkOutlined />}
-                    className="bg-purple-500"
-                  />
+                  <Avatar size={48} icon={<LinkOutlined />} className="bg-purple-500" />
                 </div>
               </Card>
 
-              <Card
-                size="small"
-                className="bg-gradient-to-r from-blue-50 to-blue-100"
-              >
+              <Card size="small" className="bg-gradient-to-r from-blue-50 to-blue-100">
                 <div className="flex items-center justify-between">
                   <div>
                     <Text type="secondary" className="text-xs">
                       Trust Score
                     </Text>
-                    <div className="text-2xl font-bold text-blue-600">
-                      99.8%
-                    </div>
+                    <div className="text-2xl font-bold text-blue-600">99.8%</div>
                   </div>
-                  <Avatar
-                    size={48}
-                    icon={<SafetyCertificateOutlined />}
-                    className="bg-blue-500"
-                  />
+                  <Avatar size={48} icon={<SafetyCertificateOutlined />} className="bg-blue-500" />
                 </div>
               </Card>
             </Space>
@@ -407,8 +358,8 @@ const VaccinePassportTab = () => {
               Explore on Blockchain
             </Title>
             <Paragraph className="mb-0 text-sm">
-              View your complete vaccination history and transaction details on
-              the SafeVax Blockchain Explorer
+              View your complete vaccination history and transaction details on the SafeVax
+              Blockchain Explorer
             </Paragraph>
           </div>
           <Button

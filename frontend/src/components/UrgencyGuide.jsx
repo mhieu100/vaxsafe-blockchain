@@ -1,12 +1,12 @@
-import { Card, Tag, Space, Typography, Alert, Divider, Timeline, Row, Col } from 'antd';
 import {
-  ThunderboltOutlined,
-  ExclamationCircleOutlined,
-  WarningOutlined,
   ClockCircleOutlined,
   CloseCircleOutlined,
+  ExclamationCircleOutlined,
   InfoCircleOutlined,
+  ThunderboltOutlined,
+  WarningOutlined,
 } from '@ant-design/icons';
+import { Alert, Card, Col, Divider, Row, Space, Tag, Timeline, Typography } from 'antd';
 
 const { Title, Text, Paragraph } = Typography;
 
@@ -63,7 +63,8 @@ const UrgencyGuide = () => {
               </Paragraph>
 
               <Paragraph>
-                <Text strong>Mô tả:</Text> Bệnh nhân đã yêu cầu đổi lịch hẹn, cần thu ngân xem xét và phê duyệt ngay.
+                <Text strong>Mô tả:</Text> Bệnh nhân đã yêu cầu đổi lịch hẹn, cần thu ngân xem xét
+                và phê duyệt ngay.
               </Paragraph>
 
               <Alert
@@ -111,15 +112,23 @@ const UrgencyGuide = () => {
               </Paragraph>
 
               <Paragraph>
-                <Text strong>Mô tả:</Text> Lịch hẹn diễn ra trong vòng 24 giờ tới nhưng chưa được phân công bác sĩ.
-                <Text strong style={{ color: '#ff4d4f' }}> CẦN XỬ LÝ NGAY!</Text>
+                <Text strong>Mô tả:</Text> Lịch hẹn diễn ra trong vòng 24 giờ tới nhưng chưa được
+                phân công bác sĩ.
+                <Text strong style={{ color: '#ff4d4f' }}>
+                  {' '}
+                  CẦN XỬ LÝ NGAY!
+                </Text>
               </Paragraph>
 
               <Alert
                 message="Hành động khẩn cấp"
                 description={
                   <ul style={{ marginBottom: 0, paddingLeft: 20 }}>
-                    <li><Text strong style={{ color: '#ff4d4f' }}>Ưu tiên phân công bác sĩ NGAY LẬP TỨC</Text></li>
+                    <li>
+                      <Text strong style={{ color: '#ff4d4f' }}>
+                        Ưu tiên phân công bác sĩ NGAY LẬP TỨC
+                      </Text>
+                    </li>
                     <li>Kiểm tra lịch bác sĩ có sẵn trong khung giờ</li>
                     <li>Liên hệ bác sĩ xác nhận</li>
                     <li>Thông báo cho bệnh nhân nếu cần đổi lịch</li>
@@ -160,7 +169,8 @@ const UrgencyGuide = () => {
               </Paragraph>
 
               <Paragraph>
-                <Text strong>Mô tả:</Text> Lịch hẹn đã quá thời gian dự định nhưng chưa được xử lý hoàn tất.
+                <Text strong>Mô tả:</Text> Lịch hẹn đã quá thời gian dự định nhưng chưa được xử lý
+                hoàn tất.
               </Paragraph>
 
               <Alert
@@ -179,7 +189,6 @@ const UrgencyGuide = () => {
             </Space>
           </Card>
         </Col>
-
 
         {/* Priority 3 */}
         <Col xs={24} lg={12}>
@@ -241,7 +250,9 @@ const UrgencyGuide = () => {
             label: <Text strong>Bước 1</Text>,
             children: (
               <Space direction="vertical">
-                <Text strong style={{ color: '#1890ff' }}>Kiểm tra danh sách</Text>
+                <Text strong style={{ color: '#1890ff' }}>
+                  Kiểm tra danh sách
+                </Text>
                 <Text type="secondary">Hệ thống tự động sắp xếp theo mức độ ưu tiên</Text>
               </Space>
             ),
@@ -251,8 +262,12 @@ const UrgencyGuide = () => {
             label: <Text strong>Bước 2</Text>,
             children: (
               <Space direction="vertical">
-                <Text strong style={{ color: '#52c41a' }}>Xử lý Priority 1 trước</Text>
-                <Text type="secondary">Ưu tiên yêu cầu đổi lịch và lịch chưa có bác sĩ trong 24h</Text>
+                <Text strong style={{ color: '#52c41a' }}>
+                  Xử lý Priority 1 trước
+                </Text>
+                <Text type="secondary">
+                  Ưu tiên yêu cầu đổi lịch và lịch chưa có bác sĩ trong 24h
+                </Text>
               </Space>
             ),
             color: 'green',
@@ -261,7 +276,9 @@ const UrgencyGuide = () => {
             label: <Text strong>Bước 3</Text>,
             children: (
               <Space direction="vertical">
-                <Text strong style={{ color: '#faad14' }}>Phân công bác sĩ</Text>
+                <Text strong style={{ color: '#faad14' }}>
+                  Phân công bác sĩ
+                </Text>
                 <Text type="secondary">Đảm bảo tất cả lịch đều có bác sĩ phụ trách</Text>
               </Space>
             ),
@@ -271,7 +288,9 @@ const UrgencyGuide = () => {
             label: <Text strong>Bước 4</Text>,
             children: (
               <Space direction="vertical">
-                <Text strong style={{ color: '#722ed1' }}>Cập nhật trạng thái</Text>
+                <Text strong style={{ color: '#722ed1' }}>
+                  Cập nhật trạng thái
+                </Text>
                 <Text type="secondary">Chuyển trạng thái sang SCHEDULED sau khi hoàn tất</Text>
               </Space>
             ),

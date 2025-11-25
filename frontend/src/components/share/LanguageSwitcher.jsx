@@ -9,8 +9,7 @@ const languages = [
 ];
 
 const LanguageSelect = () => {
-  const currentLang =
-    typeof window !== 'undefined' ? localStorage.getItem('lang') || 'vi' : 'vi';
+  const currentLang = typeof window !== 'undefined' ? localStorage.getItem('lang') || 'vi' : 'vi';
 
   return (
     <Select
@@ -20,11 +19,7 @@ const LanguageSelect = () => {
       optionLabelProp="label"
     >
       {languages.map((lang) => (
-        <Option
-          key={lang.value}
-          value={lang.value}
-          label={`${lang.flag} ${lang.label}`}
-        >
+        <Option key={lang.value} value={lang.value} label={`${lang.flag} ${lang.label}`}>
           <span>{`${lang.flag} ${lang.label}`}</span>
         </Option>
       ))}

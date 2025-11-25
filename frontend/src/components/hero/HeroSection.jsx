@@ -1,10 +1,6 @@
-import { useTranslation } from 'react-i18next';
-import {
-  CheckCircleOutlined,
-  QrcodeOutlined,
-  SafetyOutlined,
-} from '@ant-design/icons';
+import { CheckCircleOutlined, QrcodeOutlined, SafetyOutlined } from '@ant-design/icons';
 import { Button } from 'antd';
+import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
 
 const HeroSection = () => {
@@ -48,27 +44,19 @@ const HeroSection = () => {
 
                 <div className="grid grid-cols-2 gap-4 mb-4">
                   <div>
-                    <p className="text-xs text-gray-500">
-                      {t('hero.certificate.fullName')}
-                    </p>
+                    <p className="text-xs text-gray-500">{t('hero.certificate.fullName')}</p>
                     <p className="text-sm font-medium">Nguyen V.</p>
                   </div>
                   <div>
-                    <p className="text-xs text-gray-500">
-                      {t('hero.certificate.dob')}
-                    </p>
+                    <p className="text-xs text-gray-500">{t('hero.certificate.dob')}</p>
                     <p className="text-sm font-medium">••/••/1990</p>
                   </div>
                   <div>
-                    <p className="text-xs text-gray-500">
-                      {t('hero.certificate.vaccine')}
-                    </p>
+                    <p className="text-xs text-gray-500">{t('hero.certificate.vaccine')}</p>
                     <p className="text-sm font-medium">COVID-19</p>
                   </div>
                   <div>
-                    <p className="text-xs text-gray-500">
-                      {t('hero.certificate.doses')}
-                    </p>
+                    <p className="text-xs text-gray-500">{t('hero.certificate.doses')}</p>
                     <p className="text-sm font-medium">2 / 2</p>
                   </div>
                 </div>
@@ -78,12 +66,8 @@ const HeroSection = () => {
                     <QrcodeOutlined className="text-gray-400 text-2xl" />
                   </div>
                   <div className="text-right">
-                    <p className="text-xs text-gray-500">
-                      {t('hero.certificate.blockchainHash')}
-                    </p>
-                    <p className="text-xs font-mono text-gray-600 truncate">
-                      0x1a2b...f8e9
-                    </p>
+                    <p className="text-xs text-gray-500">{t('hero.certificate.blockchainHash')}</p>
+                    <p className="text-xs font-mono text-gray-600 truncate">0x1a2b...f8e9</p>
                   </div>
                 </div>
               </div>

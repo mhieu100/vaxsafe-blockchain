@@ -1,11 +1,11 @@
-import { Col, Form, message, notification, Row } from 'antd';
-import { useEffect, useState } from 'react';
 import {
   ModalForm,
   ProFormDatePicker,
   ProFormSelect,
   ProFormTimePicker,
 } from '@ant-design/pro-components';
+import { Col, Form, Row } from 'antd';
+import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAccountStore } from '../../stores/useAccountStore';
 
@@ -15,7 +15,7 @@ import { callAddAppointmentMetaMark } from '../../config/api.appointment';
 import { callFetchCenter } from '../../config/api.center';
 
 const ModalOrder = (props) => {
-  const navigate = useNavigate();
+  const _navigate = useNavigate();
   const [displayCenter, setDisplayCenter] = useState(null);
   const [animation, setAnimation] = useState('open');
   const { openModal, setOpenModal, vaccine } = props;
@@ -35,13 +35,7 @@ const ModalOrder = (props) => {
     const { date, time, center, paymentType } = valuesForm;
 
     if (paymentType === 'METAMASK') {
-      const res = await callAddAppointmentMetaMark(
-        vaccine.vaccineId,
-        user.id,
-        center,
-        date,
-        time
-      );
+      const res = await callAddAppointmentMetaMark(vaccine.vaccineId, user.id, center, date, time);
       console.log(res);
     }
   };
@@ -50,11 +44,11 @@ const ModalOrder = (props) => {
 
   useEffect(() => {
     fetchCenter();
-  }, []);
+  }, [fetchCenter]);
 
   const fetchCenter = async () => {
     const res = await callFetchCenter();
-    if (res && res.data) {
+    if (res?.data) {
       setDisplayCenter(res.data.result);
     }
   };
@@ -103,10 +97,8 @@ const ModalOrder = (props) => {
                   },
                   {
                     validator: (_, value) => {
-                      if (value && value.isBefore(new Date(), 'day')) {
-                        return Promise.reject(
-                          'Vaccination date cannot be in the past!'
-                        );
+                      if (value?.isBefore(new Date(), 'day')) {
+                        return Promise.reject('Vaccination date cannot be in the past!');
                       }
                       return Promise.resolve();
                     },
@@ -145,15 +137,12 @@ const ModalOrder = (props) => {
                     message: 'Please select a vaccination location!',
                   },
                 ]}
-                options={
-                  displayCenter &&
-                  displayCenter.map((center) => {
-                    return {
-                      label: center.name,
-                      value: center.centerId,
-                    };
-                  })
-                }
+                options={displayCenter?.map((center) => {
+                  return {
+                    label: center.name,
+                    value: center.centerId,
+                  };
+                })}
               />
             </Col>
             <Col span={12}>
@@ -169,15 +158,12 @@ const ModalOrder = (props) => {
                     message: 'Please select a payment method!',
                   },
                 ]}
-                options={
-                  paymentType &&
-                  paymentType.map((item) => {
-                    return {
-                      label: item.name,
-                      value: item.type,
-                    };
-                  })
-                }
+                options={paymentType?.map((item) => {
+                  return {
+                    label: item.name,
+                    value: item.type,
+                  };
+                })}
               />
             </Col>
           </Row>

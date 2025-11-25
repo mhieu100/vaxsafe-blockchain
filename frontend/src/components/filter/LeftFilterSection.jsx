@@ -1,15 +1,11 @@
-import {
-  ClearOutlined,
-  FilterOutlined,
-  SortAscendingOutlined,
-} from '@ant-design/icons';
+import { ClearOutlined, FilterOutlined, SortAscendingOutlined } from '@ant-design/icons';
 import { Button, Divider, Select, Slider } from 'antd';
-import { useEffect, useMemo, useState } from 'react';
 // eslint-disable-next-line import/no-extraneous-dependencies
 import debounce from 'lodash/debounce';
-import { MIN_PRICE, MAX_PRICE } from '../../constants';
-import { formatPrice } from '../../utils/formatPrice';
+import { useEffect, useMemo, useState } from 'react';
 import { callGetAllCountries } from '../../config/api.vaccine';
+import { MAX_PRICE, MIN_PRICE } from '../../constants';
+import { formatPrice } from '../../utils/formatPrice';
 
 const { Option } = Select;
 
@@ -23,13 +19,7 @@ const { Option } = Select;
  * @param {Function} props.setSortBy - Function to set sort by value
  * @returns {React.Component}
  */
-const LeftFilterSection = ({
-  setPriceRange,
-  country,
-  setCountry,
-  sortBy,
-  setSortBy,
-}) => {
+const LeftFilterSection = ({ setPriceRange, country, setCountry, sortBy, setSortBy }) => {
   const [countries, setCountries] = useState([]);
   const [sliderRange, setSliderRange] = useState([MIN_PRICE, MAX_PRICE]);
 
@@ -40,7 +30,7 @@ const LeftFilterSection = ({
   useEffect(() => {
     const handleFetchCountries = async () => {
       const response = await callGetAllCountries();
-      if (response && response.data) {
+      if (response?.data) {
         setCountries(response.data);
       }
     };

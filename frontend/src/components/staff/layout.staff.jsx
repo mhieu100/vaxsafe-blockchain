@@ -1,17 +1,15 @@
-import { Link, Outlet, useLocation, useNavigate } from 'react-router-dom';
-import { useEffect, useState } from 'react';
 import {
   CalendarOutlined,
-  UserOutlined,
   DashboardOutlined,
-  LogoutOutlined,
   EditOutlined,
+  LogoutOutlined,
   SafetyCertificateOutlined,
-  NotificationFilled,
+  UserOutlined,
 } from '@ant-design/icons';
-
 import { ProLayout } from '@ant-design/pro-components';
 import { Avatar, Badge, Dropdown, message } from 'antd';
+import { useEffect, useState } from 'react';
+import { Link, Outlet, useLocation, useNavigate } from 'react-router-dom';
 import { callLogout } from '../../config/api.auth';
 import { useAccountStore } from '../../stores/useAccountStore';
 
@@ -59,7 +57,7 @@ const LayoutStaff = () => {
       name: <Link to="/staff/dashboard">Bảng điều khiển</Link>,
       roles: ['CASHIER'],
     },
-     {
+    {
       path: '/staff/dashboard-doctor',
       icon: <DashboardOutlined />,
       name: <Link to="/staff/dashboard-doctor">Bảng điều khiển</Link>,
@@ -107,52 +105,41 @@ const LayoutStaff = () => {
   };
 
   return (
-    <>
-      <ProLayout
-        fixSiderbar
-        fixedHeader
-        defaultCollapsed
-        pageTitleRender={false}
-        title="VaxChain - Nhân viên"
-        actionsRender={() => [
-          <>
-            <Dropdown
-              menu={{ items: userMenuItems }}
-              placement="bottomRight"
-              arrow
-              trigger={['click']}
-            >
-              <div className="cursor-pointer flex items-center gap-2">
-                <Badge dot={user?.isVerified}>
-                  <Avatar src={user?.avatar} className="bg-brand-primary">
-                    {user?.name?.charAt(0) || <UserOutlined />}
-                  </Avatar>
-                </Badge>
-                <div className="hidden md:block">
-                  <div className="text-sm font-medium">{user?.fullName}</div>
-                  <div className="text-xs text-gray-500">
-                    {getRole(user?.role)}
-                  </div>
-                </div>
-              </div>
-            </Dropdown>
-          </>,
-        ]}
-        menuDataRender={() => filterMenuByRole(menuSidebar, user.role)}
-        layout="mix"
-        location={{
-          pathname: activeMenu,
-        }}
-        logoRender={() => (
-          <div className="flex items-center gap-2">
-            <SafetyCertificateOutlined className="text-2xl text-brand-primary" />
-            <span className="text-xl font-bold text-gray-900">VaxChain</span>
+    <ProLayout
+      fixSiderbar
+      fixedHeader
+      defaultCollapsed
+      pageTitleRender={false}
+      title="VaxChain - Nhân viên"
+      actionsRender={() => [
+        <Dropdown menu={{ items: userMenuItems }} placement="bottomRight" arrow trigger={['click']}>
+          <div className="cursor-pointer flex items-center gap-2">
+            <Badge dot={user?.isVerified}>
+              <Avatar src={user?.avatar} className="bg-brand-primary">
+                {user?.name?.charAt(0) || <UserOutlined />}
+              </Avatar>
+            </Badge>
+            <div className="hidden md:block">
+              <div className="text-sm font-medium">{user?.fullName}</div>
+              <div className="text-xs text-gray-500">{getRole(user?.role)}</div>
+            </div>
           </div>
-        )}
-      >
-        <Outlet />
-      </ProLayout>
-    </>
+        </Dropdown>,
+      ]}
+      menuDataRender={() => filterMenuByRole(menuSidebar, user.role)}
+      layout="mix"
+      location={{
+        pathname: activeMenu,
+      }}
+      logoRender={() => (
+        <div className="flex items-center gap-2">
+          <SafetyCertificateOutlined className="text-2xl text-brand-primary" />
+          <span className="text-xl font-bold text-gray-900">VaxChain</span>
+        </div>
+      )}
+    >
+      <Outlet />
+    </ProLayout>
   );
 };
 

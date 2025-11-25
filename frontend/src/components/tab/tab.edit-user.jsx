@@ -1,7 +1,7 @@
-import { Button, Col, Form, Input, Row, Select, Typography, message } from 'antd';
+import { Button, Col, Form, Input, message, Row, Select, Typography } from 'antd';
 import { useEffect, useState } from 'react';
-import useAccountStore from '../../stores/useAccountStore';
 import { updateAccount } from '../../config/api.auth';
+import useAccountStore from '../../stores/useAccountStore';
 
 const { Text, Paragraph } = Typography;
 
@@ -111,11 +111,7 @@ const TabEditUser = ({ editMode, setEditMode }) => {
               </Form.Item>
             </Col>
             <Col xs={24} sm={12}>
-              <Form.Item
-                label="Email"
-                name="email"
-                rules={[{ required: true, type: 'email' }]}
-              >
+              <Form.Item label="Email" name="email" rules={[{ required: true, type: 'email' }]}>
                 <Input disabled size="large" />
               </Form.Item>
             </Col>
@@ -196,7 +192,13 @@ const TabEditUser = ({ editMode, setEditMode }) => {
           </Form.Item>
 
           <div className="flex gap-2">
-            <Button type="primary" htmlType="submit" loading={loading} disabled={loading} size="large">
+            <Button
+              type="primary"
+              htmlType="submit"
+              loading={loading}
+              disabled={loading}
+              size="large"
+            >
               Save Changes
             </Button>
             <Button onClick={() => setEditMode(false)} disabled={loading} size="large">

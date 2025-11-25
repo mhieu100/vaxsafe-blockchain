@@ -1,185 +1,192 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap");
 
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 body {
-    font-family: 'Inter', sans-serif;
+  font-family: "Inter", sans-serif;
 }
 
 .hero-gradient {
-    background: linear-gradient(135deg, rgba(37, 99, 235, 0.05) 0%, rgba(5, 150, 105, 0.05) 100%);
+  background: linear-gradient(135deg, rgba(37, 99, 235, 0.05) 0%, rgba(5, 150, 105, 0.05) 100%);
 }
 
 .blockchain-bg {
-    background-image:
-        radial-gradient(circle at 10% 20%, rgba(37, 99, 235, 0.03) 0%, transparent 20%),
-        radial-gradient(circle at 90% 80%, rgba(5, 150, 105, 0.03) 0%, transparent 20%);
+  background-image:
+    radial-gradient(circle at 10% 20%, rgba(37, 99, 235, 0.03) 0%, transparent 20%),
+    radial-gradient(circle at 90% 80%, rgba(5, 150, 105, 0.03) 0%, transparent 20%);
 }
 
 /* Home */
 
 .feature-card:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1);
+  transform: translateY(-5px);
+  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1);
 }
 
 .trust-badge {
-    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
+  box-shadow:
+    0 4px 6px -1px rgba(0, 0, 0, 0.05),
+    0 2px 4px -1px rgba(0, 0, 0, 0.03);
 }
 
 /* Market */
 
 .vaccine-card:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1);
+  transform: translateY(-5px);
+  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1);
 }
 
 .trust-badge {
-    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
+  box-shadow:
+    0 4px 6px -1px rgba(0, 0, 0, 0.05),
+    0 2px 4px -1px rgba(0, 0, 0, 0.03);
 }
 
 .filter-chip:hover {
-    background-color: #f3f4f6;
+  background-color: #f3f4f6;
 }
 
 .filter-chip.active {
-    background-color: #2563eb;
-    color: white;
+  background-color: #2563eb;
+  color: white;
 }
 
 /* NFT Vaccine Passport Styles */
 
 .nft-certificate-card {
-    transition: all 0.3s ease;
-    position: relative;
-    overflow: hidden;
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
 }
 
 .nft-certificate-card::before {
-    content: '';
-    position: absolute;
-    top: -2px;
-    left: -2px;
-    right: -2px;
-    bottom: -2px;
-    background: linear-gradient(135deg,
-        rgba(139, 92, 246, 0.3),
-        rgba(59, 130, 246, 0.3),
-        rgba(16, 185, 129, 0.3)
-    );
-    border-radius: 16px;
-    z-index: -1;
-    opacity: 0;
-    transition: opacity 0.3s ease;
+  content: "";
+  position: absolute;
+  top: -2px;
+  left: -2px;
+  right: -2px;
+  bottom: -2px;
+  background: linear-gradient(
+    135deg,
+    rgba(139, 92, 246, 0.3),
+    rgba(59, 130, 246, 0.3),
+    rgba(16, 185, 129, 0.3)
+  );
+  border-radius: 16px;
+  z-index: -1;
+  opacity: 0;
+  transition: opacity 0.3s ease;
 }
 
 .nft-certificate-card:hover::before {
-    opacity: 1;
+  opacity: 1;
 }
 
 .nft-certificate-card:hover {
-    transform: translateY(-8px) scale(1.02);
-    box-shadow: 0 20px 40px -10px rgba(0, 0, 0, 0.15);
+  transform: translateY(-8px) scale(1.02);
+  box-shadow: 0 20px 40px -10px rgba(0, 0, 0, 0.15);
 }
 
 .nft-detail-modal .ant-modal-header {
-    background: linear-gradient(135deg,
-        rgba(139, 92, 246, 0.1),
-        rgba(59, 130, 246, 0.1)
-    );
-    border-bottom: 2px solid rgba(139, 92, 246, 0.2);
+  background: linear-gradient(135deg, rgba(139, 92, 246, 0.1), rgba(59, 130, 246, 0.1));
+  border-bottom: 2px solid rgba(139, 92, 246, 0.2);
 }
 
 .nft-detail-modal .ant-tabs-tab.ant-tabs-tab-active .ant-tabs-tab-btn {
-    color: #8b5cf6;
+  color: #8b5cf6;
 }
 
 .nft-detail-modal .ant-tabs-ink-bar {
-    background: linear-gradient(90deg, #8b5cf6, #3b82f6);
-    height: 3px;
+  background: linear-gradient(90deg, #8b5cf6, #3b82f6);
+  height: 3px;
 }
 
 /* Glassmorphism effect */
 .glass-card {
-    background: rgba(255, 255, 255, 0.7);
-    backdrop-filter: blur(10px);
-    -webkit-backdrop-filter: blur(10px);
-    border: 1px solid rgba(255, 255, 255, 0.3);
+  background: rgba(255, 255, 255, 0.7);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.3);
 }
 
 /* NFT Shimmer animation */
 @keyframes nft-shimmer {
-    0% {
-        background-position: -1000px 0;
-    }
-    100% {
-        background-position: 1000px 0;
-    }
+  0% {
+    background-position: -1000px 0;
+  }
+  100% {
+    background-position: 1000px 0;
+  }
 }
 
 .nft-shimmer {
-    animation: nft-shimmer 3s infinite;
-    background: linear-gradient(
-        to right,
-        transparent 0%,
-        rgba(255, 255, 255, 0.3) 50%,
-        transparent 100%
-    );
-    background-size: 1000px 100%;
+  animation: nft-shimmer 3s infinite;
+  background: linear-gradient(
+    to right,
+    transparent 0%,
+    rgba(255, 255, 255, 0.3) 50%,
+    transparent 100%
+  );
+  background-size: 1000px 100%;
 }
 
 /* Web3 gradient text */
 .web3-gradient-text {
-    background: linear-gradient(135deg, #8b5cf6, #3b82f6, #10b981);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
-    animation: gradient-shift 3s ease infinite;
-    background-size: 200% 200%;
+  background: linear-gradient(135deg, #8b5cf6, #3b82f6, #10b981);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  animation: gradient-shift 3s ease infinite;
+  background-size: 200% 200%;
 }
 
 @keyframes gradient-shift {
-    0% { background-position: 0% 50%; }
-    50% { background-position: 100% 50%; }
-    100% { background-position: 0% 50%; }
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
 }
 
 /* Blockchain verification badge */
 .blockchain-verified {
-    position: relative;
-    display: inline-block;
+  position: relative;
+  display: inline-block;
 }
 
 .blockchain-verified::after {
-    content: '✓';
-    position: absolute;
-    top: -5px;
-    right: -5px;
-    width: 18px;
-    height: 18px;
-    background: linear-gradient(135deg, #10b981, #059669);
-    border-radius: 50%;
-    color: white;
-    font-size: 10px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    box-shadow: 0 2px 8px rgba(16, 185, 129, 0.4);
+  content: "✓";
+  position: absolute;
+  top: -5px;
+  right: -5px;
+  width: 18px;
+  height: 18px;
+  background: linear-gradient(135deg, #10b981, #059669);
+  border-radius: 50%;
+  color: white;
+  font-size: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 2px 8px rgba(16, 185, 129, 0.4);
 }
 
 .leaflet-container {
-    height: 300px;
-    width: 100%;
-    border-radius: 0.5rem;
-  }
+  height: 300px;
+  width: 100%;
+  border-radius: 0.5rem;
+}
 
-
-  .certificate-border {
-    border: 20px solid transparent;
-    border-image: linear-gradient(135deg, #3b82f6, #10b981) 1;
-  }
+.certificate-border {
+  border: 20px solid transparent;
+  border-image: linear-gradient(135deg, #3b82f6, #10b981) 1;
+}
 
 /* Calendar Styles */
 
@@ -264,7 +271,7 @@ body {
 }
 
 .week-appointment {
-  padding: 8px !important;
+  padding: 8px;
   margin-bottom: 8px;
   border: 1px solid #f0f0f0;
   border-radius: 4px;
@@ -297,7 +304,7 @@ body {
 /* Day View Styles */
 
 .appointment-item {
-  padding: 16px !important;
+  padding: 16px;
   border: 1px solid #f0f0f0;
   border-radius: 8px;
   margin-bottom: 12px;
@@ -332,7 +339,7 @@ body {
   .week-view {
     grid-template-columns: repeat(2, 1fr);
   }
-  
+
   .calendar-header {
     padding: 12px;
   }

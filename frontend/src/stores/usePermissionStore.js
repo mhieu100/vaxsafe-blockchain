@@ -17,7 +17,7 @@ const usePermissionStore = create((set) => ({
     set({ isFetching: true });
     try {
       const response = await callFetchPermission(query);
-      if (response && response.data) {
+      if (response?.data) {
         set({
           isFetching: false,
           meta: response.data.meta,

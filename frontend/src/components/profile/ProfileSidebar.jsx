@@ -1,15 +1,15 @@
-import { Card, Menu, Statistic, Row, Col, Badge } from 'antd';
 import {
-  UserOutlined,
-  HistoryOutlined,
   CalendarOutlined,
-  HeartOutlined,
-  TeamOutlined,
-  SafetyCertificateOutlined,
-  MedicineBoxOutlined,
-  ClockCircleOutlined,
   CheckCircleOutlined,
+  ClockCircleOutlined,
+  HeartOutlined,
+  HistoryOutlined,
+  MedicineBoxOutlined,
+  SafetyCertificateOutlined,
+  TeamOutlined,
+  UserOutlined,
 } from '@ant-design/icons';
+import { Badge, Card, Col, Menu, Row, Statistic } from 'antd';
 
 const ProfileSidebar = ({
   totalVaccines,
@@ -31,10 +31,7 @@ const ProfileSidebar = ({
       label: (
         <span className="flex justify-between items-center w-full">
           Vaccination History
-          <Badge
-            count={totalVaccines}
-            style={{ backgroundColor: '#52c41a' }}
-          />
+          <Badge count={totalVaccines} style={{ backgroundColor: '#52c41a' }} />
         </span>
       ),
     },
@@ -87,19 +84,13 @@ const ProfileSidebar = ({
 
       <Card className="rounded-xl shadow-sm border-0 ">
         <div className="text-center mb-4">
-          <h3 className="text-lg font-semibold text-gray-800">
-            Health Overview
-          </h3>
+          <h3 className="text-lg font-semibold text-gray-800">Health Overview</h3>
         </div>
         <Row gutter={[16, 16]}>
           <Col span={24}>
             <Card className="bg-gradient-to-br from-green-50 to-emerald-50 border-green-200">
               <Statistic
-                title={
-                  <span className="text-green-700 font-medium">
-                    Total Vaccines
-                  </span>
-                }
+                title={<span className="text-green-700 font-medium">Total Vaccines</span>}
                 value={totalVaccines}
                 prefix={<MedicineBoxOutlined className="text-green-600" />}
                 valueStyle={{ color: '#059669', fontWeight: 'bold' }}
@@ -109,9 +100,7 @@ const ProfileSidebar = ({
           <Col span={24}>
             <Card className="bg-gradient-to-br from-blue-50 to-cyan-50 border-blue-200">
               <Statistic
-                title={
-                  <span className="text-blue-700 font-medium">Upcoming</span>
-                }
+                title={<span className="text-blue-700 font-medium">Upcoming</span>}
                 value={upcomingAppointments}
                 prefix={<ClockCircleOutlined className="text-blue-600" />}
                 suffix="appointments"
@@ -122,9 +111,7 @@ const ProfileSidebar = ({
           <Col span={24}>
             <Card className="bg-gradient-to-br from-purple-50 to-pink-50 border-purple-200">
               <Statistic
-                title={
-                  <span className="text-purple-700 font-medium">Coverage</span>
-                }
+                title={<span className="text-purple-700 font-medium">Coverage</span>}
                 value={coveragePercentage}
                 prefix={<CheckCircleOutlined className="text-purple-600" />}
                 suffix="%"
@@ -135,12 +122,8 @@ const ProfileSidebar = ({
         </Row>
         {nextAppointment && (
           <div className="mt-4 p-3 bg-gradient-to-r from-orange-50 to-amber-50 rounded-lg border border-orange-200">
-            <p className="text-xs text-orange-700 font-medium mb-1">
-              NEXT APPOINTMENT
-            </p>
-            <p className="text-sm font-semibold text-orange-900">
-              {nextAppointment}
-            </p>
+            <p className="text-xs text-orange-700 font-medium mb-1">NEXT APPOINTMENT</p>
+            <p className="text-sm font-semibold text-orange-900">{nextAppointment}</p>
           </div>
         )}
       </Card>

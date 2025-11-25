@@ -1,10 +1,10 @@
-import React, { useEffect, useState } from 'react';
-import { Skeleton, Table, Card, Empty } from 'antd';
+import { Card, Empty, Skeleton, Table } from 'antd';
 import PropTypes from 'prop-types';
+import { useEffect, useState } from 'react';
 
 /**
  * Component bảng với trạng thái loading
- * 
+ *
  * @param {Array} columns - Các cột của bảng
  * @param {number} rowCount - Số dòng hiển thị khi đang loading
  * @param {boolean} loading - Trạng thái loading
@@ -12,20 +12,20 @@ import PropTypes from 'prop-types';
  * @param {number} timeout - Thời gian timeout tối thiểu (ms)
  * @param {Function} onLoadingComplete - Callback khi loading hoàn tất
  */
-const LoadingTable = ({ 
-  columns, 
+const LoadingTable = ({
+  columns,
   rowCount = 5,
   loading,
-  dataSource = [], 
+  dataSource = [],
   timeout = 1000,
   onLoadingComplete = () => {},
-  ...tableProps 
+  ...tableProps
 }) => {
   const [isLoading, setIsLoading] = useState(loading);
 
   useEffect(() => {
     setIsLoading(loading);
-    
+
     // Nếu đang loading, thiết lập timeout để giả lập thời gian tải dữ liệu
     let timer;
     if (loading) {
@@ -34,20 +34,22 @@ const LoadingTable = ({
         onLoadingComplete();
       }, timeout);
     }
-    
+
     return () => {
       if (timer) clearTimeout(timer);
     };
   }, [loading, timeout, onLoadingComplete]);
 
   // Tạo dữ liệu giả cho trạng thái loading
-  const loadingData = Array(rowCount).fill().map((_, index) => ({
-    key: `loading-${index}`,
-    __loading__: true
-  }));
+  const loadingData = Array(rowCount)
+    .fill()
+    .map((_, index) => ({
+      key: `loading-${index}`,
+      __loading__: true,
+    }));
 
   // Tùy chỉnh hiển thị cho mỗi ô trong trạng thái loading
-  const loadingColumns = columns.map(column => ({
+  const loadingColumns = columns.map((column) => ({
     ...column,
     render: (text, record) => {
       if (record.__loading__) {
@@ -56,7 +58,7 @@ const LoadingTable = ({
         return <Skeleton.Input active size="small" style={{ width: `${width}px` }} />;
       }
       return column.render ? column.render(text, record) : text;
-    }
+    },
   }));
 
   return (
@@ -65,7 +67,7 @@ const LoadingTable = ({
         columns={loadingColumns}
         dataSource={isLoading ? loadingData : dataSource}
         pagination={isLoading ? false : tableProps.pagination}
-        rowKey={record => record.key || record.id}
+        rowKey={(record) => record.key || record.id}
         locale={{
           emptyText: <Empty description="Không có dữ liệu" />,
           filterConfirm: 'Đồng ý',
@@ -77,7 +79,7 @@ const LoadingTable = ({
           sortTitle: 'Sắp xếp',
           triggerDesc: 'Nhấp để sắp xếp giảm dần',
           triggerAsc: 'Nhấp để sắp xếp tăng dần',
-          cancelSort: 'Nhấp để hủy sắp xếp'
+          cancelSort: 'Nhấp để hủy sắp xếp',
         }}
         {...tableProps}
       />
@@ -94,4 +96,4 @@ LoadingTable.propTypes = {
   onLoadingComplete: PropTypes.func,
 };
 
-export default LoadingTable; 
+export default LoadingTable;

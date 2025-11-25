@@ -1,35 +1,35 @@
-import { useState, useEffect } from 'react';
-import { 
-  Card, 
-  Row, 
-  Col, 
-  Button, 
-  Space, 
-  Typography, 
-  Badge, 
-  DatePicker, 
-  Segmented,
-  Statistic,
-  Modal,
-  Descriptions,
-  List,
-  Avatar,
-  Tag,
-  message,
-  Spin
-} from 'antd';
 import {
   CalendarOutlined,
-  ClockCircleOutlined,
-  PhoneOutlined,
-  UserOutlined,
   CheckCircleOutlined,
+  ClockCircleOutlined,
   CloseCircleOutlined,
   EyeOutlined,
+  LoadingOutlined,
   MedicineBoxOutlined,
-  LoadingOutlined
+  PhoneOutlined,
+  UserOutlined,
 } from '@ant-design/icons';
+import {
+  Avatar,
+  Badge,
+  Button,
+  Card,
+  Col,
+  DatePicker,
+  Descriptions,
+  List,
+  Modal,
+  message,
+  Row,
+  Segmented,
+  Space,
+  Spin,
+  Statistic,
+  Tag,
+  Typography,
+} from 'antd';
 import dayjs from 'dayjs';
+import { useEffect, useState } from 'react';
 import { getDoctorsWithScheduleAPI } from '../../config/api.doctor.schedule';
 
 const { Title, Text } = Typography;
@@ -46,16 +46,16 @@ const DoctorSchedule = () => {
   // Fetch doctors with schedule when component mounts or date changes
   useEffect(() => {
     fetchDoctorsWithSchedule();
-  }, [selectedDate]);
+  }, [fetchDoctorsWithSchedule]);
 
   const fetchDoctorsWithSchedule = async () => {
     try {
       setLoading(true);
       const dateStr = selectedDate.format('YYYY-MM-DD');
       const response = await getDoctorsWithScheduleAPI(dateStr);
-      
+
       // Transform API response to match component structure
-      const transformedDoctors = response.data.map(doctor => ({
+      const transformedDoctors = response.data.map((doctor) => ({
         id: `BS${String(doctor.doctorId).padStart(3, '0')}`,
         doctorId: doctor.doctorId,
         name: doctor.doctorName,
@@ -65,15 +65,15 @@ const DoctorSchedule = () => {
         color: getColorForDoctor(doctor.doctorId),
         availableSlots: doctor.availableSlotsToday || 0,
         bookedSlots: doctor.bookedSlotsToday || 0,
-        schedule: (doctor.todaySchedule || []).map(slot => ({
+        schedule: (doctor.todaySchedule || []).map((slot) => ({
           slotId: slot.slotId,
           time: `${slot.startTime} - ${slot.endTime}`,
           status: slot.status === 'AVAILABLE' ? 'available' : 'booked',
           patient: slot.appointmentId ? 'Bệnh nhân' : null,
-          vaccine: slot.notes || ''
-        }))
+          vaccine: slot.notes || '',
+        })),
       }));
-      
+
       setDoctors(transformedDoctors);
     } catch (error) {
       console.error('Error fetching doctors:', error);
@@ -89,14 +89,15 @@ const DoctorSchedule = () => {
     return colors[doctorId % colors.length];
   };
 
-  
   // Calculate summary statistics
   const summary = {
     totalDoctors: doctors.length,
     totalAvailableSlots: doctors.reduce((sum, doc) => sum + doc.availableSlots, 0),
     totalBookedSlots: doctors.reduce((sum, doc) => sum + doc.bookedSlots, 0),
   };
-  summary.availabilityRate = Math.round((summary.totalAvailableSlots / (summary.totalAvailableSlots + summary.totalBookedSlots)) * 100);
+  summary.availabilityRate = Math.round(
+    (summary.totalAvailableSlots / (summary.totalAvailableSlots + summary.totalBookedSlots)) * 100
+  );
 
   // Handle view mode change
   const handleViewModeChange = (mode) => {
@@ -133,7 +134,7 @@ const DoctorSchedule = () => {
   // Render time slot
   const renderTimeSlot = (doctor, slot, index) => {
     const isAvailable = slot.status === 'available';
-    
+
     return (
       <div
         key={index}
@@ -169,15 +170,17 @@ const DoctorSchedule = () => {
             </Space>
           </Col>
           <Col>
-            <Badge 
-              status={isAvailable ? 'success' : 'error'} 
-              text={isAvailable ? 'Trống' : 'Đã đặt'} 
+            <Badge
+              status={isAvailable ? 'success' : 'error'}
+              text={isAvailable ? 'Trống' : 'Đã đặt'}
             />
           </Col>
         </Row>
         {!isAvailable && slot.patient && (
           <div style={{ marginTop: '4px', fontSize: '12px', color: '#666' }}>
-            <Text type="secondary">{slot.patient} - {slot.vaccine}</Text>
+            <Text type="secondary">
+              {slot.patient} - {slot.vaccine}
+            </Text>
           </div>
         )}
       </div>
@@ -191,7 +194,7 @@ const DoctorSchedule = () => {
         style={{
           background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
           marginBottom: '24px',
-          borderRadius: '12px'
+          borderRadius: '12px',
         }}
         bodyStyle={{ padding: '30px' }}
       >
@@ -200,17 +203,13 @@ const DoctorSchedule = () => {
             <Title level={2} style={{ color: 'white', margin: 0 }}>
               <CalendarOutlined /> Lịch Bác Sĩ
             </Title>
-            <Text style={{ color: 'rgba(255,255,255,0.9)' }}>
-              Quản lý lịch làm việc của bác sĩ
-            </Text>
+            <Text style={{ color: 'rgba(255,255,255,0.9)' }}>Quản lý lịch làm việc của bác sĩ</Text>
           </Col>
           <Col style={{ textAlign: 'right' }}>
             <Title level={4} style={{ color: 'white', margin: 0 }}>
               {dayjs().format('DD MMMM, YYYY')}
             </Title>
-            <Text style={{ color: 'rgba(255,255,255,0.9)' }}>
-              {dayjs().format('dddd')}
-            </Text>
+            <Text style={{ color: 'rgba(255,255,255,0.9)' }}>{dayjs().format('dddd')}</Text>
           </Col>
         </Row>
       </Card>
@@ -255,22 +254,23 @@ const DoctorSchedule = () => {
             </Row>
           </Card>
 
-      {/* Current Date Display */}
-      <Card 
-        style={{ 
-          marginBottom: '24px',
-          background: '#e6f7ff',
-          borderColor: '#91d5ff'
-        }}
-        bodyStyle={{ padding: '12px 24px' }}
-      >
-        <Space>
-          <CalendarOutlined style={{ color: '#1890ff', fontSize: '18px' }} />
-          <Text strong style={{ color: '#1890ff' }}>
-            Đang xem lịch ngày: {selectedDate.format('DD/MM/YYYY')} ({selectedDate.format('dddd')})
-          </Text>
-        </Space>
-      </Card>
+          {/* Current Date Display */}
+          <Card
+            style={{
+              marginBottom: '24px',
+              background: '#e6f7ff',
+              borderColor: '#91d5ff',
+            }}
+            bodyStyle={{ padding: '12px 24px' }}
+          >
+            <Space>
+              <CalendarOutlined style={{ color: '#1890ff', fontSize: '18px' }} />
+              <Text strong style={{ color: '#1890ff' }}>
+                Đang xem lịch ngày: {selectedDate.format('DD/MM/YYYY')} (
+                {selectedDate.format('dddd')})
+              </Text>
+            </Space>
+          </Card>
 
           {/* Doctors Grid */}
           <Row gutter={[16, 16]} style={{ marginBottom: '24px' }}>
@@ -278,7 +278,9 @@ const DoctorSchedule = () => {
               <Col span={24}>
                 <Card style={{ textAlign: 'center', padding: '50px' }}>
                   <UserOutlined style={{ fontSize: 64, color: '#d9d9d9', marginBottom: 16 }} />
-                  <Title level={4} type="secondary">Không có bác sĩ nào</Title>
+                  <Title level={4} type="secondary">
+                    Không có bác sĩ nào
+                  </Title>
                   <Text type="secondary">
                     Không tìm thấy bác sĩ nào làm việc tại trung tâm của bạn vào ngày này
                   </Text>
@@ -286,134 +288,146 @@ const DoctorSchedule = () => {
               </Col>
             ) : (
               doctors.map((doctor) => (
-          <Col key={doctor.id} xs={24} sm={12} lg={6}>
-            <Card
-              hoverable
-              style={{ height: '100%' }}
-              styles={{
-                header: { 
-                  background: doctor.color === 'blue' ? '#1890ff' :
-                             doctor.color === 'green' ? '#52c41a' :
-                             doctor.color === 'cyan' ? '#13c2c2' :
-                             doctor.color === 'orange' ? '#fa8c16' : '#1890ff',
-                  color: 'white'
-                }
-              }}
-              title={
-                <Space>
-                  <Avatar 
-                    size={40} 
-                    icon={<UserOutlined />} 
-                    style={{ background: 'rgba(255,255,255,0.3)' }}
-                  />
-                  <div>
-                    <div style={{ fontWeight: 'bold' }}>BS. {doctor.name}</div>
-                    <small>Chuyên khoa: {doctor.specialty}</small>
-                  </div>
-                </Space>
-              }
-            >
-              <div style={{ marginBottom: '16px' }}>
-                <Space direction="vertical" size="small" style={{ width: '100%' }}>
-                  <Space>
-                    <ClockCircleOutlined />
-                    <Text type="secondary" style={{ fontSize: '13px' }}>
-                      Ca làm việc: {doctor.workingHours}
-                    </Text>
-                  </Space>
-                  <Space>
-                    <PhoneOutlined />
-                    <Text type="secondary" style={{ fontSize: '13px' }}>
-                      SĐT: {doctor.phone}
-                    </Text>
-                  </Space>
-                </Space>
-              </div>
+                <Col key={doctor.id} xs={24} sm={12} lg={6}>
+                  <Card
+                    hoverable
+                    style={{ height: '100%' }}
+                    styles={{
+                      header: {
+                        background:
+                          doctor.color === 'blue'
+                            ? '#1890ff'
+                            : doctor.color === 'green'
+                              ? '#52c41a'
+                              : doctor.color === 'cyan'
+                                ? '#13c2c2'
+                                : doctor.color === 'orange'
+                                  ? '#fa8c16'
+                                  : '#1890ff',
+                        color: 'white',
+                      },
+                    }}
+                    title={
+                      <Space>
+                        <Avatar
+                          size={40}
+                          icon={<UserOutlined />}
+                          style={{ background: 'rgba(255,255,255,0.3)' }}
+                        />
+                        <div>
+                          <div style={{ fontWeight: 'bold' }}>BS. {doctor.name}</div>
+                          <small>Chuyên khoa: {doctor.specialty}</small>
+                        </div>
+                      </Space>
+                    }
+                  >
+                    <div style={{ marginBottom: '16px' }}>
+                      <Space direction="vertical" size="small" style={{ width: '100%' }}>
+                        <Space>
+                          <ClockCircleOutlined />
+                          <Text type="secondary" style={{ fontSize: '13px' }}>
+                            Ca làm việc: {doctor.workingHours}
+                          </Text>
+                        </Space>
+                        <Space>
+                          <PhoneOutlined />
+                          <Text type="secondary" style={{ fontSize: '13px' }}>
+                            SĐT: {doctor.phone}
+                          </Text>
+                        </Space>
+                      </Space>
+                    </div>
 
-              <div style={{ marginBottom: '16px' }}>
-                <Text strong>Trạng thái hôm nay:</Text>
-                <div style={{ marginTop: '8px' }}>
-                  <Space>
-                    <Badge 
-                      count={`${doctor.availableSlots} trống`} 
-                      style={{ backgroundColor: '#52c41a' }} 
-                    />
-                    <Badge 
-                      count={`${doctor.bookedSlots} đã đặt`} 
-                      style={{ backgroundColor: '#f5222d' }} 
-                    />
-                  </Space>
-                </div>
-              </div>
+                    <div style={{ marginBottom: '16px' }}>
+                      <Text strong>Trạng thái hôm nay:</Text>
+                      <div style={{ marginTop: '8px' }}>
+                        <Space>
+                          <Badge
+                            count={`${doctor.availableSlots} trống`}
+                            style={{ backgroundColor: '#52c41a' }}
+                          />
+                          <Badge
+                            count={`${doctor.bookedSlots} đã đặt`}
+                            style={{ backgroundColor: '#f5222d' }}
+                          />
+                        </Space>
+                      </div>
+                    </div>
 
-              <div style={{ borderTop: '1px solid #f0f0f0', paddingTop: '16px', marginBottom: '16px' }}>
-                <Text strong style={{ display: 'block', marginBottom: '8px' }}>
-                  Lịch khả dụng:
-                </Text>
-                <div style={{ maxHeight: '300px', overflowY: 'auto' }}>
-                  {doctor.schedule.map((slot, index) => renderTimeSlot(doctor, slot, index))}
-                </div>
-              </div>
+                    <div
+                      style={{
+                        borderTop: '1px solid #f0f0f0',
+                        paddingTop: '16px',
+                        marginBottom: '16px',
+                      }}
+                    >
+                      <Text strong style={{ display: 'block', marginBottom: '8px' }}>
+                        Lịch khả dụng:
+                      </Text>
+                      <div style={{ maxHeight: '300px', overflowY: 'auto' }}>
+                        {doctor.schedule.map((slot, index) => renderTimeSlot(doctor, slot, index))}
+                      </div>
+                    </div>
 
-              <Button
-                type="primary"
-                ghost
-                icon={<EyeOutlined />}
-                block
-                onClick={() => handleViewDoctorDetail(doctor)}
-              >
-                Xem chi tiết lịch
-              </Button>
-            </Card>
-          </Col>
-        ))
-      )}
-      </Row>
+                    <Button
+                      type="primary"
+                      ghost
+                      icon={<EyeOutlined />}
+                      block
+                      onClick={() => handleViewDoctorDetail(doctor)}
+                    >
+                      Xem chi tiết lịch
+                    </Button>
+                  </Card>
+                </Col>
+              ))
+            )}
+          </Row>
 
-      {/* Summary Statistics */}
-      <Card 
-        title={
-          <Space>
-            <MedicineBoxOutlined />
-            <Text strong>Tổng Quan Lịch Hôm Nay</Text>
-          </Space>
-        }
-      >
-        <Row gutter={16}>
-          <Col xs={12} sm={6}>
-            <Statistic
-              title="Tổng bác sĩ"
-              value={summary.totalDoctors}
-              valueStyle={{ color: '#1890ff' }}
-              prefix={<UserOutlined />}
-            />
-          </Col>
-          <Col xs={12} sm={6}>
-            <Statistic
-              title="Slot trống"
-              value={summary.totalAvailableSlots}
-              valueStyle={{ color: '#52c41a' }}
-              prefix={<CheckCircleOutlined />}
-            />
-          </Col>
-          <Col xs={12} sm={6}>
-            <Statistic
-              title="Slot đã đặt"
-              value={summary.totalBookedSlots}
-              valueStyle={{ color: '#f5222d' }}
-              prefix={<CloseCircleOutlined />}
-            />
-          </Col>
-          <Col xs={12} sm={6}>
-            <Statistic
-              title="Tỷ lệ trống"
-              value={summary.availabilityRate}
-              valueStyle={{ color: '#13c2c2' }}
-              suffix="%"
-            />
-          </Col>
-        </Row>
-      </Card>
+          {/* Summary Statistics */}
+          <Card
+            title={
+              <Space>
+                <MedicineBoxOutlined />
+                <Text strong>Tổng Quan Lịch Hôm Nay</Text>
+              </Space>
+            }
+          >
+            <Row gutter={16}>
+              <Col xs={12} sm={6}>
+                <Statistic
+                  title="Tổng bác sĩ"
+                  value={summary.totalDoctors}
+                  valueStyle={{ color: '#1890ff' }}
+                  prefix={<UserOutlined />}
+                />
+              </Col>
+              <Col xs={12} sm={6}>
+                <Statistic
+                  title="Slot trống"
+                  value={summary.totalAvailableSlots}
+                  valueStyle={{ color: '#52c41a' }}
+                  prefix={<CheckCircleOutlined />}
+                />
+              </Col>
+              <Col xs={12} sm={6}>
+                <Statistic
+                  title="Slot đã đặt"
+                  value={summary.totalBookedSlots}
+                  valueStyle={{ color: '#f5222d' }}
+                  prefix={<CloseCircleOutlined />}
+                />
+              </Col>
+              <Col xs={12} sm={6}>
+                <Statistic
+                  title="Tỷ lệ trống"
+                  value={summary.availabilityRate}
+                  valueStyle={{ color: '#13c2c2' }}
+                  suffix="%"
+                />
+              </Col>
+            </Row>
+          </Card>
         </>
       )}
 
@@ -462,9 +476,7 @@ const DoctorSchedule = () => {
                   <Text strong>BS. {selectedDoctor.name}</Text>
                 </Space>
               </Descriptions.Item>
-              <Descriptions.Item label="Chuyên khoa">
-                {selectedDoctor.specialty}
-              </Descriptions.Item>
+              <Descriptions.Item label="Chuyên khoa">{selectedDoctor.specialty}</Descriptions.Item>
               <Descriptions.Item label="Số điện thoại">
                 <Space>
                   <PhoneOutlined />
@@ -480,10 +492,7 @@ const DoctorSchedule = () => {
             </Descriptions>
 
             {selectedSlot ? (
-              <Card 
-                title="Thông tin slot được chọn"
-                style={{ background: '#f6ffed' }}
-              >
+              <Card title="Thông tin slot được chọn" style={{ background: '#f6ffed' }}>
                 <Descriptions column={1}>
                   <Descriptions.Item label="Thời gian">
                     <Tag color="blue" icon={<ClockCircleOutlined />}>
@@ -491,14 +500,25 @@ const DoctorSchedule = () => {
                     </Tag>
                   </Descriptions.Item>
                   <Descriptions.Item label="Trạng thái">
-                    <Badge 
-                      status={selectedSlot.status === 'available' ? 'success' : 'error'} 
-                      text={selectedSlot.status === 'available' ? 'Slot trống - Có thể phân công' : 'Đã có lịch hẹn'} 
+                    <Badge
+                      status={selectedSlot.status === 'available' ? 'success' : 'error'}
+                      text={
+                        selectedSlot.status === 'available'
+                          ? 'Slot trống - Có thể phân công'
+                          : 'Đã có lịch hẹn'
+                      }
                     />
                   </Descriptions.Item>
                 </Descriptions>
                 {selectedSlot.status === 'available' && (
-                  <div style={{ marginTop: '16px', padding: '12px', background: '#fff', borderRadius: '6px' }}>
+                  <div
+                    style={{
+                      marginTop: '16px',
+                      padding: '12px',
+                      background: '#fff',
+                      borderRadius: '6px',
+                    }}
+                  >
                     <Text type="secondary">
                       <CheckCircleOutlined style={{ color: '#52c41a', marginRight: '8px' }} />
                       Bạn có thể phân công lịch hẹn cho slot thời gian này

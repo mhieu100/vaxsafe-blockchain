@@ -1,9 +1,9 @@
 import { LogoutOutlined, UserOutlined } from '@ant-design/icons';
 import { Avatar, Dropdown, message } from 'antd';
-import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { useAccountStore } from '../../stores/useAccountStore';
+import { useNavigate } from 'react-router-dom';
 import authService from '../../services/auth.service';
+import { useAccountStore } from '../../stores/useAccountStore';
 
 const DropdownUser = () => {
   const navigate = useNavigate();
@@ -37,11 +37,7 @@ const DropdownUser = () => {
   ];
 
   return (
-    <Dropdown
-      menu={{ items: userItems }}
-      placement="bottomRight"
-      className="hidden md:block"
-    >
+    <Dropdown menu={{ items: userItems }} placement="bottomRight" className="hidden md:block">
       <Avatar
         src={
           user?.avatar ||

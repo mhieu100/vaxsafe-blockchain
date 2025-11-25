@@ -1,6 +1,6 @@
-import { useState } from 'react';
-import { Modal, Form, DatePicker, Select, message, Input } from 'antd';
+import { DatePicker, Form, Input, Modal, message, Select } from 'antd';
 import dayjs from 'dayjs';
+import { useState } from 'react';
 import { rescheduleAppointment } from '../../services/booking.service';
 
 const { TextArea } = Input;
@@ -69,9 +69,8 @@ const RescheduleAppointmentModal = ({ open, onClose, appointment, onSuccess }) =
             <span className="text-gray-600">Lịch hẹn hiện tại:</span>
           </div>
           <div className="font-medium">
-            Mũi {appointment.doseNumber} -{' '}
-            {dayjs(appointment.scheduledDate).format('DD/MM/YYYY')} lúc{' '}
-            {appointment.scheduledTime}
+            Mũi {appointment.doseNumber} - {dayjs(appointment.scheduledDate).format('DD/MM/YYYY')}{' '}
+            lúc {appointment.scheduledTime}
           </div>
           <div className="text-gray-600">📍 {appointment.centerName}</div>
         </div>
@@ -128,8 +127,7 @@ const RescheduleAppointmentModal = ({ open, onClose, appointment, onSuccess }) =
           <div>• Chỉ có thể đổi lịch sang ngày trong tương lai</div>
           <div>• Vui lòng chọn thời gian trong giờ làm việc (8:00 - 17:00)</div>
           <div>
-            • Lịch hẹn sẽ được giữ nguyên tại trung tâm:{' '}
-            <strong>{appointment.centerName}</strong>
+            • Lịch hẹn sẽ được giữ nguyên tại trung tâm: <strong>{appointment.centerName}</strong>
           </div>
           <div>• Sau khi thay đổi, vui lòng kiểm tra lại thông tin xác nhận</div>
         </div>

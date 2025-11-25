@@ -1,37 +1,21 @@
-import { useState } from 'react';
-import {
-  Card,
-  Descriptions,
-  Typography,
-  Button,
-  Checkbox,
-  Alert,
-  Divider,
-  Tag,
-  Image,
-} from 'antd';
 import {
   CalendarOutlined,
-  EnvironmentOutlined,
-  ClockCircleOutlined,
-  UserOutlined,
-  DollarOutlined,
   CheckCircleOutlined,
+  ClockCircleOutlined,
+  DollarOutlined,
+  EnvironmentOutlined,
+  UserOutlined,
 } from '@ant-design/icons';
+import { Alert, Button, Card, Checkbox, Descriptions, Divider, Image, Tag, Typography } from 'antd';
 import dayjs from 'dayjs';
+import { useState } from 'react';
+import { DEFAULT_PAGE, DEFAULT_PAGE_SIZE } from '../../constants';
 import { useCenter } from '../../hooks/useCenter';
 import { useFamilyMember } from '../../hooks/useFamilyMember';
-import { DEFAULT_PAGE, DEFAULT_PAGE_SIZE } from '../../constants';
 
 const { Title, Text } = Typography;
 
-const ReviewSection = ({
-  bookingData,
-  vaccine,
-  setCurrentStep,
-  handleBookingSubmit,
-  loading,
-}) => {
+const ReviewSection = ({ bookingData, vaccine, setCurrentStep, handleBookingSubmit, loading }) => {
   const [acceptTerms, setAcceptTerms] = useState(false);
   const [acceptPolicy, setAcceptPolicy] = useState(false);
 
@@ -57,9 +41,7 @@ const ReviewSection = ({
 
   // Helper function to get center info by ID
   const getCenterById = (centerId) => {
-    return centers?.result?.find(
-      (center) => String(center.centerId) === String(centerId)
-    );
+    return centers?.result?.find((center) => String(center.centerId) === String(centerId));
   };
 
   // Helper function to get family member info by ID
@@ -171,13 +153,12 @@ const ReviewSection = ({
             <Tag color={bookingData.bookingFor === 'self' ? 'blue' : 'green'}>
               {bookingData.bookingFor === 'self' ? 'Bản thân' : 'Người thân'}
             </Tag>
-            {bookingData.bookingFor === 'family' &&
-              bookingData.familyMemberId && (
-                <span className="ml-2">
-                  {getFamilyMemberById(bookingData.familyMemberId)?.fullName ||
-                    `ID: ${bookingData.familyMemberId}`}
-                </span>
-              )}
+            {bookingData.bookingFor === 'family' && bookingData.familyMemberId && (
+              <span className="ml-2">
+                {getFamilyMemberById(bookingData.familyMemberId)?.fullName ||
+                  `ID: ${bookingData.familyMemberId}`}
+              </span>
+            )}
           </Descriptions.Item>
         </Descriptions>
       </Card>
@@ -193,20 +174,17 @@ const ReviewSection = ({
               const center = getCenterById(dose.centerId);
               return (
                 <Card
+                  // biome-ignore lint/suspicious/noArrayIndexKey: List is static
                   key={index}
                   size="small"
                   className={`${
-                    index === 0
-                      ? 'border-2 border-blue-400 bg-blue-50'
-                      : 'border border-gray-200'
+                    index === 0 ? 'border-2 border-blue-400 bg-blue-50' : 'border border-gray-200'
                   }`}
                 >
                   <div className="flex items-start gap-4">
                     <div
                       className={`w-10 h-10 rounded-full flex items-center justify-center font-bold ${
-                        index === 0
-                          ? 'bg-blue-500 text-white'
-                          : 'bg-gray-200 text-gray-700'
+                        index === 0 ? 'bg-blue-500 text-white' : 'bg-gray-200 text-gray-700'
                       }`}
                     >
                       {index + 1}
@@ -219,9 +197,7 @@ const ReviewSection = ({
                             <span>Ngày tiêm</span>
                           </div>
                           <div className="font-semibold">
-                            {dose.date
-                              ? dayjs(dose.date).format('DD/MM/YYYY')
-                              : 'Chưa xác định'}
+                            {dose.date ? dayjs(dose.date).format('DD/MM/YYYY') : 'Chưa xác định'}
                           </div>
                         </div>
                         <div>
@@ -229,9 +205,7 @@ const ReviewSection = ({
                             <ClockCircleOutlined />
                             <span>Giờ tiêm</span>
                           </div>
-                          <div className="font-semibold">
-                            {dose.time || 'Chưa xác định'}
-                          </div>
+                          <div className="font-semibold">{dose.time || 'Chưa xác định'}</div>
                         </div>
                         <div>
                           <div className="flex items-center gap-2 text-gray-500 text-sm mb-1">
@@ -270,12 +244,12 @@ const ReviewSection = ({
               {paymentMethod === 'CASH'
                 ? 'Tiền mặt'
                 : paymentMethod === 'PAYPAL'
-                ? 'PayPal'
-                : paymentMethod === 'BANK'
-                ? 'Chuyển khoản'
-                : paymentMethod === 'METAMASK'
-                ? 'MetaMask'
-                : paymentMethod}
+                  ? 'PayPal'
+                  : paymentMethod === 'BANK'
+                    ? 'Chuyển khoản'
+                    : paymentMethod === 'METAMASK'
+                      ? 'MetaMask'
+                      : paymentMethod}
             </Tag>
           </Descriptions.Item>
           <Descriptions.Item label="Giá vaccine / mũi">
@@ -299,24 +273,18 @@ const ReviewSection = ({
       {/* Terms and Conditions */}
       <div className="mb-6">
         <div className="space-y-3">
-          <Checkbox
-            checked={acceptTerms}
-            onChange={(e) => setAcceptTerms(e.target.checked)}
-          >
+          <Checkbox checked={acceptTerms} onChange={(e) => setAcceptTerms(e.target.checked)}>
             <span className="text-sm">
               Tôi đã đọc và đồng ý với{' '}
-              <a href="#" className="text-blue-600">
+              <a href="/terms" className="text-blue-600">
                 Điều khoản sử dụng dịch vụ
               </a>
             </span>
           </Checkbox>
-          <Checkbox
-            checked={acceptPolicy}
-            onChange={(e) => setAcceptPolicy(e.target.checked)}
-          >
+          <Checkbox checked={acceptPolicy} onChange={(e) => setAcceptPolicy(e.target.checked)}>
             <span className="text-sm">
               Tôi đã đọc và đồng ý với{' '}
-              <a href="#" className="text-blue-600">
+              <a href="/privacy" className="text-blue-600">
                 Chính sách bảo mật thông tin
               </a>
             </span>

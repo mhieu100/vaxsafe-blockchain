@@ -1,13 +1,13 @@
-import { useEffect, useState } from 'react';
-import { Typography, Table, Tag, Card, Alert, Spin } from 'antd';
 import {
   CheckCircleOutlined,
   ClockCircleOutlined,
   CloseCircleOutlined,
   LoadingOutlined,
 } from '@ant-design/icons';
-import { getMyBookingHistory } from '../../services/booking.service';
+import { Alert, Card, Spin, Table, Tag, Typography } from 'antd';
 import dayjs from 'dayjs';
+import { useEffect, useState } from 'react';
+import { getMyBookingHistory } from '../../services/booking.service';
 
 const { Title, Text } = Typography;
 
@@ -18,7 +18,7 @@ const VaccinationHistoryTab = () => {
 
   useEffect(() => {
     fetchHistory();
-  }, []);
+  }, [fetchHistory]);
 
   const fetchHistory = async () => {
     try {
@@ -101,15 +101,7 @@ const VaccinationHistoryTab = () => {
   }
 
   if (error) {
-    return (
-      <Alert
-        message="Lỗi"
-        description={error}
-        type="error"
-        showIcon
-        className="mb-4"
-      />
-    );
+    return <Alert message="Lỗi" description={error} type="error" showIcon className="mb-4" />;
   }
 
   // Main booking columns
@@ -175,10 +167,7 @@ const VaccinationHistoryTab = () => {
             </Tag>
           </div>
           <div>
-            <Tag
-              color={getStatusColor(record.bookingStatus)}
-              className="text-xs"
-            >
+            <Tag color={getStatusColor(record.bookingStatus)} className="text-xs">
               {getStatusText(record.bookingStatus)}
             </Tag>
           </div>
@@ -223,9 +212,7 @@ const VaccinationHistoryTab = () => {
       dataIndex: 'doctorName',
       key: 'doctorName',
       render: (text) => (
-        <Text type={!text ? 'secondary' : undefined}>
-          {text || 'Chưa phân công'}
-        </Text>
+        <Text type={!text ? 'secondary' : undefined}>{text || 'Chưa phân công'}</Text>
       ),
     },
     {
@@ -233,9 +220,7 @@ const VaccinationHistoryTab = () => {
       dataIndex: 'cashierName',
       key: 'cashierName',
       render: (text) => (
-        <Text type={!text ? 'secondary' : undefined}>
-          {text || 'Chưa thanh toán'}
-        </Text>
+        <Text type={!text ? 'secondary' : undefined}>{text || 'Chưa thanh toán'}</Text>
       ),
     },
     {
@@ -278,33 +263,25 @@ const VaccinationHistoryTab = () => {
     <div>
       <div className="mb-4">
         <Title level={4}>Lịch sử tiêm chủng</Title>
-        <Text type="secondary">
-          Tất cả các booking tiêm chủng của bạn và gia đình
-        </Text>
+        <Text type="secondary">Tất cả các booking tiêm chủng của bạn và gia đình</Text>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
         <Card>
           <div className="text-center">
-            <div className="text-2xl font-bold text-blue-600">
-              {historyData.length}
-            </div>
+            <div className="text-2xl font-bold text-blue-600">{historyData.length}</div>
             <Text type="secondary">Tổng số booking</Text>
           </div>
         </Card>
         <Card>
           <div className="text-center">
-            <div className="text-2xl font-bold text-green-600">
-              {totalCompleted}
-            </div>
+            <div className="text-2xl font-bold text-green-600">{totalCompleted}</div>
             <Text type="secondary">Hoàn thành</Text>
           </div>
         </Card>
         <Card>
           <div className="text-center">
-            <div className="text-2xl font-bold text-orange-600">
-              {totalInProgress}
-            </div>
+            <div className="text-2xl font-bold text-orange-600">{totalInProgress}</div>
             <Text type="secondary">Đang tiến hành</Text>
           </div>
         </Card>

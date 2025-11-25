@@ -1,9 +1,4 @@
-import { Badge, Typography } from 'antd';
-
-const { Text } = Typography;
-
-const CalendarCell = ({ value, onClick, appointments }) => {
-
+const CalendarCell = ({ _value, _onClick, _appointments }) => {
   // const confirmedCount = appointments.filter(
   //   (item) => item.status === 'confirmed'
   // ).length;
@@ -13,7 +8,7 @@ const CalendarCell = ({ value, onClick, appointments }) => {
   // const completedCount = appointments.filter(
   //   (item) => item.status === 'completed'
   // ).length;
-  
+
   return (
     // <div
     //   onClick={() => onClick(value)}
@@ -45,7 +40,7 @@ const CalendarCell = ({ value, onClick, appointments }) => {
     //     </div>
     //   </div>
     // </div>
-    <><p>Chào</p></>
+    <p>Chào</p>
   );
 };
 

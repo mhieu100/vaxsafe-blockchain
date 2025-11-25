@@ -1,27 +1,9 @@
+import { CheckSquareOutlined, LoadingOutlined, PlusOutlined } from '@ant-design/icons';
+import { FooterToolbar, ModalForm, ProFormText, ProFormTextArea } from '@ant-design/pro-components';
+import { Col, ConfigProvider, Form, Modal, message, notification, Row, Upload } from 'antd';
+import enUS from 'antd/es/calendar/locale/en_US';
 import { useEffect, useState } from 'react';
 import { v4 as uuidv4 } from 'uuid';
-import {
-  FooterToolbar,
-  ModalForm,
-  ProFormText,
-  ProFormTextArea,
-} from '@ant-design/pro-components';
-import {
-  Col,
-  ConfigProvider,
-  Form,
-  message,
-  Modal,
-  notification,
-  Row,
-  Upload,
-} from 'antd';
-import {
-  CheckSquareOutlined,
-  LoadingOutlined,
-  PlusOutlined,
-} from '@ant-design/icons';
-import enUS from 'antd/es/calendar/locale/en_US';
 
 import { callCreateCenter, callUpdateCenter } from '../../config/api.center';
 import { callUploadSingleFile } from '../../config/api.file';
@@ -73,17 +55,13 @@ const ModalCenter = (props) => {
     if (!file.originFileObj) {
       setPreviewImage(file.url);
       setPreviewOpen(true);
-      setPreviewTitle(
-        file.name || file.url.substring(file.url.lastIndexOf('/') + 1)
-      );
+      setPreviewTitle(file.name || file.url.substring(file.url.lastIndexOf('/') + 1));
       return;
     }
     getBase64(file.originFileObj, (url) => {
       setPreviewImage(url);
       setPreviewOpen(true);
-      setPreviewTitle(
-        file.name || file.url.substring(file.url.lastIndexOf('/') + 1)
-      );
+      setPreviewTitle(file.name || file.url.substring(file.url.lastIndexOf('/') + 1));
     });
   };
 
@@ -101,8 +79,7 @@ const ModalCenter = (props) => {
     if (info.file.status === 'error') {
       setLoadingUpload(false);
       message.error(
-        info?.file?.error?.event?.message ??
-          'An error occurred while uploading the file.'
+        info?.file?.error?.event?.message ?? 'An error occurred while uploading the file.'
       );
     }
   };
@@ -121,7 +98,7 @@ const ModalCenter = (props) => {
 
   const handleUploadFileLogo = async ({ file, onSuccess, onError }) => {
     const res = await callUploadSingleFile(file, 'center');
-    if (res && res.data) {
+    if (res?.data) {
       setDataLogo([
         {
           name: res.data.fileName,
@@ -160,7 +137,7 @@ const ModalCenter = (props) => {
       name,
       address,
       phoneNumber,
-      capacity: parseInt(capacity),
+      capacity: parseInt(capacity, 10),
       workingHours,
       image: dataLogo[0].name,
     };
@@ -198,9 +175,7 @@ const ModalCenter = (props) => {
       {openModal && (
         <>
           <ModalForm
-            title={
-              <>{dataInit?.centerId ? 'Update Center' : 'Create New Center'}</>
-            }
+            title={dataInit?.centerId ? 'Update Center' : 'Create New Center'}
             open={openModal}
             modalProps={{
               onCancel: () => {
@@ -234,9 +209,7 @@ const ModalCenter = (props) => {
                 <ProFormText
                   label="Center Name"
                   name="name"
-                  rules={[
-                    { required: true, message: 'Please do not leave blank' },
-                  ]}
+                  rules={[{ required: true, message: 'Please do not leave blank' }]}
                   placeholder="Enter center name..."
                 />
               </Col>
@@ -244,9 +217,7 @@ const ModalCenter = (props) => {
                 <ProFormText
                   label="Phone Number"
                   name="phoneNumber"
-                  rules={[
-                    { required: true, message: 'Please do not leave blank' },
-                  ]}
+                  rules={[{ required: true, message: 'Please do not leave blank' }]}
                   placeholder="Center phone number..."
                 />
               </Col>
@@ -254,9 +225,7 @@ const ModalCenter = (props) => {
                 <ProFormText
                   label="Capacity"
                   name="capacity"
-                  rules={[
-                    { required: true, message: 'Please do not leave blank' },
-                  ]}
+                  rules={[{ required: true, message: 'Please do not leave blank' }]}
                   placeholder="Enter capacity..."
                 />
               </Col>
@@ -264,18 +233,12 @@ const ModalCenter = (props) => {
                 <ProFormText
                   label="Working Hours"
                   name="workingHours"
-                  rules={[
-                    { required: true, message: 'Please do not leave blank' },
-                  ]}
+                  rules={[{ required: true, message: 'Please do not leave blank' }]}
                   placeholder="Center working hours..."
                 />
               </Col>
               <Col span={8}>
-                <Form.Item
-                  labelCol={{ span: 24 }}
-                  label="Logo Image"
-                  name="logo"
-                >
+                <Form.Item labelCol={{ span: 24 }} label="Logo Image" name="logo">
                   <ConfigProvider locale={enUS}>
                     <Upload
                       name="logo"
@@ -314,9 +277,7 @@ const ModalCenter = (props) => {
                 <ProFormTextArea
                   label="Address"
                   name="address"
-                  rules={[
-                    { required: true, message: 'Please do not leave blank' },
-                  ]}
+                  rules={[{ required: true, message: 'Please do not leave blank' }]}
                   placeholder="Enter company address..."
                   fieldProps={{
                     autoSize: { minRows: 4 },

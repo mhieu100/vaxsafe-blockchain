@@ -1,32 +1,32 @@
-import { useState } from 'react';
 import {
-  Form,
-  Input,
-  Button,
-  Card,
-  Typography,
-  Divider,
-  message,
-  Checkbox,
-  Select,
-  DatePicker,
-  InputNumber,
-  Row,
-  Col,
-} from 'antd';
-import {
-  UserOutlined,
+  FacebookOutlined,
+  GoogleOutlined,
+  HomeOutlined,
+  IdcardOutlined,
   LockOutlined,
   MailOutlined,
-  GoogleOutlined,
-  FacebookOutlined,
   PhoneOutlined,
-  IdcardOutlined,
-  HomeOutlined,
+  UserOutlined,
 } from '@ant-design/icons';
+import {
+  Button,
+  Card,
+  Checkbox,
+  Col,
+  DatePicker,
+  Divider,
+  Form,
+  Input,
+  InputNumber,
+  message,
+  Row,
+  Select,
+  Typography,
+} from 'antd';
+import dayjs from 'dayjs';
+import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { callRegister } from '../../config/api.auth';
-import dayjs from 'dayjs';
 
 const { Title, Text } = Typography;
 
@@ -42,7 +42,7 @@ const Register = () => {
   const handleRegister = async (values) => {
     try {
       setIsSubmitting(true);
-      
+
       const payload = {
         user: {
           fullName: values.fullName,
@@ -62,7 +62,7 @@ const Register = () => {
       };
 
       const response = await callRegister(payload);
-      
+
       if (response?.data) {
         message.success('Registration successful! Please login.');
         navigate('/login');
@@ -83,9 +83,7 @@ const Register = () => {
           <Title level={2} className="mb-2">
             Create Account
           </Title>
-          <Text type="secondary">
-            Join SafeVax and start your vaccination journey
-          </Text>
+          <Text type="secondary">Join SafeVax and start your vaccination journey</Text>
         </div>
 
         <Form
@@ -141,11 +139,7 @@ const Register = () => {
                   },
                 ]}
               >
-                <Input.Password
-                  prefix={<LockOutlined />}
-                  placeholder="Password"
-                  size="large"
-                />
+                <Input.Password prefix={<LockOutlined />} placeholder="Password" size="large" />
               </Form.Item>
             </Col>
 
@@ -161,9 +155,7 @@ const Register = () => {
                       if (!value || getFieldValue('password') === value) {
                         return Promise.resolve();
                       }
-                      return Promise.reject(
-                        new Error('Passwords do not match!')
-                      );
+                      return Promise.reject(new Error('Passwords do not match!'));
                     },
                   }),
                 ]}
@@ -182,15 +174,9 @@ const Register = () => {
               <Form.Item
                 name="address"
                 label="Address"
-                rules={[
-                  { required: true, message: 'Please input your address!' },
-                ]}
+                rules={[{ required: true, message: 'Please input your address!' }]}
               >
-                <Input
-                  prefix={<HomeOutlined />}
-                  placeholder="Số 10, đường Kim Mã"
-                  size="large"
-                />
+                <Input prefix={<HomeOutlined />} placeholder="Số 10, đường Kim Mã" size="large" />
               </Form.Item>
             </Col>
             <Col xs={12} md={6}>
@@ -268,9 +254,7 @@ const Register = () => {
               <Form.Item
                 name="birthday"
                 label="Date of Birth"
-                rules={[
-                  { required: true, message: 'Please select your birthday!' },
-                ]}
+                rules={[{ required: true, message: 'Please select your birthday!' }]}
               >
                 <DatePicker
                   placeholder="Select birthday"
@@ -287,9 +271,7 @@ const Register = () => {
               <Form.Item
                 name="gender"
                 label="Gender"
-                rules={[
-                  { required: true, message: 'Please select your gender!' },
-                ]}
+                rules={[{ required: true, message: 'Please select your gender!' }]}
               >
                 <Select
                   placeholder="Select gender"
@@ -326,9 +308,7 @@ const Register = () => {
               <Form.Item
                 name="bloodType"
                 label="Blood Type"
-                rules={[
-                  { required: true, message: 'Please select your blood type!' },
-                ]}
+                rules={[{ required: true, message: 'Please select your blood type!' }]}
               >
                 <Select
                   placeholder="Select blood type"
@@ -352,9 +332,7 @@ const Register = () => {
                 validator: (_, value) =>
                   value
                     ? Promise.resolve()
-                    : Promise.reject(
-                        new Error('Please accept the terms and conditions')
-                      ),
+                    : Promise.reject(new Error('Please accept the terms and conditions')),
               },
             ]}
             className="mb-4"
@@ -365,10 +343,7 @@ const Register = () => {
                 Terms of Service
               </Link>{' '}
               and{' '}
-              <Link
-                to="/privacy"
-                className="text-blue-600 hover:text-blue-800"
-              >
+              <Link to="/privacy" className="text-blue-600 hover:text-blue-800">
                 Privacy Policy
               </Link>
             </Checkbox>
@@ -413,10 +388,7 @@ const Register = () => {
         <div className="text-center">
           <Text type="secondary">
             Already have an account?{' '}
-            <Link
-              to="/login"
-              className="text-blue-600 hover:text-blue-800 font-medium"
-            >
+            <Link to="/login" className="text-blue-600 hover:text-blue-800 font-medium">
               Sign in
             </Link>
           </Text>

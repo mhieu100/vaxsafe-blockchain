@@ -1,4 +1,3 @@
-
 import { ProTable } from '@ant-design/pro-components';
 
 const DataTable = ({
@@ -19,7 +18,7 @@ const DataTable = ({
   actionRef,
   dateFormatter = 'string',
   rowSelection,
-  expandable
+  expandable,
 }) => {
   return (
     <ProTable

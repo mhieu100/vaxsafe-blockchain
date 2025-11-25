@@ -1,32 +1,13 @@
-import { useRef, useState } from 'react';
-import {
-  Button,
-  message,
-  notification,
-  Popconfirm,
-  Space,
-  Tag,
-  Tooltip,
-  Switch,
-} from 'antd';
-import {
-  DeleteOutlined,
-  EditOutlined,
-  PlusOutlined,
-  EyeOutlined,
-} from '@ant-design/icons';
-import { sfLike } from 'spring-filter-query-builder';
-import queryString from 'query-string';
+import { DeleteOutlined, EditOutlined, EyeOutlined, PlusOutlined } from '@ant-design/icons';
+import { Button, message, notification, Popconfirm, Space, Switch, Tag, Tooltip } from 'antd';
 import dayjs from 'dayjs';
-
-import {
-  callDeleteNews,
-  callPublishNews,
-  callUnpublishNews,
-} from '../../config/api.news';
+import queryString from 'query-string';
+import { useRef, useState } from 'react';
+import { sfLike } from 'spring-filter-query-builder';
 import DataTable from '../../components/data-table';
-import { useNewsStore } from '../../stores/useNewsStore';
 import ModalNews from '../../components/modal/modal.news';
+import { callDeleteNews, callPublishNews, callUnpublishNews } from '../../config/api.news';
+import { useNewsStore } from '../../stores/useNewsStore';
 
 const NewsPage = () => {
   const tableRef = useRef();
@@ -62,13 +43,13 @@ const NewsPage = () => {
     try {
       if (record.isPublished) {
         const res = await callUnpublishNews(record.id);
-        if (res && res.data) {
+        if (res?.data) {
           message.success('Chuyển tin tức thành nháp');
           reloadTable();
         }
       } else {
         const res = await callPublishNews(record.id);
-        if (res && res.data) {
+        if (res?.data) {
           message.success('Xuất bản tin tức thành công');
           reloadTable();
         }
@@ -87,7 +68,7 @@ const NewsPage = () => {
       key: 'index',
       width: 50,
       align: 'center',
-      render: (text, record, index) => {
+      render: (_text, _record, index) => {
         return <>{index + 1 + (meta.page - 1) * meta.pageSize}</>;
       },
       hideInSearch: true,
@@ -111,9 +92,7 @@ const NewsPage = () => {
       sorter: true,
       width: 250,
       render: (text) => (
-        <Tooltip title={text}>
-          {text?.length > 50 ? text.slice(0, 50) + '...' : text}
-        </Tooltip>
+        <Tooltip title={text}>{text?.length > 50 ? `${text.slice(0, 50)}...` : text}</Tooltip>
       ),
     },
     {
@@ -130,18 +109,11 @@ const NewsPage = () => {
           SEASONAL_DISEASES: 'cyan',
           VACCINATION_SCHEDULE: 'geekblue',
         };
-        return (
-          <Tag color={colors[category] || 'default'}>
-            {category?.replace(/_/g, ' ')}
-          </Tag>
-        );
+        return <Tag color={colors[category] || 'default'}>{category?.replace(/_/g, ' ')}</Tag>;
       },
-      renderFormItem: (item, { type, defaultRender, ...rest }, form) => {
+      renderFormItem: (_item, { type, defaultRender, ...rest }, _form) => {
         return (
-          <select
-            {...rest}
-            style={{ width: '100%', padding: '4px 11px', borderRadius: 6 }}
-          >
+          <select {...rest} style={{ width: '100%', padding: '4px 11px', borderRadius: 6 }}>
             <option value="">Tất cả</option>
             <option value="VACCINE_INFO">Vaccine Info</option>
             <option value="CHILDREN_HEALTH">Children Health</option>
@@ -159,9 +131,7 @@ const NewsPage = () => {
       dataIndex: 'author',
       width: 150,
       render: (text) => (
-        <Tooltip title={text}>
-          {text?.length > 20 ? text.slice(0, 20) + '...' : text}
-        </Tooltip>
+        <Tooltip title={text}>{text?.length > 20 ? `${text.slice(0, 20)}...` : text}</Tooltip>
       ),
     },
     {
@@ -185,9 +155,7 @@ const NewsPage = () => {
       align: 'center',
       hideInSearch: true,
       render: (isFeatured) => (
-        <Tag color={isFeatured ? 'gold' : 'default'}>
-          {isFeatured ? 'Có' : 'Không'}
-        </Tag>
+        <Tag color={isFeatured ? 'gold' : 'default'}>{isFeatured ? 'Có' : 'Không'}</Tag>
       ),
     },
     {
@@ -211,15 +179,14 @@ const NewsPage = () => {
       width: 150,
       sorter: true,
       hideInSearch: true,
-      render: (publishedAt) =>
-        publishedAt ? dayjs(publishedAt).format('DD/MM/YYYY HH:mm') : '-',
+      render: (publishedAt) => (publishedAt ? dayjs(publishedAt).format('DD/MM/YYYY HH:mm') : '-'),
     },
     {
       title: 'Hành động',
       width: 120,
       align: 'center',
       hideInSearch: true,
-      render: (text, record) => {
+      render: (_text, record) => {
         return (
           <Space>
             <Tooltip title="Chỉnh sửa">
@@ -244,9 +211,7 @@ const NewsPage = () => {
               cancelText="Hủy"
             >
               <Tooltip title="Xóa">
-                <DeleteOutlined
-                  style={{ fontSize: 20, color: 'red', cursor: 'pointer' }}
-                />
+                <DeleteOutlined style={{ fontSize: 20, color: 'red', cursor: 'pointer' }} />
               </Tooltip>
             </Popconfirm>
           </Space>
@@ -255,7 +220,7 @@ const NewsPage = () => {
     },
   ];
 
-  const buildQuery = (params, sort, filter) => {
+  const buildQuery = (params, sort, _filter) => {
     const clone = { ...params };
     const q = {
       page: clone.current, // Backend configured for one-indexed pages
@@ -279,13 +244,13 @@ const NewsPage = () => {
     }
 
     // Build sort
-    if (sort && sort.title) {
+    if (sort?.title) {
       q.sort = `title,${sort.title === 'ascend' ? 'asc' : 'desc'}`;
     }
-    if (sort && sort.viewCount) {
+    if (sort?.viewCount) {
       q.sort = `viewCount,${sort.viewCount === 'ascend' ? 'asc' : 'desc'}`;
     }
-    if (sort && sort.publishedAt) {
+    if (sort?.publishedAt) {
       q.sort = `publishedAt,${sort.publishedAt === 'ascend' ? 'asc' : 'desc'}`;
     }
     if (!q.sort) {
@@ -324,9 +289,7 @@ const NewsPage = () => {
             );
           },
         }}
-        rowClassName={(record, index) =>
-          index % 2 === 0 ? 'table-row-even' : 'table-row-odd'
-        }
+        rowClassName={(_record, index) => (index % 2 === 0 ? 'table-row-even' : 'table-row-odd')}
         toolBarRender={() => [
           <Button
             key="button"

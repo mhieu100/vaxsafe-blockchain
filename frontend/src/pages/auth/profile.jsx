@@ -1,19 +1,19 @@
-import { useState } from 'react';
-import { Row, Col, Card, Avatar, Badge, Button, Typography, Statistic, Skeleton } from 'antd';
 import {
-  UserOutlined,
+  CalendarOutlined,
   CameraOutlined,
   EditOutlined,
-  SettingOutlined,
-  MailOutlined,
-  CalendarOutlined,
-  TrophyOutlined,
-  ShoppingOutlined,
-  HeartOutlined,
   GiftOutlined,
+  HeartOutlined,
+  MailOutlined,
+  SettingOutlined,
+  ShoppingOutlined,
+  TrophyOutlined,
+  UserOutlined,
 } from '@ant-design/icons';
-import useAccountStore from '../../stores/useAccountStore';
+import { Avatar, Badge, Button, Card, Col, Row, Skeleton, Statistic, Typography } from 'antd';
+import { useState } from 'react';
 import TabEditUser from '../../components/tab/tab.edit-user';
+import useAccountStore from '../../stores/useAccountStore';
 
 const { Title, Text } = Typography;
 
@@ -55,11 +55,7 @@ const Profile = () => {
                   className="absolute bottom-2 right-2 bg-white text-gray-600 border-2 border-white shadow-lg hover:bg-blue-50"
                 />
                 {isAuthenticated && (
-                  <Badge
-                    status="success"
-                    className="absolute top-2 right-2"
-                    title="Online"
-                  />
+                  <Badge status="success" className="absolute top-2 right-2" title="Online" />
                 )}
               </div>
 
@@ -75,9 +71,7 @@ const Profile = () => {
 
                     <div className="flex items-center gap-2 mb-2">
                       <MailOutlined className="text-gray-400" />
-                      <Text className="text-gray-600">
-                        {user?.email || '--'}
-                      </Text>
+                      <Text className="text-gray-600">{user?.email || '--'}</Text>
                     </div>
 
                     <div className="flex items-center gap-4 text-sm text-gray-500">
@@ -125,7 +119,9 @@ const Profile = () => {
                     prefix={<ShoppingOutlined className="text-blue-500" />}
                     valueStyle={{ color: '#1890ff', fontSize: '20px' }}
                   />
-                ) : <Skeleton active paragraph={false} title={{ width: 80 }} />}
+                ) : (
+                  <Skeleton active paragraph={false} title={{ width: 80 }} />
+                )}
               </div>
               <div className="text-center">
                 {isAuthenticated ? (
@@ -135,7 +131,9 @@ const Profile = () => {
                     prefix={<HeartOutlined className="text-red-500" />}
                     valueStyle={{ color: '#f5222d', fontSize: '20px' }}
                   />
-                ) : <Skeleton active paragraph={false} title={{ width: 90 }} />}
+                ) : (
+                  <Skeleton active paragraph={false} title={{ width: 90 }} />
+                )}
               </div>
               <div className="text-center">
                 {isAuthenticated ? (
@@ -145,7 +143,9 @@ const Profile = () => {
                     prefix={<GiftOutlined className="text-orange-500" />}
                     valueStyle={{ color: '#fa8c16', fontSize: '20px' }}
                   />
-                ) : <Skeleton active paragraph={false} title={{ width: 100 }} />}
+                ) : (
+                  <Skeleton active paragraph={false} title={{ width: 100 }} />
+                )}
               </div>
               <div className="text-center">
                 {isAuthenticated ? (
@@ -156,7 +156,9 @@ const Profile = () => {
                     suffix="USD"
                     valueStyle={{ color: '#52c41a', fontSize: '20px' }}
                   />
-                ) : <Skeleton active paragraph={false} title={{ width: 90 }} />}
+                ) : (
+                  <Skeleton active paragraph={false} title={{ width: 90 }} />
+                )}
               </div>
             </div>
           </div>

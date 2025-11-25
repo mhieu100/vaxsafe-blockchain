@@ -1,19 +1,17 @@
+import { DeleteOutlined } from '@ant-design/icons';
+import { Button, Col } from 'antd';
+import { useTranslation } from 'react-i18next';
 import { useCartStore } from '@/stores/useCartStore';
-import { DeleteOutlined } from "@ant-design/icons";
-import { Button, Col } from "antd";
-import { useTranslation } from "react-i18next";
-import CartItem from "./CartItem";
+import CartItem from './CartItem';
 
 const ListItemSection = () => {
-  const { t } = useTranslation("common");
+  const { t } = useTranslation('common');
   const { items, clearCart } = useCartStore();
 
   return (
     <Col xs={24} lg={16}>
       <div className="flex justify-between items-center mb-4">
-        <span className="text-base sm:text-lg font-semibold">
-          {t("cart.cartItems")}
-        </span>
+        <span className="text-base sm:text-lg font-semibold">{t('cart.cartItems')}</span>
         <Button
           type="text"
           danger
@@ -22,7 +20,7 @@ const ListItemSection = () => {
           size="small"
           className="text-xs sm:text-sm"
         >
-          <DeleteOutlined /> {t("cart.clearCart")}
+          <DeleteOutlined /> {t('cart.clearCart')}
         </Button>
       </div>
 

@@ -1,19 +1,18 @@
-import { Outlet, useLocation, useNavigate } from 'react-router-dom';
-import { useEffect, useState } from 'react';
 import {
-  UserOutlined,
-  MedicineBoxOutlined,
-  DashboardOutlined,
-  TeamOutlined,
-  SafetyOutlined,
-  KeyOutlined,
   BankOutlined,
+  DashboardOutlined,
+  KeyOutlined,
   LogoutOutlined,
-  SafetyCertificateOutlined,
+  MedicineBoxOutlined,
   NotificationOutlined,
+  SafetyCertificateOutlined,
+  SafetyOutlined,
+  TeamOutlined,
+  UserOutlined,
 } from '@ant-design/icons';
-
-import { Avatar, Badge, Dropdown, message, Menu, Layout } from 'antd';
+import { Avatar, Badge, Dropdown, Layout, Menu, message } from 'antd';
+import { useEffect, useState } from 'react';
+import { Outlet, useLocation, useNavigate } from 'react-router-dom';
 import { callLogout } from '../../config/api.auth';
 import { useAccountStore } from '../../stores/useAccountStore';
 
@@ -130,9 +129,7 @@ const LayoutAdmin = () => {
         <div className="p-4 h-16 flex items-center">
           <div className="flex items-center gap-2">
             <SafetyCertificateOutlined className="text-xl text-blue-500" />
-            {!collapsed && (
-              <span className="text-lg font-bold text-gray-900">VaxChain</span>
-            )}
+            {!collapsed && <span className="text-lg font-bold text-gray-900">VaxChain</span>}
           </div>
         </div>
         <Menu
@@ -165,9 +162,7 @@ const LayoutAdmin = () => {
               </Badge>
               <div className="hidden sm:block">
                 <div className="text-sm font-medium">{user?.fullName}</div>
-                <div className="text-xs text-gray-500">
-                  {getRole(user?.role)}
-                </div>
+                <div className="text-xs text-gray-500">{getRole(user?.role)}</div>
               </div>
             </div>
           </Dropdown>

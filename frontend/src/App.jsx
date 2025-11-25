@@ -1,21 +1,16 @@
-import { RouterProvider } from 'react-router-dom';
 import { useEffect } from 'react';
-
-import useAccountStore from './stores/useAccountStore';
+import { RouterProvider } from 'react-router-dom';
 import router from './routes';
+import useAccountStore from './stores/useAccountStore';
 
 const App = () => {
-  const { isAuthenticated, fetchAccount } = useAccountStore();
-  
+  const { fetchAccount } = useAccountStore();
+
   useEffect(() => {
     fetchAccount();
-  }, [fetchAccount, isAuthenticated]);
+  }, [fetchAccount]);
 
-  return (
-    <>
-      <RouterProvider router={router} />
-    </>
-  );
+  return <RouterProvider router={router} />;
 };
 
 export default App;

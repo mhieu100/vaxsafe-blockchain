@@ -1,11 +1,11 @@
 import {
-  TwitterOutlined,
-  LinkedinOutlined,
   GithubOutlined,
+  LinkedinOutlined,
   SafetyCertificateOutlined,
+  TwitterOutlined,
 } from '@ant-design/icons';
-import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
+import { Link } from 'react-router-dom';
 
 const Footer = () => {
   const { t } = useTranslation('common');
@@ -19,17 +19,15 @@ const Footer = () => {
               <SafetyCertificateOutlined className="text-blue-600 text-xl mr-2" />
               <span className="text-lg font-bold text-gray-900">SafeVax</span>
             </div>
-            <p className="mt-4 text-sm text-gray-500">
-              {t('footer.protecting')}
-            </p>
+            <p className="mt-4 text-sm text-gray-500">{t('footer.protecting')}</p>
             <div className="mt-4 flex space-x-4">
-              <a href="#" className="text-gray-400 hover:text-gray-500">
+              <a href="https://twitter.com" className="text-gray-400 hover:text-gray-500">
                 <TwitterOutlined />
               </a>
-              <a href="#" className="text-gray-400 hover:text-gray-500">
+              <a href="https://linkedin.com" className="text-gray-400 hover:text-gray-500">
                 <LinkedinOutlined />
               </a>
-              <a href="#" className="text-gray-400 hover:text-gray-500">
+              <a href="https://github.com" className="text-gray-400 hover:text-gray-500">
                 <GithubOutlined />
               </a>
             </div>
@@ -41,34 +39,22 @@ const Footer = () => {
             </h3>
             <ul className="mt-4 space-y-2">
               <li>
-                <Link
-                  to="/individual"
-                  className="text-sm text-gray-500 hover:text-blue-600"
-                >
+                <Link to="/individual" className="text-sm text-gray-500 hover:text-blue-600">
                   {t('footer.forIndividuals')}
                 </Link>
               </li>
               <li>
-                <Link
-                  to="/healthcare"
-                  className="text-sm text-gray-500 hover:text-blue-600"
-                >
+                <Link to="/healthcare" className="text-sm text-gray-500 hover:text-blue-600">
                   {t('footer.forHealthcare')}
                 </Link>
               </li>
               <li>
-                <Link
-                  to="/government"
-                  className="text-sm text-gray-500 hover:text-blue-600"
-                >
+                <Link to="/government" className="text-sm text-gray-500 hover:text-blue-600">
                   {t('footer.forGovernment')}
                 </Link>
               </li>
               <li>
-                <Link
-                  to="/travel"
-                  className="text-sm text-gray-500 hover:text-blue-600"
-                >
+                <Link to="/travel" className="text-sm text-gray-500 hover:text-blue-600">
                   {t('footer.forTravel')}
                 </Link>
               </li>
@@ -81,34 +67,22 @@ const Footer = () => {
             </h3>
             <ul className="mt-4 space-y-2">
               <li>
-                <Link
-                  to="/docs"
-                  className="text-sm text-gray-500 hover:text-blue-600"
-                >
+                <Link to="/docs" className="text-sm text-gray-500 hover:text-blue-600">
                   {t('footer.documentation')}
                 </Link>
               </li>
               <li>
-                <Link
-                  to="/api"
-                  className="text-sm text-gray-500 hover:text-blue-600"
-                >
+                <Link to="/api" className="text-sm text-gray-500 hover:text-blue-600">
                   {t('footer.api')}
                 </Link>
               </li>
               <li>
-                <Link
-                  to="/blog"
-                  className="text-sm text-gray-500 hover:text-blue-600"
-                >
+                <Link to="/blog" className="text-sm text-gray-500 hover:text-blue-600">
                   {t('footer.blog')}
                 </Link>
               </li>
               <li>
-                <Link
-                  to="/support"
-                  className="text-sm text-gray-500 hover:text-blue-600"
-                >
+                <Link to="/support" className="text-sm text-gray-500 hover:text-blue-600">
                   {t('footer.support')}
                 </Link>
               </li>
@@ -121,34 +95,22 @@ const Footer = () => {
             </h3>
             <ul className="mt-4 space-y-2">
               <li>
-                <Link
-                  to="/about"
-                  className="text-sm text-gray-500 hover:text-blue-600"
-                >
+                <Link to="/about" className="text-sm text-gray-500 hover:text-blue-600">
                   {t('footer.aboutUs')}
                 </Link>
               </li>
               <li>
-                <Link
-                  to="/careers"
-                  className="text-sm text-gray-500 hover:text-blue-600"
-                >
+                <Link to="/careers" className="text-sm text-gray-500 hover:text-blue-600">
                   {t('footer.careers')}
                 </Link>
               </li>
               <li>
-                <Link
-                  to="/privacy"
-                  className="text-sm text-gray-500 hover:text-blue-600"
-                >
+                <Link to="/privacy" className="text-sm text-gray-500 hover:text-blue-600">
                   {t('footer.privacyPolicy')}
                 </Link>
               </li>
               <li>
-                <Link
-                  to="/terms"
-                  className="text-sm text-gray-500 hover:text-blue-600"
-                >
+                <Link to="/terms" className="text-sm text-gray-500 hover:text-blue-600">
                   {t('footer.termsOfService')}
                 </Link>
               </li>

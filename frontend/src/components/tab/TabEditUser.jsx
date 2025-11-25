@@ -1,4 +1,4 @@
-import { Button, Col, Form, Input, Row, Select, Typography, message } from 'antd';
+import { Button, Col, Form, Input, message, Row, Select, Typography } from 'antd';
 import { useEffect, useState } from 'react';
 import { useAccountStore } from '../../stores/useAccountStore';
 
@@ -37,7 +37,7 @@ const TabEditUser = ({ editMode, setEditMode }) => {
 
       // TODO: Call API to update user profile
       // const response = await updateAccount(payload);
-      
+
       // For now, just update local store
       if (updateUserInfo) {
         updateUserInfo(values);
@@ -90,11 +90,7 @@ const TabEditUser = ({ editMode, setEditMode }) => {
               </Form.Item>
             </Col>
             <Col xs={24} sm={12}>
-              <Form.Item
-                label="Email"
-                name="email"
-                rules={[{ required: true, type: 'email' }]}
-              >
+              <Form.Item label="Email" name="email" rules={[{ required: true, type: 'email' }]}>
                 <Input disabled />
               </Form.Item>
             </Col>
@@ -171,19 +167,11 @@ const TabEditUser = ({ editMode, setEditMode }) => {
           </Row>
 
           <Form.Item label="Lifestyle Notes" name="lifestyleNotes">
-            <Input.TextArea
-              rows={3}
-              placeholder="Ghi chú về lối sống, sở thích..."
-            />
+            <Input.TextArea rows={3} placeholder="Ghi chú về lối sống, sở thích..." />
           </Form.Item>
 
           <div className="flex gap-2">
-            <Button
-              type="primary"
-              htmlType="submit"
-              loading={loading}
-              disabled={loading}
-            >
+            <Button type="primary" htmlType="submit" loading={loading} disabled={loading}>
               Save Changes
             </Button>
             <Button onClick={() => setEditMode(false)} disabled={loading}>
@@ -216,17 +204,15 @@ const TabEditUser = ({ editMode, setEditMode }) => {
                 {user?.gender === 'MALE'
                   ? 'Nam'
                   : user?.gender === 'FEMALE'
-                  ? 'Nữ'
-                  : user?.gender === 'OTHER'
-                  ? 'Khác'
-                  : '--'}
+                    ? 'Nữ'
+                    : user?.gender === 'OTHER'
+                      ? 'Khác'
+                      : '--'}
               </div>
             </div>
             <div>
               <Text type="secondary">Identity Number</Text>
-              <div className="text-base font-medium">
-                {user?.identityNumber || '--'}
-              </div>
+              <div className="text-base font-medium">{user?.identityNumber || '--'}</div>
             </div>
             <div>
               <Text type="secondary">Blood Type</Text>
@@ -250,9 +236,7 @@ const TabEditUser = ({ editMode, setEditMode }) => {
             </div>
             <div>
               <Text type="secondary">Insurance Number</Text>
-              <div className="text-base font-medium">
-                {user?.insuranceNumber || '--'}
-              </div>
+              <div className="text-base font-medium">{user?.insuranceNumber || '--'}</div>
             </div>
           </div>
 

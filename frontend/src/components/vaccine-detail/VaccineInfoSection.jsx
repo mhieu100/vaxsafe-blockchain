@@ -1,29 +1,18 @@
- 
-import { useState } from 'react';
-import { formatPrice } from '@/utils/formatPrice';
 import {
-  Row,
-  Col,
-  Typography,
-  Button,
-  InputNumber,
-  Card,
-  Image,
-  Rate,
-  Badge,
- message } from 'antd';
-import {
-  ShoppingCartOutlined,
-  HeartOutlined,
-  ShareAltOutlined,
   CheckCircleOutlined,
-  TruckOutlined,
-  SafetyOutlined,
   ClockCircleOutlined,
+  HeartOutlined,
+  SafetyOutlined,
+  ShareAltOutlined,
+  ShoppingCartOutlined,
+  TruckOutlined,
 } from '@ant-design/icons';
+import { Badge, Button, Card, Col, Image, InputNumber, message, Rate, Row, Typography } from 'antd';
+import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { useCartStore } from '@/stores/useCartStore';
-import { useTranslation } from 'react-i18next';
+import { formatPrice } from '@/utils/formatPrice';
 
 const { Title, Text, Paragraph } = Typography;
 
@@ -77,9 +66,7 @@ const VaccineInfoSection = ({ vaccine }) => {
               <div
                 key={index}
                 className={`cursor-pointer rounded-lg overflow-hidden border-2 ${
-                  selectedImage === index
-                    ? 'border-blue-500'
-                    : 'border-gray-200'
+                  selectedImage === index ? 'border-blue-500' : 'border-gray-200'
                 }`}
                 onClick={() => setSelectedImage(index)}
               >
@@ -97,9 +84,7 @@ const VaccineInfoSection = ({ vaccine }) => {
       <Col xs={24} lg={12}>
         <div className="space-y-6">
           <div>
-            <p className="text-sm uppercase tracking-wide text-gray-500">
-              {vaccine.country}
-            </p>
+            <p className="text-sm uppercase tracking-wide text-gray-500">{vaccine.country}</p>
             <Title level={1} className="mb-2">
               {vaccine.name}
             </Title>

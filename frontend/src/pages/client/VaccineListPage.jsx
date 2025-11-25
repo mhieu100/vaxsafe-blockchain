@@ -1,5 +1,5 @@
-import { useState } from 'react';
 import { Skeleton } from 'antd';
+import { useState } from 'react';
 import LeftFilterSection from '../../components/filter/LeftFilterSection';
 import TopFilterSection from '../../components/filter/TopFilterSection';
 import ListVaccineSection from '../../components/list/ListVaccineSection';

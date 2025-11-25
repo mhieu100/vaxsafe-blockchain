@@ -1,10 +1,10 @@
-import { useParams, useNavigate } from 'react-router-dom';
-import { useState, useEffect } from 'react';
-import { Breadcrumb, Spin } from 'antd';
 import { HomeOutlined, MenuOutlined } from '@ant-design/icons';
-import { callGetBySlug } from '../../services/vaccine.service';
-import VaccineInfoSection from '../../components/vaccine-detail/VaccineInfoSection';
+import { Breadcrumb, Spin } from 'antd';
+import { useEffect, useState } from 'react';
+import { useNavigate, useParams } from 'react-router-dom';
 import DescriptionVaccineSection from '../../components/vaccine-detail/DescriptionVaccineSection';
+import VaccineInfoSection from '../../components/vaccine-detail/VaccineInfoSection';
+import { callGetBySlug } from '../../services/vaccine.service';
 
 const VaccineDetailPage = () => {
   const navigate = useNavigate();

@@ -21,5 +21,3 @@ export async function getBySlug(slug) {
 export const callFetchCountry = getCountries;
 export const callGetBySlug = getBySlug;
 export const callGetBySku = getBySlug; // Keep for backward compatibility
-
-

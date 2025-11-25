@@ -1,13 +1,13 @@
-import { useEffect, useRef, useState } from 'react';
 import { EditOutlined } from '@ant-design/icons';
-import { sfLike } from 'spring-filter-query-builder';
 import queryString from 'query-string';
+import { useEffect, useRef, useState } from 'react';
+import { sfLike } from 'spring-filter-query-builder';
 
 import DataTable from '../../components/data-table';
-import { useRoleStore } from '../../stores/useRoleStore';
+import ModalRole from '../../components/modal/modal.role';
 import { callFetchPermission } from '../../config/api.permission';
 import { groupByPermission } from '../../config/utils';
-import ModalRole from '../../components/modal/modal.role';
+import { useRoleStore } from '../../stores/useRoleStore';
 
 const RolePage = () => {
   const tableRef = useRef();
@@ -24,11 +24,11 @@ const RolePage = () => {
     const init = async () => {
       const res = await callFetchPermission('page=1&size=100');
       if (res.data?.result) {
-        setListPermissions(groupByPermission(res.data?.result))
+        setListPermissions(groupByPermission(res.data?.result));
       }
-    }
+    };
     init();
-  }, [])
+  }, []);
 
   const columns = [
     {
@@ -36,7 +36,7 @@ const RolePage = () => {
       key: 'index',
       width: 50,
       align: 'center',
-      render: (text, record, index) => {
+      render: (_text, _record, index) => {
         return <>{index + 1 + (meta.page - 1) * meta.pageSize}</>;
       },
       hideInSearch: true,
@@ -52,7 +52,6 @@ const RolePage = () => {
       hideInSearch: true,
       width: 50,
       render: (_value, entity) => (
-
         <EditOutlined
           style={{
             fontSize: 20,
@@ -63,7 +62,6 @@ const RolePage = () => {
             setOpenModal(true);
           }}
         />
-
       ),
     },
   ];
@@ -86,7 +84,7 @@ const RolePage = () => {
     }
 
     // Build sort
-    if (sort && sort.name) {
+    if (sort?.name) {
       q.sort = `name,${sort.name === 'ascend' ? 'asc' : 'desc'}`;
     }
     if (!q.sort) {
@@ -100,8 +98,8 @@ const RolePage = () => {
     <>
       <DataTable
         actionRef={tableRef}
-        headerTitle='List Role'
-        rowKey='id'
+        headerTitle="List Role"
+        rowKey="id"
         loading={isFetching}
         columns={columns}
         dataSource={roles}
@@ -124,7 +122,6 @@ const RolePage = () => {
           },
         }}
         rowSelection={false}
-
       />
       <ModalRole
         openModal={openModal}

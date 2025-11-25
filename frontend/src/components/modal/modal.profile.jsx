@@ -14,14 +14,7 @@ const ModalProfile = (props) => {
   const updateProfile = async (valuesForm) => {
     const { fullname, phone, birthday, address, email } = valuesForm;
 
-    const res = await callUpdateUser(
-      user.walletAddress,
-      fullname,
-      email,
-      phone,
-      birthday,
-      address
-    );
+    const res = await callUpdateUser(user.walletAddress, fullname, email, phone, birthday, address);
 
     if (res.data) {
       message.success('User updated successfully');
@@ -83,8 +76,12 @@ const ModalProfile = (props) => {
               />
             </Col>
             <Col span={12}>
-              <ProFormText label="Email" name="email" rules={[{ required: true, message: 'Please do not leave blank' }]}
-                placeholder="Enter email ..." />
+              <ProFormText
+                label="Email"
+                name="email"
+                rules={[{ required: true, message: 'Please do not leave blank' }]}
+                placeholder="Enter email ..."
+              />
             </Col>
             <Col span={12}>
               <ProFormText

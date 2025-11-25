@@ -61,7 +61,7 @@ const useAccountStore = create(
         // Clear all localStorage items
         localStorage.removeItem('access_token');
         localStorage.removeItem('account-storage');
-        
+
         set({
           isAuthenticated: false,
           user: {

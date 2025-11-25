@@ -1,4 +1,3 @@
- 
 import { Tabs, Typography } from 'antd';
 import { useTranslation } from 'react-i18next';
 

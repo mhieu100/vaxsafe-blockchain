@@ -1,49 +1,49 @@
-import { Typography } from 'antd';
 import {
-  UserOutlined,
-  HistoryOutlined,
   CalendarOutlined,
   HeartOutlined,
-  TeamOutlined,
+  HistoryOutlined,
   SafetyCertificateOutlined,
+  TeamOutlined,
+  UserOutlined,
 } from '@ant-design/icons';
+import { Typography } from 'antd';
 import TabEditUser from '../tab/TabEditUser';
-import VaccinationHistoryTab from './VaccinationHistoryTab';
 import AppointmentScheduleTab from './AppointmentScheduleTab';
-import HealthRemindersTab from './HealthRemindersTab';
 import FamilyManagerTab from './FamilyManagerTab';
+import HealthRemindersTab from './HealthRemindersTab';
+import VaccinationHistoryTab from './VaccinationHistoryTab';
 import VaccinePassportTab from './VaccinePassportTab';
 
 const { Title } = Typography;
 
 const ProfileTabs = ({ activeTab, editMode, setEditMode }) => {
   const tabConfig = {
-    '1': {
+    1: {
       title: 'Health Profile',
       icon: <UserOutlined className="text-xl" />,
       content: <TabEditUser editMode={editMode} setEditMode={setEditMode} />,
     },
-    '2': {
+    2: {
       title: 'Vaccination History',
       icon: <HistoryOutlined className="text-xl" />,
       content: <VaccinationHistoryTab />,
     },
-    '3': {
+    3: {
       title: 'Appointments',
       icon: <CalendarOutlined className="text-xl" />,
       content: <AppointmentScheduleTab />,
     },
-    '4': {
+    4: {
       title: 'Health Reminders',
       icon: <HeartOutlined className="text-xl" />,
       content: <HealthRemindersTab />,
     },
-    '5': {
+    5: {
       title: 'Family Manager',
       icon: <TeamOutlined className="text-xl" />,
       content: <FamilyManagerTab />,
     },
-    '6': {
+    6: {
       title: 'Vaccine Passport',
       icon: <SafetyCertificateOutlined className="text-xl" />,
       content: <VaccinePassportTab />,

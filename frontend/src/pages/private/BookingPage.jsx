@@ -1,12 +1,12 @@
-import { useState, useEffect } from 'react';
 import { Form, message } from 'antd';
+import { useEffect, useState } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
-import TopCheckoutSection from '../../components/booking/TopCheckoutSection';
 import AppointmentSection from '../../components/booking/AppointmentSection';
 import PaymentSection from '../../components/booking/PaymentSection';
 import ReviewSection from '../../components/booking/ReviewSection';
-import { callGetBySlug } from '../../services/vaccine.service';
+import TopCheckoutSection from '../../components/booking/TopCheckoutSection';
 import { callCreateBooking } from '../../services/booking.service';
+import { callGetBySlug } from '../../services/vaccine.service';
 
 const BookingPage = () => {
   const [bookingForm] = Form.useForm();
@@ -35,7 +35,7 @@ const BookingPage = () => {
     if (slug) {
       fetchVaccineData(slug);
     }
-  }, [searchParams]);
+  }, [searchParams, fetchVaccineData]);
 
   const fetchVaccineData = async (slug) => {
     try {
@@ -66,7 +66,7 @@ const BookingPage = () => {
         }
 
         setVaccine(vaccineData);
-        
+
         // IMPORTANT: Update bookingData with vaccineId from vaccine object
         setBookingData((prev) => ({
           ...prev,
@@ -130,22 +130,22 @@ const BookingPage = () => {
         console.error('   Expected:', vaccine?.dosesRequired);
         console.error('   Got:', bookingData.doseSchedules?.length);
         /* eslint-enable no-console */
-        message.error(`Vui lòng hoàn thành tất cả ${vaccine?.dosesRequired} mũi tiêm (hiện có ${bookingData.doseSchedules?.length || 0} mũi)`);
+        message.error(
+          `Vui lòng hoàn thành tất cả ${vaccine?.dosesRequired} mũi tiêm (hiện có ${bookingData.doseSchedules?.length || 0} mũi)`
+        );
         return;
       }
 
       // Validate all doses have required fields
-      const hasIncompleteDose = bookingData.doseSchedules.some(
-        (dose, index) => {
-          const isIncomplete = !dose || !dose.date || !dose.time || !dose.centerId;
-          /* eslint-disable no-console */
-          if (isIncomplete) {
-            console.error(`❌ Mũi ${index + 1} thiếu thông tin:`, dose);
-          }
-          /* eslint-enable no-console */
-          return isIncomplete;
+      const hasIncompleteDose = bookingData.doseSchedules.some((dose, index) => {
+        const isIncomplete = !dose || !dose.date || !dose.time || !dose.centerId;
+        /* eslint-disable no-console */
+        if (isIncomplete) {
+          console.error(`❌ Mũi ${index + 1} thiếu thông tin:`, dose);
         }
-      );
+        /* eslint-enable no-console */
+        return isIncomplete;
+      });
 
       if (hasIncompleteDose) {
         message.error('Vui lòng điền đầy đủ thông tin cho tất cả các mũi tiêm');
@@ -169,10 +169,7 @@ const BookingPage = () => {
       // Prepare booking payload matching BookingRequest DTO
       const bookingPayload = {
         vaccineId: bookingData.vaccineId || vaccine?.id,
-        familyMemberId:
-          bookingData.bookingFor === 'family'
-            ? bookingData.familyMemberId
-            : null,
+        familyMemberId: bookingData.bookingFor === 'family' ? bookingData.familyMemberId : null,
         centerId: doseSchedules[0]?.centerId, // First dose center
         firstDoseDate: doseSchedules[0]?.date,
         firstDoseTime: doseSchedules[0]?.time,
@@ -258,10 +255,7 @@ const BookingPage = () => {
 
   return (
     <div className="container mx-auto px-4 py-8 max-w-7xl">
-      <TopCheckoutSection
-        currentStep={currentStep}
-        setCurrentStep={setCurrentStep}
-      />
+      <TopCheckoutSection currentStep={currentStep} setCurrentStep={setCurrentStep} />
       {renderStep()}
     </div>
   );

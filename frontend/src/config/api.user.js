@@ -19,7 +19,7 @@ export const callUpdateUser = (
     phoneNumber,
     birthday,
     address,
-    centerName
+    centerName,
   });
 };
 
@@ -33,4 +33,4 @@ export const callDeleteUser = (id) => {
 
 export const callFetchDoctor = () => {
   return axios.get('/users/doctors');
-}
+};

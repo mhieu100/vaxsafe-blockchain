@@ -1,21 +1,8 @@
-import { useEffect, useState } from 'react';
-import {
-  Typography,
-  Card,
-  Tag,
-  Timeline,
-  Spin,
-  Empty,
-  Alert,
-  Button,
-} from 'antd';
-import {
-  CheckCircleOutlined,
-  ClockCircleOutlined,
-  CalendarOutlined,
-} from '@ant-design/icons';
-import { getMyBookings } from '../../services/booking.service';
+import { CalendarOutlined, CheckCircleOutlined, ClockCircleOutlined } from '@ant-design/icons';
+import { Alert, Button, Card, Empty, Spin, Tag, Timeline, Typography } from 'antd';
 import dayjs from 'dayjs';
+import { useEffect, useState } from 'react';
+import { getMyBookings } from '../../services/booking.service';
 import RescheduleAppointmentModal from '../modal/RescheduleAppointmentModal';
 
 const { Title, Text } = Typography;
@@ -29,7 +16,7 @@ const AppointmentScheduleTab = () => {
 
   useEffect(() => {
     fetchBookings();
-  }, []);
+  }, [fetchBookings]);
 
   const fetchBookings = async () => {
     try {
@@ -109,10 +96,7 @@ const AppointmentScheduleTab = () => {
         totalDoses: booking.totalDoses,
       }))
     )
-    .sort(
-      (a, b) =>
-        dayjs(a.scheduledDate).valueOf() - dayjs(b.scheduledDate).valueOf()
-    );
+    .sort((a, b) => dayjs(a.scheduledDate).valueOf() - dayjs(b.scheduledDate).valueOf());
 
   const upcomingAppointments = allAppointments.filter(
     (apt) =>
@@ -145,17 +129,12 @@ const AppointmentScheduleTab = () => {
   }
 
   if (error) {
-    return (
-      <Alert type="error" message="Lỗi tải dữ liệu" description={error} showIcon />
-    );
+    return <Alert type="error" message="Lỗi tải dữ liệu" description={error} showIcon />;
   }
 
   if (upcomingAppointments.length === 0) {
     return (
-      <Empty
-        image={Empty.PRESENTED_IMAGE_SIMPLE}
-        description="Chưa có lịch hẹn tiêm chủng nào"
-      />
+      <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} description="Chưa có lịch hẹn tiêm chủng nào" />
     );
   }
 
@@ -193,10 +172,7 @@ const AppointmentScheduleTab = () => {
                   <div className="flex-1">
                     <div className="flex items-center gap-2 mb-2">
                       <Text strong>Mũi {apt.doseNumber}</Text>
-                      <Tag
-                        color={getStatusColor(apt.appointmentStatus)}
-                        className="!m-0"
-                      >
+                      <Tag color={getStatusColor(apt.appointmentStatus)} className="!m-0">
                         {getStatusText(apt.appointmentStatus)}
                       </Tag>
                     </div>
@@ -204,8 +180,7 @@ const AppointmentScheduleTab = () => {
                     <div className="space-y-1 text-sm">
                       <div>
                         <Text type="secondary">
-                          📅 {dayjs(apt.scheduledDate).format('DD/MM/YYYY')} lúc{' '}
-                          {apt.scheduledTime}
+                          📅 {dayjs(apt.scheduledDate).format('DD/MM/YYYY')} lúc {apt.scheduledTime}
                         </Text>
                       </div>
                       <div>
@@ -219,8 +194,8 @@ const AppointmentScheduleTab = () => {
                       {apt.appointmentStatus === 'PENDING_APPROVAL' && (
                         <div className="mt-2 p-2 bg-yellow-50 rounded border border-yellow-200">
                           <Text type="warning" className="text-xs">
-                            ⏳ Đã gửi yêu cầu đổi lịch. Vui lòng chờ nhân viên cơ sở
-                            liên hệ xác nhận.
+                            ⏳ Đã gửi yêu cầu đổi lịch. Vui lòng chờ nhân viên cơ sở liên hệ xác
+                            nhận.
                           </Text>
                         </div>
                       )}
@@ -269,9 +244,7 @@ const AppointmentScheduleTab = () => {
             </Title>
             <Tag color="blue">{selfBookings.length} vaccine</Tag>
           </div>
-          {selfBookings.map((appointments) =>
-            renderVaccineTimeline(appointments)
-          )}
+          {selfBookings.map((appointments) => renderVaccineTimeline(appointments))}
         </div>
       )}
 
@@ -283,9 +256,7 @@ const AppointmentScheduleTab = () => {
             </Title>
             <Tag color="purple">{familyBookings.length} vaccine</Tag>
           </div>
-          {familyBookings.map((appointments) =>
-            renderVaccineTimeline(appointments)
-          )}
+          {familyBookings.map((appointments) => renderVaccineTimeline(appointments))}
         </div>
       )}
 
@@ -295,9 +266,7 @@ const AppointmentScheduleTab = () => {
           <li>• Vui lòng đến trước 15 phút so với giờ hẹn</li>
           <li>• Mang theo CCCD/CMND và thẻ bảo hiểm y tế</li>
           <li>• Mặc quần áo thoải mái, dễ tiêm</li>
-          <li>
-            • Thông báo cho nhân viên y tế nếu có dị ứng hoặc đang dùng thuốc
-          </li>
+          <li>• Thông báo cho nhân viên y tế nếu có dị ứng hoặc đang dùng thuốc</li>
           <li>• Ăn uống đầy đủ trước khi tiêm</li>
         </ul>
       </Card>

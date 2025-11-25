@@ -1,9 +1,9 @@
-import { formatPrice } from '@/utils/formatPrice';
 import { Button, Card, Col, Divider } from 'antd';
-import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
+import { useNavigate } from 'react-router-dom';
 import { useAccountStore } from '@/stores/useAccountStore';
 import { useCartStore } from '@/stores/useCartStore';
+import { formatPrice } from '@/utils/formatPrice';
 
 const SummarySection = () => {
   const navigate = useNavigate();
@@ -55,21 +55,15 @@ const SummarySection = () => {
 
           {totalPrice() > 1000000 && (
             <div className="bg-green-50 p-3 rounded-lg border border-green-200">
-              <span className="text-green-700 text-sm">
-                🎉 {t('cart.savedShipping')}
-              </span>
+              <span className="text-green-700 text-sm">🎉 {t('cart.savedShipping')}</span>
             </div>
           )}
 
           <Divider className="my-4" />
 
           <div className="flex justify-between items-center">
-            <span className="mb-0 text-lg font-semibold">
-              {t('cart.total')}
-            </span>
-            <span className="text-blue-600 mb-0 text-xl font-bold">
-              {formatPrice(total)}
-            </span>
+            <span className="mb-0 text-lg font-semibold">{t('cart.total')}</span>
+            <span className="text-blue-600 mb-0 text-xl font-bold">{formatPrice(total)}</span>
           </div>
 
           <Button
@@ -81,9 +75,7 @@ const SummarySection = () => {
           </Button>
 
           <div className="text-center mt-3">
-            <span className="text-sm text-gray-500">
-              🔒 {t('cart.secureCheckout')}
-            </span>
+            <span className="text-sm text-gray-500">🔒 {t('cart.secureCheckout')}</span>
           </div>
         </div>
       </Card>

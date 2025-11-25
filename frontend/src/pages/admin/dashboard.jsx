@@ -1,18 +1,18 @@
-import { Card, Col, Row, Statistic, Progress, Table, Select } from 'antd';
 import { CheckCircleOutlined, LinkOutlined } from '@ant-design/icons';
-import CountUp from 'react-countup';
-import { Line, Doughnut } from 'react-chartjs-2';
+import { Card, Col, Progress, Row, Select, Statistic } from 'antd';
 import {
-  Chart as ChartJS,
+  ArcElement,
   CategoryScale,
+  Chart as ChartJS,
+  Legend,
   LinearScale,
-  PointElement,
   LineElement,
+  PointElement,
   Title,
   Tooltip,
-  Legend,
-  ArcElement,
 } from 'chart.js';
+import { Doughnut, Line } from 'react-chartjs-2';
+import CountUp from 'react-countup';
 
 ChartJS.register(
   CategoryScale,
@@ -63,7 +63,7 @@ const DashboardPage = () => {
   };
 
   // Table columns for regional data
-  const columns = [
+  const _columns = [
     {
       title: 'Khu vực',
       dataIndex: 'region',
@@ -115,7 +115,7 @@ const DashboardPage = () => {
   ];
 
   // Table data
-  const data = [
+  const _data = [
     {
       key: '1',
       region: 'Khu vực Bắc',
@@ -145,7 +145,9 @@ const DashboardPage = () => {
     <div className="p-6">
       <div className="mb-6">
         <h1 className="text-2xl font-bold text-gray-900">Bảng điều khiển tiêm chủng quốc gia</h1>
-        <p className="mt-1 text-sm text-gray-500">Dữ liệu tiêm chủng thời gian thực trên tất cả các khu vực</p>
+        <p className="mt-1 text-sm text-gray-500">
+          Dữ liệu tiêm chủng thời gian thực trên tất cả các khu vực
+        </p>
       </div>
 
       <Row gutter={[16, 16]} className="mb-6">
@@ -276,10 +278,6 @@ const DashboardPage = () => {
           </Card>
         </Col>
       </Row>
-
-      
-
-   
     </div>
   );
 };
