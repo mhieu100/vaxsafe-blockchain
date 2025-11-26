@@ -1,4 +1,16 @@
 -- ========================
+-- Bảng: roles
+-- ========================
+INSERT INTO roles (
+id,
+name
+) VALUES
+(1, 'ADMIN'),
+(2, 'PATIENT'),
+(3, 'DOCTOR'),
+(4, 'CASHIER');
+
+-- ========================
 -- Bảng: centers
 -- ========================
 INSERT INTO centers (
@@ -20,6 +32,50 @@ is_deleted
 (1, '198 Hoàng Văn Thụ, P. 9, Q. Phú Nhuận, TP.HCM', 100, 'http://localhost:8080/storage/center/1762081698948-cs1.png', 'VNVC Hoàng Văn Thụ 1', '02871026595', '07:30 - 17:00', '2025-11-17 02:43:20.006423', 'vnvc-hoang-van-thu-1', '2025-11-17 02:43:20.006423', false),
 (6, 'To 7, Hoa Xuan, Da Nang', 10001, 'http://localhost:8080/storage/center/1763321345550-8ead601148b6c1e898a7.png', 'NGUYỄN VĂN HIẾU', '31230123', '123123', '2025-11-17 02:43:20.006423', 'nguyen-van-hieu', '2025-11-17 02:43:20.006423', true),
 (4, '1 Quang Trung, P. 10, Q. Gò Vấp, TP.HCM', 90, 'https://res.cloudinary.com/dcwzhi4tp/image/upload/v1764100610/center/sonjjegbazjnwqq6ngwe.jpg', 'VNVC Gò Vấp', '02871026598', '07:30 - 17:00', '2025-11-26 02:56:52.922607', 'vnvc-go-vap', '2025-11-17 02:43:20.006423', false);
+
+
+-- ========================
+-- Bảng: users
+-- ========================
+INSERT INTO users (
+id,
+email,
+full_name,
+is_deleted,
+password,
+wallet_address,
+center_id,
+role_id,
+refresh_token,
+avatar
+) VALUES
+(66, 'doctor.e@vax.com', 'Bác sĩ Hoàng Văn E', false, '$2a$10$khUSAS5S7gXcMMG6pwIPCeo5raxxdJggD/3fnKwjVTRFaBLD.TIIG', NULL, 2, 3, 'eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJkb2N0b3IuZUB2YXguY29tIiwiZXhwIjoxODQ5ODkwMzc3LCJpYXQiOjE3NjM4OTAzNzd9.YBOsLMSmg4YLLoxU6waIbfsasKFnhzC9WZ4QYCnV6DUi1DSNFrIsaa15wjTAcJQ5rGsSWF8XJQxqx0LoF1YOeA', 'https_example.com/avatars/doc_e.png'),
+(65, 'cashier.d@vax.com', 'Thu ngân Phạm Văn D', false, '$2a$10$khUSAS5S7gXcMMG6pwIPCeo5raxxdJggD/3fnKwjVTRFaBLD.TIIG', NULL, 1, 4, NULL, 'https_example.com/avatars/cash_d.png'),
+(64, 'doctor.c@vax.com', 'Bác sĩ Lê Thị C', false, '$2a$10$khUSAS5S7gXcMMG6pwIPCeo5raxxdJggD/3fnKwjVTRFaBLD.TIIG', NULL, 1, 3, NULL, 'https_example.com/avatars/doc_c.png'),
+(62, 'doctor.a@vax.com', 'Bác sĩ Nguyễn Văn A', false, '$2a$10$khUSAS5S7gXcMMG6pwIPCeo5raxxdJggD/3fnKwjVTRFaBLD.TIIG', NULL, 1, 3, 'eyJhbGciOiJIUzUxMiJ9.eyJleHAiOjE4NDg1MzQ1OTcsInN1YiI6ImRvY3Rvci5hQHZheC5jb20iLCJpYXQiOjE3NjI1MzQ1OTd9.DDg2rhfruCXs5GLAloeRvyax6l6fGmLVBc0l24IPLdDLlaHsJ4BH508xiqY4ryr4rxpgYJVBMMFxD8sCfIc7cw', 'https_example.com/avatars/doc_a.png'),
+(63, 'doctor.b@vax.com', 'Bác sĩ Trần Văn B', false, '$2a$10$khUSAS5S7gXcMMG6pwIPCeo5raxxdJggD/3fnKwjVTRFaBLD.TIIG', NULL, 1, 3, NULL, 'https_example.com/avatars/doc_b.png'),
+(67, 'doctor.f@vax.com', 'Bác sĩ Võ Thị F', false, '$2a$10$khUSAS5S7gXcMMG6pwIPCeo5raxxdJggD/3fnKwjVTRFaBLD.TIIG', NULL, 2, 3, NULL, 'https_example.com/avatars/doc_f.png'),
+(68, 'doctor.g@vax.com', 'Bác sĩ Đặng Văn G', false, '$2a$10$khUSAS5S7gXcMMG6pwIPCeo5raxxdJggD/3fnKwjVTRFaBLD.TIIG', NULL, 2, 3, NULL, 'https_example.com/avatars/doc_g.png'),
+(69, 'doctor.h@vax.com', 'Bác sĩ Bùi Thị H', false, '$2a$10$khUSAS5S7gXcMMG6pwIPCeo5raxxdJggD/3fnKwjVTRFaBLD.TIIG', NULL, 2, 3, NULL, 'https_example.com/avatars/doc_h.png'),
+(71, 'doctor.j@vax.com', 'Bác sĩ Trịnh Văn J', false, '$2a$10$khUSAS5S7gXcMMG6pwIPCeo5raxxdJggD/3fnKwjVTRFaBLD.TIIG', NULL, 3, 3, NULL, 'https_example.com/avatars/doc_j.png'),
+(72, 'doctor.k@vax.com', 'Bác sĩ Mai Thị K', false, '$2a$10$khUSAS5S7gXcMMG6pwIPCeo5raxxdJggD/3fnKwjVTRFaBLD.TIIG', NULL, 3, 3, NULL, 'https_example.com/avatars/doc_k.png'),
+(73, 'doctor.l@vax.com', 'Bác sĩ Phan Văn L', false, '$2a$10$khUSAS5S7gXcMMG6pwIPCeo5raxxdJggD/3fnKwjVTRFaBLD.TIIG', NULL, 3, 3, NULL, 'https_example.com/avatars/doc_l.png'),
+(74, 'doctor.m@vax.com', 'Bác sĩ Dương Thị M', false, '$2a$10$khUSAS5S7gXcMMG6pwIPCeo5raxxdJggD/3fnKwjVTRFaBLD.TIIG', NULL, 3, 3, NULL, 'https_example.com/avatars/doc_m.png'),
+(75, 'doctor.n@vax.com', 'Bác sĩ Hà Văn N', false, '$2a$10$khUSAS5S7gXcMMG6pwIPCeo5raxxdJggD/3fnKwjVTRFaBLD.TIIG', NULL, 3, 3, NULL, 'https_example.com/avatars/doc_n.png'),
+(77, 'doctor.p@vax.com', 'Bác sĩ Vũ Văn P', false, '$2a$10$khUSAS5S7gXcMMG6pwIPCeo5raxxdJggD/3fnKwjVTRFaBLD.TIIG', NULL, 4, 3, NULL, 'https_example.com/avatars/doc_p.png'),
+(78, 'doctor.q@vax.com', 'Bác sĩ Đỗ Thị Q', false, '$2a$10$khUSAS5S7gXcMMG6pwIPCeo5raxxdJggD/3fnKwjVTRFaBLD.TIIG', NULL, 4, 3, NULL, 'https_example.com/avatars/doc_q.png'),
+(79, 'doctor.r@vax.com', 'Bác sĩ Hồ Văn R', false, '$2a$10$khUSAS5S7gXcMMG6pwIPCeo5raxxdJggD/3fnKwjVTRFaBLD.TIIG', NULL, 4, 3, NULL, 'https_example.com/avatars/doc_r.png'),
+(81, 'doctor.t@vax.com', 'Bác sĩ Lâm Văn T', false, '$2a$10$khUSAS5S7gXcMMG6pwIPCeo5raxxdJggD/3fnKwjVTRFaBLD.TIIG', NULL, 5, 3, NULL, 'https_example.com/avatars/doc_t.png'),
+(82, 'doctor.u@vax.com', 'Bác sĩ Trương Thị U', false, '$2a$10$khUSAS5S7gXcMMG6pwIPCeo5raxxdJggD/3fnKwjVTRFaBLD.TIIG', NULL, 5, 3, NULL, 'https_example.com/avatars/doc_u.png'),
+(83, 'doctor.v@vax.com', 'Bác sĩ Mạc Văn V', false, '$2a$10$khUSAS5S7gXcMMG6pwIPCeo5raxxdJggD/3fnKwjVTRFaBLD.TIIG', NULL, 5, 3, NULL, 'https_example.com/avatars/doc_v.png'),
+(84, 'doctor.w@vax.com', 'Bác sĩ Tạ Thị W', false, '$2a$10$khUSAS5S7gXcMMG6pwIPCeo5raxxdJggD/3fnKwjVTRFaBLD.TIIG', NULL, 5, 3, NULL, 'https_example.com/avatars/doc_w.png'),
+(85, 'cashier.x@vax.com', 'Thu ngân Đoàn Văn X', false, '$2a$10$khUSAS5S7gXcMMG6pwIPCeo5raxxdJggD/3fnKwjVTRFaBLD.TIIG', NULL, 5, 4, NULL, 'https_example.com/avatars/cash_x.png'),
+(76, 'cashier.o@vax.com', 'Thu ngân Lương Thị O', false, '$2a$10$khUSAS5S7gXcMMG6pwIPCeo5raxxdJggD/3fnKwjVTRFaBLD.TIIG', NULL, 3, 4, 'eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJjYXNoaWVyLm9AdmF4LmNvbSIsImV4cCI6MTg0OTg5Nzg2NCwiaWF0IjoxNzYzODk3ODY0fQ.G2OyWIkI1dAojcg6NeOSY6pcYPiP2HczI_Fe5Ac1NtNbk1_k1JWHydz7UmPxhNzHRZG2PNr26cKzCmNE0aZDAg', 'http://localhost:8080/storage/user/1762459328103-chungnhan.png'),
+(87, 'admin@gmail.com', 'Super Admin', false, '$2a$10$khUSAS5S7gXcMMG6pwIPCeo5raxxdJggD/3fnKwjVTRFaBLD.TIIG', NULL, NULL, 1, NULL, 'https://res.cloudinary.com/dcwzhi4tp/image/upload/v1764097281/user/syrvax40k3nise2l2uak.jpg'),
+(80, 'cashier.s@vax.com', 'Thu ngân Đinh Thị S', false, '$2a$10$khUSAS5S7gXcMMG6pwIPCeo5raxxdJggD/3fnKwjVTRFaBLD.TIIG', NULL, 4, 4, 'eyJhbGciOiJIUzUxMiJ9.eyJleHAiOjE4NDgwMjQ4MjYsInN1YiI6ImNhc2hpZXIuc0B2YXguY29tIiwiaWF0IjoxNzYyMDI0ODI2fQ.XeCMUGXrl7t1zphdfCwo3jNEH76Wr_w55KBw3BCJQ8sqVh_WQ-bVRwsTpaLjNOe1wrDaBdYaE6KPr5iw6OlQDQ', 'https_example.com/avatars/cash_s.png'),
+(86, 'hieu@gmail.com', 'Nguyen Van Hieu', false, '$2a$10$2m0/qcn4BVVnLhZn36QmN.NelZreBtCxI01PMoyuCw78IWuv2kmLO', NULL, NULL, 2, NULL, 'https://res.cloudinary.com/dcwzhi4tp/image/upload/v1764098547/user/gboznpairqqcivpfqpfu.jpg'),
+(70, 'cashier.i@vax.com', 'Thu ngân Ngô Văn I', false, '$2a$10$khUSAS5S7gXcMMG6pwIPCeo5raxxdJggD/3fnKwjVTRFaBLD.TIIG', NULL, 2, 4, NULL, 'https_example.com/avatars/cash_i.png');
+
 
 -- ========================
 -- Bảng: doctors
@@ -130,6 +186,49 @@ user_id
 (4, 'Số 10, đường Kim Mã', '1995-06-15', 'O', true, 'MALE', 175, '012345673901', 'BHYT123456789', 'Không hút thuốc, thỉnh thoảng uống rượu, hay đi công tác', 'Software Engineer', '0912345678', 70.5, 86);
 
 -- ========================
+-- Bảng: permissions
+-- ========================
+INSERT INTO permissions (
+id,
+api_path,
+method,
+module,
+name
+) VALUES
+(1, '/appointments', 'GET', 'APPOINTMENT', 'Get all appointments of center'),
+(2, '/appointments/{id}', 'PUT', 'APPOINTMENT', 'Update a appointment of cashier'),
+(3, '/appointments/{id}/cancel', 'PUT', 'APPOINTMENT', 'Cancel a appointment'),
+(4, '/appointments/{id}/complete', 'PUT', 'APPOINTMENT', 'Complete a appointment'),
+(5, '/appointments/cash', 'POST', 'APPOINTMENT', 'Create a appointments with cash'),
+(6, '/appointments/credit-card', 'POST', 'APPOINTMENT', 'Create a appointments with credit card'),
+(7, '/appointments/update-payment', 'POST', 'APPOINTMENT', 'Update status of payment'),
+(8, '/appointments/my-schedule', 'GET', 'APPOINTMENT', 'Get all appointments of doctor'),
+(9, '/auth/account', 'GET', 'AUTH', 'Access profile'),
+(10, '/auth/my-appointments', 'GET', 'AUTH', 'Get all appointments of user'),
+(11, '/centers', 'POST', 'CENTER', 'Create a center'),
+(12, '/centers/{id}', 'GET', 'CENTER', 'Get a center by id'),
+(13, '/centers/{id}', 'PUT', 'CENTER', 'Update a center'),
+(14, '/centers/{id}', 'DELETE', 'CENTER', 'Delete a center'),
+(15, '/vaccines', 'POST', 'VACCINE', 'Create a vaccine'),
+(16, '/vaccines/{id}', 'GET', 'VACCINE', 'Get a vaccine by id'),
+(17, '/vaccines/{id}', 'PUT', 'VACCINE', 'Update a vaccine'),
+(18, '/vaccines/{id}', 'DELETE', 'VACCINE', 'Delete a vaccine'),
+(19, '/permissions', 'POST', 'PERMISSION', 'Create a permission'),
+(20, '/permissions', 'GET', 'PERMISSION', 'Get all permissions'),
+(21, '/permissions', 'PUT', 'PERMISSION', 'Update a permission'),
+(22, '/permissions/{id}', 'DELETE', 'PERMISSION', 'Delete a permission'),
+(23, '/users/{walletAddress}', 'PUT', 'USER', 'Update a user'),
+(24, '/users/{walletAddress}', 'DELETE', 'USER', 'Delete a user'),
+(25, '/users', 'GET', 'USER', 'Get all users'),
+(26, '/users/doctors', 'GET', 'USER', 'Get all doctors of center'),
+(27, '/roles', 'GET', 'ROLE', 'Get all roles'),
+(28, '/roles/{id}', 'PUT', 'ROLE', 'Update a role'),
+(30, '/appointments/all', 'GET', 'APPOINTMENT', 'Get all appointment'),
+(29, '/files', 'POST', 'FILE', 'Upload a file');
+
+
+
+-- ========================
 -- Bảng: permission_role
 -- ========================
 INSERT INTO permission_role (
@@ -182,103 +281,7 @@ permission_id
 (2, 30),
 (2, 29);
 
--- ========================
--- Bảng: permissions
--- ========================
-INSERT INTO permissions (
-id,
-api_path,
-method,
-module,
-name
-) VALUES
-(1, '/appointments', 'GET', 'APPOINTMENT', 'Get all appointments of center'),
-(2, '/appointments/{id}', 'PUT', 'APPOINTMENT', 'Update a appointment of cashier'),
-(3, '/appointments/{id}/cancel', 'PUT', 'APPOINTMENT', 'Cancel a appointment'),
-(4, '/appointments/{id}/complete', 'PUT', 'APPOINTMENT', 'Complete a appointment'),
-(5, '/appointments/cash', 'POST', 'APPOINTMENT', 'Create a appointments with cash'),
-(6, '/appointments/credit-card', 'POST', 'APPOINTMENT', 'Create a appointments with credit card'),
-(7, '/appointments/update-payment', 'POST', 'APPOINTMENT', 'Update status of payment'),
-(8, '/appointments/my-schedule', 'GET', 'APPOINTMENT', 'Get all appointments of doctor'),
-(9, '/auth/account', 'GET', 'AUTH', 'Access profile'),
-(10, '/auth/my-appointments', 'GET', 'AUTH', 'Get all appointments of user'),
-(11, '/centers', 'POST', 'CENTER', 'Create a center'),
-(12, '/centers/{id}', 'GET', 'CENTER', 'Get a center by id'),
-(13, '/centers/{id}', 'PUT', 'CENTER', 'Update a center'),
-(14, '/centers/{id}', 'DELETE', 'CENTER', 'Delete a center'),
-(15, '/vaccines', 'POST', 'VACCINE', 'Create a vaccine'),
-(16, '/vaccines/{id}', 'GET', 'VACCINE', 'Get a vaccine by id'),
-(17, '/vaccines/{id}', 'PUT', 'VACCINE', 'Update a vaccine'),
-(18, '/vaccines/{id}', 'DELETE', 'VACCINE', 'Delete a vaccine'),
-(19, '/permissions', 'POST', 'PERMISSION', 'Create a permission'),
-(20, '/permissions', 'GET', 'PERMISSION', 'Get all permissions'),
-(21, '/permissions', 'PUT', 'PERMISSION', 'Update a permission'),
-(22, '/permissions/{id}', 'DELETE', 'PERMISSION', 'Delete a permission'),
-(23, '/users/{walletAddress}', 'PUT', 'USER', 'Update a user'),
-(24, '/users/{walletAddress}', 'DELETE', 'USER', 'Delete a user'),
-(25, '/users', 'GET', 'USER', 'Get all users'),
-(26, '/users/doctors', 'GET', 'USER', 'Get all doctors of center'),
-(27, '/roles', 'GET', 'ROLE', 'Get all roles'),
-(28, '/roles/{id}', 'PUT', 'ROLE', 'Update a role'),
-(30, '/appointments/all', 'GET', 'APPOINTMENT', 'Get all appointment'),
-(29, '/files', 'POST', 'FILE', 'Upload a file');
 
--- ========================
--- Bảng: roles
--- ========================
-INSERT INTO roles (
-id,
-name
-) VALUES
-(1, 'ADMIN'),
-(2, 'PATIENT'),
-(3, 'DOCTOR'),
-(4, 'CASHIER');
-
--- ========================
--- Bảng: users
--- ========================
-INSERT INTO users (
-id,
-address,
-birthday,
-email,
-full_name,
-is_deleted,
-password,
-phone_number,
-wallet_address,
-center_id,
-role_id,
-refresh_token,
-avatar
-) VALUES
-(66, NULL, NULL, 'doctor.e@vax.com', 'Bác sĩ Hoàng Văn E', false, '$2a$10$khUSAS5S7gXcMMG6pwIPCeo5raxxdJggD/3fnKwjVTRFaBLD.TIIG', NULL, NULL, 2, 3, 'eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJkb2N0b3IuZUB2YXguY29tIiwiZXhwIjoxODQ5ODkwMzc3LCJpYXQiOjE3NjM4OTAzNzd9.YBOsLMSmg4YLLoxU6waIbfsasKFnhzC9WZ4QYCnV6DUi1DSNFrIsaa15wjTAcJQ5rGsSWF8XJQxqx0LoF1YOeA', 'https_example.com/avatars/doc_e.png'),
-(65, NULL, NULL, 'cashier.d@vax.com', 'Thu ngân Phạm Văn D', false, '$2a$10$khUSAS5S7gXcMMG6pwIPCeo5raxxdJggD/3fnKwjVTRFaBLD.TIIG', NULL, NULL, 1, 4, NULL, 'https_example.com/avatars/cash_d.png'),
-(64, NULL, NULL, 'doctor.c@vax.com', 'Bác sĩ Lê Thị C', false, '$2a$10$khUSAS5S7gXcMMG6pwIPCeo5raxxdJggD/3fnKwjVTRFaBLD.TIIG', NULL, NULL, 1, 3, NULL, 'https_example.com/avatars/doc_c.png'),
-(62, NULL, NULL, 'doctor.a@vax.com', 'Bác sĩ Nguyễn Văn A', false, '$2a$10$khUSAS5S7gXcMMG6pwIPCeo5raxxdJggD/3fnKwjVTRFaBLD.TIIG', NULL, NULL, 1, 3, 'eyJhbGciOiJIUzUxMiJ9.eyJleHAiOjE4NDg1MzQ1OTcsInN1YiI6ImRvY3Rvci5hQHZheC5jb20iLCJpYXQiOjE3NjI1MzQ1OTd9.DDg2rhfruCXs5GLAloeRvyax6l6fGmLVBc0l24IPLdDLlaHsJ4BH508xiqY4ryr4rxpgYJVBMMFxD8sCfIc7cw', 'https_example.com/avatars/doc_a.png'),
-(63, NULL, NULL, 'doctor.b@vax.com', 'Bác sĩ Trần Văn B', false, '$2a$10$khUSAS5S7gXcMMG6pwIPCeo5raxxdJggD/3fnKwjVTRFaBLD.TIIG', NULL, NULL, 1, 3, NULL, 'https_example.com/avatars/doc_b.png'),
-(67, NULL, NULL, 'doctor.f@vax.com', 'Bác sĩ Võ Thị F', false, '$2a$10$khUSAS5S7gXcMMG6pwIPCeo5raxxdJggD/3fnKwjVTRFaBLD.TIIG', NULL, NULL, 2, 3, NULL, 'https_example.com/avatars/doc_f.png'),
-(68, NULL, NULL, 'doctor.g@vax.com', 'Bác sĩ Đặng Văn G', false, '$2a$10$khUSAS5S7gXcMMG6pwIPCeo5raxxdJggD/3fnKwjVTRFaBLD.TIIG', NULL, NULL, 2, 3, NULL, 'https_example.com/avatars/doc_g.png'),
-(69, NULL, NULL, 'doctor.h@vax.com', 'Bác sĩ Bùi Thị H', false, '$2a$10$khUSAS5S7gXcMMG6pwIPCeo5raxxdJggD/3fnKwjVTRFaBLD.TIIG', NULL, NULL, 2, 3, NULL, 'https_example.com/avatars/doc_h.png'),
-(71, NULL, NULL, 'doctor.j@vax.com', 'Bác sĩ Trịnh Văn J', false, '$2a$10$khUSAS5S7gXcMMG6pwIPCeo5raxxdJggD/3fnKwjVTRFaBLD.TIIG', NULL, NULL, 3, 3, NULL, 'https_example.com/avatars/doc_j.png'),
-(72, NULL, NULL, 'doctor.k@vax.com', 'Bác sĩ Mai Thị K', false, '$2a$10$khUSAS5S7gXcMMG6pwIPCeo5raxxdJggD/3fnKwjVTRFaBLD.TIIG', NULL, NULL, 3, 3, NULL, 'https_example.com/avatars/doc_k.png'),
-(73, NULL, NULL, 'doctor.l@vax.com', 'Bác sĩ Phan Văn L', false, '$2a$10$khUSAS5S7gXcMMG6pwIPCeo5raxxdJggD/3fnKwjVTRFaBLD.TIIG', NULL, NULL, 3, 3, NULL, 'https_example.com/avatars/doc_l.png'),
-(74, NULL, NULL, 'doctor.m@vax.com', 'Bác sĩ Dương Thị M', false, '$2a$10$khUSAS5S7gXcMMG6pwIPCeo5raxxdJggD/3fnKwjVTRFaBLD.TIIG', NULL, NULL, 3, 3, NULL, 'https_example.com/avatars/doc_m.png'),
-(75, NULL, NULL, 'doctor.n@vax.com', 'Bác sĩ Hà Văn N', false, '$2a$10$khUSAS5S7gXcMMG6pwIPCeo5raxxdJggD/3fnKwjVTRFaBLD.TIIG', NULL, NULL, 3, 3, NULL, 'https_example.com/avatars/doc_n.png'),
-(77, NULL, NULL, 'doctor.p@vax.com', 'Bác sĩ Vũ Văn P', false, '$2a$10$khUSAS5S7gXcMMG6pwIPCeo5raxxdJggD/3fnKwjVTRFaBLD.TIIG', NULL, NULL, 4, 3, NULL, 'https_example.com/avatars/doc_p.png'),
-(78, NULL, NULL, 'doctor.q@vax.com', 'Bác sĩ Đỗ Thị Q', false, '$2a$10$khUSAS5S7gXcMMG6pwIPCeo5raxxdJggD/3fnKwjVTRFaBLD.TIIG', NULL, NULL, 4, 3, NULL, 'https_example.com/avatars/doc_q.png'),
-(79, NULL, NULL, 'doctor.r@vax.com', 'Bác sĩ Hồ Văn R', false, '$2a$10$khUSAS5S7gXcMMG6pwIPCeo5raxxdJggD/3fnKwjVTRFaBLD.TIIG', NULL, NULL, 4, 3, NULL, 'https_example.com/avatars/doc_r.png'),
-(81, NULL, NULL, 'doctor.t@vax.com', 'Bác sĩ Lâm Văn T', false, '$2a$10$khUSAS5S7gXcMMG6pwIPCeo5raxxdJggD/3fnKwjVTRFaBLD.TIIG', NULL, NULL, 5, 3, NULL, 'https_example.com/avatars/doc_t.png'),
-(82, NULL, NULL, 'doctor.u@vax.com', 'Bác sĩ Trương Thị U', false, '$2a$10$khUSAS5S7gXcMMG6pwIPCeo5raxxdJggD/3fnKwjVTRFaBLD.TIIG', NULL, NULL, 5, 3, NULL, 'https_example.com/avatars/doc_u.png'),
-(83, NULL, NULL, 'doctor.v@vax.com', 'Bác sĩ Mạc Văn V', false, '$2a$10$khUSAS5S7gXcMMG6pwIPCeo5raxxdJggD/3fnKwjVTRFaBLD.TIIG', NULL, NULL, 5, 3, NULL, 'https_example.com/avatars/doc_v.png'),
-(84, NULL, NULL, 'doctor.w@vax.com', 'Bác sĩ Tạ Thị W', false, '$2a$10$khUSAS5S7gXcMMG6pwIPCeo5raxxdJggD/3fnKwjVTRFaBLD.TIIG', NULL, NULL, 5, 3, NULL, 'https_example.com/avatars/doc_w.png'),
-(85, NULL, NULL, 'cashier.x@vax.com', 'Thu ngân Đoàn Văn X', false, '$2a$10$khUSAS5S7gXcMMG6pwIPCeo5raxxdJggD/3fnKwjVTRFaBLD.TIIG', NULL, NULL, 5, 4, NULL, 'https_example.com/avatars/cash_x.png'),
-(76, NULL, NULL, 'cashier.o@vax.com', 'Thu ngân Lương Thị O', false, '$2a$10$khUSAS5S7gXcMMG6pwIPCeo5raxxdJggD/3fnKwjVTRFaBLD.TIIG', NULL, NULL, 3, 4, 'eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJjYXNoaWVyLm9AdmF4LmNvbSIsImV4cCI6MTg0OTg5Nzg2NCwiaWF0IjoxNzYzODk3ODY0fQ.G2OyWIkI1dAojcg6NeOSY6pcYPiP2HczI_Fe5Ac1NtNbk1_k1JWHydz7UmPxhNzHRZG2PNr26cKzCmNE0aZDAg', 'http://localhost:8080/storage/user/1762459328103-chungnhan.png'),
-(87, NULL, NULL, 'admin@gmail.com', 'Super Admin', false, '$2a$10$khUSAS5S7gXcMMG6pwIPCeo5raxxdJggD/3fnKwjVTRFaBLD.TIIG', NULL, NULL, NULL, 1, NULL, 'https://res.cloudinary.com/dcwzhi4tp/image/upload/v1764097281/user/syrvax40k3nise2l2uak.jpg'),
-(80, NULL, NULL, 'cashier.s@vax.com', 'Thu ngân Đinh Thị S', false, '$2a$10$khUSAS5S7gXcMMG6pwIPCeo5raxxdJggD/3fnKwjVTRFaBLD.TIIG', NULL, NULL, 4, 4, 'eyJhbGciOiJIUzUxMiJ9.eyJleHAiOjE4NDgwMjQ4MjYsInN1YiI6ImNhc2hpZXIuc0B2YXguY29tIiwiaWF0IjoxNzYyMDI0ODI2fQ.XeCMUGXrl7t1zphdfCwo3jNEH76Wr_w55KBw3BCJQ8sqVh_WQ-bVRwsTpaLjNOe1wrDaBdYaE6KPr5iw6OlQDQ', 'https_example.com/avatars/cash_s.png'),
-(86, NULL, NULL, 'hieu@gmail.com', 'Nguyen Van Hieu', false, '$2a$10$2m0/qcn4BVVnLhZn36QmN.NelZreBtCxI01PMoyuCw78IWuv2kmLO', NULL, NULL, NULL, 2, NULL, 'https://res.cloudinary.com/dcwzhi4tp/image/upload/v1764098547/user/gboznpairqqcivpfqpfu.jpg'),
-(70, NULL, NULL, 'cashier.i@vax.com', 'Thu ngân Ngô Văn I', false, '$2a$10$khUSAS5S7gXcMMG6pwIPCeo5raxxdJggD/3fnKwjVTRFaBLD.TIIG', NULL, NULL, 2, 4, NULL, 'https_example.com/avatars/cash_i.png');
 
 -- ========================
 -- Bảng: vaccines
@@ -360,3 +363,5 @@ is_deleted
 (5, 'vac-xin-qdenga', 'Qdenga', 'Nhật Bản', 'https://vnvc.vn/wp-content/uploads/2024/09/vaccine-qdenga-1.jpg', 'Vắc xin Qdenga được phê duyệt sử dụng tại hơn 40 quốc gia, là vắc xin phòng bệnh sốt xuất huyết đầu tiên và duy...', 'Vắc xin Qdenga là chế phẩm sinh học đặc biệt có khả năng phòng bệnh sốt xuất huyết do virus Dengue gây ra, có khả năng bảo vệ chống lại cả 4 nhóm huyết thanh của virus dengue, bao gồm DEN-1, DEN-2, DEN-3 và DEN-4, được chỉ định tiêm cho người từ 4 tuổi trở lên với hiệu lực bảo vệ hơn 80% nguy cơ mắc bệnh do 4 tuýp virus Dengue và trên 90% nguy cơ nhập viện, mắc bệnh nặng và biến chứng nguy hiểm do bệnh sốt xuất huyết gây ra.', 'Vắc xin Qdenga là vắc xin sống giảm độc lực được nghiên cứu, phát triển và sản xuất bởi Hãng vắc xin và dược phẩm Takeda – Nhật Bản, xuất xứ tại Đức.', '{"Sau khi hoàn nguyên hoàn toàn vắc xin đông khô với chất pha loãng (dung môi), Qdenga nên được tiêm dưới da, tốt nhất là ở cánh tay trên ở vùng cơ delta.","Qdenga không được tiêm vào mạch, không được tiêm trong da hoặc tiêm bắp.","Không nên trộn vắc xin trong cùng một ống tiêm với bất kỳ loại vắc xin hoặc sản phẩm thuốc tiêm nào khác."}', '{"Vắc xin được bảo quản ở nhiệt độ từ 2 –  8°C.","Tránh tiếp xúc với chất bảo quản, thuốc sát trùng, chất tẩy rửa và các chất chống vi rút khác vì chúng có thể làm bất hoạt vắc xin.","Chỉ sử dụng ống tiêm vô trùng không chứa chất bảo quản, chất khử trùng, chất tẩy rửa và các chất chống virus khác để pha và tiêm Qdenga.","Qdenga phải được hoàn nguyên trước khi dùng."}', '{"Quá mẫn cảm với hoạt chất hoặc với bất kỳ tá dược nào hoặc quá mẫn cảm với liều Qdenga trước đó","Những người bị suy giảm miễn dịch bẩm sinh hoặc mắc phải, bao gồm sử dụng các liệu pháp ức chế miễn dịch như hóa trị hoặc dùng corticosteroid toàn thân liều cao (ví dụ: với liều 20mg/ngày hoặc liều tương đương với prednisone 2 mg/kg/ngày trong 2 tuần trở lên) trong vòng 4 tuần trước khi tiêm chủng, tương tự như với các vắc xin sống giảm độc lực khác","Những người nhiễm HIV có triệu chứng hoặc nhiễm HIV không có triệu chứng kèm theo bằng chứng suy giảm chức năng hệ miễn dịch","Phụ nữ có thai","Phụ nữ cho con bú"}', 3, 20, 836851, 20, '2025-11-17 02:43:15.408049', '2025-11-17 02:43:15.408049', false),
 (55, 'jevax-vac-xin-phong-viem-nao-nhat-ban-b', 'Jevax', 'Việt Nam', 'https://vnvc.vn/wp-content/uploads/2017/04/JEVAX.jpg', 'Viêm não Nhật Bản là căn bệnh nguy hiểm, rất khó phát hiện do triệu chứng ban đầu rất giống với các bệnh viêm nhiễm...', 'Jevax là vắc xin phòng viêm não Nhật Bản được chỉ định cho trẻ em từ 12 tháng tuổi trở lên và người lớn.', '{"Vắc xin Jevax được nghiên cứu và sản xuất bởi Vabiotech – Việt Nam."}', '{"Tiêm dưới da."}', '{"Vắc xin được bảo quản ở nhiệt độ từ 2 đến 8 độ C và không được đông băng."}', '{"Người nhạy cảm với bất kỳ thành phần nào trong vắc xin.","Người bị bệnh tim, gan, thận.","Mệt mỏi, sốt cao hoặc nhiễm trùng tiến triển.","Người đang mắc bệnh tiểu đường hoặc suy dinh dưỡng.","Bệnh ung thư máu và các bệnh ác tính nói chung.","Phụ nữ có thai.","Bệnh quá mẫn."}', 3, 20, 688595, 20, '2025-11-17 02:43:15.408049', '2025-11-17 02:43:15.408049', false),
 (47, 'huyet-thanh-uon-van-sat', 'Uốn Ván SAT', 'Việt Nam', 'https://vnvc.vn/wp-content/uploads/2021/02/huyet-thanh-uon-van-SAT.jpg', 'Uốn ván là bệnh nhiễm trùng cấp tính do vi khuẩn yếm khí Clostridium tetani gây ra. Theo Tổ chức Y tế Thế giới (WHO),...', 'Huyết thanh uốn ván SAT được dùng để phòng ngừa uốn ván ở người vừa mới bị vết thương có thể nhiễm bào tử uốn ván, bao gồm những người không tiêm ngừa uốn ván trong 10 năm gần đây, hoặc không nhớ rõ lịch tiêm uốn ván.', 'Huyết thanh uốn ván SAT được nghiên cứu và phát triển bởi Viện Vắc xin và Sinh phẩm Y tế ( IVAC – Việt Nam).', '{"Huyết thanh uốn ván SAT được chỉ định tiêm bắp."}', '{"Bảo quản ở nhiệt độ lạnh (từ 2 – 8 độ C). Không được đóng băng."}', '{"Những trường hợp có tiền sử dị ứng với huyết thanh kháng độc tố uốn ván nguồn gốc từ ngựa. Những trường hợp này nếu bắt buộc dùng nên dùng loại huyết thanh uốn ván nguồn gốc từ người.","Phụ nữ đang mang thai."}', 3, 20, 886289, 20, '2025-11-17 02:43:15.408049', '2025-11-17 02:43:15.408049', false);
+
+
