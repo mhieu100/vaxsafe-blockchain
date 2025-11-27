@@ -51,6 +51,6 @@ jobs:
       - name: Deploy on EC2
         run: |
           ssh -o StrictHostKeyChecking=no ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }} "
-            cd ~/dev &&
+            cd ~/dev/vaxsafe-blockchain/backend &&
             ./deploy.sh
           "
