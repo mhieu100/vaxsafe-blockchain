@@ -52,7 +52,7 @@ jobs:
         run: |
           ssh -o StrictHostKeyChecking=no ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }} "
             cd ~/vaxsafe-backend &&
-            docker-compose pull &&
-            docker-compose up -d &&
-            docker-compose logs --tail=50
+            docker compose pull &&
+            docker compose up -d &&
+            docker compose logs --tail=50
           "
