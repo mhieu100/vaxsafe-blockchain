@@ -115,6 +115,8 @@ const useAccountStore = create(
                 avatar: response.data.avatar || '',
               },
             });
+          } else {
+            set({ isLoading: false, isAuthenticated: false });
           }
         } catch {
           set({ isAuthenticated: false, isLoading: false });

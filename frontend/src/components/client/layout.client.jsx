@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { Outlet, useLocation } from 'react-router-dom';
-import { Loading } from '../common/feedback';
+import Loading from '@/components/common/feedback/Loading';
 import Footer from './footer.client';
 import Navbar from './header.client';
 

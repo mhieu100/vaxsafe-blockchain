@@ -2,8 +2,8 @@
 import PropTypes from 'prop-types';
 import { useEffect, useState } from 'react';
 import { Navigate } from 'react-router-dom';
+import Loading from '@/components/common/feedback/Loading';
 import { useAccountStore } from '@/stores/useAccountStore';
-import { Loading } from '../feedback';
 import NotPermitted from './not-permitted';
 
 const RoleBaseRoute = (props) => {
@@ -17,7 +17,7 @@ const RoleBaseRoute = (props) => {
   }
 };
 
-const ProtectedRoute = (props) => {
+const ProtectedAdminRoute = (props) => {
   const isAuthenticated = useAccountStore((state) => state.isAuthenticated);
   const isLoading = useAccountStore((state) => state.isLoading);
 
@@ -53,7 +53,7 @@ const ProtectedRoute = (props) => {
 RoleBaseRoute.propTypes = {
   children: PropTypes.node,
 };
-ProtectedRoute.propTypes = {
+ProtectedAdminRoute.propTypes = {
   children: PropTypes.node,
 };
-export default ProtectedRoute;
+export default ProtectedAdminRoute;

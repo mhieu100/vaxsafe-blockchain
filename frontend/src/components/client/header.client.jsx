@@ -13,10 +13,10 @@ import { Avatar, Badge, Button, Drawer, Input, Layout, Menu, message, Space } fr
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
+import LanguageSelect from '@/components/common/ui/LanguageSwitcher';
 import { callLogout } from '@/services/auth.service';
 import { useAccountStore } from '@/stores/useAccountStore';
 import useCartStore from '@/stores/useCartStore';
-import { LanguageSwitcher as LanguageSelect } from '../common/ui';
 import DropdownUser from '../dropdown/DropdownUser';
 
 const { Header: AntHeader } = Layout;

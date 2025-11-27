@@ -37,12 +37,10 @@ const Login = () => {
         // Navigate based on role
         if (userData.role === 'ADMIN') {
           navigate('/admin');
-        } else if (
-          userData.role === 'STAFF' ||
-          userData.role === 'CASHIER' ||
-          userData.role === 'DOCTOR'
-        ) {
-          navigate('/staff');
+        } else if (userData.role === 'CASHIER') {
+          navigate('/staff/dashboard');
+        } else if (userData.role === 'DOCTOR') {
+          navigate('/staff/dashboard-doctor');
         } else {
           navigate('/');
         }

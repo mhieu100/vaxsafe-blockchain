@@ -1,47 +1,50 @@
 import { createBrowserRouter } from 'react-router-dom';
-import LayoutAdmin from './components/admin/layout.admin';
-import ProtectedAuthRoute from './components/auth/ProtectedAuthRoute';
-import LayoutClient from './components/client/layout.client';
-import { NotFound } from './components/common/feedback';
-import {
-  ProtectedRoute as ProtectedAdminRoute,
-  StaffProtected as ProtectedStaffRoute,
-  UserProtected as ProtectedUserRoute,
-} from './components/common/guards';
+import LayoutAdmin from '@/components/admin/layout.admin';
+import ProtectedAuthRoute from '@/components/auth/ProtectedAuthRoute';
+import LayoutClient from '@/components/client/layout.client';
+import NotFound from '@/components/common/feedback/NotFound';
+import ProtectedAdminRoute from '@/components/common/guards/protected-admin-route';
+import ProtectedStaffRoute from '@/components/common/guards/protected-staff-route';
+import ProtectedUserRoute from '@/components/common/guards/protected-user-route';
+import PublicRoute from '@/components/common/guards/public-route';
 // Staff pages
-import LayoutStaff from './components/staff/layout.staff';
-import CenterPage from './pages/admin/center';
-import DashboardPage from './pages/admin/dashboard';
-import NewsPage from './pages/admin/news';
-import PermissionPage from './pages/admin/permission';
-import RolePage from './pages/admin/role';
-import UserPage from './pages/admin/user';
-import VaccinePage from './pages/admin/vaccine';
-import ForgotPasswordPage from './pages/auth/ForgotPasswordPage';
-import LoginPage from './pages/auth/login';
-import ResetPasswordPage from './pages/auth/ResetPasswordPage';
-import RegisterPage from './pages/auth/register';
-import BlockchainPage from './pages/client/BlockchainPage';
-import BookingPage from './pages/client/booking';
-import CancelPage from './pages/client/CancelPage';
-import CheckoutPage from './pages/client/CheckoutPage';
-import CartPage from './pages/client/cart';
-import HomePage from './pages/client/home';
-import UserProfilePage from './pages/client/profile';
-import SuccessPage from './pages/client/SuccessPage';
-import VaccineDetailPage from './pages/client/vaccine-detail';
-import VaccineListPage from './pages/client/vaccine-list';
-import CalendarView from './pages/staff/calendar-view';
-import StaffDashboard from './pages/staff/dashboard';
-import DoctorDashboard from './pages/staff/doctor-dashboard';
-import DoctorSchedule from './pages/staff/doctor-schedule';
-import MySchedulePage from './pages/staff/my-schedule';
-import PendingAppointmentPage from './pages/staff/pending-appointment';
+import LayoutStaff from '@/components/staff/layout.staff';
+import CenterPage from '@/pages/admin/center';
+import DashboardPage from '@/pages/admin/dashboard';
+import NewsPage from '@/pages/admin/news';
+import PermissionPage from '@/pages/admin/permission';
+import RolePage from '@/pages/admin/role';
+import UserPage from '@/pages/admin/user';
+import VaccinePage from '@/pages/admin/vaccine';
+import ForgotPasswordPage from '@/pages/auth/ForgotPasswordPage';
+import LoginPage from '@/pages/auth/login';
+import ResetPasswordPage from '@/pages/auth/ResetPasswordPage';
+import RegisterPage from '@/pages/auth/register';
+import BlockchainPage from '@/pages/client/BlockchainPage';
+import BookingPage from '@/pages/client/booking';
+import CancelPage from '@/pages/client/CancelPage';
+import CheckoutPage from '@/pages/client/CheckoutPage';
+import CartPage from '@/pages/client/cart';
+import HomePage from '@/pages/client/home';
+import UserProfilePage from '@/pages/client/profile';
+import SuccessPage from '@/pages/client/SuccessPage';
+import VaccineDetailPage from '@/pages/client/vaccine-detail';
+import VaccineListPage from '@/pages/client/vaccine-list';
+import CalendarView from '@/pages/staff/calendar-view';
+import StaffDashboard from '@/pages/staff/dashboard';
+import DoctorDashboard from '@/pages/staff/doctor-dashboard';
+import DoctorSchedule from '@/pages/staff/doctor-schedule';
+import MySchedulePage from '@/pages/staff/my-schedule';
+import PendingAppointmentPage from '@/pages/staff/pending-appointment';
 
 const router = createBrowserRouter([
   {
     path: '/',
-    element: <LayoutClient />,
+    element: (
+      <PublicRoute>
+        <LayoutClient />
+      </PublicRoute>
+    ),
     errorElement: <NotFound />,
     children: [
       { index: true, element: <HomePage /> },
