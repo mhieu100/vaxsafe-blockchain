@@ -94,26 +94,7 @@ const Navbar = () => {
       icon: <UserOutlined />,
       onClick: () => navigate('/profile'),
     },
-    ...(user?.role === 'ADMIN'
-      ? [
-          {
-            key: 'admin',
-            label: t('user.adminDashboard'),
-            icon: <DashboardOutlined />,
-            onClick: () => navigate('/admin'),
-          },
-        ]
-      : []),
-    ...(user?.role === 'DOCTOR' || user?.role === 'CASHIER'
-      ? [
-          {
-            key: 'staff/dashboard',
-            label: t('user.staffDashboard'),
-            icon: <DashboardOutlined />,
-            onClick: () => navigate('/staff/dashboard'),
-          },
-        ]
-      : []),
+
     {
       type: 'divider',
     },

@@ -52,13 +52,6 @@ const CalendarView = () => {
     { id: 'BS003', name: 'BS. Lê Văn Hùng' },
     { id: 'BS004', name: 'BS. Phạm Thị Mai' },
   ];
-
-  // Fetch appointments based on view mode
-  useEffect(() => {
-    fetchAppointments();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [fetchAppointments]);
-
   const fetchAppointments = async () => {
     setLoading(true);
     try {
@@ -88,6 +81,12 @@ const CalendarView = () => {
       setLoading(false);
     }
   };
+
+  // Fetch appointments based on view mode
+  useEffect(() => {
+    fetchAppointments();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   // Navigation handlers
   const handlePrevious = () => {
@@ -428,7 +427,11 @@ const CalendarView = () => {
                 {dayAppointments.length > 0 && (
                   <Text
                     type="primary"
-                    style={{ fontSize: '11px', display: 'block', marginTop: '4px' }}
+                    style={{
+                      fontSize: '11px',
+                      display: 'block',
+                      marginTop: '4px',
+                    }}
                   >
                     <strong>{dayAppointments.length} lịch</strong>
                   </Text>
@@ -448,7 +451,9 @@ const CalendarView = () => {
     } else if (viewMode === 'week') {
       const weekStart = selectedDate.startOf('isoWeek');
       const weekEnd = selectedDate.endOf('isoWeek');
-      return `Tuần ${selectedDate.isoWeek()} - ${weekStart.format('DD/MM')} đến ${weekEnd.format('DD/MM/YYYY')}`;
+      return `Tuần ${selectedDate.isoWeek()} - ${weekStart.format(
+        'DD/MM'
+      )} đến ${weekEnd.format('DD/MM/YYYY')}`;
     } else {
       return `Tháng ${selectedDate.format('MM, YYYY')}`;
     }

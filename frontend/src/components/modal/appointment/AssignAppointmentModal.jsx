@@ -64,27 +64,6 @@ const AssignAppointmentModal = ({ open, onClose, appointment, onSuccess }) => {
     return dayjs();
   };
 
-  // Fetch doctors when modal opens
-  useEffect(() => {
-    if (open) {
-      const targetDate = getTargetDate();
-      setSelectedDate(targetDate);
-      form.setFieldsValue({
-        appointmentDate: targetDate,
-      });
-      fetchDoctors(targetDate.format('YYYY-MM-DD'));
-    }
-  }, [open, fetchDoctors, form.setFieldsValue, getTargetDate]);
-
-  // Fetch slots when doctor or date changes
-  useEffect(() => {
-    if (selectedDoctorId && selectedDate) {
-      fetchAvailableSlots(selectedDoctorId, selectedDate.format('YYYY-MM-DD'));
-    }
-  }, [selectedDoctorId, selectedDate, fetchAvailableSlots]);
-
-  if (!appointment) return null;
-
   const fetchDoctors = async (date) => {
     try {
       setLoadingDoctors(true);
@@ -123,6 +102,27 @@ const AssignAppointmentModal = ({ open, onClose, appointment, onSuccess }) => {
       setLoadingSlots(false);
     }
   };
+
+  // Fetch doctors when modal opens
+  useEffect(() => {
+    if (open) {
+      const targetDate = getTargetDate();
+      setSelectedDate(targetDate);
+      form.setFieldsValue({
+        appointmentDate: targetDate,
+      });
+      fetchDoctors(targetDate.format('YYYY-MM-DD'));
+    }
+  }, [open, form.setFieldsValue, getTargetDate]);
+
+  // Fetch slots when doctor or date changes
+  useEffect(() => {
+    if (selectedDoctorId && selectedDate) {
+      fetchAvailableSlots(selectedDoctorId, selectedDate.format('YYYY-MM-DD'));
+    }
+  }, [selectedDoctorId, selectedDate]);
+
+  if (!appointment) return null;
 
   const handleDoctorChange = (doctorId) => {
     setSelectedDoctorId(doctorId);

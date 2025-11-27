@@ -60,23 +60,6 @@ const ProcessUrgentAppointmentModal = ({ open, onClose, appointment, onSuccess }
   // Xác định ngày cần xem lịch
   const targetDate = isRescheduleRequest ? appointment?.desiredDate : appointment?.scheduledDate;
 
-  // Fetch doctors when modal opens
-  useEffect(() => {
-    if (open && userCenterId) {
-      fetchDoctors();
-    }
-  }, [open, userCenterId, fetchDoctors]);
-
-  // Fetch slots when doctor or date changes
-  useEffect(() => {
-    if (selectedDoctorId && targetDate) {
-      fetchAvailableSlots(selectedDoctorId, targetDate);
-    }
-  }, [selectedDoctorId, targetDate, fetchAvailableSlots]);
-
-  // Early return AFTER all hooks
-  if (!appointment) return null;
-
   const fetchDoctors = async () => {
     try {
       setLoadingDoctors(true);
@@ -117,6 +100,23 @@ const ProcessUrgentAppointmentModal = ({ open, onClose, appointment, onSuccess }
       setLoadingSlots(false);
     }
   };
+
+  // Fetch doctors when modal opens
+  useEffect(() => {
+    if (open && userCenterId) {
+      fetchDoctors();
+    }
+  }, [open, userCenterId]);
+
+  // Fetch slots when doctor or date changes
+  useEffect(() => {
+    if (selectedDoctorId && targetDate) {
+      fetchAvailableSlots(selectedDoctorId, targetDate);
+    }
+  }, [selectedDoctorId, targetDate]);
+
+  // Early return AFTER all hooks
+  if (!appointment) return null;
 
   const handleDoctorChange = (doctorId) => {
     setSelectedDoctorId(doctorId);

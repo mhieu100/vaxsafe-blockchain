@@ -42,12 +42,6 @@ const DoctorSchedule = () => {
   const [selectedSlot, setSelectedSlot] = useState(null);
   const [doctors, setDoctors] = useState([]);
   const [loading, setLoading] = useState(false);
-
-  // Fetch doctors with schedule when component mounts or date changes
-  useEffect(() => {
-    fetchDoctorsWithSchedule();
-  }, [fetchDoctorsWithSchedule]);
-
   const fetchDoctorsWithSchedule = async () => {
     try {
       setLoading(true);
@@ -82,6 +76,10 @@ const DoctorSchedule = () => {
       setLoading(false);
     }
   };
+  // Fetch doctors with schedule when component mounts or date changes
+  useEffect(() => {
+    fetchDoctorsWithSchedule();
+  }, []);
 
   // Get color for doctor based on ID
   const getColorForDoctor = (doctorId) => {
