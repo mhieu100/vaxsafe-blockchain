@@ -1,16 +1,19 @@
 import { Button, Result } from 'antd';
+import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 
 const NotPermitted = () => {
   const navigate = useNavigate();
+  const { t } = useTranslation('common');
+
   return (
     <Result
       status="403"
-      title="403"
-      subTitle="Sorry, you are not authorized to access this page."
+      title={t('errors.403.title')}
+      subTitle={t('errors.403.subtitle')}
       extra={
         <Button type="primary" onClick={() => navigate('/')}>
-          Back Home
+          {t('errors.403.backHome')}
         </Button>
       }
     />

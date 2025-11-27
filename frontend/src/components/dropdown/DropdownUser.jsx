@@ -1,4 +1,4 @@
-import { LogoutOutlined, UserOutlined } from '@ant-design/icons';
+import { DashboardOutlined, LogoutOutlined, UserOutlined } from '@ant-design/icons';
 import { Avatar, Dropdown, message } from 'antd';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
@@ -23,9 +23,32 @@ const DropdownUser = () => {
   const userItems = [
     {
       key: 'profile',
-      label: t('user.profile'),
+      label: t('user.personalInfo'),
       icon: <UserOutlined />,
       onClick: () => navigate('/profile'),
+    },
+    ...(user?.role === 'ADMIN'
+      ? [
+          {
+            key: 'admin',
+            label: t('user.adminDashboard'),
+            icon: <DashboardOutlined />,
+            onClick: () => navigate('/admin'),
+          },
+        ]
+      : []),
+    ...(user?.role === 'DOCTOR' || user?.role === 'CASHIER'
+      ? [
+          {
+            key: 'staff/dashboard',
+            label: t('user.staffDashboard'),
+            icon: <DashboardOutlined />,
+            onClick: () => navigate('/staff/dashboard'),
+          },
+        ]
+      : []),
+    {
+      type: 'divider',
     },
     {
       key: 'logout',

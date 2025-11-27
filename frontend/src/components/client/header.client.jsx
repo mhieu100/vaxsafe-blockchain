@@ -90,17 +90,17 @@ const Navbar = () => {
   const userMenuItems = [
     {
       key: 'profile',
-      label: t('user.profile'),
+      label: t('user.personalInfo'),
       icon: <UserOutlined />,
       onClick: () => navigate('/profile'),
     },
     ...(user?.role === 'ADMIN'
       ? [
           {
-            key: 'admin/dashboard',
-            label: 'Trang quản trị',
+            key: 'admin',
+            label: t('user.adminDashboard'),
             icon: <DashboardOutlined />,
-            onClick: () => navigate('/admin/dashboard'),
+            onClick: () => navigate('/admin'),
           },
         ]
       : []),
@@ -108,7 +108,7 @@ const Navbar = () => {
       ? [
           {
             key: 'staff/dashboard',
-            label: 'Trang nhân viên',
+            label: t('user.staffDashboard'),
             icon: <DashboardOutlined />,
             onClick: () => navigate('/staff/dashboard'),
           },

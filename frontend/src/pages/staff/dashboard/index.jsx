@@ -1,5 +1,3 @@
-/* eslint-disable react/jsx-key */
-
 import {
   CalendarFilled,
   CalendarOutlined,
@@ -60,26 +58,6 @@ const StaffDashboard = () => {
   const [processModalOpen, setProcessModalOpen] = useState(false);
   const [selectedAppointment, setSelectedAppointment] = useState(null);
 
-  // Fetch urgent appointments for cashier
-  useEffect(() => {
-    if (isCashierRole) {
-      fetchUrgentAppointments();
-      // Auto refresh every 2 minutes
-      const interval = setInterval(fetchUrgentAppointments, 120000);
-      return () => clearInterval(interval);
-    }
-  }, [isCashierRole, fetchUrgentAppointments]);
-
-  // Fetch today's appointments for doctor
-  useEffect(() => {
-    if (isDoctorRole) {
-      fetchTodayAppointments();
-      // Auto refresh every 2 minutes
-      const interval = setInterval(fetchTodayAppointments, 120000);
-      return () => clearInterval(interval);
-    }
-  }, [isDoctorRole, fetchTodayAppointments]);
-
   const fetchUrgentAppointments = async () => {
     try {
       setLoading(true);
@@ -109,6 +87,26 @@ const StaffDashboard = () => {
       setLoadingToday(false);
     }
   };
+
+  // Fetch urgent appointments for cashier
+  useEffect(() => {
+    if (isCashierRole) {
+      fetchUrgentAppointments();
+      // Auto refresh every 2 minutes
+      const interval = setInterval(fetchUrgentAppointments, 120000);
+      return () => clearInterval(interval);
+    }
+  }, [isCashierRole, fetchUrgentAppointments]);
+
+  // Fetch today's appointments for doctor
+  useEffect(() => {
+    if (isDoctorRole) {
+      fetchTodayAppointments();
+      // Auto refresh every 2 minutes
+      const interval = setInterval(fetchTodayAppointments, 120000);
+      return () => clearInterval(interval);
+    }
+  }, [isDoctorRole, fetchTodayAppointments]);
 
   // Mock data for CASHIER - Pending appointments that need scheduling (fallback)
   const _pendingAppointments = [
@@ -310,7 +308,13 @@ const StaffDashboard = () => {
               valueStyle={{ color: '#ff4d4f', fontSize: 28 }}
               loading={loading}
             />
-            <div style={{ marginTop: 12, paddingTop: 12, borderTop: '1px solid #f0f0f0' }}>
+            <div
+              style={{
+                marginTop: 12,
+                paddingTop: 12,
+                borderTop: '1px solid #f0f0f0',
+              }}
+            >
               <Text type="secondary" style={{ fontSize: 12 }}>
                 <ExclamationCircleOutlined /> Ưu tiên cao nhất
               </Text>
@@ -331,7 +335,13 @@ const StaffDashboard = () => {
               suffix="lịch hẹn"
               valueStyle={{ color: '#1890ff', fontSize: 28 }}
             />
-            <div style={{ marginTop: 12, paddingTop: 12, borderTop: '1px solid #f0f0f0' }}>
+            <div
+              style={{
+                marginTop: 12,
+                paddingTop: 12,
+                borderTop: '1px solid #f0f0f0',
+              }}
+            >
               <Text type="secondary" style={{ fontSize: 12 }}>
                 <CalendarOutlined /> Hôm nay
               </Text>
@@ -352,7 +362,13 @@ const StaffDashboard = () => {
               suffix="trong tuần"
               valueStyle={{ color: '#52c41a', fontSize: 28 }}
             />
-            <div style={{ marginTop: 12, paddingTop: 12, borderTop: '1px solid #f0f0f0' }}>
+            <div
+              style={{
+                marginTop: 12,
+                paddingTop: 12,
+                borderTop: '1px solid #f0f0f0',
+              }}
+            >
               <Text type="secondary" style={{ fontSize: 12 }}>
                 <RiseOutlined /> +12% so với tuần trước
               </Text>
@@ -373,7 +389,13 @@ const StaffDashboard = () => {
               suffix="trong tuần"
               valueStyle={{ color: '#ff4d4f', fontSize: 28 }}
             />
-            <div style={{ marginTop: 12, paddingTop: 12, borderTop: '1px solid #f0f0f0' }}>
+            <div
+              style={{
+                marginTop: 12,
+                paddingTop: 12,
+                borderTop: '1px solid #f0f0f0',
+              }}
+            >
               <Text type="secondary" style={{ fontSize: 12 }}>
                 <InfoCircleOutlined /> Xem chi tiết
               </Text>
@@ -450,7 +472,10 @@ const StaffDashboard = () => {
               <Col xs={24} sm={12} md={6}>
                 <Card
                   size="small"
-                  style={{ borderLeft: '4px solid #ff4d4f', background: '#fff1f0' }}
+                  style={{
+                    borderLeft: '4px solid #ff4d4f',
+                    background: '#fff1f0',
+                  }}
                 >
                   <Space direction="vertical" size="small">
                     <Space>
@@ -468,7 +493,10 @@ const StaffDashboard = () => {
               <Col xs={24} sm={12} md={6}>
                 <Card
                   size="small"
-                  style={{ borderLeft: '4px solid #ffa940', background: '#fff7e6' }}
+                  style={{
+                    borderLeft: '4px solid #ffa940',
+                    background: '#fff7e6',
+                  }}
                 >
                   <Space direction="vertical" size="small">
                     <Space>
@@ -485,7 +513,10 @@ const StaffDashboard = () => {
               <Col xs={24} sm={12} md={6}>
                 <Card
                   size="small"
-                  style={{ borderLeft: '4px solid #faad14', background: '#fffbe6' }}
+                  style={{
+                    borderLeft: '4px solid #faad14',
+                    background: '#fffbe6',
+                  }}
                 >
                   <Space direction="vertical" size="small">
                     <Space>
@@ -502,7 +533,10 @@ const StaffDashboard = () => {
               <Col xs={24} sm={12} md={6}>
                 <Card
                   size="small"
-                  style={{ borderLeft: '4px solid #1890ff', background: '#e6f7ff' }}
+                  style={{
+                    borderLeft: '4px solid #1890ff',
+                    background: '#e6f7ff',
+                  }}
                 >
                   <Space direction="vertical" size="small">
                     <Space>
@@ -607,7 +641,13 @@ const StaffDashboard = () => {
                         padding: '12px 16px',
                         marginBottom: 8,
                         borderRadius: 8,
-                        border: `2px solid ${item.priorityLevel === 1 ? '#ff4d4f' : item.priorityLevel === 2 ? '#ffa940' : '#f0f0f0'}`,
+                        border: `2px solid ${
+                          item.priorityLevel === 1
+                            ? '#ff4d4f'
+                            : item.priorityLevel === 2
+                              ? '#ffa940'
+                              : '#f0f0f0'
+                        }`,
                       }}
                     >
                       <List.Item.Meta
@@ -683,7 +723,11 @@ const StaffDashboard = () => {
                               {item.desiredDate && (
                                 <Tooltip title="Ngày mong muốn đổi">
                                   <Text
-                                    style={{ fontSize: 12, color: '#ff4d4f', fontWeight: 'bold' }}
+                                    style={{
+                                      fontSize: 12,
+                                      color: '#ff4d4f',
+                                      fontWeight: 'bold',
+                                    }}
                                   >
                                     Muốn đổi: {dayjs(item.desiredDate).format('DD/MM/YYYY')}{' '}
                                     {item.desiredTime}

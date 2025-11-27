@@ -47,14 +47,6 @@ const DoctorDashboard = () => {
   const [todayAppointments, setTodayAppointments] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  // Fetch today's appointments
-  useEffect(() => {
-    fetchTodayAppointments();
-    // Auto refresh every 2 minutes
-    const interval = setInterval(fetchTodayAppointments, 120000);
-    return () => clearInterval(interval);
-  }, [fetchTodayAppointments]);
-
   const fetchTodayAppointments = async () => {
     try {
       setLoading(true);
@@ -69,6 +61,13 @@ const DoctorDashboard = () => {
       setLoading(false);
     }
   };
+
+  useEffect(() => {
+    fetchTodayAppointments();
+    // Auto refresh every 2 minutes
+    const interval = setInterval(fetchTodayAppointments, 120000);
+    return () => clearInterval(interval);
+  }, []);
 
   // Calculate statistics from real data
   const _completedCount = todayAppointments.filter((a) => a.status === 'COMPLETED').length;

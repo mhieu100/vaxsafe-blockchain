@@ -9,12 +9,14 @@ import {
 import { ProLayout } from '@ant-design/pro-components';
 import { Avatar, Badge, Dropdown, message } from 'antd';
 import { useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Link, Outlet, useLocation, useNavigate } from 'react-router-dom';
 import { callLogout } from '@/services/auth.service';
 import { useAccountStore } from '@/stores/useAccountStore';
 
 const LayoutStaff = () => {
   const navigate = useNavigate();
+  const { t } = useTranslation(['common', 'staff']);
   const user = useAccountStore((state) => state.user);
   const logout = useAccountStore((state) => state.logout);
 
@@ -29,7 +31,7 @@ const LayoutStaff = () => {
     if (res && res && +res.statusCode === 200) {
       localStorage.removeItem('token');
       logout();
-      message.success('Đăng xuất thành công');
+      message.success(t('common:user.logoutSuccess'));
       navigate('/');
     }
   };
@@ -37,13 +39,13 @@ const LayoutStaff = () => {
   const userMenuItems = [
     {
       key: 'profile',
-      label: 'Thông tin cá nhân',
+      label: t('common:user.personalInfo'),
       icon: <UserOutlined />,
       onClick: () => navigate('/profile'),
     },
     {
       key: 'logout',
-      label: 'Đăng xuất',
+      label: t('common:user.logout'),
       icon: <LogoutOutlined />,
       onClick: handleLogout,
       danger: true,
@@ -54,36 +56,36 @@ const LayoutStaff = () => {
     {
       path: '/staff/dashboard',
       icon: <DashboardOutlined />,
-      name: <Link to="/staff/dashboard">Bảng điều khiển</Link>,
+      name: <Link to="/staff/dashboard">{t('staff:dashboard.title')}</Link>,
       roles: ['CASHIER'],
     },
     {
       path: '/staff/dashboard-doctor',
       icon: <DashboardOutlined />,
-      name: <Link to="/staff/dashboard-doctor">Bảng điều khiển</Link>,
+      name: <Link to="/staff/dashboard-doctor">{t('staff:dashboard.title')}</Link>,
       roles: ['DOCTOR'],
     },
     {
       path: '/staff/my-schedule',
       icon: <CalendarOutlined />,
-      name: <Link to="/staff/my-schedule">Lịch của tôi</Link>,
+      name: <Link to="/staff/my-schedule">{t('staff:doctorSchedule.mySchedule')}</Link>,
       roles: ['DOCTOR'],
     },
     {
       path: '/staff/pending-appointments',
-      name: <Link to="/staff/pending-appointments">Quản lý lịch hẹn</Link>,
+      name: <Link to="/staff/pending-appointments">{t('staff:appointments.title')}</Link>,
       icon: <EditOutlined />,
       roles: ['CASHIER'],
     },
     {
       path: '/staff/doctor-schedule',
-      name: <Link to="/staff/doctor-schedule">Lịch bác sĩ</Link>,
+      name: <Link to="/staff/doctor-schedule">{t('staff:doctorSchedule.title')}</Link>,
       icon: <EditOutlined />,
       roles: ['CASHIER'],
     },
     {
       path: '/staff/calendar-view',
-      name: <Link to="/staff/calendar-view">Lịch làm việc</Link>,
+      name: <Link to="/staff/calendar-view">{t('staff:calendar.title')}</Link>,
       icon: <CalendarOutlined />,
       roles: ['CASHIER', 'DOCTOR'],
     },
@@ -94,14 +96,8 @@ const LayoutStaff = () => {
   };
 
   const getRole = (role) => {
-    switch (role) {
-      case 'DOCTOR':
-        return 'Bác sĩ';
-      case 'CASHIER':
-        return 'Nhân viên thu ngân';
-      default:
-        return role;
-    }
+    const roleKey = role?.toLowerCase();
+    return t(`common:roles.${roleKey}`, role);
   };
 
   return (

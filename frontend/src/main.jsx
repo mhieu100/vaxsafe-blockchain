@@ -1,10 +1,13 @@
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import vi_VI from 'antd/locale/vi_VN';
-import { createRoot } from 'react-dom/client';
-import Root from './App.jsx';
-import './index.css';
-import './i18n'; // Initialize i18n
 import { ConfigProvider } from 'antd';
+import enUS from 'antd/locale/en_US';
+import viVN from 'antd/locale/vi_VN';
+import { useEffect, useState } from 'react';
+import { createRoot } from 'react-dom/client';
+import { useTranslation } from 'react-i18next';
+import Root from './App.jsx';
+import './i18n'; // Initialize i18n
+import './index.css';
 
 // Configure React Query
 const queryClient = new QueryClient({
@@ -17,13 +20,35 @@ const queryClient = new QueryClient({
   },
 });
 
+// Wrapper component to handle locale changes
+const AppWithLocale = () => {
+  const { i18n } = useTranslation();
+  const [locale, setLocale] = useState(i18n.language === 'en' ? enUS : viVN);
+
+  useEffect(() => {
+    const handleLanguageChange = (lng) => {
+      setLocale(lng === 'en' ? enUS : viVN);
+    };
+
+    i18n.on('languageChanged', handleLanguageChange);
+
+    return () => {
+      i18n.off('languageChanged', handleLanguageChange);
+    };
+  }, [i18n]);
+
+  return (
+    <ConfigProvider locale={locale}>
+      <Root />
+    </ConfigProvider>
+  );
+};
+
 const rootElement = document.getElementById('root');
 const root = createRoot(rootElement);
 
 root.render(
   <QueryClientProvider client={queryClient}>
-    <ConfigProvider locale={vi_VI}>
-      <Root />
-    </ConfigProvider>
+    <AppWithLocale />
   </QueryClientProvider>
 );

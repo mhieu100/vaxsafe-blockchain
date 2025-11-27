@@ -31,7 +31,16 @@
   "user": {
     "profile": "Profile",
     "logout": "Logout",
-    "logoutSuccess": "Logout success"
+    "logoutSuccess": "Logout success",
+    "adminDashboard": "Admin Dashboard",
+    "staffDashboard": "Staff Dashboard",
+    "personalInfo": "Personal Information"
+  },
+  "roles": {
+    "admin": "Administrator",
+    "patient": "Patient",
+    "doctor": "Doctor",
+    "cashier": "Cashier"
   },
   "hero": {
     "title": "Smart Vaccination Management Platform",
@@ -119,6 +128,23 @@
     "productDescription": "Product Description",
     "defaultFullDesc": "This premium product is designed with the highest quality materials and craftsmanship.",
     "qualityCommitment": "Our commitment to quality ensures that every product meets rigorous standards."
+  },
+  "errors": {
+    "403": {
+      "title": "403",
+      "subtitle": "Sorry, you are not authorized to access this page.",
+      "backHome": "Back Home"
+    },
+    "404": {
+      "title": "404",
+      "subtitle": "Sorry, the page you visited does not exist.",
+      "backHome": "Back Home"
+    },
+    "401": {
+      "title": "401",
+      "subtitle": "Your session has expired. Please login again.",
+      "backHome": "Back Home"
+    }
   },
   "auth": {
     "checkEmail": "Check Your Email",

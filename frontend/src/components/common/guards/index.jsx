@@ -9,7 +9,8 @@ import NotPermitted from './not-permitted';
 const RoleBaseRoute = (props) => {
   const user = useAccountStore((state) => state.user);
 
-  if (user.role === 'ADMIN') {
+  // Only ADMIN can access admin routes
+  if (user?.role === 'ADMIN') {
     return <>{props.children}</>;
   } else {
     return <NotPermitted />;

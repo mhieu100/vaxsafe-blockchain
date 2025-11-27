@@ -12,6 +12,7 @@ import {
 } from '@ant-design/icons';
 import { Avatar, Badge, Dropdown, Layout, Menu, message } from 'antd';
 import { useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Outlet, useLocation, useNavigate } from 'react-router-dom';
 import { callLogout } from '@/services/auth.service';
 import { useAccountStore } from '@/stores/useAccountStore';
@@ -20,6 +21,7 @@ const { Header, Sider, Content } = Layout;
 
 const LayoutAdmin = () => {
   const navigate = useNavigate();
+  const { t } = useTranslation(['common', 'admin']);
   const user = useAccountStore((state) => state.user);
   const logout = useAccountStore((state) => state.logout);
   const location = useLocation();
@@ -35,7 +37,7 @@ const LayoutAdmin = () => {
     if (res && res && +res.statusCode === 200) {
       localStorage.removeItem('token');
       logout();
-      message.success('Đăng xuất thành công');
+      message.success(t('common:user.logoutSuccess'));
       navigate('/');
     }
   };
@@ -43,14 +45,13 @@ const LayoutAdmin = () => {
   const userMenuItems = [
     {
       key: 'profile',
-      label: 'Thông tin cá nhân',
+      label: t('common:user.personalInfo'),
       icon: <UserOutlined />,
       onClick: () => navigate('/profile'),
     },
-
     {
       key: 'logout',
-      label: 'Đăng xuất',
+      label: t('common:user.logout'),
       icon: <LogoutOutlined />,
       onClick: handleLogout,
       danger: true,
@@ -59,55 +60,45 @@ const LayoutAdmin = () => {
 
   const menuItems = [
     {
-      key: '/admin/dashboard',
+      key: '/admin',
       icon: <DashboardOutlined />,
-      label: 'Bảng điều khiển',
+      label: t('admin:dashboard.title'),
     },
     {
       key: '/admin/users',
       icon: <TeamOutlined />,
-      label: 'Người dùng',
+      label: t('admin:users.title'),
     },
     {
       key: '/admin/vaccines',
       icon: <MedicineBoxOutlined />,
-      label: 'Vaccine',
+      label: t('admin:vaccines.title'),
     },
     {
       key: '/admin/centers',
       icon: <BankOutlined />,
-      label: 'Cơ sở tiêm chủng',
+      label: t('admin:centers.title'),
     },
     {
       key: '/admin/permissions',
       icon: <SafetyOutlined />,
-      label: 'Quyền hạn',
+      label: t('admin:permissions.title'),
     },
     {
       key: '/admin/news',
       icon: <NotificationOutlined />,
-      label: 'Tin tức',
+      label: t('admin:news.title'),
     },
     {
       key: '/admin/roles',
       icon: <KeyOutlined />,
-      label: 'Vai trò',
+      label: t('admin:roles.title'),
     },
   ];
 
   const getRole = (role) => {
-    switch (role) {
-      case 'ADMIN':
-        return 'Quản trị viên';
-      case 'PATIENT':
-        return 'Người dùng';
-      case 'DOCTOR':
-        return 'Bác sĩ';
-      case 'CASHIER':
-        return 'Nhân viên thu ngân';
-      default:
-        return '';
-    }
+    const roleKey = role?.toLowerCase();
+    return t(`common:roles.${roleKey}`, role);
   };
 
   const handleMenuClick = (e) => {

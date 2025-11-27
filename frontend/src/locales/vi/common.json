@@ -31,7 +31,16 @@
   "user": {
     "profile": "Hồ sơ",
     "logout": "Đăng xuất",
-    "logoutSuccess": "Đăng xuất thành công"
+    "logoutSuccess": "Đăng xuất thành công",
+    "adminDashboard": "Trang quản trị",
+    "staffDashboard": "Trang nhân viên",
+    "personalInfo": "Thông tin cá nhân"
+  },
+  "roles": {
+    "admin": "Quản trị viên",
+    "patient": "Người dùng",
+    "doctor": "Bác sĩ",
+    "cashier": "Nhân viên thu ngân"
   },
   "hero": {
     "title": "Nền tảng Quản lý Tiêm chủng Thông minh",
@@ -119,6 +128,23 @@
     "productDescription": "Mô tả sản phẩm",
     "defaultFullDesc": "Sản phẩm cao cấp này được thiết kế với vật liệu và tay nghề chất lượng cao nhất.",
     "qualityCommitment": "Cam kết chất lượng của chúng tôi đảm bảo rằng mọi sản phẩm đều đáp ứng các tiêu chuẩn nghiêm ngặt."
+  },
+  "errors": {
+    "403": {
+      "title": "403",
+      "subtitle": "Xin lỗi, bạn không có quyền truy cập trang này.",
+      "backHome": "Về trang chủ"
+    },
+    "404": {
+      "title": "404",
+      "subtitle": "Xin lỗi, trang bạn truy cập không tồn tại.",
+      "backHome": "Về trang chủ"
+    },
+    "401": {
+      "title": "401",
+      "subtitle": "Phiên đăng nhập đã hết hạn. Vui lòng đăng nhập lại.",
+      "backHome": "Về trang chủ"
+    }
   },
   "auth": {
     "checkEmail": "Kiểm tra Email của bạn",

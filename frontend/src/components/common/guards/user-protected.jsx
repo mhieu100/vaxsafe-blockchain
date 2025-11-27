@@ -2,10 +2,12 @@ import { useEffect, useState } from 'react';
 import { Navigate } from 'react-router-dom';
 import { useAccountStore } from '@/stores/useAccountStore';
 import { Loading } from '../feedback';
+import NotPermitted from './not-permitted';
 
 const ProtectedUserRoute = (props) => {
   const isAuthenticated = useAccountStore((state) => state.isAuthenticated);
   const isLoading = useAccountStore((state) => state.isLoading);
+  const user = useAccountStore((state) => state.user);
   const [redirectToLogin, setRedirectToLogin] = useState(false);
 
   useEffect(() => {
@@ -20,6 +22,11 @@ const ProtectedUserRoute = (props) => {
 
   if (redirectToLogin) {
     return <Navigate to="/login" replace />;
+  }
+
+  // Block ADMIN, DOCTOR, CASHIER from accessing user routes
+  if (isAuthenticated && user?.role && ['ADMIN', 'DOCTOR', 'CASHIER'].includes(user.role)) {
+    return <NotPermitted />;
   }
 
   return (

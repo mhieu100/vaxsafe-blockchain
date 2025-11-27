@@ -9,7 +9,8 @@ import NotPermitted from './not-permitted';
 const StaffRoleRoute = (props) => {
   const user = useAccountStore((state) => state.user);
 
-  if (user.role === 'DOCTOR' || user.role === 'CASHIER') {
+  // Only DOCTOR and CASHIER can access staff routes
+  if (user?.role === 'DOCTOR' || user?.role === 'CASHIER') {
     return <>{props.children}</>;
   } else {
     return <NotPermitted />;
