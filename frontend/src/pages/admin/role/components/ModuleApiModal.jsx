@@ -3,7 +3,7 @@ import { ProFormSwitch } from '@ant-design/pro-components';
 import { Alert, Card, Col, Collapse, Row, Space, Tag, Tooltip } from 'antd';
 import { useEffect, useState } from 'react';
 
-import { colorMethod, groupByPermission } from '@/config/utils';
+import { colorMethod, groupByPermission } from '@/utils/permission';
 
 const ModuleApi = (props) => {
   const { form, listPermissions, singleRole, openModal } = props;

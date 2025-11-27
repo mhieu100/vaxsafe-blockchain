@@ -1,5 +1,5 @@
 import { create } from 'zustand';
-import { callFetchAppointmentOfCenter, callMySchedule } from '../config/api.appointment';
+import { callFetchAppointmentOfCenter, callMySchedule } from '../services/appointment.service';
 
 const useAppointmentStore = create((set) => ({
   // State

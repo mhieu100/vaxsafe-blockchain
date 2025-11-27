@@ -1,5 +1,5 @@
 import { create } from 'zustand';
-import { callFetchNews } from '../config/api.news';
+import { callFetchNews } from '../services/news.service';
 
 const useNewsStore = create((set) => ({
   // State

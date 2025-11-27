@@ -1,5 +1,5 @@
 import { create } from 'zustand';
-import { callFetchUser } from '../config/api.user';
+import { callFetchUser } from '../services/user.service';
 
 const useUserStore = create((set) => ({
   // State

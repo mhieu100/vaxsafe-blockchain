@@ -3,8 +3,8 @@ import { Form, message, notification } from 'antd';
 import dayjs from 'dayjs';
 import customParseFormat from 'dayjs/plugin/customParseFormat';
 import { useEffect, useState } from 'react';
-import { callUpdateAppointment } from '@/config/api.appointment';
-import { callFetchDoctor } from '@/config/api.user';
+import { callUpdateAppointment } from '@/services/appointment.service';
+import { callFetchDoctor } from '@/services/user.service';
 import '../../../styles/reset.scss';
 import { useAccountStore } from '@/stores/useAccountStore';
 

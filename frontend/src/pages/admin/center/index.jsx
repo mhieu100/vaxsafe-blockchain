@@ -4,7 +4,7 @@ import queryString from 'query-string';
 import { useRef, useState } from 'react';
 import { sfLike } from 'spring-filter-query-builder';
 import DataTable from '@/components/data-table';
-import { callDeleteCenter } from '@/config/api.center';
+import { callDeleteCenter } from '@/services/center.service';
 import { useCenterStore } from '@/stores/useCenterStore';
 import ModalCenter from './components/CenterModal';
 

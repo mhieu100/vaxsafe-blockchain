@@ -1,5 +1,5 @@
 import { create } from 'zustand';
-import { callFetchPermission } from '../config/api.permission';
+import { callFetchPermission } from '../services/permission.service';
 
 const usePermissionStore = create((set) => ({
   // State

@@ -1,4 +1,4 @@
-import axios from './axios-customize';
+import apiClient from '../services/apiClient';
 
 /**
  * Module News
@@ -11,21 +11,21 @@ import axios from './axios-customize';
  * @param {string} query - Query string (e.g., "page=0&size=10&sort=publishedAt,desc")
  */
 export const callFetchNews = (query) => {
-  return axios.get(`/news?${query}`);
+  return apiClient.get(`/news?${query}`);
 };
 
 /**
  * Get published news only
  */
 export const callFetchPublishedNews = () => {
-  return axios.get('/news/published');
+  return apiClient.get('/news/published');
 };
 
 /**
  * Get featured news
  */
 export const callFetchFeaturedNews = () => {
-  return axios.get('/news/featured');
+  return apiClient.get('/news/featured');
 };
 
 /**
@@ -33,7 +33,7 @@ export const callFetchFeaturedNews = () => {
  * @param {string} slug - News slug
  */
 export const callFetchNewsBySlug = (slug) => {
-  return axios.get(`/news/slug/${slug}`);
+  return apiClient.get(`/news/slug/${slug}`);
 };
 
 /**
@@ -41,14 +41,14 @@ export const callFetchNewsBySlug = (slug) => {
  * @param {number} id - News ID
  */
 export const callFetchNewsById = (id) => {
-  return axios.get(`/news/${id}`);
+  return apiClient.get(`/news/${id}`);
 };
 
 /**
  * Get all news categories
  */
 export const callGetNewsCategories = () => {
-  return axios.get('/news/categories');
+  return apiClient.get('/news/categories');
 };
 
 /**
@@ -56,7 +56,7 @@ export const callGetNewsCategories = () => {
  * @param {string} category - Category name (e.g., "VACCINE_INFO", "CHILDREN_HEALTH")
  */
 export const callFetchNewsByCategory = (category) => {
-  return axios.get(`/news/category/${category}`);
+  return apiClient.get(`/news/category/${category}`);
 };
 
 // ===== ADMIN ENDPOINTS (Require Authentication) =====
@@ -77,7 +77,7 @@ export const callFetchNewsByCategory = (category) => {
  * @param {string} data.coverImage - Cover image URL
  */
 export const callCreateNews = (data) => {
-  return axios.post('/news', data);
+  return apiClient.post('/news', data);
 };
 
 /**
@@ -86,7 +86,7 @@ export const callCreateNews = (data) => {
  * @param {Object} data - News data to update
  */
 export const callUpdateNews = (id, data) => {
-  return axios.put(`/news/${id}`, data);
+  return apiClient.put(`/news/${id}`, data);
 };
 
 /**
@@ -94,7 +94,7 @@ export const callUpdateNews = (id, data) => {
  * @param {number} id - News ID
  */
 export const callDeleteNews = (id) => {
-  return axios.delete(`/news/${id}`);
+  return apiClient.delete(`/news/${id}`);
 };
 
 /**
@@ -102,7 +102,7 @@ export const callDeleteNews = (id) => {
  * @param {number} id - News ID
  */
 export const callPublishNews = (id) => {
-  return axios.patch(`/news/${id}/publish`);
+  return apiClient.patch(`/news/${id}/publish`);
 };
 
 /**
@@ -110,5 +110,5 @@ export const callPublishNews = (id) => {
  * @param {number} id - News ID
  */
 export const callUnpublishNews = (id) => {
-  return axios.patch(`/news/${id}/unpublish`);
+  return apiClient.patch(`/news/${id}/unpublish`);
 };

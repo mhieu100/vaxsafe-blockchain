@@ -13,7 +13,7 @@ import { Avatar, Badge, Button, Drawer, Input, Layout, Menu, message, Space } fr
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
-import authService from '@/services/auth.service';
+import { callLogout } from '@/services/auth.service';
 import { useAccountStore } from '@/stores/useAccountStore';
 import useCartStore from '@/stores/useCartStore';
 import { LanguageSwitcher as LanguageSelect } from '../common/ui';
@@ -36,9 +36,9 @@ const Navbar = () => {
   const [_searchValue, setSearchValue] = useState('');
 
   const handleLogout = async () => {
-    const res = await authService.logout();
+    const res = await callLogout();
     if (res && res && +res.statusCode === 200) {
-      localStorage.removeItem('access_token');
+      localStorage.removeItem('token');
       logout();
       message.success(t('user.logoutSuccess'));
       navigate('/');

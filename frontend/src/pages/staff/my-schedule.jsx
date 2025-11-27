@@ -6,7 +6,7 @@ import queryString from 'query-string';
 import { useRef } from 'react';
 import { sfLike } from 'spring-filter-query-builder';
 import DataTable from '@/components/data-table';
-import { callCancelAppointment, callCompleteAppointment } from '../../config/api.appointment';
+import { callCancelAppointment, callCompleteAppointment } from '../../services/appointment.service';
 import { useAppointmentStore } from '../../stores/useAppointmentStore';
 import { getColorStatus } from '../../utils/status';
 

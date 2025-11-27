@@ -1,4 +1,4 @@
-import axios from './axios-customize';
+import apiClient from '../services/apiClient';
 
 /**
  *
@@ -6,7 +6,7 @@ Module Permission
  */
 
 export const callCreatePermission = (name, method, apiPath, module) => {
-  return axios.post('/permissions', {
+  return apiClient.post('/permissions', {
     name,
     method,
     apiPath,
@@ -15,7 +15,7 @@ export const callCreatePermission = (name, method, apiPath, module) => {
 };
 
 export const callUpdatePermission = (id, name, method, apiPath, module) => {
-  return axios.put('/permissions', {
+  return apiClient.put('/permissions', {
     id,
     name,
     method,
@@ -25,9 +25,9 @@ export const callUpdatePermission = (id, name, method, apiPath, module) => {
 };
 
 export const callFetchPermission = (query) => {
-  return axios.get(`/permissions?${query}`);
+  return apiClient.get(`/permissions?${query}`);
 };
 
 export const callDeletePermission = (id) => {
-  return axios.delete(`/permissions/${id}`);
+  return apiClient.delete(`/permissions/${id}`);
 };

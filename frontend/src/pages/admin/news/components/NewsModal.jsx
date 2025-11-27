@@ -10,7 +10,7 @@ import {
 import { Col, Form, Input, message, notification, Row } from 'antd';
 import { useEffect, useState } from 'react';
 
-import { callCreateNews, callGetNewsCategories, callUpdateNews } from '@/config/api.news';
+import { callCreateNews, callGetNewsCategories, callUpdateNews } from '@/services/news.service';
 
 import '@/styles/reset.scss';
 

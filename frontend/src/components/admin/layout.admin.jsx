@@ -13,7 +13,7 @@ import {
 import { Avatar, Badge, Dropdown, Layout, Menu, message } from 'antd';
 import { useEffect, useState } from 'react';
 import { Outlet, useLocation, useNavigate } from 'react-router-dom';
-import { callLogout } from '@/config/api.auth';
+import { callLogout } from '@/services/auth.service';
 import { useAccountStore } from '@/stores/useAccountStore';
 
 const { Header, Sider, Content } = Layout;
@@ -33,7 +33,7 @@ const LayoutAdmin = () => {
   const handleLogout = async () => {
     const res = await callLogout();
     if (res && res && +res.statusCode === 200) {
-      localStorage.removeItem('access_token');
+      localStorage.removeItem('token');
       logout();
       message.success('Đăng xuất thành công');
       navigate('/');

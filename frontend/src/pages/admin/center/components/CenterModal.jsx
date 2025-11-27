@@ -5,8 +5,8 @@ import enUS from 'antd/es/calendar/locale/en_US';
 import { useEffect, useState } from 'react';
 import { v4 as uuidv4 } from 'uuid';
 
-import { callCreateCenter, callUpdateCenter } from '@/config/api.center';
-import { callUploadSingleFile } from '@/config/api.file';
+import { callCreateCenter, callUpdateCenter } from '@/services/center.service';
+import { callUploadSingleFile } from '@/services/file.service';
 
 import '@/styles/reset.scss';
 

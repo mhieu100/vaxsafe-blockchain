@@ -79,7 +79,7 @@ public class SecurityConfiguration {
     public SecurityFilterChain filterChain(HttpSecurity http, CustomAuthenticationEntryPoint customAuthenticationEntryPoint) throws Exception {
 
         String[] whiteList = {
-                "/", "/auth/login/password", "/auth/refresh", "/auth/register", "/storage/**","/email/**", "/payments/vnpay/return", "/payments/paypal/success", "/payments/paypal/cancel"
+                "/", "/auth/login/password", "/auth/refresh", "/auth/register", "/storage/**","/email/**", "/payments/vnpay/return", "/payments/paypal/success", "/payments/paypal/cancel", "/api/v1/hello"
         };
         http
                 .csrf(AbstractHttpConfigurer::disable)

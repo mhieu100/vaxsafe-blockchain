@@ -10,7 +10,7 @@ import {
 import { Col, Form, message, notification, Row } from 'antd';
 import { useEffect, useState } from 'react';
 
-import { callCreateVaccine, callUpdateVaccine } from '@/config/api.vaccine';
+import { callCreateVaccine, callUpdateVaccine } from '@/services/vaccine.service';
 
 import '@/styles/reset.scss';
 

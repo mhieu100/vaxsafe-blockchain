@@ -5,7 +5,7 @@ import queryString from 'query-string';
 import { useRef, useState } from 'react';
 import { sfLike } from 'spring-filter-query-builder';
 import DataTable from '@/components/data-table';
-import { callDeleteNews, callPublishNews, callUnpublishNews } from '@/config/api.news';
+import { callDeleteNews, callPublishNews, callUnpublishNews } from '@/services/news.service';
 import { useNewsStore } from '@/stores/useNewsStore';
 import ModalNews from './components/NewsModal';
 

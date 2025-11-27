@@ -1,5 +1,5 @@
 import { create } from 'zustand';
-import { callFetchCenter } from '../config/api.center';
+import { callFetchCenter } from '../services/center.service';
 
 const useCenterStore = create((set) => ({
   // State

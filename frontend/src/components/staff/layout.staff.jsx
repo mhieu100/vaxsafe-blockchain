@@ -10,7 +10,7 @@ import { ProLayout } from '@ant-design/pro-components';
 import { Avatar, Badge, Dropdown, message } from 'antd';
 import { useEffect, useState } from 'react';
 import { Link, Outlet, useLocation, useNavigate } from 'react-router-dom';
-import { callLogout } from '@/config/api.auth';
+import { callLogout } from '@/services/auth.service';
 import { useAccountStore } from '@/stores/useAccountStore';
 
 const LayoutStaff = () => {
@@ -27,7 +27,7 @@ const LayoutStaff = () => {
   const handleLogout = async () => {
     const res = await callLogout();
     if (res && res && +res.statusCode === 200) {
-      localStorage.removeItem('access_token');
+      localStorage.removeItem('token');
       logout();
       message.success('Đăng xuất thành công');
       navigate('/');

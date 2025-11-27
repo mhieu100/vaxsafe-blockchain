@@ -22,12 +22,6 @@ export const callLogout = () => {
 };
 
 /**
- * Logout current user (alias for callLogout)
- * @returns {Promise} Logout response
- */
-export const logout = callLogout;
-
-/**
  * Register new user account
  * @param {object} payload - Registration data
  * @param {string} payload.username - Username
@@ -90,15 +84,27 @@ export async function updateAccount(payload) {
   return await apiClient.post('/auth/update-account', payload);
 }
 
-// Default export for convenience
-const authService = {
-  callLogin,
-  callLogout,
-  logout,
-  callRegister,
-  callChangePassword,
-  updateAvatar,
-  updateAccount,
-};
+/**
+ * Login with Google token
+ * @param {string} googleToken - Google authentication token
+ * @returns {Promise} Login response with user account data
+ */
+export async function callLoginWithGoogle(googleToken) {
+  return await apiClient.post('/auth/login/google', { token: googleToken });
+}
 
-export default authService;
+/**
+ * Fetch current user account information
+ * @returns {Promise} Current user account data
+ */
+export async function callFetchAccount() {
+  return await apiClient.get('/auth/account');
+}
+
+/**
+ * Get my appointments
+ * @returns {Promise} List of user's appointments
+ */
+export async function callMyAppointments() {
+  return await apiClient.get('/auth/my-appointments');
+}

@@ -1,5 +1,5 @@
 import { create } from 'zustand';
-import { callFetchVaccine } from '../config/api.vaccine';
+import { callFetchVaccine } from '../services/vaccine.service';
 
 const useVaccineStore = create((set) => ({
   // State

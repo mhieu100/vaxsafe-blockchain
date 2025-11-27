@@ -2,7 +2,7 @@ import { CameraOutlined, DeleteOutlined, UserOutlined } from '@ant-design/icons'
 import { Avatar, Button, Modal, message, Upload } from 'antd';
 import { useState } from 'react';
 import { callUpdateAvatar } from '@/services/auth.service';
-import { callUploadFile } from '@/services/file.service';
+import { callUploadSingleFile } from '@/services/file.service';
 import { useAccountStore } from '@/stores/useAccountStore';
 
 const ModalUpdateAvatar = ({ open, setOpen }) => {
@@ -16,7 +16,7 @@ const ModalUpdateAvatar = ({ open, setOpen }) => {
       setUploading(true);
 
       // Step 1: Upload file to /files
-      const uploadRes = await callUploadFile(file, 'user');
+      const uploadRes = await callUploadSingleFile(file, 'user');
       if (!uploadRes?.data?.fileName) {
         throw new Error('Upload failed: no file URL returned');
       }
@@ -47,7 +47,9 @@ const ModalUpdateAvatar = ({ open, setOpen }) => {
       setRemoving(true);
 
       // Update avatar to default image
-      const updateRes = await callUpdateAvatar('http://localhost:8080/storage/user/default.png');
+      const updateRes = await callUpdateAvatar(
+        `${import.meta.env.VITE_API_BASE_URL}/storage/user/default.png`
+      );
       if (!updateRes?.data) {
         throw new Error('Remove avatar failed');
       }

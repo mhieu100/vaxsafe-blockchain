@@ -29,8 +29,8 @@ import {
 } from 'antd';
 import dayjs from 'dayjs';
 import { useEffect, useState } from 'react';
-import { callUpdateAppointment } from '@/config/api.appointment';
-import { getAvailableSlotsAPI, getDoctorsWithScheduleAPI } from '@/config/api.doctor.schedule';
+import { callUpdateAppointment } from '@/services/appointment.service';
+import { getAvailableSlotsAPI, getDoctorsWithScheduleAPI } from '@/services/doctor.service';
 import { useAccountStore } from '@/stores/useAccountStore';
 
 const { Text } = Typography;

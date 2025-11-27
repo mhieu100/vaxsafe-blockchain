@@ -1,4 +1,4 @@
-import axios from './axios-customize';
+import apiClient from '../services/apiClient';
 /**
  *
 Module User
@@ -13,7 +13,7 @@ export const callUpdateUser = (
   address,
   centerName
 ) => {
-  return axios.put(`/users/${walletAddress}`, {
+  return apiClient.put(`/users/${walletAddress}`, {
     fullname,
     email,
     phoneNumber,
@@ -24,13 +24,13 @@ export const callUpdateUser = (
 };
 
 export const callFetchUser = (query) => {
-  return axios.get(`/users?${query}`);
+  return apiClient.get(`/users?${query}`);
 };
 
 export const callDeleteUser = (id) => {
-  return axios.delete(`/users/${id}`);
+  return apiClient.delete(`/users/${id}`);
 };
 
 export const callFetchDoctor = () => {
-  return axios.get('/users/doctors');
+  return apiClient.get('/users/doctors');
 };

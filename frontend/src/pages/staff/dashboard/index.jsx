@@ -36,7 +36,10 @@ import dayjs from 'dayjs';
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ProcessUrgentAppointmentModal } from '@/components/modal/appointment';
-import { callGetTodayAppointments, callGetUrgentAppointments } from '@/config/api.appointment';
+import {
+  callGetTodayAppointments,
+  callGetUrgentAppointments,
+} from '@/services/appointment.service';
 import { useAccountStore } from '@/stores/useAccountStore';
 import UrgencyGuide from './components/UrgencyGuide';
 

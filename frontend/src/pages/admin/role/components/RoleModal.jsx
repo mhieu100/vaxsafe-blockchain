@@ -4,7 +4,7 @@ import { Col, Form, message, notification, Row } from 'antd';
 import { useState } from 'react';
 
 import '@/styles/reset.scss';
-import { callUpdateRole } from '@/config/api.role';
+import { callUpdateRole } from '@/services/role.service';
 import ModuleApi from './ModuleApiModal';
 
 const ModalRole = (props) => {

@@ -27,7 +27,7 @@ import dayjs from 'dayjs';
 import isoWeek from 'dayjs/plugin/isoWeek';
 import weekOfYear from 'dayjs/plugin/weekOfYear';
 import { useEffect, useState } from 'react';
-import { callFetchAppointmentOfCenter } from '../../config/api.appointment';
+import { callFetchAppointmentOfCenter } from '../../services/appointment.service';
 import { getColorStatus } from '../../utils/status';
 
 dayjs.extend(isoWeek);

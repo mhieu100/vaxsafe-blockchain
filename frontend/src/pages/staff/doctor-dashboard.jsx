@@ -34,7 +34,7 @@ import {
 } from 'antd';
 import dayjs from 'dayjs';
 import { useEffect, useState } from 'react';
-import { callGetTodayAppointments } from '../../config/api.appointment';
+import { callGetTodayAppointments } from '../../services/appointment.service';
 import { useAccountStore } from '../../stores/useAccountStore';
 
 const { Title, Text } = Typography;

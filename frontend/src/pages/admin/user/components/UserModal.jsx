@@ -12,9 +12,9 @@ import dayjs from 'dayjs';
 import customParseFormat from 'dayjs/plugin/customParseFormat';
 import { useEffect, useState } from 'react';
 
-import { callUpdateUser } from '@/config/api.user';
+import { callUpdateUser } from '@/services/user.service';
 import '@/styles/reset.scss';
-import { callFetchCenter } from '@/config/api.center';
+import { callFetchCenter } from '@/services/center.service';
 
 dayjs.extend(customParseFormat);
 const dateFormat = 'YYYY-MM-DD';

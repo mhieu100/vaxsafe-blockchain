@@ -4,7 +4,7 @@ import { Col, Form, message, notification, Row } from 'antd';
 import { useState } from 'react';
 
 import '@/styles/reset.scss';
-import { callCreatePermission, callUpdatePermission } from '@/config/api.permission';
+import { callCreatePermission, callUpdatePermission } from '@/services/permission.service';
 
 const ModalPermission = (props) => {
   const { openModal, setOpenModal, reloadTable, dataInit, setDataInit } = props;

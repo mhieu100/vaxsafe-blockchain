@@ -1,5 +1,5 @@
 import { create } from 'zustand';
-import { callAllBookings } from '../config/api.appointment';
+import { callAllBookings } from '../services/appointment.service';
 
 const useBookingStore = create((set) => ({
   // State

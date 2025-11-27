@@ -2,7 +2,7 @@ import { ModalForm, ProFormDatePicker, ProFormText } from '@ant-design/pro-compo
 import { Col, Form, message, notification, Row } from 'antd';
 import { useState } from 'react';
 
-import { callUpdateUser } from '@/config/api.user';
+import { callUpdateUser } from '@/services/user.service';
 
 const ModalProfile = (props) => {
   const { openModal, setOpenModal, reloadData, user } = props;

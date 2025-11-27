@@ -3,8 +3,8 @@ import { Button, Divider, Select, Slider } from 'antd';
 // eslint-disable-next-line import/no-extraneous-dependencies
 import debounce from 'lodash/debounce';
 import { useEffect, useMemo, useState } from 'react';
-import { callGetAllCountries } from '@/config/api.vaccine';
 import { MAX_PRICE, MIN_PRICE } from '@/constants';
+import { callGetAllCountries } from '@/services/vaccine.service';
 import { formatPrice } from '@/utils/formatPrice';
 
 const { Option } = Select;

@@ -9,7 +9,7 @@ const NO_RETRY_HEADER = 'x-no-retry';
  * Main API client instance with token refresh interceptor
  */
 const apiClient = axios.create({
-  baseURL: import.meta.env.VITE_API_BASE_URL || 'http://localhost:8080',
+  baseURL: import.meta.env.VITE_API_BASE_URL || 'http://52.197.232.53:8080',
   withCredentials: true,
 });
 
@@ -27,7 +27,6 @@ const handleRefreshToken = async () => {
       return null;
     } catch {
       // If refresh fails, logout user
-      localStorage.removeItem('access_token');
       localStorage.removeItem('token');
       window.location.href = '/login';
       return null;
@@ -40,8 +39,7 @@ const handleRefreshToken = async () => {
  */
 apiClient.interceptors.request.use(
   (config) => {
-    // Get token from localStorage
-    const token = localStorage.getItem('access_token');
+    const token = localStorage.getItem('token');
 
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
@@ -80,7 +78,7 @@ apiClient.interceptors.response.use(
 
       if (newToken) {
         // Update token in localStorage
-        localStorage.setItem('access_token', newToken);
+        localStorage.setItem('token', newToken);
 
         // Retry the original request with new token
         originalRequest.headers.Authorization = `Bearer ${newToken}`;

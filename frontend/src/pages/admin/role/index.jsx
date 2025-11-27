@@ -4,9 +4,9 @@ import { useEffect, useRef, useState } from 'react';
 import { sfLike } from 'spring-filter-query-builder';
 
 import DataTable from '@/components/data-table';
-import { callFetchPermission } from '@/config/api.permission';
-import { groupByPermission } from '@/config/utils';
+import { callFetchPermission } from '@/services/permission.service';
 import { useRoleStore } from '@/stores/useRoleStore';
+import { groupByPermission } from '@/utils/permission';
 import ModalRole from './components/RoleModal';
 
 const RolePage = () => {

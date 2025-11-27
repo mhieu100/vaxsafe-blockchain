@@ -1,5 +1,5 @@
 import { create } from 'zustand';
-import { callFetchRole } from '../config/api.role';
+import { callFetchRole } from '../services/role.service';
 
 const useRoleStore = create((set) => ({
   // State

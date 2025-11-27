@@ -1,7 +1,7 @@
 /* eslint-disable import/no-extraneous-dependencies */
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
-import { callFetchAccount } from '../config/api.auth';
+import { callFetchAccount } from '../services/auth.service';
 
 const useAccountStore = create(
   persist(
@@ -59,8 +59,7 @@ const useAccountStore = create(
 
       logout: () => {
         // Clear all localStorage items
-        localStorage.removeItem('access_token');
-        localStorage.removeItem('account-storage');
+        localStorage.removeItem('token');
 
         set({
           isAuthenticated: false,

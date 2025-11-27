@@ -4,7 +4,7 @@ import queryString from 'query-string';
 import { useRef, useState } from 'react';
 import { sfLike } from 'spring-filter-query-builder';
 import DataTable from '@/components/data-table';
-import { callDeleteUser } from '@/config/api.user';
+import { callDeleteUser } from '@/services/user.service';
 import { useUserStore } from '@/stores/useUserStore';
 import ModalUser from './components/UserModal';
 

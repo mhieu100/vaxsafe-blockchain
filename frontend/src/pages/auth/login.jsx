@@ -2,7 +2,7 @@ import { FacebookOutlined, GoogleOutlined, LockOutlined, UserOutlined } from '@a
 import { Button, Card, Divider, Form, Input, message, Typography } from 'antd';
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { callLoginWithPassword } from '../../config/api.auth';
+import { callLogin } from '@/services/auth.service';
 import useAccountStore from '../../stores/useAccountStore';
 
 const { Title, Text } = Typography;
@@ -20,7 +20,7 @@ const Login = () => {
   const onSubmit = async (values) => {
     try {
       setIsSubmitting(true);
-      const response = await callLoginWithPassword(values.email, values.password);
+      const response = await callLogin(values.email, values.password);
 
       if (response?.data) {
         const userData = response.data.user;

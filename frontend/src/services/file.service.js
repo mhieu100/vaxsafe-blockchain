@@ -6,7 +6,7 @@ import apiClient from './apiClient';
  * @param {string} [folder='user'] - The folder to store the file (e.g., "user", "vaccine")
  * @returns {Promise} The uploaded file URL and timestamp
  */
-export async function uploadFile(file, folder = 'user') {
+export async function callUploadSingleFile(file, folder = 'user') {
   const formData = new FormData();
   formData.append('file', file);
   formData.append('folder', folder);
@@ -17,6 +17,3 @@ export async function uploadFile(file, folder = 'user') {
     },
   });
 }
-
-// Alias for consistency
-export const callUploadFile = uploadFile;

@@ -4,7 +4,7 @@ import queryString from 'query-string';
 import { useRef, useState } from 'react';
 import { sfLike } from 'spring-filter-query-builder';
 import DataTable from '@/components/data-table';
-import { callDeleteVaccine } from '@/config/api.vaccine';
+import { callDeleteVaccine } from '@/services/vaccine.service';
 import { useVaccineStore } from '@/stores/useVaccineStore';
 import ModalVaccine from './components/VaccineModal';
 
