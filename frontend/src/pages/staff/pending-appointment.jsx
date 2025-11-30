@@ -42,7 +42,6 @@ import {
   getAppointmentStatusDisplay,
   getPaymentMethodDisplay,
   getPaymentStatusColor,
-  PaymentMethod,
   PaymentStatus,
 } from '@/constants/enums';
 import { useAppointmentStore } from '../../stores/useAppointmentStore';
@@ -146,7 +145,7 @@ const PendingAppointmentPage = () => {
         const dateToShow = text || record.scheduledDate;
         const timeSlotToShow = record.desiredTimeSlot || record.scheduledTimeSlot;
         const isUrgent = dayjs(dateToShow).diff(dayjs(), 'day') <= 1;
-        const isReschedule = record.status === 'RESCHEDULE';
+        const _isReschedule = record.status === 'RESCHEDULE';
 
         return (
           <Space orientation="vertical" size={0}>
@@ -175,7 +174,7 @@ const PendingAppointmentPage = () => {
       width: 180,
       render: (text, record) => {
         const dateToShow = text || record.scheduledDate;
-        const timeSlotToShow = record.desiredTimeSlot || record.scheduledTimeSlot;
+        const _timeSlotToShow = record.desiredTimeSlot || record.scheduledTimeSlot;
         const actualTimeToShow = record.actualDesiredTime || record.actualScheduledTime;
         const isUrgent = dayjs(dateToShow).diff(dayjs(), 'day') <= 1;
         const isReschedule = record.status === 'RESCHEDULE';

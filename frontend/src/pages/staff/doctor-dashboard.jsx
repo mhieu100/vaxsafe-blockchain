@@ -34,7 +34,6 @@ import {
 } from 'antd';
 import dayjs from 'dayjs';
 import { useEffect, useState } from 'react';
-import { AppointmentStatus } from '@/constants/enums';
 import { callGetTodayAppointments } from '../../services/appointment.service';
 import { useAccountStore } from '../../stores/useAccountStore';
 import { formatAppointmentTime } from '../../utils/appointment';

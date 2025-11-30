@@ -12,7 +12,6 @@ import { useTranslation } from 'react-i18next';
 import { Link, useNavigate } from 'react-router-dom';
 import { changeLanguage } from '../../i18n';
 import { callRegister } from '../../services/auth.service';
-import useAccountStore from '../../stores/useAccountStore';
 
 const BACKEND_URL = import.meta.env.VITE_BACKEND_URL || 'http://localhost:8080';
 
@@ -23,7 +22,6 @@ const Register = () => {
   const navigate = useNavigate();
   const [form] = Form.useForm();
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const { setUserLoginInfo } = useAccountStore();
 
   const languageItems = [
     {

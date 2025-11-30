@@ -155,8 +155,6 @@ export const convertToVND = (amount, method) => {
       return amount * EXCHANGE_RATES.USD_TO_VND;
     case PaymentMethod.METAMASK:
       return amount * EXCHANGE_RATES.ETH_TO_VND;
-    case PaymentMethod.BANK:
-    case PaymentMethod.CASH:
     default:
       return amount; // Already in VND
   }

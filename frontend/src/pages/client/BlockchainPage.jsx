@@ -79,9 +79,9 @@ const BlockchainPage = () => {
       <Card className="mt-6 rounded-xl shadow-sm">
         <Title level={4}>Latest Blockchain Activity</Title>
         <div className="space-y-4 mt-4">
-          {stats?.recentBlocks?.slice(0, 5).map((block, index) => (
+          {stats?.recentBlocks?.slice(0, 5).map((block) => (
             <div
-              key={index}
+              key={block.blockHash || block.blockNumber}
               className="flex justify-between items-center p-4 bg-gray-50 rounded-lg"
             >
               <div>

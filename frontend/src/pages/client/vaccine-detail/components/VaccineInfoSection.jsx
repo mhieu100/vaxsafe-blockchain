@@ -64,11 +64,14 @@ const VaccineInfoSection = ({ vaccine }) => {
           <div className="grid grid-cols-4 gap-2">
             {vaccineImages.map((img, index) => (
               <div
-                key={index}
+                key={img}
+                role="button"
+                tabIndex={0}
                 className={`cursor-pointer rounded-lg overflow-hidden border-2 ${
                   selectedImage === index ? 'border-blue-500' : 'border-gray-200'
                 }`}
                 onClick={() => setSelectedImage(index)}
+                onKeyDown={(e) => e.key === 'Enter' && setSelectedImage(index)}
               >
                 <img
                   src={img}
@@ -118,8 +121,8 @@ const VaccineInfoSection = ({ vaccine }) => {
           <div>
             <Title level={4}>{t('vaccine.keyFeatures')}</Title>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-              {features.map((feature, index) => (
-                <div key={index} className="flex items-center gap-2">
+              {features.map((feature) => (
+                <div key={feature} className="flex items-center gap-2">
                   <CheckCircleOutlined className="text-green-500" />
                   <Text>{feature}</Text>
                 </div>

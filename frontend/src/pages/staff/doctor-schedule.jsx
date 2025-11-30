@@ -134,8 +134,11 @@ const DoctorSchedule = () => {
 
     return (
       <div
-        key={index}
+        key={slot.slotId || index}
+        role="button"
+        tabIndex={0}
         onClick={() => handleSlotClick(doctor, slot)}
+        onKeyDown={(e) => e.key === 'Enter' && handleSlotClick(doctor, slot)}
         style={{
           border: '1px solid #d9d9d9',
           padding: '10px',

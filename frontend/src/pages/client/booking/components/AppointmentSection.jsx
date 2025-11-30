@@ -5,7 +5,6 @@ import {
   Card,
   Col,
   DatePicker,
-  Divider,
   Form,
   message,
   Radio,
@@ -15,7 +14,7 @@ import {
 } from 'antd';
 import locale from 'antd/es/date-picker/locale/vi_VN';
 import dayjs from 'dayjs';
-import { useEffect, useMemo, useState } from 'react';
+import { useMemo, useState } from 'react';
 import { DEFAULT_PAGE, DEFAULT_PAGE_SIZE } from '@/constants';
 import { useCenter } from '@/hooks/useCenter';
 import { useFamilyMember } from '@/hooks/useFamilyMember';
@@ -23,9 +22,9 @@ import { useFamilyMember } from '@/hooks/useFamilyMember';
 const { Text } = Typography;
 
 const AppointmentSection = ({ bookingForm, vaccine, setCurrentStep, setBookingData }) => {
-  const [appointmentDate, setAppointmentDate] = useState(null);
-  const [appointmentTime, setAppointmentTime] = useState(null);
-  const [appointmentCenterId, setAppointmentCenterId] = useState(null);
+  const [_appointmentDate, setAppointmentDate] = useState(null);
+  const [_appointmentTime, setAppointmentTime] = useState(null);
+  const [_appointmentCenterId, setAppointmentCenterId] = useState(null);
   const [bookingFor, setBookingFor] = useState('self');
 
   const filter = {

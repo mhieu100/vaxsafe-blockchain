@@ -22,7 +22,7 @@ const CompleteProfilePage = () => {
   const navigate = useNavigate();
   const [form] = Form.useForm();
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const { userLoginInfo, setUserLoginInfo, isActive, isAuthenticated, user } = useAccountStore();
+  const { setUserLoginInfo, isActive, isAuthenticated, user } = useAccountStore();
 
   useEffect(() => {
     // If not authenticated, redirect to login

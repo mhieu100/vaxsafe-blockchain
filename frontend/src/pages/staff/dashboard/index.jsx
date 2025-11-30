@@ -631,6 +631,7 @@ const StaffDashboard = () => {
                     <List.Item
                       actions={[
                         <Button
+                          key="assign"
                           type="primary"
                           icon={<CalendarOutlined />}
                           onClick={() => handleAssignAppointment(item)}
@@ -819,6 +820,7 @@ const StaffDashboard = () => {
                     <List.Item
                       actions={[
                         <Tag
+                          key="status"
                           color={
                             item.status === AppointmentStatus.COMPLETED
                               ? 'green'

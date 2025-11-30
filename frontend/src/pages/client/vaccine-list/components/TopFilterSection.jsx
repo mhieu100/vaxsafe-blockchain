@@ -1,5 +1,5 @@
 import { AppstoreOutlined, BarsOutlined } from '@ant-design/icons';
-import { Button, Divider, Pagination, Space } from 'antd';
+import { Button, Pagination, Space } from 'antd';
 import { useTranslation } from 'react-i18next';
 
 /**

@@ -169,11 +169,11 @@ const CalendarView = () => {
         >
           Giờ
         </div>
-        {weekDays.map((day, idx) => {
+        {weekDays.map((day) => {
           const isToday = day.isSame(dayjs(), 'day');
           return (
             <div
-              key={idx}
+              key={day.format('YYYY-MM-DD')}
               style={{
                 background: isToday ? '#e7f3ff' : '#f5f5f5',
                 padding: '15px 8px',
@@ -206,14 +206,14 @@ const CalendarView = () => {
             >
               {time}
             </div>
-            {weekDays.map((day, dayIdx) => {
+            {weekDays.map((day) => {
               const dateStr = day.format('YYYY-MM-DD');
               const key = `${dateStr}-${time}`;
               const dayAppointments = appointmentsByDateTime[key] || [];
 
               return (
                 <div
-                  key={`${time}-${dayIdx}`}
+                  key={key}
                   style={{
                     background: 'white',
                     padding: '8px',
@@ -221,10 +221,13 @@ const CalendarView = () => {
                     position: 'relative',
                   }}
                 >
-                  {dayAppointments.map((apt, aptIdx) => (
+                  {dayAppointments.map((apt) => (
                     <div
-                      key={aptIdx}
+                      key={apt.appointmentId}
+                      role="button"
+                      tabIndex={0}
                       onClick={() => handleAppointmentClick(apt)}
+                      onKeyDown={(e) => e.key === 'Enter' && handleAppointmentClick(apt)}
                       style={{
                         background: getVaccineColor(apt.vaccine?.name),
                         color: 'white',
@@ -270,10 +273,13 @@ const CalendarView = () => {
             <Text type="secondary">Không có lịch hẹn nào trong ngày này</Text>
           </div>
         ) : (
-          appointments.map((apt, idx) => (
+          appointments.map((apt) => (
             <div
-              key={idx}
+              key={apt.appointmentId}
+              role="button"
+              tabIndex={0}
               onClick={() => handleAppointmentClick(apt)}
+              onKeyDown={(e) => e.key === 'Enter' && handleAppointmentClick(apt)}
               style={{
                 border: '1px solid #f0f0f0',
                 padding: '15px',
@@ -362,9 +368,9 @@ const CalendarView = () => {
         }}
       >
         {/* Header */}
-        {['T2', 'T3', 'T4', 'T5', 'T6', 'T7', 'CN'].map((day, idx) => (
+        {['T2', 'T3', 'T4', 'T5', 'T6', 'T7', 'CN'].map((day) => (
           <div
-            key={idx}
+            key={day}
             style={{
               background: '#f5f5f5',
               padding: '15px 8px',
@@ -377,8 +383,8 @@ const CalendarView = () => {
         ))}
 
         {/* Calendar cells */}
-        {weeks.map((week, weekIdx) =>
-          week.map((day, dayIdx) => {
+        {weeks.map((week) =>
+          week.map((day) => {
             const isCurrentMonth = day.month() === selectedDate.month();
             const isToday = day.isSame(dayjs(), 'day');
             const dateStr = day.format('YYYY-MM-DD');
@@ -386,7 +392,9 @@ const CalendarView = () => {
 
             return (
               <div
-                key={`${weekIdx}-${dayIdx}`}
+                key={dateStr}
+                role="button"
+                tabIndex={0}
                 style={{
                   background: isCurrentMonth ? 'white' : '#f9f9f9',
                   minHeight: '120px',
@@ -399,6 +407,12 @@ const CalendarView = () => {
                   setSelectedDate(day);
                   setViewMode('day');
                 }}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter') {
+                    setSelectedDate(day);
+                    setViewMode('day');
+                  }
+                }}
               >
                 <div
                   style={{
@@ -410,9 +424,9 @@ const CalendarView = () => {
                   {day.format('D')}
                 </div>
                 <div>
-                  {dayAppointments.slice(0, 3).map((apt, idx) => (
+                  {dayAppointments.slice(0, 3).map((apt) => (
                     <div
-                      key={idx}
+                      key={apt.appointmentId}
                       style={{
                         width: '6px',
                         height: '6px',

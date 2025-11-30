@@ -2,7 +2,6 @@ import {
   CalendarOutlined,
   CheckCircleOutlined,
   ClockCircleOutlined,
-  EditOutlined,
   InfoCircleOutlined,
   ReloadOutlined,
   UserOutlined,
@@ -21,7 +20,6 @@ import {
   notification,
   Radio,
   Row,
-  Select,
   Space,
   Spin,
   Tag,
@@ -32,7 +30,6 @@ import { useEffect, useState } from 'react';
 import { TIME_SLOT_LABELS } from '@/constants';
 import { callUpdateAppointment } from '@/services/appointment.service';
 import { getAvailableSlotsByCenterAndTimeSlotAPI } from '@/services/doctor.service';
-import { useAccountStore } from '@/stores/useAccountStore';
 
 const { Text } = Typography;
 const { TextArea } = Input;
@@ -176,7 +173,7 @@ const AssignAppointmentModal = ({ open, onClose, appointment, onSuccess }) => {
         setAvailableSlots(res.data);
         setSelectedSlotId(null);
       }
-    } catch (error) {
+    } catch (_error) {
       notification.error({
         message: 'Lỗi',
         description: 'Không thể tải lịch trống',

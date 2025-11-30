@@ -173,7 +173,7 @@ const ApproveRescheduleModal = ({ open, onClose, appointment, onSuccess }) => {
         setAvailableSlots(res.data);
         setSelectedSlotId(null);
       }
-    } catch (error) {
+    } catch (_error) {
       notification.error({
         message: 'Lỗi',
         description: 'Không thể tải lịch trống',

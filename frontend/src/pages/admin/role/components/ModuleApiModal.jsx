@@ -130,7 +130,13 @@ const ModuleApi = (props) => {
         }}
       >
         <span>{item.module}</span>
-        <div onClick={(e) => e.stopPropagation()} style={{ marginRight: 10 }}>
+        <div
+          role="button"
+          tabIndex={0}
+          onClick={(e) => e.stopPropagation()}
+          onKeyDown={(e) => e.key === 'Enter' && e.stopPropagation()}
+          style={{ marginRight: 10 }}
+        >
           <ProFormSwitch
             key={`${item.module}-${forceRenderKey}`}
             name={['permissions', item.module]}

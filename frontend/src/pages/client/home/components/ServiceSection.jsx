@@ -33,9 +33,9 @@ const ServiceSection = () => {
           <p className="text-lg text-gray-600 max-w-3xl mx-auto">{t('service.subtitle')}</p>
         </div>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-          {features.map((f, index) => (
+          {features.map((f) => (
             <div
-              key={index}
+              key={f.title}
               className="bg-white p-6 rounded-xl shadow-sm transition-all duration-300 hover:shadow-md"
             >
               <div
