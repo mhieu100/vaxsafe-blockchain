@@ -8,6 +8,7 @@ import { Alert, Card, Spin, Table, Tag, Typography } from 'antd';
 import dayjs from 'dayjs';
 import { useEffect, useState } from 'react';
 import { getMyBookingHistory } from '@/services/booking.service';
+import { formatAppointmentTime } from '@/utils/appointment';
 
 const { Title, Text } = Typography;
 
@@ -94,13 +95,15 @@ const VaccinationHistoryTab = () => {
   if (loading) {
     return (
       <div className="flex justify-center items-center py-12">
-        <Spin size="large" tip="Đang tải lịch sử tiêm chủng..." />
+        <Spin size="large" spinning tip="Đang tải lịch sử tiêm chủng...">
+          <div style={{ minHeight: 100 }} />
+        </Spin>
       </div>
     );
   }
 
   if (error) {
-    return <Alert message="Lỗi" description={error} type="error" showIcon className="mb-4" />;
+    return <Alert title="Lỗi" description={error} type="error" showIcon className="mb-4" />;
   }
 
   // Main booking columns
@@ -196,7 +199,7 @@ const VaccinationHistoryTab = () => {
         <div>
           <div>{dayjs(date).format('DD/MM/YYYY')}</div>
           <Text type="secondary" className="text-xs">
-            {record.scheduledTime}
+            {formatAppointmentTime(record)}
           </Text>
         </div>
       ),

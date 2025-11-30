@@ -34,17 +34,14 @@ const TopCheckoutSection = ({ currentStep, setCurrentStep }) => {
             {
               title: 'Lịch hẹn',
               icon: <CalendarOutlined />,
-              description: 'Thông tin đặt lịch',
             },
             {
               title: 'Thanh toán',
               icon: <CreditCardOutlined />,
-              description: 'Phương thức thanh toán',
             },
             {
               title: 'Xem lại',
               icon: <CheckCircleOutlined />,
-              description: 'Xác nhận đặt lịch',
             },
           ]}
         />

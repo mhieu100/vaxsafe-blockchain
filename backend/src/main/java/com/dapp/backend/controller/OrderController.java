@@ -1,5 +1,6 @@
 package com.dapp.backend.controller;
 
+import com.dapp.backend.annotation.ApiMessage;
 import com.dapp.backend.dto.request.OrderRequest;
 import com.dapp.backend.dto.response.OrderResponse;
 
@@ -18,12 +19,15 @@ import java.util.List;
 @RequiredArgsConstructor
 public class OrderController {
     private final OrderService orderService;
+    
     @PostMapping
+    @ApiMessage("Create a new order")
     public ResponseEntity<PaymentResponse> create(@RequestBody OrderRequest request) throws AppException, PayPalRESTException {
         return ResponseEntity.ok(orderService.createOrder(request));
     }
 
     @GetMapping
+    @ApiMessage("Get all orders of user")
     public ResponseEntity<List<OrderResponse>> getOrder() throws AppException {
         return ResponseEntity.ok(orderService.getOrder());
     }

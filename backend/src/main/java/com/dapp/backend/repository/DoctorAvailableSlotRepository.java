@@ -35,6 +35,19 @@ public interface DoctorAvailableSlotRepository extends JpaRepository<DoctorAvail
     List<DoctorAvailableSlot> findAvailableSlotsByCenter(@Param("centerId") Long centerId, 
                                                            @Param("date") LocalDate date);
     
+    @Query("SELECT s FROM DoctorAvailableSlot s " +
+           "WHERE s.doctor.center.centerId = :centerId " +
+           "AND s.slotDate = :date " +
+           "AND s.startTime >= :startTime " +
+           "AND s.startTime < :endTime " +
+           "AND s.status = 'AVAILABLE' " +
+           "ORDER BY s.startTime, s.doctor.doctorId")
+    List<DoctorAvailableSlot> findAvailableSlotsByCenterAndTimeRange(
+        @Param("centerId") Long centerId,
+        @Param("date") LocalDate date,
+        @Param("startTime") LocalTime startTime,
+        @Param("endTime") LocalTime endTime);
+    
     Optional<DoctorAvailableSlot> findByDoctor_DoctorIdAndSlotDateAndStartTime(
         Long doctorId, LocalDate slotDate, LocalTime startTime
     );

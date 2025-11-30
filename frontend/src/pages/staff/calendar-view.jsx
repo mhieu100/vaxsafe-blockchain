@@ -27,8 +27,9 @@ import dayjs from 'dayjs';
 import isoWeek from 'dayjs/plugin/isoWeek';
 import weekOfYear from 'dayjs/plugin/weekOfYear';
 import { useEffect, useState } from 'react';
+import { getAppointmentStatusColor, getAppointmentStatusDisplay } from '@/constants/enums';
 import { callFetchAppointmentOfCenter } from '../../services/appointment.service';
-import { getColorStatus } from '../../utils/status';
+import { formatAppointmentTime } from '../../utils/appointment';
 
 dayjs.extend(isoWeek);
 dayjs.extend(weekOfYear);
@@ -139,7 +140,7 @@ const CalendarView = () => {
     const appointmentsByDateTime = {};
     appointments.forEach((apt) => {
       const date = dayjs(apt.scheduledDate).format('YYYY-MM-DD');
-      const time = apt.scheduledTime?.substring(0, 5) || '08:00';
+      const time = formatAppointmentTime(apt).substring(0, 5);
       const key = `${date}-${time}`;
       if (!appointmentsByDateTime[key]) {
         appointmentsByDateTime[key] = [];
@@ -244,7 +245,7 @@ const CalendarView = () => {
                         e.currentTarget.style.boxShadow = 'none';
                       }}
                     >
-                      <strong>{apt.scheduledTime?.substring(0, 5)}</strong>
+                      <strong>{formatAppointmentTime(apt).substring(0, 5)}</strong>
                       <br />
                       {apt.user?.firstName} {apt.user?.lastName}
                       <br />
@@ -292,7 +293,7 @@ const CalendarView = () => {
                 <Col span={4}>
                   <Space>
                     <ClockCircleOutlined />
-                    <Text strong>{apt.scheduledTime?.substring(0, 5)}</Text>
+                    <Text strong>{formatAppointmentTime(apt).substring(0, 5)}</Text>
                   </Space>
                 </Col>
                 <Col span={20}>
@@ -624,7 +625,7 @@ const CalendarView = () => {
                 <ClockCircleOutlined />
                 <Text>
                   {dayjs(selectedAppointment.scheduledDate).format('DD/MM/YYYY')} -{' '}
-                  {selectedAppointment.scheduledTime?.substring(0, 5)}
+                  {formatAppointmentTime(selectedAppointment)}
                 </Text>
               </Space>
             </Descriptions.Item>
@@ -637,14 +638,8 @@ const CalendarView = () => {
               </Space>
             </Descriptions.Item>
             <Descriptions.Item label="Trạng thái">
-              <Tag color={getColorStatus(selectedAppointment.status)}>
-                {selectedAppointment.status === 'SCHEDULED'
-                  ? 'Đã xếp lịch'
-                  : selectedAppointment.status === 'COMPLETED'
-                    ? 'Đã hoàn thành'
-                    : selectedAppointment.status === 'CANCELLED'
-                      ? 'Đã hủy'
-                      : selectedAppointment.status}
+              <Tag color={getAppointmentStatusColor(selectedAppointment.status)}>
+                {getAppointmentStatusDisplay(selectedAppointment.status)}
               </Tag>
             </Descriptions.Item>
             <Descriptions.Item label="Ghi chú">

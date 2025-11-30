@@ -117,7 +117,7 @@ const CardInfoUser = ({ setOpen, editMode, setEditMode, onOpenSettings }) => {
                 title="Total Orders"
                 value={12}
                 prefix={<ShoppingOutlined className="text-blue-500" />}
-                valueStyle={{ color: '#1890ff', fontSize: '20px' }}
+                styles={{ content: { color: '#1890ff', fontSize: '20px' } }}
               />
             ) : (
               <Skeleton active paragraph={false} title={{ width: 80 }} />
@@ -129,7 +129,7 @@ const CardInfoUser = ({ setOpen, editMode, setEditMode, onOpenSettings }) => {
                 title="Wishlist Items"
                 value={8}
                 prefix={<HeartOutlined className="text-red-500" />}
-                valueStyle={{ color: '#f5222d', fontSize: '20px' }}
+                styles={{ content: { color: '#f5222d', fontSize: '20px' } }}
               />
             ) : (
               <Skeleton active paragraph={false} title={{ width: 90 }} />
@@ -141,7 +141,7 @@ const CardInfoUser = ({ setOpen, editMode, setEditMode, onOpenSettings }) => {
                 title="Reward Points"
                 value={2450}
                 prefix={<GiftOutlined className="text-orange-500" />}
-                valueStyle={{ color: '#fa8c16', fontSize: '20px' }}
+                styles={{ content: { color: '#fa8c16', fontSize: '20px' } }}
               />
             ) : (
               <Skeleton active paragraph={false} title={{ width: 100 }} />
@@ -154,7 +154,7 @@ const CardInfoUser = ({ setOpen, editMode, setEditMode, onOpenSettings }) => {
                 value={189}
                 prefix="$"
                 suffix="USD"
-                valueStyle={{ color: '#52c41a', fontSize: '20px' }}
+                styles={{ content: { color: '#52c41a', fontSize: '20px' } }}
               />
             ) : (
               <Skeleton active paragraph={false} title={{ width: 90 }} />

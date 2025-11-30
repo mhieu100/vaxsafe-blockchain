@@ -1,6 +1,5 @@
 package com.dapp.backend.model;
 
-import com.dapp.backend.enums.OrderStatus;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;

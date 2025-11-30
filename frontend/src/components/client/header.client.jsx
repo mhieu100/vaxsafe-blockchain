@@ -126,34 +126,36 @@ const Navbar = () => {
               onClick={handleMenuClick}
               selectedKeys={[location.pathname?.split('?')?.[0] ?? '']}
               items={menuItems}
+              className="hidden lg:flex !border-0 !bg-transparent"
               style={{
-                border: 'none',
-                background: 'transparent',
                 minWidth: '300px',
+                lineHeight: '64px',
               }}
-              className="hidden lg:flex"
             />
           </div>
 
           <div className="flex items-center gap-2 md:gap-4">
-            <div className="hidden md:flex md:items-center">
+            <div className="hidden md:block">
               <Search
                 placeholder={t('header.searchPlaceholder')}
                 allowClear
                 onSearch={onSearch}
+                size="middle"
                 style={{ width: 250 }}
+                className="align-middle"
               />
             </div>
 
-            <Space className="hidden sm:flex">
+            <Space className="hidden sm:flex" size="small">
               <LanguageSelect />
 
-              <Badge count={itemCount} size="small" className="mr-1 md:mr-0">
+              <Badge count={itemCount} size="small">
                 <Button
                   icon={<ShoppingCartOutlined />}
                   size="middle"
                   onClick={() => navigate('/cart')}
-                  className="border-none shadow-none hover:bg-slate-100"
+                  type="text"
+                  className="hover:bg-slate-100"
                   title={t('header.cart')}
                 />
               </Badge>
@@ -182,7 +184,8 @@ const Navbar = () => {
             <Button
               icon={<MenuOutlined />}
               size="middle"
-              className="flex border-none shadow-none hover:bg-slate-100 lg:hidden"
+              type="text"
+              className="flex hover:bg-slate-100 lg:hidden"
               onClick={() => setMobileMenuVisible(true)}
               title="Menu"
             />
@@ -201,7 +204,7 @@ const Navbar = () => {
         placement="right"
         onClose={handleMobileMenuClose}
         open={mobileMenuVisible}
-        width={300}
+        size="default"
         className="md:hidden"
       >
         <div className="flex h-full flex-col">

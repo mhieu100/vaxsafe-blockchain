@@ -1,14 +1,17 @@
-/* eslint-disable no-undef */
-
 import { CheckOutlined, CloseOutlined } from '@ant-design/icons';
 import { Badge, Button, message, notification, Space, Tag } from 'antd';
 import queryString from 'query-string';
 import { useRef } from 'react';
 import { sfLike } from 'spring-filter-query-builder';
 import DataTable from '@/components/data-table';
+import {
+  AppointmentStatus,
+  getAppointmentStatusColor,
+  getAppointmentStatusDisplay,
+} from '@/constants/enums';
 import { callCancelAppointment, callCompleteAppointment } from '../../services/appointment.service';
 import { useAppointmentStore } from '../../stores/useAppointmentStore';
-import { getColorStatus } from '../../utils/status';
+import { formatAppointmentTime } from '../../utils/appointment';
 
 const MySchedulePage = () => {
   const tableRef = useRef();
@@ -80,6 +83,7 @@ const MySchedulePage = () => {
     {
       title: 'Giờ tiêm',
       dataIndex: 'scheduledTime',
+      render: (_, record) => formatAppointmentTime(record),
     },
     {
       title: 'Bác sĩ',
@@ -98,14 +102,16 @@ const MySchedulePage = () => {
     {
       title: 'Trạng thái',
       dataIndex: 'status',
-      render: (text) => {
-        return <Tag color={getColorStatus(text)}>{text}</Tag>;
+      render: (status) => {
+        return (
+          <Tag color={getAppointmentStatusColor(status)}>{getAppointmentStatusDisplay(status)}</Tag>
+        );
       },
     },
     {
       title: 'Thao tác',
       render: (_value, entity) =>
-        entity.status === 'SCHEDULED' ? (
+        entity.status === AppointmentStatus.SCHEDULED ? (
           <Space>
             <Button type="primary" onClick={() => handleComplete(entity.id)}>
               <CheckOutlined />

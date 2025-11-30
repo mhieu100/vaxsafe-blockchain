@@ -1,11 +1,11 @@
 package com.dapp.backend.dto.request;
 
+import com.dapp.backend.enums.TimeSlotEnum;
 import jakarta.validation.constraints.Future;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 
 import java.time.LocalDate;
-import java.time.LocalTime;
 
 @Data
 public class RescheduleAppointmentRequest {
@@ -17,7 +17,7 @@ public class RescheduleAppointmentRequest {
     private LocalDate desiredDate;
 
     @NotNull(message = "Desired time is required")
-    private LocalTime desiredTime;
+    private TimeSlotEnum desiredTimeSlot;
 
     private String reason;
 }

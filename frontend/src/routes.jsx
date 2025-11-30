@@ -13,11 +13,14 @@ import CenterPage from '@/pages/admin/center';
 import DashboardPage from '@/pages/admin/dashboard';
 import NewsPage from '@/pages/admin/news';
 import PermissionPage from '@/pages/admin/permission';
+import AdminProfilePage from '@/pages/admin/profile';
 import RolePage from '@/pages/admin/role';
 import UserPage from '@/pages/admin/user';
 import VaccinePage from '@/pages/admin/vaccine';
+import CompleteProfilePage from '@/pages/auth/CompleteProfilePage';
 import ForgotPasswordPage from '@/pages/auth/ForgotPasswordPage';
 import LoginPage from '@/pages/auth/login';
+import OAuth2Callback from '@/pages/auth/OAuth2Callback';
 import ResetPasswordPage from '@/pages/auth/ResetPasswordPage';
 import RegisterPage from '@/pages/auth/register';
 import BlockchainPage from '@/pages/client/BlockchainPage';
@@ -36,6 +39,7 @@ import DoctorDashboard from '@/pages/staff/doctor-dashboard';
 import DoctorSchedule from '@/pages/staff/doctor-schedule';
 import MySchedulePage from '@/pages/staff/my-schedule';
 import PendingAppointmentPage from '@/pages/staff/pending-appointment';
+import StaffProfilePage from '@/pages/staff/profile';
 
 const router = createBrowserRouter([
   {
@@ -141,6 +145,10 @@ const router = createBrowserRouter([
         path: 'roles',
         element: <RolePage />,
       },
+      {
+        path: 'profile',
+        element: <AdminProfilePage />,
+      },
     ],
   },
 
@@ -180,6 +188,10 @@ const router = createBrowserRouter([
         path: 'my-schedule',
         element: <MySchedulePage />,
       },
+      {
+        path: 'profile',
+        element: <StaffProfilePage />,
+      },
     ],
   },
 
@@ -217,6 +229,16 @@ const router = createBrowserRouter([
         <ResetPasswordPage />
       </ProtectedAuthRoute>
     ),
+  },
+
+  {
+    path: '/complete-profile',
+    element: <CompleteProfilePage />,
+  },
+
+  {
+    path: '/oauth2/callback',
+    element: <OAuth2Callback />,
   },
 ]);
 

@@ -69,6 +69,22 @@ export const callGetAvailableSlotsByCenter = (centerId, date) => {
 export const getAvailableSlotsByCenterAPI = callGetAvailableSlotsByCenter;
 
 /**
+ * Get all available slots for a center filtered by date and time slot
+ * @param {string|number} centerId - Center ID
+ * @param {string} date - Date in YYYY-MM-DD format
+ * @param {string} timeSlot - Time slot enum (e.g., 'SLOT_07_00')
+ * @returns {Promise} Available time slots for all doctors in center within time slot
+ */
+export const callGetAvailableSlotsByCenterAndTimeSlot = (centerId, date, timeSlot) => {
+  return apiClient.get(`/api/v1/doctors/center/${centerId}/slots/available-by-timeslot`, {
+    params: { date, timeSlot },
+  });
+};
+
+// Alias for consistency
+export const getAvailableSlotsByCenterAndTimeSlotAPI = callGetAvailableSlotsByCenterAndTimeSlot;
+
+/**
  * Get doctor's slots in a date range (for calendar view)
  * @param {string|number} doctorId - Doctor ID
  * @param {string} startDate - Start date in YYYY-MM-DD format
@@ -112,6 +128,8 @@ const doctorService = {
   getAvailableSlotsAPI,
   callGetAvailableSlotsByCenter,
   getAvailableSlotsByCenterAPI,
+  callGetAvailableSlotsByCenterAndTimeSlot,
+  getAvailableSlotsByCenterAndTimeSlotAPI,
   callGetDoctorSlotsInRange,
   getDoctorSlotsInRangeAPI,
   callGenerateDoctorSlots,

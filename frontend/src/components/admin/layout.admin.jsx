@@ -10,10 +10,11 @@ import {
   TeamOutlined,
   UserOutlined,
 } from '@ant-design/icons';
-import { Avatar, Badge, Dropdown, Layout, Menu, message } from 'antd';
+import { Avatar, Badge, Dropdown, Layout, Menu, message, Space } from 'antd';
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Outlet, useLocation, useNavigate } from 'react-router-dom';
+import LanguageSelect from '@/components/common/ui/LanguageSwitcher';
 import { callLogout } from '@/services/auth.service';
 import { useAccountStore } from '@/stores/useAccountStore';
 
@@ -47,7 +48,7 @@ const LayoutAdmin = () => {
       key: 'profile',
       label: t('common:user.personalInfo'),
       icon: <UserOutlined />,
-      onClick: () => navigate('/profile'),
+      onClick: () => navigate('/admin/profile'),
     },
     {
       key: 'logout',
@@ -139,24 +140,27 @@ const LayoutAdmin = () => {
             height: 64,
           }}
         >
-          <Dropdown
-            menu={{ items: userMenuItems }}
-            placement="bottomRight"
-            arrow
-            trigger={['click']}
-          >
-            <div className="cursor-pointer flex items-center gap-2">
-              <Badge dot={user?.isVerified}>
-                <Avatar src={user?.avatar} className="bg-blue-500">
-                  {user?.fullName?.charAt(0) || <UserOutlined />}
-                </Avatar>
-              </Badge>
-              <div className="hidden sm:block">
-                <div className="text-sm font-medium">{user?.fullName}</div>
-                <div className="text-xs text-gray-500">{getRole(user?.role)}</div>
+          <Space size="middle">
+            <LanguageSelect />
+            <Dropdown
+              menu={{ items: userMenuItems }}
+              placement="bottomRight"
+              arrow
+              trigger={['click']}
+            >
+              <div className="cursor-pointer flex items-center gap-2">
+                <Badge dot={user?.isVerified}>
+                  <Avatar src={user?.avatar} className="bg-blue-500">
+                    {user?.fullName?.charAt(0) || <UserOutlined />}
+                  </Avatar>
+                </Badge>
+                <div className="hidden sm:block">
+                  <div className="text-sm font-medium">{user?.fullName}</div>
+                  <div className="text-xs text-gray-500">{getRole(user?.role)}</div>
+                </div>
               </div>
-            </div>
-          </Dropdown>
+            </Dropdown>
+          </Space>
         </Header>
         <Content className="m-5 p-5 bg-white rounded-lg">
           <Outlet />

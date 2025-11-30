@@ -3,8 +3,10 @@ package com.dapp.backend.service;
 import com.dapp.backend.dto.request.PaymentRequest;
 import com.dapp.backend.enums.*;
 import com.dapp.backend.exception.AppException;
+import com.dapp.backend.model.Appointment;
 import com.dapp.backend.model.Booking;
 import com.dapp.backend.model.Order;
+import com.dapp.backend.repository.AppointmentRepository;
 import com.dapp.backend.repository.BookingRepository;
 import com.dapp.backend.repository.OrderRepository;
 import com.dapp.backend.repository.PaymentRepository;
@@ -18,6 +20,7 @@ import java.io.UnsupportedEncodingException;
 @RequiredArgsConstructor
 public class PaymentService {
 
+    private final AppointmentRepository appointmentRepository;
     private final BookingRepository bookingRepository;
     private final OrderRepository orderRepository;
     private final PaymentRepository paymentRepository;
@@ -50,9 +53,11 @@ public class PaymentService {
                     .orElseThrow(() -> new AppException("Order not found!"));
             order.setStatus(OrderStatus.PROCESSING);
             payment.setReferenceType(request.getType());
-        } else {
-            Booking booking = bookingRepository.findById(Long.parseLong(request.getReferenceId()))
-                    .orElseThrow(() -> new AppException("Booking not found!"));
+        } else if (request.getType() == TypeTransactionEnum.APPOINTMENT) {
+            // referenceId is appointmentId
+            Appointment appointment = appointmentRepository.findById(Long.parseLong(request.getReferenceId()))
+                    .orElseThrow(() -> new AppException("Appointment not found!"));
+            Booking booking = appointment.getBooking();
             booking.setStatus(BookingEnum.CONFIRMED);
             bookingRepository.save(booking);
             payment.setReferenceType(request.getType());
@@ -74,9 +79,11 @@ public class PaymentService {
                     .orElseThrow(() -> new AppException("Order not found!"));
             order.setStatus(OrderStatus.CANCELLED);
             payment.setReferenceType(request.getType());
-        } else {
-            Booking booking = bookingRepository.findById(Long.parseLong(request.getReferenceId()))
-                    .orElseThrow(() -> new AppException("Booking not found!"));
+        } else if (request.getType() == TypeTransactionEnum.APPOINTMENT) {
+            // referenceId is appointmentId
+            Appointment appointment = appointmentRepository.findById(Long.parseLong(request.getReferenceId()))
+                    .orElseThrow(() -> new AppException("Appointment not found!"));
+            Booking booking = appointment.getBooking();
             booking.setStatus(BookingEnum.CANCELLED);
             bookingRepository.save(booking);
             payment.setReferenceType(request.getType());
@@ -90,8 +97,10 @@ public class PaymentService {
      * Update payment status for MetaMask
      */
     public void updatePaymentMetaMask(PaymentRequest request) throws AppException {
-        Booking booking = bookingRepository.findById(Long.parseLong(request.getReferenceId()))
-                .orElseThrow(() -> new AppException("Booking not found!"));
+        // referenceId is appointmentId
+        Appointment appointment = appointmentRepository.findById(Long.parseLong(request.getReferenceId()))
+                .orElseThrow(() -> new AppException("Appointment not found!"));
+        Booking booking = appointment.getBooking();
         com.dapp.backend.model.Payment payment = paymentRepository.findById(request.getPaymentId())
                 .orElseThrow(() -> new AppException("Payment not found!"));
         

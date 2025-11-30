@@ -18,8 +18,7 @@ public class RegisterPatientResponse {
     String fullName;
     String email;
     String role;
-
-    PatientProfileResponse patientProfile;
+    boolean isActive; // Account activation status
 
     @Data
     @NoArgsConstructor

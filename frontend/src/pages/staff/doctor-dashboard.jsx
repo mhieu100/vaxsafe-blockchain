@@ -34,8 +34,10 @@ import {
 } from 'antd';
 import dayjs from 'dayjs';
 import { useEffect, useState } from 'react';
+import { AppointmentStatus } from '@/constants/enums';
 import { callGetTodayAppointments } from '../../services/appointment.service';
 import { useAccountStore } from '../../stores/useAccountStore';
+import { formatAppointmentTime } from '../../utils/appointment';
 
 const { Title, Text } = Typography;
 
@@ -75,7 +77,7 @@ const DoctorDashboard = () => {
 
   const nextAppointment = todayAppointments
     .filter((a) => a.status === 'SCHEDULED')
-    .sort((a, b) => a.scheduledTime.localeCompare(b.scheduledTime))[0];
+    .sort((a, b) => formatAppointmentTime(a).localeCompare(formatAppointmentTime(b)))[0];
 
   // Mock doctor info (can be replaced with real data later)
   const doctorInfo = {
@@ -87,7 +89,7 @@ const DoctorDashboard = () => {
     monthCompleted: 45,
     nextAppointment: nextAppointment
       ? {
-          time: nextAppointment.scheduledTime,
+          time: formatAppointmentTime(nextAppointment),
           patient: nextAppointment.patientName,
           vaccine: nextAppointment.vaccineName,
         }
@@ -108,7 +110,7 @@ const DoctorDashboard = () => {
       IN_PROGRESS: { color: 'warning', text: 'Đang tiêm', icon: <ClockCircleOutlined /> },
       SCHEDULED: { color: 'default', text: 'Chờ tiêm', icon: <ClockCircleOutlined /> },
       CANCELLED: { color: 'error', text: 'Đã hủy', icon: <CloseCircleOutlined /> },
-      PENDING_APPROVAL: { color: 'warning', text: 'Chờ duyệt', icon: <ClockCircleOutlined /> },
+      RESCHEDULE: { color: 'warning', text: 'Chờ duyệt', icon: <ClockCircleOutlined /> },
     };
     return configs[status] || configs.SCHEDULED;
   };
@@ -116,14 +118,14 @@ const DoctorDashboard = () => {
   // Map appointment to display format
   const mapAppointment = (apt) => ({
     id: apt.id,
-    time: apt.scheduledTime || 'N/A',
+    time: formatAppointmentTime(apt),
     patient: apt.patientName,
     phone: apt.patientPhone || 'N/A',
     vaccine: apt.vaccineName,
     vaccineColor: 'blue', // Can be dynamic based on vaccine type
     notes: apt.notes || 'Không có ghi chú',
     status: apt.status,
-    urgent: apt.status === 'PENDING_APPROVAL' || false,
+    urgent: apt.status === 'RESCHEDULE' || false,
   });
 
   // Handle view appointment
@@ -198,7 +200,7 @@ const DoctorDashboard = () => {
         >
           <Row justify="space-between" align="top" style={{ marginBottom: '12px' }}>
             <Col>
-              <Space direction="vertical" size={0}>
+              <Space orientation="vertical" size={0}>
                 <Space>
                   <ClockCircleOutlined
                     style={{ color: appointment.urgent ? '#ff4d4f' : '#1890ff' }}
@@ -217,7 +219,11 @@ const DoctorDashboard = () => {
             </Col>
           </Row>
 
-          <Space direction="vertical" size="small" style={{ width: '100%', marginBottom: '12px' }}>
+          <Space
+            orientation="vertical"
+            size="small"
+            style={{ width: '100%', marginBottom: '12px' }}
+          >
             <Space>
               <PhoneOutlined />
               <Text type="secondary">{appointment.phone}</Text>
@@ -321,7 +327,7 @@ const DoctorDashboard = () => {
             </Space>
           </Col>
           <Col style={{ textAlign: 'right' }}>
-            <Space direction="vertical" size={0}>
+            <Space orientation="vertical" size={0}>
               <Title level={4} style={{ color: 'white', margin: 0 }}>
                 {dayjs().format('DD MMMM, YYYY')}
               </Title>
@@ -358,7 +364,7 @@ const DoctorDashboard = () => {
               title="Lịch Hôm Nay"
               value={doctorInfo.todayAppointments}
               suffix="bệnh nhân"
-              valueStyle={{ color: '#1890ff', fontSize: '32px' }}
+              styles={{ content: { color: '#1890ff', fontSize: '32px' } }}
               prefix={<CalendarOutlined />}
             />
             <Text type="secondary" style={{ fontSize: '12px' }}>
@@ -374,7 +380,7 @@ const DoctorDashboard = () => {
               title="Tuần Này"
               value={doctorInfo.weekAppointments}
               suffix="bệnh nhân"
-              valueStyle={{ color: '#13c2c2', fontSize: '32px' }}
+              styles={{ content: { color: '#13c2c2', fontSize: '32px' } }}
               prefix={<CalendarTwoTone />}
             />
             <Text type="secondary" style={{ fontSize: '12px' }}>
@@ -390,7 +396,7 @@ const DoctorDashboard = () => {
               title="Đã Hoàn Thành"
               value={doctorInfo.monthCompleted}
               suffix="trong tháng"
-              valueStyle={{ color: '#52c41a', fontSize: '32px' }}
+              styles={{ content: { color: '#52c41a', fontSize: '32px' } }}
               prefix={<CheckCircleOutlined />}
             />
             <Text type="secondary" style={{ fontSize: '12px' }}>
@@ -408,7 +414,7 @@ const DoctorDashboard = () => {
                   title="Lịch Tiếp Theo"
                   value={doctorInfo.nextAppointment.time}
                   suffix="hôm nay"
-                  valueStyle={{ color: '#faad14', fontSize: '32px' }}
+                  styles={{ content: { color: '#faad14', fontSize: '32px' } }}
                   prefix={<BellOutlined />}
                 />
                 <Text type="secondary" style={{ fontSize: '12px' }}>
@@ -420,7 +426,7 @@ const DoctorDashboard = () => {
               <Statistic
                 title="Lịch Tiếp Theo"
                 value="N/A"
-                valueStyle={{ color: '#999', fontSize: '32px' }}
+                styles={{ content: { color: '#999', fontSize: '32px' } }}
                 prefix={<BellOutlined />}
               />
             )}
@@ -447,7 +453,9 @@ const DoctorDashboard = () => {
       >
         {loading ? (
           <div style={{ textAlign: 'center', padding: '60px 0' }}>
-            <Spin size="large" tip="Đang tải lịch hẹn..." />
+            <Spin size="large" spinning tip="Đang tải lịch hẹn...">
+              <div style={{ minHeight: 100 }} />
+            </Spin>
           </div>
         ) : todayAppointments.length === 0 ? (
           <div style={{ textAlign: 'center', padding: '60px 0' }}>
@@ -474,7 +482,7 @@ const DoctorDashboard = () => {
               </Space>
             }
           >
-            <Space direction="vertical" size="large" style={{ width: '100%' }}>
+            <Space orientation="vertical" size="large" style={{ width: '100%' }}>
               <div>
                 <Row justify="space-between" style={{ marginBottom: '8px' }}>
                   <Text>Hoàn thành</Text>

@@ -61,7 +61,7 @@ const DoctorSchedule = () => {
         bookedSlots: doctor.bookedSlotsToday || 0,
         schedule: (doctor.todaySchedule || []).map((slot) => ({
           slotId: slot.slotId,
-          time: `${slot.startTime} - ${slot.endTime}`,
+          time: `${slot.startTime?.substring(0, 5)} - ${slot.endTime?.substring(0, 5)}`,
           status: slot.status === 'AVAILABLE' ? 'available' : 'booked',
           patient: slot.appointmentId ? 'Bệnh nhân' : null,
           vaccine: slot.notes || '',
@@ -319,7 +319,7 @@ const DoctorSchedule = () => {
                     }
                   >
                     <div style={{ marginBottom: '16px' }}>
-                      <Space direction="vertical" size="small" style={{ width: '100%' }}>
+                      <Space orientation="vertical" size="small" style={{ width: '100%' }}>
                         <Space>
                           <ClockCircleOutlined />
                           <Text type="secondary" style={{ fontSize: '13px' }}>
@@ -395,7 +395,7 @@ const DoctorSchedule = () => {
                 <Statistic
                   title="Tổng bác sĩ"
                   value={summary.totalDoctors}
-                  valueStyle={{ color: '#1890ff' }}
+                  styles={{ content: { color: '#1890ff' } }}
                   prefix={<UserOutlined />}
                 />
               </Col>
@@ -403,7 +403,7 @@ const DoctorSchedule = () => {
                 <Statistic
                   title="Slot trống"
                   value={summary.totalAvailableSlots}
-                  valueStyle={{ color: '#52c41a' }}
+                  styles={{ content: { color: '#52c41a' } }}
                   prefix={<CheckCircleOutlined />}
                 />
               </Col>
@@ -411,7 +411,7 @@ const DoctorSchedule = () => {
                 <Statistic
                   title="Slot đã đặt"
                   value={summary.totalBookedSlots}
-                  valueStyle={{ color: '#f5222d' }}
+                  styles={{ content: { color: '#f5222d' } }}
                   prefix={<CloseCircleOutlined />}
                 />
               </Col>
@@ -419,7 +419,7 @@ const DoctorSchedule = () => {
                 <Statistic
                   title="Tỷ lệ trống"
                   value={summary.availabilityRate}
-                  valueStyle={{ color: '#13c2c2' }}
+                  styles={{ content: { color: '#13c2c2' } }}
                   suffix="%"
                 />
               </Col>

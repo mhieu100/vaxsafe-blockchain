@@ -12,7 +12,7 @@ const ViewDetailPermission = (props) => {
         setDataInit(null);
       }}
       open={open}
-      width="40vw"
+      size="large"
       maskClosable={false}
     >
       <Descriptions title="" bordered column={2} layout="vertical">

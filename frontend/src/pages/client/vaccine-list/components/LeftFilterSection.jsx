@@ -3,6 +3,7 @@ import { Button, Divider, Select, Slider } from 'antd';
 // eslint-disable-next-line import/no-extraneous-dependencies
 import debounce from 'lodash/debounce';
 import { useEffect, useMemo, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { MAX_PRICE, MIN_PRICE } from '@/constants';
 import { callGetAllCountries } from '@/services/vaccine.service';
 import { formatPrice } from '@/utils/formatPrice';
@@ -20,6 +21,7 @@ const { Option } = Select;
  * @returns {React.Component}
  */
 const LeftFilterSection = ({ setPriceRange, country, setCountry, sortBy, setSortBy }) => {
+  const { t } = useTranslation();
   const [countries, setCountries] = useState([]);
   const [sliderRange, setSliderRange] = useState([MIN_PRICE, MAX_PRICE]);
 
@@ -71,14 +73,14 @@ const LeftFilterSection = ({ setPriceRange, country, setCountry, sortBy, setSort
     <div className="hidden md:block sticky w-64 flex-shrink-0">
       <div className="bg-amber-50 p-6 rounded-lg shadow-sm top-6">
         <h3 className="text-lg font-bold mb-6">
-          <FilterOutlined /> Filters
+          <FilterOutlined /> {t('vaccine.filters')}
         </h3>
 
         <div className="mb-8">
           <div className="flex flex-wrap gap-3 items-center">
             <Select
               mode="multiple"
-              placeholder="Select Country"
+              placeholder={t('vaccine.selectCountry')}
               allowClear
               style={{ width: '100%' }}
               value={country}
@@ -93,21 +95,21 @@ const LeftFilterSection = ({ setPriceRange, country, setCountry, sortBy, setSort
             </Select>
 
             <Select
-              placeholder="Sort by"
+              placeholder={t('vaccine.sortBy')}
               style={{ width: '100%' }}
               value={sortBy}
               onChange={handleSortChange}
               suffixIcon={<SortAscendingOutlined />}
               className="shadow-sm"
             >
-              <Option value="price-ascend">Price: Low to High</Option>
-              <Option value="price-descend">Price: High to Low</Option>
-              <Option value="name-ascend">Name A-Z</Option>
-              <Option value="name-descend">Name Z-A</Option>
+              <Option value="price-ascend">{t('vaccine.sortOptions.priceLowToHigh')}</Option>
+              <Option value="price-descend">{t('vaccine.sortOptions.priceHighToLow')}</Option>
+              <Option value="name-ascend">{t('vaccine.sortOptions.nameAZ')}</Option>
+              <Option value="name-descend">{t('vaccine.sortOptions.nameZA')}</Option>
             </Select>
           </div>
         </div>
-        <h3 className="text-lg font-bold mb-6">Price Range</h3>
+        <h3 className="text-lg font-bold mb-6">{t('vaccine.priceRange')}</h3>
         <div className="p-2 rounded-lg">
           <Slider
             range
@@ -135,7 +137,7 @@ const LeftFilterSection = ({ setPriceRange, country, setCountry, sortBy, setSort
           className="w-full"
           danger
         >
-          Clear All
+          {t('vaccine.clearAll')}
         </Button>
       </div>
     </div>

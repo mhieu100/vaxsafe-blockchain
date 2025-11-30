@@ -29,6 +29,7 @@ public class AppointmentController {
     private final AppointmentService appointmentService;
 
     @GetMapping("/center")
+    @ApiMessage("Get all appointments of center")
     public ResponseEntity<Pagination> getAllAppointmentOfCenter(@Filter Specification<Appointment> specification, Pageable pageable) throws AppException {
         return ResponseEntity.ok(appointmentService.getAllAppointmentOfCenter(specification, pageable));
     }

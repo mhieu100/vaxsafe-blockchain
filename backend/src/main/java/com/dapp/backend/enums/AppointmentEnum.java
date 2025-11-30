@@ -1,8 +1,8 @@
 package com.dapp.backend.enums;
 
 public enum AppointmentEnum {
-    PENDING_SCHEDULE,
-    PENDING_APPROVAL,
+    PENDING,
+    RESCHEDULE,
     SCHEDULED,
     COMPLETED,
     CANCELLED

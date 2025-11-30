@@ -11,7 +11,6 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import java.time.LocalDate;
-import java.time.LocalTime;
 import java.util.List;
 
 public interface AppointmentRepository extends JpaRepository<Appointment, Long>, JpaSpecificationExecutor<Appointment>{
@@ -32,10 +31,12 @@ public interface AppointmentRepository extends JpaRepository<Appointment, Long>,
             @Param("center") Center center
     );
 
-    // Find appointments coming soon (within hours)
+    // Find appointments coming soon (within hours) - DISABLED: TimeSlotEnum doesn't support time-based queries
+    // TODO: Implement slot-based query if needed
+    /*
     @Query("SELECT a FROM Appointment a WHERE a.status = :status " +
             "AND a.scheduledDate = :date " +
-            "AND a.scheduledTime BETWEEN :startTime AND :endTime " +
+            "AND a.scheduledTimeSlot BETWEEN :startTime AND :endTime " +
             "AND a.center = :center")
     List<Appointment> findAppointmentsComingSoon(
             @Param("status") AppointmentEnum status,
@@ -44,11 +45,14 @@ public interface AppointmentRepository extends JpaRepository<Appointment, Long>,
             @Param("endTime") LocalTime endTime,
             @Param("center") Center center
     );
+    */
 
-    // Find overdue appointments
+    // Find overdue appointments - DISABLED: TimeSlotEnum doesn't support time-based queries
+    // TODO: Implement date-only overdue check if needed
+    /*
     @Query("SELECT a FROM Appointment a WHERE a.status IN :statuses " +
             "AND ((a.scheduledDate < :currentDate) OR " +
-            "(a.scheduledDate = :currentDate AND a.scheduledTime < :currentTime)) " +
+            "(a.scheduledDate = :currentDate AND a.scheduledTimeSlot < :currentTime)) " +
             "AND a.center = :center")
     List<Appointment> findOverdueAppointments(
             @Param("statuses") List<AppointmentEnum> statuses,
@@ -56,7 +60,8 @@ public interface AppointmentRepository extends JpaRepository<Appointment, Long>,
             @Param("currentTime") LocalTime currentTime,
             @Param("center") Center center
     );
+    */
 
-    // Find appointments for a doctor on a specific date, ordered by time
-    List<Appointment> findByDoctorAndScheduledDateOrderByScheduledTimeAsc(Doctor doctor, LocalDate scheduledDate);
+    // Find appointments for a doctor on a specific date, ordered by time slot
+    List<Appointment> findByDoctorAndScheduledDateOrderByScheduledTimeSlotAsc(Doctor doctor, LocalDate scheduledDate);
 }

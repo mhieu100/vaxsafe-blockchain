@@ -93,7 +93,7 @@ const ProfileSidebar = ({
                 title={<span className="text-green-700 font-medium">Total Vaccines</span>}
                 value={totalVaccines}
                 prefix={<MedicineBoxOutlined className="text-green-600" />}
-                valueStyle={{ color: '#059669', fontWeight: 'bold' }}
+                styles={{ content: { color: '#059669', fontWeight: 'bold' } }}
               />
             </Card>
           </Col>
@@ -104,7 +104,7 @@ const ProfileSidebar = ({
                 value={upcomingAppointments}
                 prefix={<ClockCircleOutlined className="text-blue-600" />}
                 suffix="appointments"
-                valueStyle={{ color: '#0284c7', fontWeight: 'bold' }}
+                styles={{ content: { color: '#0284c7', fontWeight: 'bold' } }}
               />
             </Card>
           </Col>
@@ -115,7 +115,7 @@ const ProfileSidebar = ({
                 value={coveragePercentage}
                 prefix={<CheckCircleOutlined className="text-purple-600" />}
                 suffix="%"
-                valueStyle={{ color: '#9333ea', fontWeight: 'bold' }}
+                styles={{ content: { color: '#9333ea', fontWeight: 'bold' } }}
               />
             </Card>
           </Col>

@@ -5,6 +5,7 @@ import {
   ShoppingCartOutlined,
 } from '@ant-design/icons';
 import { Badge, Button, Card, Image, message, Rate, Space, Tag, Typography } from 'antd';
+import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import useCartStore from '@/stores/useCartStore';
 import { formatPrice } from '@/utils/formatPrice';
@@ -19,12 +20,13 @@ const { Title, Text } = Typography;
  * @returns {JSX.Element}
  */
 const VaccineModeCard = ({ vaccine }) => {
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const { addItem } = useCartStore();
 
   const handleAddToCart = (vaccine) => {
     addItem(vaccine, 1);
-    message.success('Add vaccine to cart success');
+    message.success(t('vaccine.card.addToCartSuccess'));
   };
 
   return (
@@ -79,7 +81,7 @@ const VaccineModeCard = ({ vaccine }) => {
             </Tag>
             <Rate disabled defaultValue={vaccine.rating || 4} />
             <Text type="secondary" className="text-sm">
-              ({vaccine.reviews || 128} reviews)
+              ({vaccine.reviews || 128} {t('vaccine.card.reviews')})
             </Text>
           </div>
 
@@ -94,7 +96,7 @@ const VaccineModeCard = ({ vaccine }) => {
                 {formatPrice(vaccine.price)}
               </Title>
               <Badge
-                count={vaccine.stock > 0 ? 'In Stock' : 'Out of Stock'}
+                count={vaccine.stock > 0 ? t('vaccine.card.inStock') : t('vaccine.card.outOfStock')}
                 style={{
                   backgroundColor: vaccine.stock > 0 ? '#52c41a' : '#ff4d4f',
                 }}
@@ -102,7 +104,7 @@ const VaccineModeCard = ({ vaccine }) => {
             </div>
             <Space>
               <Button icon={<EyeOutlined />} onClick={() => navigate(`/vaccine/${vaccine.slug}`)}>
-                View
+                {t('vaccine.card.view')}
               </Button>
               <Button
                 type="primary"
@@ -110,7 +112,7 @@ const VaccineModeCard = ({ vaccine }) => {
                 onClick={() => navigate(`/booking?slug=${vaccine.slug}`)}
                 disabled={vaccine.stock === 0}
               >
-                Booking now
+                {t('vaccine.card.bookingNow')}
               </Button>
               <Button
                 type="primary"
@@ -118,7 +120,7 @@ const VaccineModeCard = ({ vaccine }) => {
                 onClick={() => handleAddToCart(vaccine)}
                 disabled={vaccine.stock === 0}
               >
-                Add to Cart
+                {t('vaccine.card.addToCart')}
               </Button>
             </Space>
           </div>

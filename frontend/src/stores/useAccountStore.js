@@ -9,6 +9,7 @@ const useAccountStore = create(
       // State
       isAuthenticated: false,
       isLoading: true,
+      isActive: true, // Profile completion status
       user: {
         id: '',
         fullName: '',
@@ -35,6 +36,7 @@ const useAccountStore = create(
         set({
           isAuthenticated: true,
           isLoading: false,
+          isActive: userData.isActive !== undefined ? userData.isActive : true,
           user: {
             id: userData.id,
             fullName: userData.fullName,
@@ -63,6 +65,7 @@ const useAccountStore = create(
 
         set({
           isAuthenticated: false,
+          isActive: true,
           user: {
             id: '',
             fullName: '',
@@ -91,9 +94,13 @@ const useAccountStore = create(
         try {
           const response = await callFetchAccount();
           if (response.data) {
+            // Check if profile is complete (has required fields)
+            const hasProfile = response.data.phone && response.data.address;
+
             set({
               isAuthenticated: true,
               isLoading: false,
+              isActive: hasProfile,
               user: {
                 id: response.data.id,
                 fullName: response.data.fullName,

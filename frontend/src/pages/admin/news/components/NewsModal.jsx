@@ -128,7 +128,7 @@ const ModalNews = (props) => {
               handleReset();
             },
             afterClose: () => handleReset(),
-            destroyOnClose: true,
+            destroyOnHidden: true,
             footer: null,
             keyboard: false,
             maskClosable: false,

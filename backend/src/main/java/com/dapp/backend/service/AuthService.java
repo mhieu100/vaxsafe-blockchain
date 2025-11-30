@@ -10,6 +10,8 @@ import com.dapp.backend.model.Role;
 import com.dapp.backend.repository.PatientRepository;
 import com.dapp.backend.security.JwtUtil;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.core.Authentication;
@@ -17,10 +19,13 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
 
 import com.dapp.backend.model.User;
 import com.dapp.backend.repository.RoleRepository;
 import com.dapp.backend.repository.UserRepository;
+
+import java.util.Map;
 
 @Service
 @RequiredArgsConstructor
@@ -83,39 +88,18 @@ public class AuthService {
             throw new AppException("Email already exists");
         }
 
-        if (patientRepository.existsByIdentityNumber(request.getPatientProfile().getIdentityNumber())) {
-            throw new AppException("IdentityNumber already exists");
-        }
-
         User user = User.builder()
                 .avatar("http://localhost:8080/storage/user/default.png")
                 .fullName(request.getUser().getFullName())
                 .email(request.getUser().getEmail())
                 .password(passwordEncoder.encode(request.getUser().getPassword()))
                 .isDeleted(false)
+                .isActive(false) // Account is inactive until profile is completed
                 .build();
 
         Role role = roleRepository.findByName("PATIENT")
                 .orElseThrow(() -> new AppException("Role PATIENT not found"));
         user.setRole(role);
-
-        Patient patient = Patient.builder()
-                .address(request.getPatientProfile().getAddress())
-                .phone(request.getPatientProfile().getPhone())
-                .birthday(request.getPatientProfile().getBirthday())
-                .gender(request.getPatientProfile().getGender())
-                .identityNumber(request.getPatientProfile().getIdentityNumber())
-                .bloodType(request.getPatientProfile().getBloodType())
-                .heightCm(request.getPatientProfile().getHeightCm())
-                .weightKg(request.getPatientProfile().getWeightKg())
-                .occupation(request.getPatientProfile().getOccupation())
-                .lifestyleNotes(request.getPatientProfile().getLifestyleNotes())
-                .insuranceNumber(request.getPatientProfile().getInsuranceNumber())
-                .consentForAIAnalysis(request.getPatientProfile().isConsentForAIAnalysis())
-                .user(user)
-                .build();
-
-        user.setPatientProfile(patient);
 
         userRepository.save(user);
 
@@ -125,21 +109,7 @@ public class AuthService {
                 .fullName(user.getFullName())
                 .email(user.getEmail())
                 .role(user.getRole().getName())
-                .patientProfile(RegisterPatientResponse.PatientProfileResponse.builder()
-                        .id(patient.getId())
-                        .address(patient.getAddress())
-                        .phone(patient.getPhone())
-                        .birthday(patient.getBirthday())
-                        .gender(patient.getGender().name())
-                        .identityNumber(patient.getIdentityNumber())
-                        .bloodType(patient.getBloodType().name())
-                        .heightCm(patient.getHeightCm())
-                        .weightKg(patient.getWeightKg())
-                        .occupation(patient.getOccupation())
-                        .lifestyleNotes(patient.getLifestyleNotes())
-                        .insuranceNumber(patient.getInsuranceNumber())
-                        .consentForAIAnalysis(patient.isConsentForAIAnalysis())
-                        .build())
+                .isActive(user.isActive())
                 .build();
     }
 
@@ -219,5 +189,79 @@ public class AuthService {
     public User getCurrentUserLogin()throws AppException {
         String email = JwtUtil.getCurrentEmailLogin().isPresent() ? JwtUtil.getCurrentEmailLogin().get() : "";
         return userRepository.findByEmail(email).orElseThrow(() -> new AppException("User not found"));
+    }
+
+
+
+    public LoginResponse.UserLogin completeGoogleProfile(CompleteGoogleProfileRequest request) throws AppException {
+        User user = getCurrentUserLogin();
+
+        if (user.getPatientProfile() != null) {
+            throw new AppException("Profile already completed");
+        }
+
+        if (patientRepository.existsByIdentityNumber(request.getPatientProfile().getIdentityNumber())) {
+            throw new AppException("Identity number already exists");
+        }
+
+        Patient patient = Patient.builder()
+                .phone(request.getPatientProfile().getPhone())
+                .address(request.getPatientProfile().getAddress())
+                .birthday(request.getPatientProfile().getBirthday())
+                .gender(request.getPatientProfile().getGender())
+                .identityNumber(request.getPatientProfile().getIdentityNumber())
+                .bloodType(request.getPatientProfile().getBloodType())
+                .heightCm(request.getPatientProfile().getHeightCm())
+                .weightKg(request.getPatientProfile().getWeightKg())
+                .occupation(request.getPatientProfile().getOccupation())
+                .lifestyleNotes(request.getPatientProfile().getLifestyleNotes())
+                .insuranceNumber(request.getPatientProfile().getInsuranceNumber())
+                .consentForAIAnalysis(request.getPatientProfile().isConsentForAIAnalysis())
+                .user(user)
+                .build();
+
+        user.setPatientProfile(patient);
+        user.setActive(true); // Activate account after completing profile
+        userRepository.save(user);
+
+        return toUserLogin(user);
+    }
+
+    /**
+     * Complete profile for users registered via password or Google
+     * This method is used for the unified complete-profile flow
+     */
+    public LoginResponse.UserLogin completeProfile(CompleteProfileRequest request) throws AppException {
+        User user = getCurrentUserLogin();
+
+        if (user.getPatientProfile() != null) {
+            throw new AppException("Profile already completed");
+        }
+
+        if (patientRepository.existsByIdentityNumber(request.getPatientProfile().getIdentityNumber())) {
+            throw new AppException("Identity number already exists");
+        }
+
+        Patient patient = Patient.builder()
+                .address(request.getPatientProfile().getAddress())
+                .phone(request.getPatientProfile().getPhone())
+                .birthday(request.getPatientProfile().getBirthday())
+                .gender(request.getPatientProfile().getGender())
+                .identityNumber(request.getPatientProfile().getIdentityNumber())
+                .bloodType(request.getPatientProfile().getBloodType())
+                .heightCm(request.getPatientProfile().getHeightCm())
+                .weightKg(request.getPatientProfile().getWeightKg())
+                .occupation(request.getPatientProfile().getOccupation())
+                .lifestyleNotes(request.getPatientProfile().getLifestyleNotes())
+                .insuranceNumber(request.getPatientProfile().getInsuranceNumber())
+                .consentForAIAnalysis(request.getPatientProfile().isConsentForAIAnalysis())
+                .user(user)
+                .build();
+
+        user.setPatientProfile(patient);
+        user.setActive(true); // Activate account after completing profile
+        userRepository.save(user);
+
+        return toUserLogin(user);
     }
 }

@@ -9,5 +9,7 @@ import lombok.experimental.FieldDefaults;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class ProcessAppointmentRequest {
     Long appointmentId;
-    Long doctorId;
+    Long doctorId; // This is actually doctorId from Doctor entity, not userId
+    Long slotId; // ID of the selected DoctorAvailableSlot
+    java.time.LocalTime actualScheduledTime; // The actual scheduled time
 }

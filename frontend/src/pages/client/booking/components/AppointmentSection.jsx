@@ -23,10 +23,9 @@ import { useFamilyMember } from '@/hooks/useFamilyMember';
 const { Text } = Typography;
 
 const AppointmentSection = ({ bookingForm, vaccine, setCurrentStep, setBookingData }) => {
-  const [doseForms, setDoseForms] = useState([]);
-  const [firstDoseDate, setFirstDoseDate] = useState(null);
-  const [firstDoseTime, setFirstDoseTime] = useState(null);
-  const [firstDoseCenterId, setFirstDoseCenterId] = useState(null);
+  const [appointmentDate, setAppointmentDate] = useState(null);
+  const [appointmentTime, setAppointmentTime] = useState(null);
+  const [appointmentCenterId, setAppointmentCenterId] = useState(null);
   const [bookingFor, setBookingFor] = useState('self');
 
   const filter = {
@@ -37,183 +36,29 @@ const AppointmentSection = ({ bookingForm, vaccine, setCurrentStep, setBookingDa
   const { data: centers } = useCenter(filter);
   const { data: families } = useFamilyMember(filter);
 
-  const timeSlots = useMemo(() => ['08:00', '09:00', '10:00', '14:00', '15:00', '16:00'], []);
+  const timeSlots = useMemo(
+    () => [
+      { value: '07:00', label: '07:00 - 09:00' },
+      { value: '09:00', label: '09:00 - 11:00' },
+      { value: '11:00', label: '11:00 - 13:00' },
+      { value: '13:00', label: '13:00 - 15:00' },
+      { value: '15:00', label: '15:00 - 17:00' },
+      { value: '17:00', label: '17:00 - 19:00' },
+    ],
+    []
+  );
 
-  useEffect(() => {
-    if (!firstDoseDate || !firstDoseTime || !firstDoseCenterId || !vaccine) {
-      return;
-    }
-
-    const { dosesRequired, duration } = vaccine;
-
-    const dates = [firstDoseDate];
-
-    // Calculate all subsequent dose dates
-    for (let i = 1; i < dosesRequired; i++) {
-      const previousDate = dates[i - 1];
-      if (!previousDate) continue;
-
-      let nextDate = previousDate.add(duration, 'day');
-
-      while (nextDate.day() === 0 || nextDate.day() === 6) {
-        nextDate = nextDate.add(1, 'day');
-      }
-
-      dates.push(nextDate);
-    }
-
-    // Create dose forms for ALL doses (including first dose)
-    const forms = [];
-    for (let i = 0; i < dosesRequired; i++) {
-      const date = dates[i];
-      if (date) {
-        forms.push({
-          doseNumber: i + 1,
-          date: date,
-          time: i === 0 ? firstDoseTime : timeSlots[0] || '08:00',
-          centerId: firstDoseCenterId, // All doses use the same center by default
-        });
-      }
-    }
-
-    setDoseForms(forms);
-
-    // Set form values for all dose schedules - IMPORTANT: Must include ALL required fields
-    const doseSchedulesValues = forms.map((form) => ({
-      date: form.date,
-      time: form.time,
-      centerId: form.centerId,
-    }));
-
-    bookingForm.setFieldsValue({
-      doseSchedules: doseSchedulesValues,
-    });
-
-    // IMPORTANT: Also update parent BookingPage state so data persists across steps
-    if (setBookingData) {
-      setBookingData((prev) => ({
-        ...prev,
-        doseSchedules: doseSchedulesValues,
-      }));
-    }
-  }, [
-    firstDoseDate,
-    firstDoseTime,
-    firstDoseCenterId,
-    vaccine,
-    bookingForm,
-    timeSlots,
-    setBookingData,
-  ]);
-
-  const handleDoseDateChange = (index, value) => {
-    if (!value) return;
-    const updatedForms = [...doseForms];
-    const targetForm = updatedForms[index];
-    if (targetForm) {
-      targetForm.date = value;
-      setDoseForms(updatedForms);
-
-      const currentSchedules = bookingForm.getFieldValue('doseSchedules') || [];
-      currentSchedules[index] = {
-        ...currentSchedules[index],
-        date: value,
-        centerId: targetForm.centerId,
-      };
-      bookingForm.setFieldsValue({
-        doseSchedules: currentSchedules,
-      });
-
-      if (index === 0) {
-        setFirstDoseDate(value);
-      }
-    }
-  };
-
-  const handleDoseTimeChange = (index, value) => {
-    const updatedForms = [...doseForms];
-    const targetForm = updatedForms[index];
-    if (targetForm) {
-      targetForm.time = value;
-      setDoseForms(updatedForms);
-
-      const currentSchedules = bookingForm.getFieldValue('doseSchedules') || [];
-      currentSchedules[index] = {
-        ...currentSchedules[index],
-        time: value,
-        centerId: targetForm.centerId,
-      };
-      bookingForm.setFieldsValue({
-        doseSchedules: currentSchedules,
-      });
-
-      if (index === 0) {
-        setFirstDoseTime(value);
-      }
-    }
-  };
-
-  const handleFirstDoseDateChange = (date) => {
-    setFirstDoseDate(date);
-    // Update form value immediately
-    bookingForm.setFieldsValue({ firstDoseDate: date });
-  };
-
-  const handleFirstDoseCenterChange = (centerId) => {
-    setFirstDoseCenterId(centerId);
-    // Update form value immediately
-    bookingForm.setFieldsValue({ firstDoseCenter: centerId });
-  };
-
-  const handleDoseCenterChange = (index, centerId) => {
-    const updatedForms = [...doseForms];
-    const targetForm = updatedForms[index];
-    if (targetForm) {
-      targetForm.centerId = centerId;
-      setDoseForms(updatedForms);
-
-      const currentSchedules = bookingForm.getFieldValue('doseSchedules') || [];
-      currentSchedules[index] = {
-        ...currentSchedules[index],
-        centerId: centerId,
-      };
-      bookingForm.setFieldsValue({
-        doseSchedules: currentSchedules,
-      });
-    }
-  };
+  // No automatic calculation - user just books one appointment at a time
 
   const disabledDate = (current) => {
     if (!current) return false;
     const isPast = current < dayjs().startOf('day');
-    const isWeekend = current.day() === 0 || current.day() === 6;
-    return isPast || isWeekend;
+    return isPast;
   };
 
   const handleBookingNext = async () => {
     try {
-      // Validate all required fields
       await bookingForm.validateFields();
-
-      // Additional validation for dose schedules
-      const doseSchedules = bookingForm.getFieldValue('doseSchedules') || [];
-      const requiredDoses = vaccine?.dosesRequired || 0;
-
-      if (doseSchedules.length !== requiredDoses) {
-        message.error(`Vui lòng hoàn thành tất cả ${requiredDoses} mũi tiêm`);
-        return;
-      }
-
-      // Check if all doses have required fields
-      const hasIncompleteDose = doseSchedules.some(
-        (dose) => !dose || !dose.date || !dose.time || !dose.centerId
-      );
-
-      if (hasIncompleteDose) {
-        message.error('Vui lòng điền đầy đủ thông tin cho tất cả các mũi tiêm');
-        return;
-      }
-
       setCurrentStep(1);
     } catch (_error) {
       message.error('Vui lòng điền đầy đủ thông tin');
@@ -277,32 +122,12 @@ const AppointmentSection = ({ bookingForm, vaccine, setCurrentStep, setBookingDa
               </div>
             )}
 
-            {!firstDoseDate && (
-              <Alert
-                message="Hướng dẫn đặt lịch"
-                description={
-                  <div className="space-y-2">
-                    <p>Vui lòng chọn ngày bắt đầu cho mũi tiêm đầu tiên.</p>
-                    <p className="text-sm">
-                      Hệ thống sẽ tự động tính toán lịch cho tất cả{' '}
-                      <strong className="text-blue-600">{vaccine?.dosesRequired} mũi tiêm</strong>{' '}
-                      dựa trên khoảng cách{' '}
-                      <strong className="text-blue-600">{vaccine?.duration} ngày</strong>.
-                    </p>
-                  </div>
-                }
-                type="info"
-                className="mb-6 border-l-4 border-l-blue-500"
-                showIcon={false}
-              />
-            )}
-
             <div className="bg-gray-50 p-5 rounded-lg mb-6 border border-gray-200">
               <div className="mb-4">
                 <div className="flex items-center gap-2 mb-3">
                   <div className="w-1 h-6 bg-blue-500 rounded" />
                   <Text strong className="text-base text-gray-700">
-                    Thông tin mũi tiêm đầu tiên
+                    Thông tin lịch hẹn
                   </Text>
                 </div>
               </div>
@@ -311,7 +136,7 @@ const AppointmentSection = ({ bookingForm, vaccine, setCurrentStep, setBookingDa
                 <Col xs={24} sm={12}>
                   <Form.Item
                     label={<span className="font-semibold text-sm">Chọn ngày</span>}
-                    name="firstDoseDate"
+                    name="appointmentDate"
                     rules={[
                       {
                         required: true,
@@ -323,9 +148,9 @@ const AppointmentSection = ({ bookingForm, vaccine, setCurrentStep, setBookingDa
                       className="w-full"
                       locale={locale}
                       disabledDate={disabledDate}
-                      onChange={handleFirstDoseDateChange}
+                      onChange={(date) => setAppointmentDate(date)}
                       suffixIcon={<CalendarOutlined />}
-                      placeholder="Chọn ngày bắt đầu"
+                      placeholder="Chọn ngày tiêm"
                       size="large"
                       format="DD/MM/YYYY"
                     />
@@ -334,27 +159,20 @@ const AppointmentSection = ({ bookingForm, vaccine, setCurrentStep, setBookingDa
 
                 <Col xs={24} sm={12}>
                   <Form.Item
-                    label={<span className="font-semibold text-sm">Chọn giờ</span>}
-                    name="firstDoseTime"
+                    label={<span className="font-semibold text-sm">Chọn khung giờ</span>}
+                    name="appointmentTime"
                     rules={[
                       {
                         required: true,
-                        message: 'Vui lòng chọn giờ',
+                        message: 'Vui lòng chọn khung giờ',
                       },
                     ]}
                   >
                     <Select
-                      options={timeSlots.map((time) => ({
-                        value: time,
-                        label: time,
-                      }))}
-                      value={firstDoseTime}
-                      onChange={(value) => {
-                        setFirstDoseTime(value);
-                        bookingForm.setFieldsValue({ firstDoseTime: value });
-                      }}
+                      options={timeSlots}
+                      onChange={(value) => setAppointmentTime(value)}
                       size="large"
-                      placeholder="Chọn giờ tiêm"
+                      placeholder="Chọn khung giờ tiêm"
                     />
                   </Form.Item>
                 </Col>
@@ -364,7 +182,7 @@ const AppointmentSection = ({ bookingForm, vaccine, setCurrentStep, setBookingDa
                 <Col xs={24}>
                   <Form.Item
                     label={<span className="font-semibold text-sm">Chọn địa điểm tiêm</span>}
-                    name="firstDoseCenter"
+                    name="appointmentCenter"
                     rules={[
                       {
                         required: true,
@@ -381,8 +199,7 @@ const AppointmentSection = ({ bookingForm, vaccine, setCurrentStep, setBookingDa
                           </div>
                         ),
                       }))}
-                      value={firstDoseCenterId}
-                      onChange={handleFirstDoseCenterChange}
+                      onChange={(value) => setAppointmentCenterId(value)}
                       size="large"
                       placeholder="Chọn trung tâm tiêm chủng"
                       showSearch
@@ -395,181 +212,6 @@ const AppointmentSection = ({ bookingForm, vaccine, setCurrentStep, setBookingDa
                 </Col>
               </Row>
             </div>
-
-            {doseForms.length > 0 ? (
-              <div className="mt-6">
-                <Divider orientation="left" className="border-blue-300">
-                  <span className="text-lg font-semibold text-blue-700 flex items-center gap-2">
-                    Lịch tiêm chi tiết
-                    <span className="text-sm bg-blue-100 text-blue-700 px-3 py-1 rounded-full">
-                      {doseForms.length} mũi
-                    </span>
-                  </span>
-                </Divider>
-
-                <Form.List name="doseSchedules">
-                  {(fields) => (
-                    <>
-                      {fields.map(({ key, name, ...restField }, index) => {
-                        const doseForm = doseForms[index];
-                        if (!doseForm) return null;
-
-                        const isFirstDose = index === 0;
-
-                        return (
-                          <Card
-                            key={key}
-                            size="small"
-                            title={
-                              <div className="flex items-center gap-2">
-                                <div
-                                  className={`w-8 h-8 rounded-full flex items-center justify-center ${
-                                    isFirstDose
-                                      ? 'bg-blue-500 text-white'
-                                      : 'bg-gray-200 text-gray-700'
-                                  }`}
-                                >
-                                  {doseForm.doseNumber}
-                                </div>
-                                <span>
-                                  Mũi tiêm thứ {doseForm.doseNumber}
-                                  {isFirstDose && (
-                                    <span className="ml-2 text-xs bg-blue-100 text-blue-700 px-2 py-1 rounded">
-                                      Mũi đầu tiên
-                                    </span>
-                                  )}
-                                </span>
-                              </div>
-                            }
-                            className={`mb-4 transition-all hover:shadow-lg ${
-                              isFirstDose ? 'border-2 border-blue-300' : 'border border-gray-200'
-                            }`}
-                          >
-                            <Row gutter={16}>
-                              <Col xs={24} sm={12}>
-                                <Form.Item
-                                  {...restField}
-                                  label={<span className="font-medium">Ngày tiêm</span>}
-                                  name={[name, 'date']}
-                                  rules={[
-                                    {
-                                      required: true,
-                                      message: 'Vui lòng chọn ngày',
-                                    },
-                                  ]}
-                                >
-                                  <DatePicker
-                                    className="w-full"
-                                    locale={locale}
-                                    disabledDate={(current) => {
-                                      if (!current) return false;
-                                      return current.day() === 0 || current.day() === 6;
-                                    }}
-                                    value={doseForm.date}
-                                    onChange={(value) => handleDoseDateChange(index, value)}
-                                    format="DD/MM/YYYY"
-                                    size="large"
-                                  />
-                                </Form.Item>
-                              </Col>
-                              <Col xs={24} sm={12}>
-                                <Form.Item
-                                  {...restField}
-                                  label={<span className="font-medium">Giờ tiêm</span>}
-                                  name={[name, 'time']}
-                                  rules={[
-                                    {
-                                      required: true,
-                                      message: 'Vui lòng chọn giờ',
-                                    },
-                                  ]}
-                                >
-                                  <Select
-                                    options={timeSlots.map((time) => ({
-                                      value: time,
-                                      label: time,
-                                    }))}
-                                    value={doseForm.time}
-                                    onChange={(value) => handleDoseTimeChange(index, value)}
-                                    size="large"
-                                    placeholder="Chọn giờ"
-                                  />
-                                </Form.Item>
-                              </Col>
-                            </Row>
-
-                            <Row gutter={16} className="mt-4">
-                              <Col xs={24}>
-                                <Form.Item
-                                  {...restField}
-                                  label={
-                                    <span className="font-medium">
-                                      Địa điểm tiêm
-                                      {isFirstDose && (
-                                        <span className="ml-2 text-xs text-gray-500">
-                                          (mặc định từ mũi đầu tiên)
-                                        </span>
-                                      )}
-                                    </span>
-                                  }
-                                  name={[name, 'centerId']}
-                                  rules={[
-                                    {
-                                      required: true,
-                                      message: 'Vui lòng chọn địa điểm tiêm',
-                                    },
-                                  ]}
-                                  initialValue={doseForm.centerId}
-                                >
-                                  <Select
-                                    options={centers?.result?.map((center) => ({
-                                      value: center.centerId,
-                                      label: (
-                                        <div>
-                                          <div className="font-medium">{center.name}</div>
-                                        </div>
-                                      ),
-                                    }))}
-                                    value={doseForm.centerId}
-                                    onChange={(value) => handleDoseCenterChange(index, value)}
-                                    size="large"
-                                    placeholder={
-                                      isFirstDose
-                                        ? 'Địa điểm được chọn ở trên'
-                                        : 'Chọn địa điểm tiêm (mặc định: như mũi đầu)'
-                                    }
-                                    showSearch
-                                    filterOption={(input, option) => {
-                                      const center = centers?.result?.find(
-                                        (c) => c.centerId === option?.value
-                                      );
-                                      return (
-                                        center?.name
-                                          ?.toLowerCase()
-                                          ?.includes(input.toLowerCase()) || false
-                                      );
-                                    }}
-                                  />
-                                </Form.Item>
-                              </Col>
-                            </Row>
-                          </Card>
-                        );
-                      })}
-                    </>
-                  )}
-                </Form.List>
-              </div>
-            ) : (
-              <div className="mt-6">
-                <Alert
-                  message="Chưa có lịch tiêm"
-                  description="Vui lòng chọn ngày và giờ cho mũi tiêm đầu tiên để hệ thống tạo lịch tiêm chi tiết."
-                  type="warning"
-                  showIcon={false}
-                />
-              </div>
-            )}
           </Col>
           <Col xs={24} lg={12}>
             <div className="mb-6">

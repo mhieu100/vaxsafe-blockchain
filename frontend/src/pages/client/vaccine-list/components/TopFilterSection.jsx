@@ -1,5 +1,6 @@
 import { AppstoreOutlined, BarsOutlined } from '@ant-design/icons';
 import { Button, Divider, Pagination, Space } from 'antd';
+import { useTranslation } from 'react-i18next';
 
 /**
  * TopFilterSection component for pagination and view mode controls
@@ -22,6 +23,8 @@ const TopFilterSection = ({
   viewMode,
   setViewMode,
 }) => {
+  const { t } = useTranslation();
+
   const handlePageChange = (page, size) => {
     setCurrentPage(page);
     if (size !== pageSize) {
@@ -33,7 +36,7 @@ const TopFilterSection = ({
   return (
     <div className="mb-6 flex justify-between items-center">
       <span className="text-lg font-medium text-gray-700">
-        {meta.total} vaccine{meta.total !== 1 ? 's' : ''} found
+        {meta.total} {t(meta.total === 1 ? 'vaccine.found' : 'vaccine.foundPlural')}
       </span>
       <div className="flex items-center">
         <Pagination
@@ -46,7 +49,7 @@ const TopFilterSection = ({
           className="text-center"
         />
 
-        <Divider type="vertical" className="h-8" />
+        <div className="h-8 w-px bg-gray-300 mx-4" />
 
         <Space.Compact>
           <Button

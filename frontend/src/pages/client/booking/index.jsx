@@ -21,10 +21,9 @@ const BookingPage = () => {
     vaccineId: null,
     bookingFor: 'self',
     familyMemberId: null,
-    firstDoseDate: null,
-    firstDoseTime: '',
-    firstDoseCenter: '',
-    doseSchedules: [],
+    appointmentDate: null,
+    appointmentTime: '',
+    appointmentCenter: null,
     paymentMethod: 'CASH',
   });
 
@@ -97,51 +96,18 @@ const BookingPage = () => {
       await bookingForm.validateFields();
       await paymentForm.validateFields();
 
-      const _paymentValues = paymentForm.getFieldsValue();
+      // Amount is just the vaccine price (backend will create all appointment records)
+      const totalAmount = vaccine?.price || 0;
 
-      // Check if all dose schedules are filled
-      if (
-        !bookingData.doseSchedules ||
-        bookingData.doseSchedules.length !== vaccine?.dosesRequired
-      ) {
-        message.error(
-          `Vui lòng hoàn thành tất cả ${vaccine?.dosesRequired} mũi tiêm (hiện có ${bookingData.doseSchedules?.length || 0} mũi)`
-        );
-        return;
-      }
-
-      // Validate all doses have required fields
-      const hasIncompleteDose = bookingData.doseSchedules.some((dose, _index) => {
-        const isIncomplete = !dose || !dose.date || !dose.time || !dose.centerId;
-        if (isIncomplete) {
-        }
-        return isIncomplete;
-      });
-
-      if (hasIncompleteDose) {
-        message.error('Vui lòng điền đầy đủ thông tin cho tất cả các mũi tiêm');
-        return;
-      }
-
-      // Format dose schedules for API - match BookingRequest.DoseSchedule
-      const doseSchedules = bookingData.doseSchedules.map((dose) => ({
-        date: dose.date.format('YYYY-MM-DD'),
-        time: dose.time, // Time already in HH:mm format
-        centerId: dose.centerId,
-      }));
-
-      // Calculate total amount
-      const totalAmount = vaccine?.price * doseSchedules.length || 0;
-
-      // Prepare booking payload matching BookingRequest DTO
+      // Prepare booking payload matching new simplified BookingRequest DTO
       const bookingPayload = {
         vaccineId: bookingData.vaccineId || vaccine?.id,
         familyMemberId: bookingData.bookingFor === 'family' ? bookingData.familyMemberId : null,
-        centerId: doseSchedules[0]?.centerId, // First dose center
-        firstDoseDate: doseSchedules[0]?.date,
-        firstDoseTime: doseSchedules[0]?.time,
+        appointmentDate:
+          bookingData.appointmentDate?.format?.('YYYY-MM-DD') || bookingData.appointmentDate,
+        appointmentTime: bookingData.appointmentTime,
+        appointmentCenter: bookingData.appointmentCenter,
         amount: totalAmount,
-        doseSchedules: doseSchedules,
         paymentMethod: bookingData.paymentMethod || 'CASH',
       };
 

@@ -46,4 +46,8 @@ public class User {
     List<FamilyMember> familyMembers = new ArrayList<>();
 
     boolean isDeleted;
+    
+    @Column(nullable = false)
+    @Builder.Default
+    boolean isActive = false;
 }

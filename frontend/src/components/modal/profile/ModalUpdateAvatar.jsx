@@ -7,7 +7,7 @@ import { useAccountStore } from '@/stores/useAccountStore';
 
 const ModalUpdateAvatar = ({ open, setOpen }) => {
   const user = useAccountStore((state) => state.user);
-  const fetchAccount = useAccountStore((state) => state.fetchAccount);
+  const updateUserInfo = useAccountStore((state) => state.updateUserInfo);
   const [uploading, setUploading] = useState(false);
   const [removing, setRemoving] = useState(false);
 
@@ -29,8 +29,8 @@ const ModalUpdateAvatar = ({ open, setOpen }) => {
         throw new Error('Update avatar failed');
       }
 
-      // Step 3: Refresh user data from server
-      await fetchAccount();
+      // Step 3: Update avatar in store directly (no page reload)
+      updateUserInfo({ avatar: avatarUrl });
 
       message.success('Cập nhật ảnh đại diện thành công!');
       setOpen(false);
@@ -45,16 +45,16 @@ const ModalUpdateAvatar = ({ open, setOpen }) => {
     try {
       setRemoving(true);
 
+      const defaultAvatar = `${import.meta.env.VITE_API_BASE_URL}/storage/user/default.png`;
+
       // Update avatar to default image
-      const updateRes = await callUpdateAvatar(
-        `${import.meta.env.VITE_API_BASE_URL}/storage/user/default.png`
-      );
+      const updateRes = await callUpdateAvatar(defaultAvatar);
       if (!updateRes?.data) {
         throw new Error('Remove avatar failed');
       }
 
-      // Refresh user data from server
-      await fetchAccount();
+      // Update avatar in store directly (no page reload)
+      updateUserInfo({ avatar: defaultAvatar });
 
       message.success('Đã xóa ảnh đại diện!');
       setOpen(false);

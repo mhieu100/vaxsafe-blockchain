@@ -29,8 +29,6 @@ public class DoctorScheduleService {
     
     DoctorRepository doctorRepository;
     DoctorScheduleRepository doctorScheduleRepository;
-    DoctorSpecialScheduleRepository specialScheduleRepository;
-    DoctorLeaveRepository leaveRepository;
     DoctorAvailableSlotRepository slotRepository;
     
     /**
@@ -86,8 +84,52 @@ public class DoctorScheduleService {
     }
     
     /**
+     * Get all available slots for a center on a specific date and time slot
+     * This filters slots to only those within the given TimeSlotEnum range
+     */
+    public List<DoctorAvailableSlotResponse> getAvailableSlotsByCenterAndTimeSlot(
+            Long centerId, LocalDate date, com.dapp.backend.enums.TimeSlotEnum timeSlot) {
+        // Get time range from TimeSlotEnum
+        LocalTime startTime = getTimeSlotStartTime(timeSlot);
+        LocalTime endTime = getTimeSlotEndTime(timeSlot);
+        
+        log.info("Fetching available slots for center {}, date {}, timeSlot {} ({} - {})", 
+            centerId, date, timeSlot, startTime, endTime);
+        
+        List<DoctorAvailableSlot> slots = slotRepository.findAvailableSlotsByCenterAndTimeRange(
+                centerId, date, startTime, endTime);
+        
+        log.info("Found {} available slots", slots.size());
+        
+        return slots.stream()
+            .map(this::toSlotResponse)
+            .collect(Collectors.toList());
+    }
+    
+    /**
+     * Helper method to get start time from TimeSlotEnum
+     */
+    private LocalTime getTimeSlotStartTime(com.dapp.backend.enums.TimeSlotEnum timeSlot) {
+        return switch (timeSlot) {
+            case SLOT_07_00 -> LocalTime.of(7, 0);
+            case SLOT_09_00 -> LocalTime.of(9, 0);
+            case SLOT_11_00 -> LocalTime.of(11, 0);
+            case SLOT_13_00 -> LocalTime.of(13, 0);
+            case SLOT_15_00 -> LocalTime.of(15, 0);
+        };
+    }
+    
+    /**
+     * Helper method to get end time from TimeSlotEnum (2 hours after start)
+     */
+    private LocalTime getTimeSlotEndTime(com.dapp.backend.enums.TimeSlotEnum timeSlot) {
+        return getTimeSlotStartTime(timeSlot).plusHours(2);
+    }
+    
+    /**
      * Generate slots for a doctor within a date range
-     * This implements the logic from stored procedure
+     * Default working hours: 7:00 - 17:00, every day, 30-minute slots
+     * If DoctorSchedule exists, use it. Otherwise use default hours.
      */
     @Transactional
     public int generateDoctorSlots(Long doctorId, LocalDate startDate, LocalDate endDate) throws AppException {
@@ -102,32 +144,25 @@ public class DoctorScheduleService {
         LocalDate currentDate = startDate;
         
         while (!currentDate.isAfter(endDate)) {
-            // Check if doctor is on leave
-            if (leaveRepository.isDoctorOnLeave(doctorId, currentDate)) {
-                currentDate = currentDate.plusDays(1);
-                continue;
-            }
-            
             // Get day of week (Monday=1, Sunday=7 in Java, but we store 0-6)
             int dayOfWeek = currentDate.getDayOfWeek().getValue() % 7; // Convert to 0=Sunday
             
-            // Check for special schedule first
-            var specialSchedule = specialScheduleRepository
-                .findByDoctor_DoctorIdAndWorkDate(doctorId, currentDate);
+            // Try to get doctor's custom schedule
+            var schedules = doctorScheduleRepository
+                .findActiveDaySchedules(doctorId, dayOfWeek);
             
-            if (specialSchedule.isPresent()) {
-                // Use special schedule
+            if (schedules.isEmpty()) {
+                // No custom schedule found, use default: 7:00 - 17:00
+                log.debug("No custom schedule for doctor {} on day {}, using default 7:00-17:00", 
+                    doctorId, dayOfWeek);
                 slotsGenerated += generateSlotsForTimeRange(
-                    doctor, 
-                    currentDate, 
-                    specialSchedule.get().getStartTime(),
-                    specialSchedule.get().getEndTime()
+                    doctor,
+                    currentDate,
+                    LocalTime.of(7, 0),  // Start at 7:00
+                    LocalTime.of(17, 0)  // End at 17:00
                 );
             } else {
-                // Use normal weekly schedule
-                var schedules = doctorScheduleRepository
-                    .findActiveDaySchedules(doctorId, dayOfWeek);
-                
+                // Use custom schedule
                 for (DoctorSchedule schedule : schedules) {
                     slotsGenerated += generateSlotsForTimeRange(
                         doctor,
@@ -149,11 +184,15 @@ public class DoctorScheduleService {
     
     /**
      * Helper method to generate slots for a time range
+     * Default slot duration: 30 minutes
      */
     private int generateSlotsForTimeRange(Doctor doctor, LocalDate date, 
                                            LocalTime startTime, LocalTime endTime) {
         int slotsGenerated = 0;
-        Integer duration = doctor.getConsultationDuration();
+        // Use doctor's consultation duration, default to 30 minutes if not set
+        Integer duration = doctor.getConsultationDuration() != null 
+            ? doctor.getConsultationDuration() 
+            : 30;
         LocalTime slotStart = startTime;
         
         while (slotStart.isBefore(endTime)) {
@@ -263,17 +302,6 @@ public class DoctorScheduleService {
     }
     
     private String getWorkingHoursForDate(Doctor doctor, LocalDate date) {
-        // Check for special schedule first
-        var specialSchedule = specialScheduleRepository
-            .findByDoctor_DoctorIdAndWorkDate(doctor.getDoctorId(), date);
-        
-        if (specialSchedule.isPresent()) {
-            return formatTimeRange(
-                specialSchedule.get().getStartTime(),
-                specialSchedule.get().getEndTime()
-            );
-        }
-        
         // Get day of week (0=Sunday, 1=Monday, etc.)
         int dayOfWeek = date.getDayOfWeek().getValue() % 7;
         

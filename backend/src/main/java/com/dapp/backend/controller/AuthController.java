@@ -53,19 +53,22 @@ public class AuthController {
 
     @PostMapping("/update-password")
     @ApiMessage("Update password")
-    public ResponseEntity<Boolean> updatePassword(@Valid @RequestBody UpdatePasswordRequest request) throws AppException {
+    public ResponseEntity<Boolean> updatePassword(@Valid @RequestBody UpdatePasswordRequest request)
+            throws AppException {
         return ResponseEntity.ok(authService.updatePassword(request));
     }
 
     @PostMapping("/register")
     @ApiMessage("Register new patient")
-    public ResponseEntity<RegisterPatientResponse> register(@Valid @RequestBody RegisterPatientRequest request) throws AppException {
+    public ResponseEntity<RegisterPatientResponse> register(@Valid @RequestBody RegisterPatientRequest request)
+            throws AppException {
         return ResponseEntity.ok(authService.register(request));
     }
 
     @GetMapping("/refresh")
     @ApiMessage("refresh token")
-    public ResponseEntity<RefreshResponse> refresh(@CookieValue(name = "refresh_token", defaultValue = "empty") String refreshToken) throws AppException {
+    public ResponseEntity<RefreshResponse> refresh(
+            @CookieValue(name = "refresh_token", defaultValue = "empty") String refreshToken) throws AppException {
         LoginResponse login = this.authService.refresh(refreshToken);
         String newRefreshToken = this.jwtUtil.createRefreshToken(login.getUser().getEmail());
         this.authService.updateUserToken(newRefreshToken, login.getUser().getEmail());
@@ -76,12 +79,14 @@ public class AuthController {
                 .path("/")
                 .maxAge(refreshTokenExpiration)
                 .build();
-        return ResponseEntity.ok().header(HttpHeaders.SET_COOKIE, cookie.toString()).body(RefreshResponse.builder().accessToken(login.getAccessToken()).build());
+        return ResponseEntity.ok().header(HttpHeaders.SET_COOKIE, cookie.toString())
+                .body(RefreshResponse.builder().accessToken(login.getAccessToken()).build());
     }
 
     @PostMapping("/update-account")
     @ApiMessage("Update account")
-    public ResponseEntity<LoginResponse.UserLogin> update(@Valid @RequestBody UpdateAccountRequest request) throws AppException {
+    public ResponseEntity<LoginResponse.UserLogin> update(@Valid @RequestBody UpdateAccountRequest request)
+            throws AppException {
         return ResponseEntity.ok(authService.updateAccount(request));
     }
 
@@ -120,9 +125,49 @@ public class AuthController {
 
     @PostMapping("/avatar")
     @ApiMessage("update avatar")
-    public ResponseEntity<LoginResponse.UserLogin> updateAvatar(@RequestBody AvatarRequest request) throws AppException {
+    public ResponseEntity<LoginResponse.UserLogin> updateAvatar(@RequestBody AvatarRequest request)
+            throws AppException {
         return ResponseEntity.ok(this.authService.updateAvatar(request));
     }
 
+    @PostMapping("/complete-google-profile")
+    @ApiMessage("Complete Google profile with patient information")
+    public ResponseEntity<LoginResponse.UserLogin> completeGoogleProfile(
+            @Valid @RequestBody CompleteGoogleProfileRequest request) throws AppException {
+        LoginResponse.UserLogin user = authService.completeGoogleProfile(request);
+        
+        String refreshToken = jwtUtil.createRefreshToken(user.getEmail());
+        authService.updateUserToken(refreshToken, user.getEmail());
+        
+        ResponseCookie cookie = ResponseCookie
+                .from("refresh_token", refreshToken)
+                .httpOnly(true)
+                .secure(true)
+                .path("/")
+                .maxAge(refreshTokenExpiration)
+                .build();
+        
+        return ResponseEntity.ok().header(HttpHeaders.SET_COOKIE, cookie.toString()).body(user);
+    }
+
+    @PostMapping("/complete-profile")
+    @ApiMessage("Complete patient profile after registration")
+    public ResponseEntity<LoginResponse.UserLogin> completeProfile(
+            @Valid @RequestBody CompleteProfileRequest request) throws AppException {
+        LoginResponse.UserLogin user = authService.completeProfile(request);
+        
+        String refreshToken = jwtUtil.createRefreshToken(user.getEmail());
+        authService.updateUserToken(refreshToken, user.getEmail());
+        
+        ResponseCookie cookie = ResponseCookie
+                .from("refresh_token", refreshToken)
+                .httpOnly(true)
+                .secure(true)
+                .path("/")
+                .maxAge(refreshTokenExpiration)
+                .build();
+        
+        return ResponseEntity.ok().header(HttpHeaders.SET_COOKIE, cookie.toString()).body(user);
+    }
 
 }

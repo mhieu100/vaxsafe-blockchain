@@ -5,6 +5,7 @@ import {
   ShoppingCartOutlined,
 } from '@ant-design/icons';
 import { Badge, Button, Card, Image, message, Rate } from 'antd';
+import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import useCartStore from '@/stores/useCartStore';
 import { formatPrice } from '@/utils/formatPrice';
@@ -17,12 +18,13 @@ import { getImageProps } from '@/utils/imageUtils';
  * @returns {JSX.Element}
  */
 const VaccineCard = ({ vaccine }) => {
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const { addItem } = useCartStore();
 
   const handleAddToCart = (vaccine) => {
     addItem(vaccine, 1);
-    message.success('Add vaccine to cart success');
+    message.success(t('vaccine.card.addToCartSuccess'));
   };
 
   return (
@@ -36,27 +38,27 @@ const VaccineCard = ({ vaccine }) => {
             className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
             style={{ objectFit: 'cover' }}
             preview={{
-              mask: <EyeOutlined />,
-              maskClassName: 'rounded-lg',
+              cover: <EyeOutlined />,
+              classNames: { cover: 'rounded-lg' },
             }}
           />
           <div className="absolute top-2 right-2 flex flex-col gap-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
             <Button
               icon={<EyeOutlined />}
               onClick={() => navigate(`/vaccine/${vaccine.slug}`)}
-              title="Quick View"
+              title={t('vaccine.card.quickView')}
               className="w-9 h-9 rounded-full flex items-center justify-center bg-white/90 backdrop-blur-sm border border-gray-300 shadow-md hover:bg-blue-500 hover:border-blue-500 hover:text-white text-xs"
             />
             <Button
               icon={<HeartOutlined />}
-              title="Add to Wishlist"
+              title={t('vaccine.card.addToWishlist')}
               className="w-9 h-9 rounded-full flex items-center justify-center bg-white/90 backdrop-blur-sm border border-gray-300 shadow-md hover:bg-red-500 hover:border-red-500 hover:text-white text-xs"
             />
           </div>
           {vaccine.stock === 0 && (
             <div className="absolute inset-0 bg-black/50 flex items-center justify-center">
               <span className="bg-red-500 text-white px-3 py-1 rounded-full text-sm font-medium">
-                Out of Stock
+                {t('vaccine.card.outOfStock')}
               </span>
             </div>
           )}
@@ -93,7 +95,7 @@ const VaccineCard = ({ vaccine }) => {
             <span className="text-blue-600 m-0">{formatPrice(vaccine.price)}</span>
           </div>
           <Badge
-            count={vaccine.stock > 0 ? 'In Stock' : 'Out of Stock'}
+            count={vaccine.stock > 0 ? t('vaccine.card.inStock') : t('vaccine.card.outOfStock')}
             style={{
               backgroundColor: vaccine.stock > 0 ? '#52c41a' : '#ff4d4f',
               fontSize: '10px',
@@ -108,7 +110,7 @@ const VaccineCard = ({ vaccine }) => {
             disabled={vaccine.stock === 0}
             className="w-full h-10 rounded-lg font-medium hover:-translate-y-0.5 transition-transform mt-auto"
           >
-            {vaccine.stock === 0 ? 'Out of Stock' : 'Add to Cart'}
+            {vaccine.stock === 0 ? t('vaccine.card.outOfStock') : t('vaccine.card.addToCart')}
           </Button>
 
           <Button
@@ -118,7 +120,7 @@ const VaccineCard = ({ vaccine }) => {
             disabled={vaccine.stock === 0}
             className="w-full h-10 rounded-lg font-medium hover:-translate-y-0.5 transition-transform mt-auto"
           >
-            {vaccine.stock === 0 ? 'Out of Stock' : 'Booking now'}
+            {vaccine.stock === 0 ? t('vaccine.card.outOfStock') : t('vaccine.card.bookingNow')}
           </Button>
         </div>
       </div>

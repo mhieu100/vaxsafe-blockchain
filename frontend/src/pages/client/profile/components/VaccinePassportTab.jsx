@@ -186,7 +186,7 @@ const VaccinePassportTab = () => {
                 Blockchain Verification
               </Title>
               <Card className="bg-gradient-to-br from-purple-50 to-blue-50 border-purple-200">
-                <Space direction="vertical" className="w-full">
+                <Space orientation="vertical" className="w-full">
                   <div className="flex items-center justify-between">
                     <Text type="secondary">Network Type:</Text>
                     <Tag color="purple">Permissioned Blockchain</Tag>
@@ -306,7 +306,7 @@ const VaccinePassportTab = () => {
               <BlockOutlined className="mr-2 text-purple-600" />
               Blockchain Stats
             </Title>
-            <Space direction="vertical" className="w-full" size="middle">
+            <Space orientation="vertical" className="w-full" size="middle">
               <Card size="small" className="bg-gradient-to-r from-green-50 to-green-100">
                 <div className="flex items-center justify-between">
                   <div>

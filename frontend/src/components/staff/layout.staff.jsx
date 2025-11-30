@@ -11,6 +11,7 @@ import { Avatar, Badge, Dropdown, message } from 'antd';
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link, Outlet, useLocation, useNavigate } from 'react-router-dom';
+import LanguageSelect from '@/components/common/ui/LanguageSwitcher';
 import { callLogout } from '@/services/auth.service';
 import { useAccountStore } from '@/stores/useAccountStore';
 
@@ -41,7 +42,7 @@ const LayoutStaff = () => {
       key: 'profile',
       label: t('common:user.personalInfo'),
       icon: <UserOutlined />,
-      onClick: () => navigate('/profile'),
+      onClick: () => navigate('/staff/profile'),
     },
     {
       key: 'logout',
@@ -108,7 +109,14 @@ const LayoutStaff = () => {
       pageTitleRender={false}
       title="VaxChain - Nhân viên"
       actionsRender={() => [
-        <Dropdown menu={{ items: userMenuItems }} placement="bottomRight" arrow trigger={['click']}>
+        <LanguageSelect key="language" />,
+        <Dropdown
+          key="user"
+          menu={{ items: userMenuItems }}
+          placement="bottomRight"
+          arrow
+          trigger={['click']}
+        >
           <div className="cursor-pointer flex items-center gap-2">
             <Badge dot={user?.isVerified}>
               <Avatar src={user?.avatar} className="bg-brand-primary">

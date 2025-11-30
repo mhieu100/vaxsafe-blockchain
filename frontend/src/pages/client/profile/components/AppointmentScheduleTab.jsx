@@ -4,6 +4,7 @@ import dayjs from 'dayjs';
 import { useEffect, useState } from 'react';
 import { RescheduleAppointmentModal } from '@/components/modal/appointment';
 import { getMyBookings } from '@/services/booking.service';
+import { formatAppointmentTime } from '@/utils/appointment';
 
 const { Title, Text } = Typography;
 
@@ -42,7 +43,7 @@ const AppointmentScheduleTab = () => {
         return 'cyan';
       case 'PENDING':
         return 'orange';
-      case 'PENDING_APPROVAL':
+      case 'RESCHEDULE':
         return 'gold';
       case 'PROGRESS':
         return 'orange';
@@ -63,7 +64,7 @@ const AppointmentScheduleTab = () => {
         return 'Đã lên lịch';
       case 'PENDING':
         return 'Chờ xác nhận';
-      case 'PENDING_APPROVAL':
+      case 'RESCHEDULE':
         return 'Chờ duyệt đổi lịch';
       case 'PROGRESS':
         return 'Đang tiến hành';
@@ -122,13 +123,15 @@ const AppointmentScheduleTab = () => {
   if (loading) {
     return (
       <div className="flex justify-center items-center py-12">
-        <Spin size="large" tip="Đang tải lịch hẹn..." />
+        <Spin size="large" spinning tip="Đang tải lịch hẹn...">
+          <div style={{ minHeight: 100 }} />
+        </Spin>
       </div>
     );
   }
 
   if (error) {
-    return <Alert type="error" message="Lỗi tải dữ liệu" description={error} showIcon />;
+    return <Alert type="error" title="Lỗi tải dữ liệu" description={error} showIcon />;
   }
 
   if (upcomingAppointments.length === 0) {
@@ -179,7 +182,8 @@ const AppointmentScheduleTab = () => {
                     <div className="space-y-1 text-sm">
                       <div>
                         <Text type="secondary">
-                          📅 {dayjs(apt.scheduledDate).format('DD/MM/YYYY')} lúc {apt.scheduledTime}
+                          📅 {dayjs(apt.scheduledDate).format('DD/MM/YYYY')} lúc{' '}
+                          {formatAppointmentTime(apt)}
                         </Text>
                       </div>
                       <div>
@@ -190,7 +194,7 @@ const AppointmentScheduleTab = () => {
                           <Text type="secondary">👨‍⚕️ BS: {apt.doctorName}</Text>
                         </div>
                       )}
-                      {apt.appointmentStatus === 'PENDING_APPROVAL' && (
+                      {apt.appointmentStatus === 'RESCHEDULE' && (
                         <div className="mt-2 p-2 bg-yellow-50 rounded border border-yellow-200">
                           <Text type="warning" className="text-xs">
                             ⏳ Đã gửi yêu cầu đổi lịch. Vui lòng chờ nhân viên cơ sở liên hệ xác
@@ -204,7 +208,7 @@ const AppointmentScheduleTab = () => {
                   {/* Reschedule button */}
                   {apt.appointmentStatus !== 'COMPLETED' &&
                     apt.appointmentStatus !== 'CANCELLED' &&
-                    apt.appointmentStatus !== 'PENDING_APPROVAL' &&
+                    apt.appointmentStatus !== 'RESCHEDULE' &&
                     dayjs(apt.scheduledDate).isAfter(dayjs()) && (
                       <Button
                         type="link"

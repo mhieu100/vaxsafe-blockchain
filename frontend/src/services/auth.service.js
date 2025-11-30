@@ -85,12 +85,47 @@ export async function updateAccount(payload) {
 }
 
 /**
- * Login with Google token
- * @param {string} googleToken - Google authentication token
- * @returns {Promise} Login response with user account data
+ * Complete Google profile with patient information
+ * @param {object} payload - Patient profile data
+ * @param {object} payload.patientProfile - Patient profile details
+ * @param {string} payload.patientProfile.phone - Phone number (required)
+ * @param {string} payload.patientProfile.address - Address (required)
+ * @param {string} payload.patientProfile.birthday - Birthday in YYYY-MM-DD format (required)
+ * @param {string} payload.patientProfile.gender - Gender: MALE, FEMALE, OTHER (required)
+ * @param {string} payload.patientProfile.identityNumber - Identity number (required)
+ * @param {string} payload.patientProfile.bloodType - Blood type: A, B, AB, O, A_POSITIVE, A_NEGATIVE, B_POSITIVE, B_NEGATIVE, AB_POSITIVE, AB_NEGATIVE, O_POSITIVE, O_NEGATIVE (required)
+ * @param {number} [payload.patientProfile.heightCm] - Height in cm
+ * @param {number} [payload.patientProfile.weightKg] - Weight in kg
+ * @param {string} [payload.patientProfile.occupation] - Occupation
+ * @param {string} [payload.patientProfile.lifestyleNotes] - Lifestyle notes
+ * @param {string} [payload.patientProfile.insuranceNumber] - Insurance number
+ * @param {boolean} [payload.patientProfile.consentForAIAnalysis] - AI analysis consent
+ * @returns {Promise} Updated user information
  */
-export async function callLoginWithGoogle(googleToken) {
-  return await apiClient.post('/auth/login/google', { token: googleToken });
+export async function callCompleteGoogleProfile(payload) {
+  return await apiClient.post('/auth/complete-google-profile', payload);
+}
+
+/**
+ * Complete user profile with patient information (for both password and Google registration)
+ * @param {object} payload - Patient profile data
+ * @param {object} payload.patientProfile - Patient profile details
+ * @param {string} payload.patientProfile.address - Address (required)
+ * @param {string} payload.patientProfile.phone - Phone number (required)
+ * @param {string} payload.patientProfile.birthday - Birthday in YYYY-MM-DD format (required)
+ * @param {string} payload.patientProfile.gender - Gender: MALE, FEMALE, OTHER (required)
+ * @param {string} payload.patientProfile.identityNumber - Identity number (required)
+ * @param {string} payload.patientProfile.bloodType - Blood type: A, B, AB, O (required)
+ * @param {number} [payload.patientProfile.heightCm] - Height in cm
+ * @param {number} [payload.patientProfile.weightKg] - Weight in kg
+ * @param {string} [payload.patientProfile.occupation] - Occupation
+ * @param {string} [payload.patientProfile.lifestyleNotes] - Lifestyle notes
+ * @param {string} [payload.patientProfile.insuranceNumber] - Insurance number
+ * @param {boolean} [payload.patientProfile.consentForAIAnalysis] - AI analysis consent
+ * @returns {Promise} Updated user information
+ */
+export async function callCompleteProfile(payload) {
+  return await apiClient.post('/auth/complete-profile', payload);
 }
 
 /**

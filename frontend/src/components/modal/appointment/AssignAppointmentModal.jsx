@@ -29,123 +29,87 @@ import {
 } from 'antd';
 import dayjs from 'dayjs';
 import { useEffect, useState } from 'react';
+import { TIME_SLOT_LABELS } from '@/constants';
 import { callUpdateAppointment } from '@/services/appointment.service';
-import { getAvailableSlotsAPI, getDoctorsWithScheduleAPI } from '@/services/doctor.service';
+import { getAvailableSlotsByCenterAndTimeSlotAPI } from '@/services/doctor.service';
 import { useAccountStore } from '@/stores/useAccountStore';
 
 const { Text } = Typography;
 const { TextArea } = Input;
-const { Option } = Select;
 
 const AssignAppointmentModal = ({ open, onClose, appointment, onSuccess }) => {
   const [form] = Form.useForm();
   const [loading, setLoading] = useState(false);
   const [loadingSlots, setLoadingSlots] = useState(false);
-  const [loadingDoctors, setLoadingDoctors] = useState(false);
-  const [selectedDoctorId, setSelectedDoctorId] = useState(null);
   const [selectedSlotId, setSelectedSlotId] = useState(null);
   const [selectedDate, setSelectedDate] = useState(null);
   const [availableSlots, setAvailableSlots] = useState([]);
-  const [doctors, setDoctors] = useState([]);
 
-  const _user = useAccountStore((state) => state.user);
-
-  // Check if this is a reschedule request
-  const isRescheduleRequest = appointment?.status === 'PENDING_APPROVAL';
-
-  // Determine target date
-  const getTargetDate = () => {
-    if (isRescheduleRequest && appointment?.desiredDate) {
-      return dayjs(appointment.desiredDate);
-    }
-    if (appointment?.scheduledDate) {
-      return dayjs(appointment.scheduledDate);
-    }
-    return dayjs();
-  };
-
-  const fetchDoctors = async (date) => {
-    try {
-      setLoadingDoctors(true);
-      const res = await getDoctorsWithScheduleAPI(date);
-      if (res?.data) {
-        setDoctors(res.data);
-      }
-    } catch (_error) {
-      notification.error({
-        message: 'Lỗi',
-        description: 'Không thể tải danh sách bác sĩ',
-      });
-    } finally {
-      setLoadingDoctors(false);
-    }
-  };
-
-  const fetchAvailableSlots = async (doctorId, date) => {
-    try {
-      setLoadingSlots(true);
-      const res = await getAvailableSlotsAPI(doctorId, date);
-
-      if (res?.data) {
-        setAvailableSlots(res.data);
-        setSelectedSlotId(null);
-      }
-    } catch (_error) {
-      notification.error({
-        message: 'Lỗi',
-        description: 'Không thể tải lịch trống của bác sĩ',
-      });
-      setAvailableSlots([]);
-    } finally {
-      setLoadingSlots(false);
-    }
-  };
-
-  // Fetch doctors when modal opens
+  // Set date when modal opens (use scheduledDate for pending appointments)
   useEffect(() => {
-    if (open) {
-      const targetDate = getTargetDate();
+    if (open && appointment) {
+      const targetDate = appointment.scheduledDate ? dayjs(appointment.scheduledDate) : dayjs();
       setSelectedDate(targetDate);
       form.setFieldsValue({
         appointmentDate: targetDate,
       });
-      fetchDoctors(targetDate.format('YYYY-MM-DD'));
     }
-  }, [open, form.setFieldsValue, getTargetDate]);
 
-  // Fetch slots when doctor or date changes
-  useEffect(() => {
-    if (selectedDoctorId && selectedDate) {
-      fetchAvailableSlots(selectedDoctorId, selectedDate.format('YYYY-MM-DD'));
+    // Reset state when modal closes
+    if (!open) {
+      form.resetFields();
+      setSelectedSlotId(null);
+      setSelectedDate(null);
+      setAvailableSlots([]);
     }
-  }, [selectedDoctorId, selectedDate]);
+  }, [open, appointment?.id]);
+
+  // Fetch slots when selectedDate is available
+  useEffect(() => {
+    const loadSlots = async () => {
+      if (!appointment?.centerId || !selectedDate) {
+        return;
+      }
+
+      // Get scheduled time slot for pending appointments
+      const targetTimeSlot = appointment.scheduledTimeSlot;
+      if (!targetTimeSlot) {
+        notification.warning({
+          message: 'Thiếu thông tin',
+          description: 'Không tìm thấy khung giờ đặt lịch',
+        });
+        return;
+      }
+
+      try {
+        setLoadingSlots(true);
+        const res = await getAvailableSlotsByCenterAndTimeSlotAPI(
+          appointment.centerId,
+          selectedDate.format('YYYY-MM-DD'),
+          targetTimeSlot
+        );
+
+        if (res?.data) {
+          setAvailableSlots(res.data);
+          setSelectedSlotId(null);
+        }
+      } catch (error) {
+        notification.error({
+          message: 'Lỗi',
+          description: error?.response?.data?.message || 'Không thể tải lịch trống',
+        });
+        setAvailableSlots([]);
+      } finally {
+        setLoadingSlots(false);
+      }
+    };
+
+    if (open && appointment?.centerId && selectedDate) {
+      loadSlots();
+    }
+  }, [open, appointment?.centerId, appointment?.scheduledTimeSlot, selectedDate]);
 
   if (!appointment) return null;
-
-  const handleDoctorChange = (doctorId) => {
-    setSelectedDoctorId(doctorId);
-    form.setFieldsValue({ doctorId });
-
-    // Find the selected doctor to get userId
-    const selectedDoctor = doctors.find((d) => d.doctorId === doctorId);
-    if (selectedDoctor) {
-      form.setFieldsValue({ userId: selectedDoctor.userId });
-    }
-  };
-
-  const _handleDateChange = (date) => {
-    setSelectedDate(date);
-    form.setFieldsValue({ appointmentDate: date });
-
-    // Reload doctors with new date
-    if (date) {
-      fetchDoctors(date.format('YYYY-MM-DD'));
-    }
-
-    // Clear selected slot when date changes
-    setSelectedSlotId(null);
-    setAvailableSlots([]);
-  };
 
   const handleSlotSelect = (slotId) => {
     setSelectedSlotId(slotId);
@@ -155,32 +119,31 @@ const AssignAppointmentModal = ({ open, onClose, appointment, onSuccess }) => {
   const handleConfirmAssign = async () => {
     try {
       setLoading(true);
-      const values = await form.validateFields(['doctorId', 'slotId']);
+      const values = await form.validateFields(['slotId']);
 
-      const selectedDoctor = doctors.find((d) => d.doctorId === values.doctorId);
-      if (!selectedDoctor) {
-        throw new Error('Không tìm thấy thông tin bác sĩ');
+      const slotIdNumber = Number(values.slotId);
+      const selectedSlot = availableSlots.find((slot) => slot.slotId === slotIdNumber);
+
+      if (!selectedSlot) {
+        throw new Error('Không tìm thấy thông tin khung giờ');
       }
 
-      const res = await callUpdateAppointment(appointment.id, selectedDoctor.userId, values.slotId);
+      const res = await callUpdateAppointment(
+        appointment.id,
+        selectedSlot.doctorId,
+        values.slotId,
+        selectedSlot.startTime
+      );
 
       if (res?.data) {
-        message.success(
-          isRescheduleRequest
-            ? 'Phê duyệt yêu cầu đổi lịch thành công!'
-            : 'Phân công bác sĩ thành công!'
-        );
+        message.success('Phân công bác sĩ thành công!');
         onSuccess?.();
         handleClose();
       }
     } catch (error) {
       notification.error({
         message: 'Có lỗi xảy ra',
-        description:
-          error.message ||
-          (isRescheduleRequest
-            ? 'Không thể phê duyệt yêu cầu đổi lịch'
-            : 'Không thể phân công bác sĩ'),
+        description: error.message || 'Không thể phân công bác sĩ',
       });
     } finally {
       setLoading(false);
@@ -190,46 +153,69 @@ const AssignAppointmentModal = ({ open, onClose, appointment, onSuccess }) => {
   const handleClose = () => {
     onClose();
     form.resetFields();
-    setSelectedDoctorId(null);
     setSelectedSlotId(null);
     setSelectedDate(null);
     setAvailableSlots([]);
-    setDoctors([]);
+  };
+
+  const fetchAvailableSlots = async () => {
+    if (!appointment?.centerId || !selectedDate) return;
+
+    const targetTimeSlot = appointment.scheduledTimeSlot;
+    if (!targetTimeSlot) return;
+
+    try {
+      setLoadingSlots(true);
+      const res = await getAvailableSlotsByCenterAndTimeSlotAPI(
+        appointment.centerId,
+        selectedDate.format('YYYY-MM-DD'),
+        targetTimeSlot
+      );
+
+      if (res?.data) {
+        setAvailableSlots(res.data);
+        setSelectedSlotId(null);
+      }
+    } catch (error) {
+      notification.error({
+        message: 'Lỗi',
+        description: 'Không thể tải lịch trống',
+      });
+      setAvailableSlots([]);
+    } finally {
+      setLoadingSlots(false);
+    }
   };
 
   const renderAvailableSlots = () => {
     if (loadingSlots) {
       return (
         <div style={{ textAlign: 'center', padding: '20px' }}>
-          <Spin tip="Đang tải lịch trống..." />
+          <Spin spinning tip="Đang tải lịch trống...">
+            <div style={{ minHeight: 50 }} />
+          </Spin>
         </div>
       );
     }
 
-    if (!selectedDoctorId) {
-      return (
-        <Alert
-          message="Vui lòng chọn bác sĩ"
-          description="Chọn bác sĩ để xem lịch trống có sẵn"
-          type="info"
-          showIcon
-        />
-      );
-    }
-
     if (availableSlots.length === 0) {
+      const timeSlotLabel = appointment?.scheduledTimeSlot
+        ? TIME_SLOT_LABELS[appointment.scheduledTimeSlot]
+        : '';
+
       return (
         <Empty
           image={Empty.PRESENTED_IMAGE_SIMPLE}
           description={
             <Space direction="vertical">
-              <span>Không có lịch trống trong ngày này</span>
-              <Button
-                icon={<ReloadOutlined />}
-                onClick={() =>
-                  fetchAvailableSlots(selectedDoctorId, selectedDate.format('YYYY-MM-DD'))
-                }
-              >
+              <span>
+                Không có lịch trống trong khung giờ{' '}
+                {timeSlotLabel && <strong>{timeSlotLabel}</strong>}
+              </span>
+              <Text type="secondary" style={{ fontSize: 12 }}>
+                Không có bác sĩ nào có slot trống trong khung giờ này
+              </Text>
+              <Button icon={<ReloadOutlined />} onClick={fetchAvailableSlots}>
                 Tải lại
               </Button>
             </Space>
@@ -241,7 +227,7 @@ const AssignAppointmentModal = ({ open, onClose, appointment, onSuccess }) => {
     return (
       <div
         style={{
-          maxHeight: '300px',
+          maxHeight: '400px',
           overflowY: 'auto',
           border: '1px solid #d9d9d9',
           borderRadius: 8,
@@ -253,39 +239,50 @@ const AssignAppointmentModal = ({ open, onClose, appointment, onSuccess }) => {
           onChange={(e) => handleSlotSelect(e.target.value)}
           style={{ width: '100%' }}
         >
-          <Space direction="vertical" style={{ width: '100%' }} size="middle">
+          <Row gutter={[12, 12]}>
             {availableSlots.map((slot) => (
-              <Radio
-                key={slot.slotId}
-                value={slot.slotId}
-                disabled={slot.status !== 'AVAILABLE'}
-                style={{
-                  width: '100%',
-                  padding: 12,
-                  background: slot.status === 'AVAILABLE' ? '#f6ffed' : '#fff2e8',
-                  border: `1px solid ${slot.status === 'AVAILABLE' ? '#b7eb8f' : '#ffbb96'}`,
-                  borderRadius: 8,
-                }}
-              >
-                <Space
+              <Col key={slot.slotId} xs={24} sm={12} md={8}>
+                <Radio
+                  value={slot.slotId}
+                  disabled={slot.status !== 'AVAILABLE'}
                   style={{
                     width: '100%',
-                    justifyContent: 'space-between',
+                    height: '100%',
+                    padding: 12,
+                    background: slot.status === 'AVAILABLE' ? '#f6ffed' : '#fff2e8',
+                    border: `2px solid ${
+                      selectedSlotId === slot.slotId
+                        ? '#1890ff'
+                        : slot.status === 'AVAILABLE'
+                          ? '#b7eb8f'
+                          : '#ffbb96'
+                    }`,
+                    borderRadius: 8,
+                    display: 'flex',
+                    alignItems: 'flex-start',
                   }}
                 >
-                  <Space>
-                    <ClockCircleOutlined />
-                    <Text strong>
-                      {slot.startTime} - {slot.endTime}
-                    </Text>
+                  <Space direction="vertical" size="small" style={{ width: '100%' }}>
+                    <Space>
+                      <ClockCircleOutlined style={{ color: '#1890ff' }} />
+                      <Text strong style={{ fontSize: 14 }}>
+                        {slot.startTime?.substring(0, 5)} - {slot.endTime?.substring(0, 5)}
+                      </Text>
+                    </Space>
+                    <Tag color="blue" icon={<UserOutlined />} style={{ marginLeft: 0 }}>
+                      Bs. {slot.doctorName}
+                    </Tag>
+                    <Tag
+                      color={slot.status === 'AVAILABLE' ? 'success' : 'error'}
+                      style={{ marginLeft: 0 }}
+                    >
+                      {slot.status === 'AVAILABLE' ? 'Trống' : 'Đã đặt'}
+                    </Tag>
                   </Space>
-                  <Tag color={slot.status === 'AVAILABLE' ? 'success' : 'error'}>
-                    {slot.status === 'AVAILABLE' ? 'Trống' : 'Đã đặt'}
-                  </Tag>
-                </Space>
-              </Radio>
+                </Radio>
+              </Col>
             ))}
-          </Space>
+          </Row>
         </Radio.Group>
       </div>
     );
@@ -295,18 +292,8 @@ const AssignAppointmentModal = ({ open, onClose, appointment, onSuccess }) => {
     <Modal
       title={
         <Space>
-          {isRescheduleRequest ? (
-            <>
-              <EditOutlined style={{ color: '#faad14' }} />
-              <span>Duyệt Yêu Cầu Đổi Lịch</span>
-              <Tag color="warning">PENDING_APPROVAL</Tag>
-            </>
-          ) : (
-            <>
-              <CalendarOutlined style={{ color: '#1890ff' }} />
-              <span>Phân Công Lịch Hẹn</span>
-            </>
-          )}
+          <CalendarOutlined style={{ color: '#1890ff' }} />
+          <span>Phân Công Lịch Hẹn</span>
         </Space>
       }
       open={open}
@@ -324,7 +311,7 @@ const AssignAppointmentModal = ({ open, onClose, appointment, onSuccess }) => {
           onClick={handleConfirmAssign}
           disabled={!selectedSlotId}
         >
-          {isRescheduleRequest ? 'Xác Nhận Đổi Lịch' : 'Xác Nhận Phân Công'}
+          Xác Nhận Phân Công
         </Button>,
       ]}
       destroyOnClose
@@ -336,16 +323,10 @@ const AssignAppointmentModal = ({ open, onClose, appointment, onSuccess }) => {
           <Space>
             <InfoCircleOutlined />
             <span>Thông Tin Lịch Hẹn</span>
-            {isRescheduleRequest && (
-              <Tag color="warning" icon={<EditOutlined />}>
-                Yêu cầu đổi lịch
-              </Tag>
-            )}
           </Space>
         }
         style={{
           marginBottom: 24,
-          background: isRescheduleRequest ? '#fffbf0' : 'white',
         }}
       >
         <Row gutter={[16, 16]}>
@@ -362,7 +343,7 @@ const AssignAppointmentModal = ({ open, onClose, appointment, onSuccess }) => {
           <Col span={12}>
             <Text type="secondary">Số điện thoại:</Text>
             <br />
-            <Text strong>{appointment.phone || 'N/A'}</Text>
+            <Text strong>{appointment.patientPhone || 'N/A'}</Text>
           </Col>
           <Col span={12}>
             <Text type="secondary">Vaccine:</Text>
@@ -370,82 +351,25 @@ const AssignAppointmentModal = ({ open, onClose, appointment, onSuccess }) => {
             <Tag color="blue">{appointment.vaccineName}</Tag>
           </Col>
 
-          {/* Show old schedule if rescheduling */}
-          {isRescheduleRequest && appointment.scheduledDate && (
-            <>
-              <Col span={24}>
-                <Divider style={{ margin: '12px 0' }} />
-                <Text strong style={{ color: '#ff4d4f' }}>
-                  Lịch Cũ (Đang muốn đổi):
-                </Text>
-              </Col>
-              <Col span={12}>
-                <Text type="secondary">Ngày cũ:</Text>
-                <br />
-                <Text delete style={{ color: '#999' }}>
-                  {dayjs(appointment.scheduledDate).format('DD/MM/YYYY')}
-                  {appointment.scheduledTime && ` - ${appointment.scheduledTime}`}
-                </Text>
-              </Col>
-              <Col span={12}>
-                <Text type="secondary">Bác sĩ cũ:</Text>
-                <br />
-                <Text delete style={{ color: '#999' }}>
-                  {appointment.doctorName || 'Chưa có'}
-                </Text>
-              </Col>
-            </>
-          )}
-
-          <Col span={24}>
-            <Divider style={{ margin: '12px 0' }} />
-            <Text strong style={{ color: '#52c41a' }}>
-              {isRescheduleRequest ? 'Lịch Mới (Yêu cầu):' : 'Thông tin yêu cầu:'}
-            </Text>
-          </Col>
-
           <Col span={12}>
-            <Text type="secondary">
-              {isRescheduleRequest ? 'Ngày mới mong muốn:' : 'Ngày mong muốn:'}
-            </Text>
+            <Text type="secondary">Ngày đăng ký:</Text>
             <br />
-            <Text
-              strong
-              style={{
-                color: isRescheduleRequest ? '#52c41a' : '#ff4d4f',
-              }}
-            >
-              {dayjs(appointment.desiredDate || appointment.scheduledDate).format('DD/MM/YYYY')}
-              {appointment.desiredTime && ` - ${appointment.desiredTime}`}
-            </Text>
-          </Col>
-
-          <Col span={12}>
-            <Text type="secondary">
-              {isRescheduleRequest ? 'Thời gian yêu cầu:' : 'Trung tâm:'}
-            </Text>
+            <Text strong>{dayjs(appointment.scheduledDate).format('DD/MM/YYYY')}</Text>
             <br />
-            {isRescheduleRequest ? (
-              <Text type="warning">
-                {dayjs(appointment.rescheduledAt).format('DD/MM/YYYY HH:mm')}
-              </Text>
-            ) : (
-              <Text>{appointment.centerName}</Text>
+            {appointment.scheduledTimeSlot && (
+              <Tag color="blue">{TIME_SLOT_LABELS[appointment.scheduledTimeSlot]}</Tag>
             )}
           </Col>
 
-          {isRescheduleRequest && appointment.rescheduleReason && (
-            <Col span={24}>
-              <Text type="secondary">Lý do đổi lịch:</Text>
-              <br />
-              <Text strong style={{ color: '#fa8c16' }}>
-                {appointment.rescheduleReason}
-              </Text>
-            </Col>
-          )}
+          <Col span={12}>
+            <Text type="secondary">Trung tâm:</Text>
+            <br />
+            <Text>{appointment.centerName}</Text>
+          </Col>
 
-          {!isRescheduleRequest && appointment.notes && (
+          {appointment.notes && (
             <Col span={24}>
+              <Divider style={{ margin: '12px 0' }} />
               <Text type="secondary">Ghi chú:</Text>
               <br />
               <Text>{appointment.notes}</Text>
@@ -458,52 +382,28 @@ const AssignAppointmentModal = ({ open, onClose, appointment, onSuccess }) => {
 
       {/* Assignment Form */}
       <Form form={form} layout="vertical">
-        <Form.Item
-          name="appointmentDate"
-          label={<Text strong>Chọn Ngày</Text>}
-          rules={[{ required: true, message: 'Vui lòng chọn ngày!' }]}
-        >
-          <Input
-            value={selectedDate?.format('DD/MM/YYYY')}
-            readOnly
-            size="large"
-            prefix={<CalendarOutlined />}
+        {appointment?.scheduledTimeSlot && (
+          <Alert
+            message={
+              <Space>
+                <ClockCircleOutlined />
+                <span>
+                  Khung giờ đặt lịch:{' '}
+                  <strong>{TIME_SLOT_LABELS[appointment.scheduledTimeSlot]}</strong>
+                </span>
+              </Space>
+            }
+            type="info"
+            showIcon={false}
+            style={{ marginBottom: 16 }}
           />
-        </Form.Item>
-
-        <Form.Item
-          name="doctorId"
-          label={<Text strong>Chọn Bác Sĩ</Text>}
-          rules={[{ required: true, message: 'Vui lòng chọn bác sĩ!' }]}
-        >
-          <Select
-            placeholder="-- Chọn bác sĩ --"
-            showSearch
-            optionFilterProp="children"
-            size="large"
-            loading={loadingDoctors}
-            onChange={handleDoctorChange}
-          >
-            {doctors.map((doctor) => (
-              <Option key={doctor.doctorId} value={doctor.doctorId}>
-                <Space>
-                  <UserOutlined />
-                  <span>{doctor.doctorName}</span>
-                  {doctor.specialization && <Tag color="blue">{doctor.specialization}</Tag>}
-                  <Text type="secondary" style={{ fontSize: 12 }}>
-                    ({doctor.availableSlotsToday} slot trống)
-                  </Text>
-                </Space>
-              </Option>
-            ))}
-          </Select>
-        </Form.Item>
+        )}
 
         <Form.Item
           name="slotId"
           label={
             <Space>
-              <Text strong>Chọn Khung Giờ</Text>
+              <Text strong>Chọn Khung Giờ Của Bác Sĩ</Text>
               {selectedDate && (
                 <Text type="secondary" style={{ fontSize: 12 }}>
                   ({selectedDate.format('DD/MM/YYYY')})
@@ -512,6 +412,7 @@ const AssignAppointmentModal = ({ open, onClose, appointment, onSuccess }) => {
             </Space>
           }
           rules={[{ required: true, message: 'Vui lòng chọn khung giờ!' }]}
+          tooltip="Chọn khung giờ trống từ lịch của bác sĩ (mỗi khung 15 phút)"
         >
           {renderAvailableSlots()}
         </Form.Item>

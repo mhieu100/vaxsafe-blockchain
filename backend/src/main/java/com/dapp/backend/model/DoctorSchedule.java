@@ -7,6 +7,20 @@ import lombok.experimental.FieldDefaults;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 
+/**
+ * DoctorSchedule model - OPTIONAL custom working hours
+ * 
+ * If no schedule is defined for a doctor:
+ * - System automatically uses default working hours: 7:00 AM - 5:00 PM
+ * - Available every day (Monday - Sunday)
+ * - 30-minute consultation slots
+ * 
+ * If custom schedule is defined:
+ * - System uses the specified working hours per day
+ * - Can have different hours for different days
+ * 
+ * This table is optional and can be left empty for simple setups.
+ */
 @Entity
 @Table(name = "doctor_schedules", uniqueConstraints = {
     @UniqueConstraint(columnNames = {"doctor_id", "day_of_week", "start_time", "end_time"})

@@ -34,11 +34,13 @@ import dayjs from 'dayjs';
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ProcessUrgentAppointmentModal } from '@/components/modal/appointment';
+import { AppointmentStatus } from '@/constants/enums';
 import {
   callGetTodayAppointments,
   callGetUrgentAppointments,
 } from '@/services/appointment.service';
 import { useAccountStore } from '@/stores/useAccountStore';
+import { formatAppointmentTime } from '@/utils/appointment';
 import UrgencyGuide from './components/UrgencyGuide';
 
 const { Title, Text } = Typography;
@@ -94,7 +96,7 @@ const StaffDashboard = () => {
       const interval = setInterval(fetchUrgentAppointments, 120000);
       return () => clearInterval(interval);
     }
-  }, [isCashierRole, fetchUrgentAppointments]);
+  }, [isCashierRole]); // Remove fetchUrgentAppointments from dependencies
 
   // Fetch today's appointments for doctor
   useEffect(() => {
@@ -104,7 +106,7 @@ const StaffDashboard = () => {
       const interval = setInterval(fetchTodayAppointments, 120000);
       return () => clearInterval(interval);
     }
-  }, [isDoctorRole, fetchTodayAppointments]);
+  }, [isDoctorRole]); // Remove fetchTodayAppointments from dependencies
 
   // Mock data for CASHIER - Pending appointments that need scheduling (fallback)
   const _pendingAppointments = [
@@ -303,7 +305,7 @@ const StaffDashboard = () => {
               }
               value={isCashierRole ? urgentAppointments.length : 12}
               suffix="lịch hẹn"
-              valueStyle={{ color: '#ff4d4f', fontSize: 28 }}
+              styles={{ content: { color: '#ff4d4f', fontSize: 28 } }}
               loading={loading}
             />
             <div
@@ -331,7 +333,7 @@ const StaffDashboard = () => {
               }
               value={8}
               suffix="lịch hẹn"
-              valueStyle={{ color: '#1890ff', fontSize: 28 }}
+              styles={{ content: { color: '#1890ff', fontSize: 28 } }}
             />
             <div
               style={{
@@ -358,7 +360,7 @@ const StaffDashboard = () => {
               }
               value={25}
               suffix="trong tuần"
-              valueStyle={{ color: '#52c41a', fontSize: 28 }}
+              styles={{ content: { color: '#52c41a', fontSize: 28 } }}
             />
             <div
               style={{
@@ -385,7 +387,7 @@ const StaffDashboard = () => {
               }
               value={3}
               suffix="trong tuần"
-              valueStyle={{ color: '#ff4d4f', fontSize: 28 }}
+              styles={{ content: { color: '#ff4d4f', fontSize: 28 } }}
             />
             <div
               style={{
@@ -475,7 +477,7 @@ const StaffDashboard = () => {
                     background: '#fff1f0',
                   }}
                 >
-                  <Space direction="vertical" size="small">
+                  <Space orientation="vertical" size="small">
                     <Space>
                       <ExclamationCircleOutlined style={{ color: '#ff4d4f', fontSize: 20 }} />
                       <Tag color="red">P1</Tag>
@@ -496,7 +498,7 @@ const StaffDashboard = () => {
                     background: '#fff7e6',
                   }}
                 >
-                  <Space direction="vertical" size="small">
+                  <Space orientation="vertical" size="small">
                     <Space>
                       <CloseCircleOutlined style={{ color: '#fa8c16', fontSize: 20 }} />
                       <Tag color="orange">P2</Tag>
@@ -516,7 +518,7 @@ const StaffDashboard = () => {
                     background: '#fffbe6',
                   }}
                 >
-                  <Space direction="vertical" size="small">
+                  <Space orientation="vertical" size="small">
                     <Space>
                       <ClockCircleOutlined style={{ color: '#faad14', fontSize: 20 }} />
                       <Tag color="gold">P3</Tag>
@@ -536,7 +538,7 @@ const StaffDashboard = () => {
                     background: '#e6f7ff',
                   }}
                 >
-                  <Space direction="vertical" size="small">
+                  <Space orientation="vertical" size="small">
                     <Space>
                       <InfoCircleOutlined style={{ color: '#1890ff', fontSize: 20 }} />
                       <Tag color="blue">KHÁC</Tag>
@@ -607,7 +609,9 @@ const StaffDashboard = () => {
 
               {loading ? (
                 <div style={{ textAlign: 'center', padding: '40px 0' }}>
-                  <Spin size="large" tip="Đang tải danh sách lịch hẹn cần xử lý..." />
+                  <Spin size="large" spinning tip="Đang tải danh sách lịch hẹn cần xử lý...">
+                    <div style={{ minHeight: 100 }} />
+                  </Spin>
                 </div>
               ) : urgentAppointments.length === 0 ? (
                 <div style={{ textAlign: 'center', padding: '40px 0' }}>
@@ -683,7 +687,7 @@ const StaffDashboard = () => {
                           </Space>
                         }
                         description={
-                          <Space direction="vertical" size={4} style={{ width: '100%' }}>
+                          <Space orientation="vertical" size={4} style={{ width: '100%' }}>
                             {/* Patient Info */}
                             <Space wrap>
                               <PhoneOutlined />
@@ -695,7 +699,7 @@ const StaffDashboard = () => {
 
                             {/* Urgency Message */}
                             <Alert
-                              message={item.urgencyMessage}
+                              title={item.urgencyMessage}
                               type={
                                 item.priorityLevel === 1
                                   ? 'error'
@@ -714,7 +718,7 @@ const StaffDashboard = () => {
                                 <Text style={{ fontSize: 12 }}>
                                   <CalendarOutlined /> Hẹn:{' '}
                                   {dayjs(item.scheduledDate).format('DD/MM/YYYY')}{' '}
-                                  {item.scheduledTime}
+                                  {formatAppointmentTime(item)}
                                 </Text>
                               </Tooltip>
 
@@ -744,7 +748,11 @@ const StaffDashboard = () => {
                               )}
 
                               <Tag
-                                color={item.status === 'PENDING_APPROVAL' ? 'orange' : 'default'}
+                                color={
+                                  item.status === AppointmentStatus.RESCHEDULE
+                                    ? 'orange'
+                                    : 'default'
+                                }
                               >
                                 {item.status}
                               </Tag>
@@ -792,7 +800,9 @@ const StaffDashboard = () => {
             >
               {loadingToday ? (
                 <div style={{ textAlign: 'center', padding: '40px 0' }}>
-                  <Spin size="large" tip="Đang tải lịch hẹn hôm nay..." />
+                  <Spin size="large" spinning tip="Đang tải lịch hẹn hôm nay...">
+                    <div style={{ minHeight: 100 }} />
+                  </Spin>
                 </div>
               ) : todayAppointments.length === 0 ? (
                 <div style={{ textAlign: 'center', padding: '40px 0' }}>
@@ -810,33 +820,33 @@ const StaffDashboard = () => {
                       actions={[
                         <Tag
                           color={
-                            item.status === 'COMPLETED'
+                            item.status === AppointmentStatus.COMPLETED
                               ? 'green'
-                              : item.status === 'SCHEDULED'
+                              : item.status === AppointmentStatus.SCHEDULED
                                 ? 'blue'
-                                : item.status === 'CANCELLED'
+                                : item.status === AppointmentStatus.CANCELLED
                                   ? 'red'
                                   : 'orange'
                           }
                           icon={
-                            item.status === 'COMPLETED' ? (
+                            item.status === AppointmentStatus.COMPLETED ? (
                               <CheckCircleOutlined />
-                            ) : item.status === 'SCHEDULED' ? (
+                            ) : item.status === AppointmentStatus.SCHEDULED ? (
                               <ClockCircleOutlined />
                             ) : (
                               <CloseCircleOutlined />
                             )
                           }
                         >
-                          {item.status === 'COMPLETED'
+                          {item.status === AppointmentStatus.COMPLETED
                             ? 'Đã hoàn thành'
-                            : item.status === 'SCHEDULED'
+                            : item.status === AppointmentStatus.SCHEDULED
                               ? 'Đã xếp lịch'
-                              : item.status === 'CANCELLED'
+                              : item.status === AppointmentStatus.CANCELLED
                                 ? 'Đã hủy'
                                 : item.status}
                         </Tag>,
-                        item.status === 'SCHEDULED' && (
+                        item.status === AppointmentStatus.SCHEDULED && (
                           <Button
                             type="primary"
                             size="small"
@@ -860,9 +870,9 @@ const StaffDashboard = () => {
                           </Space>
                         }
                         description={
-                          <Space direction="vertical" size={4}>
+                          <Space orientation="vertical" size={4}>
                             <Text>
-                              <ClockCircleOutlined /> {item.scheduledTime} -{' '}
+                              <ClockCircleOutlined /> {formatAppointmentTime(item)} -{' '}
                               {dayjs(item.scheduledDate).format('DD/MM/YYYY')}
                             </Text>
                             <Text type="secondary">

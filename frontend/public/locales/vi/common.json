@@ -66,5 +66,37 @@
         "description": "Hộ chiếu vắc-xin kỹ thuật số của bạn hoạt động ở mọi nơi, được công nhận trên toàn cầu và các hệ thống y tế."
       }
     }
+  },
+  "vaccine": {
+    "filters": "Bộ lọc",
+    "priceRange": "Khoảng giá",
+    "clearAll": "Xóa tất cả",
+    "selectCountry": "Chọn quốc gia",
+    "sortBy": "Sắp xếp theo",
+    "sortOptions": {
+      "priceLowToHigh": "Giá: Thấp đến Cao",
+      "priceHighToLow": "Giá: Cao đến Thấp",
+      "nameAZ": "Tên A-Z",
+      "nameZA": "Tên Z-A"
+    },
+    "found": "vắc-xin được tìm thấy",
+    "foundPlural": "vắc-xin được tìm thấy",
+    "stats": {
+      "users": "Người dùng",
+      "vaccines": "Vắc-xin",
+      "centers": "Trung tâm",
+      "doctors": "Bác sĩ"
+    },
+    "card": {
+      "outOfStock": "Hết hàng",
+      "inStock": "Còn hàng",
+      "addToCart": "Thêm vào giỏ",
+      "addToWishlist": "Thêm vào yêu thích",
+      "quickView": "Xem nhanh",
+      "view": "Xem",
+      "bookingNow": "Đặt lịch ngay",
+      "reviews": "đánh giá",
+      "addToCartSuccess": "Đã thêm vắc-xin vào giỏ hàng"
+    }
   }
 }

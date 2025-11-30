@@ -66,5 +66,37 @@
         "description": "Your digital vaccine passport works everywhere, recognized across borders and healthcare systems."
       }
     }
+  },
+  "vaccine": {
+    "filters": "Filters",
+    "priceRange": "Price Range",
+    "clearAll": "Clear All",
+    "selectCountry": "Select Country",
+    "sortBy": "Sort by",
+    "sortOptions": {
+      "priceLowToHigh": "Price: Low to High",
+      "priceHighToLow": "Price: High to Low",
+      "nameAZ": "Name A-Z",
+      "nameZA": "Name Z-A"
+    },
+    "found": "vaccine found",
+    "foundPlural": "vaccines found",
+    "stats": {
+      "users": "Users",
+      "vaccines": "Vaccines",
+      "centers": "Centers",
+      "doctors": "Doctors"
+    },
+    "card": {
+      "outOfStock": "Out of Stock",
+      "inStock": "In Stock",
+      "addToCart": "Add to Cart",
+      "addToWishlist": "Add to Wishlist",
+      "quickView": "Quick View",
+      "view": "View",
+      "bookingNow": "Booking now",
+      "reviews": "reviews",
+      "addToCartSuccess": "Add vaccine to cart success"
+    }
   }
 }

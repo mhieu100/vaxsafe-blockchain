@@ -44,17 +44,23 @@ public class BookingService {
         BookingBlcRequest.AppointmentBlcResponse response = new BookingBlcRequest.AppointmentBlcResponse();
         response.setAppointmentId(appointment.getId());
         response.setDoseNumber(appointment.getDoseNumber());
-        response.setScheduledTime(appointment.getScheduledTime());
+        response.setScheduledTimeSlot(appointment.getScheduledTimeSlot());
         response.setScheduledDate(appointment.getScheduledDate());
         response.setAppointmentStatus(appointment.getStatus());
-        response.setCenter(appointment.getCenter().getName());
+        response.setCenter(appointment.getCenter() != null ? appointment.getCenter().getName() : null);
         return response;
     }
 
     public PaymentResponse createBooking(HttpServletRequest request, BookingRequest bookingRequest) throws Exception {
             User user = authService.getCurrentUserLogin();
             Vaccine vaccine = vaccineRepository.findById(bookingRequest.getVaccineId()).orElseThrow(() -> new AppException("Vaccine not found!"));
-            Center center = centerRepository.findById(bookingRequest.getCenterId()).orElseThrow(() -> new AppException("Center not found!"));
+            
+            // Get center for first appointment only if provided
+            Center center = null;
+            if (bookingRequest.getAppointmentCenter() != null) {
+                center = centerRepository.findById(bookingRequest.getAppointmentCenter()).orElseThrow(() -> new AppException("Center not found!"));
+            }
+            
             BookingBlcRequest bookingBlcRequest = new BookingBlcRequest();
 
             Booking booking = new Booking();
@@ -72,30 +78,35 @@ public class BookingService {
             booking.setVaccine(vaccine);
             booking.setTotalAmount(bookingRequest.getAmount());
             booking.setStatus(BookingEnum.PENDING_PAYMENT);
-            booking.setTotalDoses(bookingRequest.getDoseSchedules().size() + 1);
+            booking.setTotalDoses(vaccine.getDosesRequired()); // Use vaccine's required doses
 
+            // Create all appointment records based on vaccine's dosesRequired
             List<Appointment> appointments = new ArrayList<>();
-            Appointment firstDose = new Appointment();
-            firstDose.setBooking(booking);
-            firstDose.setDoseNumber(1);
-            firstDose.setScheduledDate(bookingRequest.getFirstDoseDate());
-            firstDose.setScheduledTime(bookingRequest.getFirstDoseTime());
-            firstDose.setCenter(center);
-            firstDose.setStatus(AppointmentEnum.PENDING_SCHEDULE);
-            appointments.add(firstDose);
-
-            int doseNumber = 1;
-            for(BookingRequest.DoseSchedule doseSchedule : bookingRequest.getDoseSchedules()) {
-                doseNumber++;
-                Appointment dose = new Appointment();
-                dose.setBooking(booking);
-                dose.setDoseNumber(doseNumber);
-                dose.setScheduledDate(doseSchedule.getDate());
-                dose.setScheduledTime(doseSchedule.getTime());
-                dose.setCenter(this.centerRepository.findById(doseSchedule.getCenterId()).orElseThrow(() -> new AppException("Center not found!")));
-                dose.setStatus(AppointmentEnum.PENDING_SCHEDULE);
-                appointments.add(dose);
+            
+            for (int i = 1; i <= vaccine.getDosesRequired(); i++) {
+                Appointment appointment = new Appointment();
+                appointment.setBooking(booking);
+                appointment.setDoseNumber(i);
+                
+                // Only first appointment has date/time/center
+                if (i == 1) {
+                    appointment.setScheduledDate(bookingRequest.getAppointmentDate());
+                    if (bookingRequest.getAppointmentTime() != null) {
+                        appointment.setScheduledTimeSlot(TimeSlotEnum.fromTime(bookingRequest.getAppointmentTime()));
+                    }
+                    appointment.setCenter(center);
+                    appointment.setStatus(AppointmentEnum.PENDING);
+                } else {
+                    // Subsequent appointments: leave date/time/center null
+                    appointment.setScheduledDate(null);
+                    appointment.setScheduledTimeSlot(null);
+                    appointment.setCenter(null);
+                    appointment.setStatus(AppointmentEnum.PENDING);
+                }
+                
+                appointments.add(appointment);
             }
+            
             booking.setAppointments(appointments);
             bookingRepository.save(booking);
 
@@ -121,8 +132,11 @@ public class BookingService {
             bookingRepository.save(booking);
 //        }
 
+            // Payment links to first appointment (dose 1)
+            Appointment firstAppointment = appointments.get(0);
             Payment payment = new Payment();
-            payment.setReferenceId(booking.getBookingId());
+            payment.setReferenceId(firstAppointment.getId());
+            payment.setReferenceType(TypeTransactionEnum.APPOINTMENT);
             payment.setAmount(bookingRequest.getAmount());
             payment.setMethod(bookingRequest.getPaymentMethod());
 
@@ -136,17 +150,17 @@ public class BookingService {
             paymentRepository.save(payment);
 
             PaymentResponse paymentResponse = new PaymentResponse();
-            paymentResponse.setReferenceId(booking.getBookingId());
+            paymentResponse.setReferenceId(firstAppointment.getId());
             paymentResponse.setPaymentId(payment.getId());
             paymentResponse.setMethod(payment.getMethod());
 
             switch (bookingRequest.getPaymentMethod()) {
                 case BANK:
-                    String bankUrl = paymentService.createBankUrl(Math.round(bookingRequest.getAmount()), paymentResponse.getReferenceId(), paymentResponse.getPaymentId(), TypeTransactionEnum.BOOKING, request.getRemoteAddr());
+                    String bankUrl = paymentService.createBankUrl(Math.round(bookingRequest.getAmount()), paymentResponse.getReferenceId(), paymentResponse.getPaymentId(), TypeTransactionEnum.APPOINTMENT, request.getRemoteAddr());
                     paymentResponse.setPaymentURL(bankUrl);
                     break;
                 case PAYPAL:
-                    String paypalUrl = paymentService.createPaypalUrl(bookingRequest.getAmount(), paymentResponse.getReferenceId(), paymentResponse.getPaymentId(), TypeTransactionEnum.BOOKING);
+                    String paypalUrl = paymentService.createPaypalUrl(bookingRequest.getAmount(), paymentResponse.getReferenceId(), paymentResponse.getPaymentId(), TypeTransactionEnum.APPOINTMENT);
                     paymentResponse.setPaymentURL(paypalUrl);
                     break;
                 case METAMASK:
@@ -154,7 +168,7 @@ public class BookingService {
                     break;
                 case CASH:
                     payment.setStatus(PaymentEnum.PROCESSING);
-                    payment.setReferenceType(TypeTransactionEnum.BOOKING);
+                    payment.setReferenceType(TypeTransactionEnum.APPOINTMENT);
                     paymentRepository.save(payment);
                     booking.setStatus(BookingEnum.CONFIRMED);
                     bookingRepository.save(booking);

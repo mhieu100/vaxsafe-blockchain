@@ -36,6 +36,7 @@ import {
   callGetDoctorAvailableSlots,
 } from '@/services/doctor.service';
 import { useAccountStore } from '@/stores/useAccountStore';
+import { formatAppointmentTime, formatDesiredTime } from '@/utils/appointment';
 
 const { Text } = Typography;
 const { TextArea } = Input;
@@ -235,7 +236,9 @@ const ProcessUrgentAppointmentModal = ({ open, onClose, appointment, onSuccess }
     if (loadingSlots) {
       return (
         <div style={{ textAlign: 'center', padding: '20px' }}>
-          <Spin tip="Đang tải lịch trống..." />
+          <Spin spinning tip="Đang tải lịch trống...">
+            <div style={{ minHeight: 50 }} />
+          </Spin>
         </div>
       );
     }
@@ -256,7 +259,7 @@ const ProcessUrgentAppointmentModal = ({ open, onClose, appointment, onSuccess }
         <Empty
           image={Empty.PRESENTED_IMAGE_SIMPLE}
           description={
-            <Space direction="vertical">
+            <Space orientation="vertical">
               <span>Không có lịch trống trong ngày này</span>
               <Button
                 icon={<ReloadOutlined />}
@@ -290,9 +293,10 @@ const ProcessUrgentAppointmentModal = ({ open, onClose, appointment, onSuccess }
                   onClick={() => handleSlotSelect(slot.slotId)}
                 >
                   <Radio value={slot.slotId}>
-                    <Space direction="vertical" size={0}>
+                    <Space orientation="vertical" size={0}>
                       <Text strong>
-                        <ClockCircleOutlined /> {slot.startTime} - {slot.endTime}
+                        <ClockCircleOutlined /> {slot.startTime?.substring(0, 5)} -{' '}
+                        {slot.endTime?.substring(0, 5)}
                       </Text>
                       <Tag color="green" size="small">
                         {slot.status}
@@ -313,14 +317,15 @@ const ProcessUrgentAppointmentModal = ({ open, onClose, appointment, onSuccess }
       <Alert
         message="Yêu cầu đổi lịch hẹn"
         description={
-          <Space direction="vertical" style={{ width: '100%' }}>
+          <Space orientation="vertical" style={{ width: '100%' }}>
             <div>
               <strong>Lịch cũ:</strong> {dayjs(appointment.scheduledDate).format('DD/MM/YYYY')} lúc{' '}
-              {appointment.scheduledTime}
+              {formatAppointmentTime(appointment)}
             </div>
             <div>
               <strong>Lịch mới mong muốn:</strong>{' '}
-              {dayjs(appointment.desiredDate).format('DD/MM/YYYY')} lúc {appointment.desiredTime}
+              {dayjs(appointment.desiredDate).format('DD/MM/YYYY')} lúc{' '}
+              {formatDesiredTime(appointment)}
             </div>
             {appointment.rescheduleReason && (
               <div>
@@ -495,7 +500,7 @@ const ProcessUrgentAppointmentModal = ({ open, onClose, appointment, onSuccess }
       onCancel={handleClose}
       footer={null}
       width={900}
-      destroyOnClose
+      destroyOnHidden
     >
       {/* Patient Information */}
       <Descriptions
@@ -513,7 +518,7 @@ const ProcessUrgentAppointmentModal = ({ open, onClose, appointment, onSuccess }
         <Descriptions.Item label="Vaccine">{appointment.vaccineName}</Descriptions.Item>
         <Descriptions.Item label="Mũi tiêm">Mũi {appointment.doseNumber}</Descriptions.Item>
         <Descriptions.Item label="Trạng thái" span={2}>
-          <Tag color={appointment.status === 'PENDING_APPROVAL' ? 'orange' : 'default'}>
+          <Tag color={appointment.status === 'RESCHEDULE' ? 'orange' : 'default'}>
             {appointment.status}
           </Tag>
         </Descriptions.Item>

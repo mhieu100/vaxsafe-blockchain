@@ -2,12 +2,12 @@ package com.dapp.backend.dto.response;
 
 import com.dapp.backend.enums.AppointmentEnum;
 import com.dapp.backend.enums.BookingEnum;
+import com.dapp.backend.enums.TimeSlotEnum;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.LocalTime;
 import java.util.List;
 
 @Data
@@ -37,7 +37,8 @@ public class BookingResponse {
         Long appointmentId;
         Integer doseNumber;
         LocalDate scheduledDate;
-        LocalTime scheduledTime;
+        TimeSlotEnum scheduledTimeSlot;
+        java.time.LocalTime actualScheduledTime;
         Long centerId;
         String centerName;
         Long doctorId;

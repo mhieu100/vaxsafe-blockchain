@@ -123,8 +123,8 @@ const SettingsModal = ({ open, setOpen, setSecurityModalVisible }) => {
                 </div>
               </div>
               <Select defaultValue="en" style={{ width: 120 }}>
-                <Select.Option value="en">English</Select.Option>
-                <Select.Option value="vi">Tiếng Việt</Select.Option>
+                <Select.Option value="en">EN</Select.Option>
+                <Select.Option value="vi">VI</Select.Option>
               </Select>
             </div>
           </Card>

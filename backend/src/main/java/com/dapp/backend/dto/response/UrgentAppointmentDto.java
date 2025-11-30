@@ -1,12 +1,12 @@
 package com.dapp.backend.dto.response;
 
 import com.dapp.backend.enums.AppointmentEnum;
+import com.dapp.backend.enums.TimeSlotEnum;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.LocalTime;
 
 @Data
 @Builder
@@ -24,11 +24,13 @@ public class UrgentAppointmentDto {
 
     // Scheduled info
     LocalDate scheduledDate;
-    LocalTime scheduledTime;
+    TimeSlotEnum scheduledTimeSlot;
+    java.time.LocalTime actualScheduledTime;
 
     // Reschedule info (if applicable)
     LocalDate desiredDate;
-    LocalTime desiredTime;
+    TimeSlotEnum desiredTimeSlot;
+    java.time.LocalTime actualDesiredTime;
     String rescheduleReason;
     LocalDateTime rescheduledAt;
 

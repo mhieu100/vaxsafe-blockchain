@@ -4,12 +4,12 @@ import com.dapp.backend.dto.response.BookingResponse;
 import com.dapp.backend.enums.AppointmentEnum;
 import com.dapp.backend.enums.BookingEnum;
 import com.dapp.backend.enums.MethodPaymentEnum;
+import com.dapp.backend.enums.TimeSlotEnum;
 import lombok.AccessLevel;
 import lombok.Data;
 import lombok.experimental.FieldDefaults;
 
 import java.time.LocalDate;
-import java.time.LocalTime;
 import java.util.List;
 
 @Data
@@ -29,7 +29,7 @@ public class BookingBlcRequest {
         Long appointmentId;
         Integer doseNumber;
         LocalDate scheduledDate;
-        LocalTime scheduledTime;
+        TimeSlotEnum scheduledTimeSlot;
         AppointmentEnum appointmentStatus;
     }
 }

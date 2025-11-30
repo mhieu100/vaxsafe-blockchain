@@ -36,12 +36,15 @@ public class Doctor {
     String specialization;
 
     @Column(name = "consultation_duration")
-    Integer consultationDuration = 30; // Default 30 minutes
+    @Builder.Default
+    Integer consultationDuration = 30; // Default 30 minutes per slot
 
     @Column(name = "max_patients_per_day")
+    @Builder.Default
     Integer maxPatientsPerDay = 20;
 
     @Column(name = "is_available")
+    @Builder.Default
     Boolean isAvailable = true;
 
     @Column(name = "created_at")
@@ -53,14 +56,6 @@ public class Doctor {
     @OneToMany(mappedBy = "doctor", cascade = CascadeType.ALL, orphanRemoval = true)
     @Builder.Default
     List<DoctorSchedule> schedules = new ArrayList<>();
-
-    @OneToMany(mappedBy = "doctor", cascade = CascadeType.ALL, orphanRemoval = true)
-    @Builder.Default
-    List<DoctorSpecialSchedule> specialSchedules = new ArrayList<>();
-
-    @OneToMany(mappedBy = "doctor", cascade = CascadeType.ALL, orphanRemoval = true)
-    @Builder.Default
-    List<DoctorLeave> leaves = new ArrayList<>();
 
     @OneToMany(mappedBy = "doctor", cascade = CascadeType.ALL, orphanRemoval = true)
     @Builder.Default

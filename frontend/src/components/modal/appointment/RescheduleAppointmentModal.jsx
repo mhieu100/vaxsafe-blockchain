@@ -2,12 +2,22 @@ import { DatePicker, Form, Input, Modal, message, Select } from 'antd';
 import dayjs from 'dayjs';
 import { useState } from 'react';
 import { rescheduleAppointment } from '@/services/booking.service';
+import { formatAppointmentTime } from '@/utils/appointment';
 
 const { TextArea } = Input;
 
 const RescheduleAppointmentModal = ({ open, onClose, appointment, onSuccess }) => {
   const [form] = Form.useForm();
   const [loading, setLoading] = useState(false);
+
+  // Time slots with enum mapping (2-hour windows)
+  const timeSlots = [
+    { value: 'SLOT_07_00', label: '07:00 - 09:00' },
+    { value: 'SLOT_09_00', label: '09:00 - 11:00' },
+    { value: 'SLOT_11_00', label: '11:00 - 13:00' },
+    { value: 'SLOT_13_00', label: '13:00 - 15:00' },
+    { value: 'SLOT_15_00', label: '15:00 - 17:00' },
+  ];
 
   const handleSubmit = async () => {
     try {
@@ -17,7 +27,7 @@ const RescheduleAppointmentModal = ({ open, onClose, appointment, onSuccess }) =
       const payload = {
         appointmentId: appointment.appointmentId,
         desiredDate: dayjs(values.date).format('YYYY-MM-DD'),
-        desiredTime: values.time, // Already in HH:mm format from Select
+        desiredTimeSlot: values.time, // Already in enum format
         reason: values.reason || '',
       };
 
@@ -44,13 +54,6 @@ const RescheduleAppointmentModal = ({ open, onClose, appointment, onSuccess }) =
     return current && current < dayjs().startOf('day');
   };
 
-  // Time slots (8:00 - 17:00, every 30 minutes)
-  const timeSlots = [];
-  for (let hour = 8; hour < 17; hour++) {
-    timeSlots.push(`${hour.toString().padStart(2, '0')}:00`);
-    timeSlots.push(`${hour.toString().padStart(2, '0')}:30`);
-  }
-
   return (
     <Modal
       title="Thay đổi lịch hẹn tiêm chủng"
@@ -62,16 +65,29 @@ const RescheduleAppointmentModal = ({ open, onClose, appointment, onSuccess }) =
       cancelText="Hủy"
       width={600}
     >
-      <div className="mb-4 p-3 bg-gray-50 rounded-lg">
-        <div className="text-sm space-y-1">
+      <div className="mb-4 p-3 bg-yellow-50 border border-yellow-200 rounded-lg">
+        <div className="text-sm space-y-2">
+          <div className="font-semibold text-yellow-800 mb-2">⚠️ Yêu cầu đổi lịch hẹn</div>
           <div>
-            <span className="text-gray-600">Lịch hẹn hiện tại:</span>
+            <span className="text-gray-600">Lịch cũ:</span>
+            <div className="font-medium text-red-600">
+              {dayjs(appointment.scheduledDate).format('DD/MM/YYYY')} lúc{' '}
+              {formatAppointmentTime(appointment)}
+            </div>
           </div>
-          <div className="font-medium">
-            Mũi {appointment.doseNumber} - {dayjs(appointment.scheduledDate).format('DD/MM/YYYY')}{' '}
-            lúc {appointment.scheduledTime}
+          <div>
+            <span className="text-gray-600">Lịch mới mong muốn:</span>
+            <div className="font-medium text-green-600">
+              {dayjs(appointment.desiredDate || appointment.scheduledDate).format('DD/MM/YYYY')} lúc{' '}
+              {appointment.desiredTimeSlot
+                ? timeSlots.find((slot) => slot.value === appointment.desiredTimeSlot)?.label ||
+                  appointment.desiredTimeSlot
+                : formatAppointmentTime(appointment)}
+            </div>
           </div>
-          <div className="text-gray-600">📍 {appointment.centerName}</div>
+          <div className="text-gray-600 pt-1 border-t border-yellow-200">
+            📍 {appointment.centerName}
+          </div>
         </div>
       </div>
 
@@ -80,7 +96,7 @@ const RescheduleAppointmentModal = ({ open, onClose, appointment, onSuccess }) =
         layout="vertical"
         initialValues={{
           date: dayjs(appointment.scheduledDate),
-          time: appointment.scheduledTime,
+          time: appointment.scheduledTimeSlot, // Use enum value directly
         }}
       >
         <Form.Item
@@ -97,17 +113,11 @@ const RescheduleAppointmentModal = ({ open, onClose, appointment, onSuccess }) =
         </Form.Item>
 
         <Form.Item
-          label="Giờ tiêm mới"
+          label="Khung giờ tiêm mới"
           name="time"
-          rules={[{ required: true, message: 'Vui lòng chọn giờ tiêm' }]}
+          rules={[{ required: true, message: 'Vui lòng chọn khung giờ tiêm' }]}
         >
-          <Select
-            placeholder="Chọn giờ tiêm"
-            options={timeSlots.map((time) => ({
-              label: time,
-              value: time,
-            }))}
-          />
+          <Select placeholder="Chọn khung giờ tiêm" options={timeSlots} />
         </Form.Item>
 
         <Form.Item label="Lý do thay đổi (tùy chọn)" name="reason">
@@ -124,7 +134,9 @@ const RescheduleAppointmentModal = ({ open, onClose, appointment, onSuccess }) =
         <div className="text-xs text-gray-600 space-y-1">
           <div className="font-medium text-gray-800 mb-2">📌 Lưu ý:</div>
           <div>• Chỉ có thể đổi lịch sang ngày trong tương lai</div>
-          <div>• Vui lòng chọn thời gian trong giờ làm việc (8:00 - 17:00)</div>
+          <div>
+            • Chọn khung giờ mong muốn (2 tiếng), Thu ngân sẽ xác định giờ chính thức (15 phút)
+          </div>
           <div>
             • Lịch hẹn sẽ được giữ nguyên tại trung tâm: <strong>{appointment.centerName}</strong>
           </div>

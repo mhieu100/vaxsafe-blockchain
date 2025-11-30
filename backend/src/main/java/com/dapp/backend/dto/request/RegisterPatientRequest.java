@@ -49,24 +49,18 @@ public class RegisterPatientRequest {
     @Builder
     public static class PatientProfileRequest {
 
-        @NotBlank(message = "Address is required")
         private String address;
 
-        @NotBlank(message = "Phone number is required")
         @Pattern(regexp = "^[0-9]{9,11}$", message = "Phone must be 9-11 digits")
         private String phone;
 
-        @NotNull(message = "Birthday is required")
         @Past(message = "Birthday must be in the past")
         private LocalDate birthday;
 
-        @NotNull(message = "Gender is required")
         private Gender gender;
 
-        @NotBlank(message = "Identity number is required")
         private String identityNumber;
 
-        @NotNull(message = "Blood type is required")
         private BloodType bloodType;
 
         @Positive(message = "Height must be positive")

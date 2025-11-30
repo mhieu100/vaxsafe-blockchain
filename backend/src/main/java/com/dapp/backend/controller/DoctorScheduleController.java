@@ -1,5 +1,6 @@
 package com.dapp.backend.controller;
 
+import com.dapp.backend.annotation.ApiMessage;
 import com.dapp.backend.dto.response.DoctorAvailableSlotResponse;
 import com.dapp.backend.dto.response.DoctorResponse;
 import com.dapp.backend.dto.response.DoctorScheduleResponse;
@@ -39,6 +40,7 @@ public class DoctorScheduleController {
      * GET /api/v1/doctors/my-center/with-schedule?date=2025-11-23
      */
     @GetMapping("/my-center/with-schedule")
+    @ApiMessage("Get all doctors with today's schedule in current user's center")
     public ResponseEntity<List<DoctorWithScheduleResponse>> getDoctorsWithScheduleInMyCenter(
             @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date) 
             throws AppException {
@@ -69,6 +71,7 @@ public class DoctorScheduleController {
      * GET /api/v1/doctors/center/{centerId}/available
      */
     @GetMapping("/center/{centerId}/available")
+    @ApiMessage("Get all available doctors by center")
     public ResponseEntity<List<DoctorResponse>> getAvailableDoctors(@PathVariable Long centerId) {
         return ResponseEntity.ok(doctorScheduleService.getAvailableDoctorsByCenter(centerId));
     }
@@ -78,6 +81,7 @@ public class DoctorScheduleController {
      * GET /api/v1/doctors/{doctorId}/schedules
      */
     @GetMapping("/{doctorId}/schedules")
+    @ApiMessage("Get doctor's weekly schedule template")
     public ResponseEntity<List<DoctorScheduleResponse>> getDoctorSchedules(@PathVariable Long doctorId) {
         return ResponseEntity.ok(doctorScheduleService.getDoctorSchedules(doctorId));
     }
@@ -87,6 +91,7 @@ public class DoctorScheduleController {
      * GET /api/v1/doctors/{doctorId}/slots/available?date=2025-11-20
      */
     @GetMapping("/{doctorId}/slots/available")
+    @ApiMessage("Get available slots for a doctor on a specific date")
     public ResponseEntity<List<DoctorAvailableSlotResponse>> getAvailableSlots(
             @PathVariable Long doctorId,
             @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date) {
@@ -98,10 +103,26 @@ public class DoctorScheduleController {
      * GET /api/v1/doctors/center/{centerId}/slots/available?date=2025-11-20
      */
     @GetMapping("/center/{centerId}/slots/available")
+    @ApiMessage("Get all available slots for a center on a specific date")
     public ResponseEntity<List<DoctorAvailableSlotResponse>> getAvailableSlotsByCenter(
             @PathVariable Long centerId,
             @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date) {
         return ResponseEntity.ok(doctorScheduleService.getAvailableSlotsByCenter(centerId, date));
+    }
+    
+    /**
+     * Get all available slots for a center on a specific date and time slot
+     * GET /api/v1/doctors/center/{centerId}/slots/available-by-timeslot?date=2025-11-20&timeSlot=SLOT_07_00
+     */
+    @GetMapping("/center/{centerId}/slots/available-by-timeslot")
+    @ApiMessage("Get all available slots for a center filtered by date and time slot")
+    public ResponseEntity<List<DoctorAvailableSlotResponse>> getAvailableSlotsByCenterAndTimeSlot(
+            @PathVariable Long centerId,
+            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date,
+            @RequestParam com.dapp.backend.enums.TimeSlotEnum timeSlot) {
+        return ResponseEntity.ok(
+            doctorScheduleService.getAvailableSlotsByCenterAndTimeSlot(centerId, date, timeSlot)
+        );
     }
 
     /**
@@ -109,6 +130,7 @@ public class DoctorScheduleController {
      * GET /api/v1/doctors/{doctorId}/slots?startDate=2025-11-01&endDate=2025-11-30
      */
     @GetMapping("/{doctorId}/slots")
+    @ApiMessage("Get doctor's slots in a date range (for calendar view)")
     public ResponseEntity<List<DoctorAvailableSlotResponse>> getDoctorSlotsInRange(
             @PathVariable Long doctorId,
             @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,
@@ -122,6 +144,7 @@ public class DoctorScheduleController {
      * Body: { "startDate": "2025-11-01", "endDate": "2025-11-30" }
      */
     @PostMapping("/{doctorId}/slots/generate")
+    @ApiMessage("Generate slots for a doctor in a date range")
     public ResponseEntity<Map<String, Object>> generateSlots(
             @PathVariable Long doctorId,
             @RequestBody Map<String, String> request) throws AppException {

@@ -1,6 +1,12 @@
 -- ============================================
 -- V4 Migration: Seed Doctor Data for Testing
--- Migrate existing doctors to new schema + Create schedules + Generate slots
+-- Migrate existing doctors to new schema + Generate slots
+-- 
+-- UPDATED LOGIC:
+-- - Default working hours: 7:00 - 17:00 (all days)
+-- - Slot duration: 30 minutes
+-- - No doctor_schedules required (optional table)
+-- - System auto-generates 20 slots/day (7:00-17:00)
 -- ============================================
 
 -- ============================================
@@ -17,8 +23,8 @@ SELECT
         WHEN u.id % 3 = 1 THEN 'Tiêm chủng người lớn'
         ELSE 'Tiêm chủng tổng hợp'
     END as specialization,
-    30, -- Default 30 minutes per appointment
-    20, -- Max 20 patients per day
+    30, -- Default 30 minutes per slot
+    20, -- Max 20 patients per day (20 slots x 30 min = 10 hours)
     TRUE
 FROM users u
 JOIN roles r ON u.role_id = r.id
@@ -27,71 +33,27 @@ WHERE r.name = 'DOCTOR'
 ON CONFLICT (user_id) DO NOTHING;
 
 -- ============================================
--- 2. CREATE WEEKLY SCHEDULES FOR ALL DOCTORS
+-- 2. SKIP DOCTOR_SCHEDULES (OPTIONAL TABLE)
 -- ============================================
--- Create standard working schedule for all doctors
--- Monday to Friday: 8:00-12:00 (morning) and 14:00-17:00 (afternoon)
--- Saturday: 8:00-12:00 (morning only)
+-- doctor_schedules table is now OPTIONAL
+-- If no schedule exists, system will use default: 7:00-17:00 every day
+-- Uncomment below if you want custom schedules for specific doctors
 
-DO $$
-DECLARE
-    doctor_record RECORD;
-BEGIN
-    FOR doctor_record IN SELECT doctor_id FROM doctors WHERE is_available = TRUE
-    LOOP
-        -- Monday to Friday (day 1-5): Morning shift
-        INSERT INTO doctor_schedules (doctor_id, day_of_week, start_time, end_time, is_active)
-        VALUES 
-            (doctor_record.doctor_id, 1, '08:00', '12:00', TRUE), -- Monday morning
-            (doctor_record.doctor_id, 1, '14:00', '17:00', TRUE), -- Monday afternoon
-            (doctor_record.doctor_id, 2, '08:00', '12:00', TRUE), -- Tuesday morning
-            (doctor_record.doctor_id, 2, '14:00', '17:00', TRUE), -- Tuesday afternoon
-            (doctor_record.doctor_id, 3, '08:00', '12:00', TRUE), -- Wednesday morning
-            (doctor_record.doctor_id, 3, '14:00', '17:00', TRUE), -- Wednesday afternoon
-            (doctor_record.doctor_id, 4, '08:00', '12:00', TRUE), -- Thursday morning
-            (doctor_record.doctor_id, 4, '14:00', '17:00', TRUE), -- Thursday afternoon
-            (doctor_record.doctor_id, 5, '08:00', '12:00', TRUE), -- Friday morning
-            (doctor_record.doctor_id, 5, '14:00', '17:00', TRUE), -- Friday afternoon
-            (doctor_record.doctor_id, 6, '08:00', '12:00', TRUE)  -- Saturday morning only
-        ON CONFLICT (doctor_id, day_of_week, start_time, end_time) DO NOTHING;
-    END LOOP;
-END $$;
+/*
+-- Example: Custom schedule for doctor_id = 1
+INSERT INTO doctor_schedules (doctor_id, day_of_week, start_time, end_time, is_active)
+VALUES 
+    (1, 1, '08:00', '12:00', TRUE),  -- Monday morning
+    (1, 1, '14:00', '18:00', TRUE);  -- Monday afternoon
+*/
 
 -- ============================================
--- 3. CREATE SOME SPECIAL SCHEDULES (EXAMPLES)
+-- 3. GENERATE SLOTS FOR NEXT 60 DAYS
 -- ============================================
--- Example: Some doctors have special schedule on specific dates
-INSERT INTO doctor_special_schedules (doctor_id, work_date, start_time, end_time, reason)
-SELECT 
-    d.doctor_id,
-    CURRENT_DATE + INTERVAL '7 days', -- Next week
-    '10:00'::TIME,
-    '14:00'::TIME,
-    'Họp hội nghị khoa học buổi sáng'
-FROM doctors d
-WHERE d.doctor_id IN (1, 5, 10) -- Only first 3 doctors
-ON CONFLICT (doctor_id, work_date) DO NOTHING;
-
--- ============================================
--- 4. CREATE SOME LEAVE RECORDS (EXAMPLES)
--- ============================================
--- Example: Some doctors on leave
-INSERT INTO doctor_leave (doctor_id, start_date, end_date, reason, leave_type, status)
-SELECT 
-    d.doctor_id,
-    CURRENT_DATE + INTERVAL '3 days',
-    CURRENT_DATE + INTERVAL '5 days',
-    'Nghỉ phép năm',
-    'VACATION',
-    'APPROVED'
-FROM doctors d
-WHERE d.doctor_id IN (2, 7) -- Only 2 doctors on leave
-ON CONFLICT DO NOTHING;
-
--- ============================================
--- 5. GENERATE SLOTS FOR NEXT 60 DAYS
--- ============================================
--- Call the stored procedure to generate slots for all doctors
+-- Generate slots with NEW LOGIC:
+-- - If no doctor_schedules exist: use default 7:00-17:00
+-- - If doctor_schedules exist: use custom hours
+-- - Slot duration: 30 minutes (from doctor.consultation_duration)
 DO $$
 DECLARE
     doctor_record RECORD;
@@ -99,17 +61,21 @@ DECLARE
     v_end_date DATE := CURRENT_DATE + INTERVAL '60 days';
     v_current_date DATE;
     v_day_of_week INTEGER;
-    v_is_on_leave BOOLEAN;
     v_schedule RECORD;
-    v_special_schedule RECORD;
     v_slot_start TIME;
     v_slot_end TIME;
     v_consultation_duration INTEGER;
+    v_schedule_count INTEGER;
+    v_default_start TIME := '07:00';
+    v_default_end TIME := '17:00';
 BEGIN
     -- Loop through all available doctors
-    FOR doctor_record IN SELECT doctor_id, consultation_duration FROM doctors WHERE is_available = TRUE
+    FOR doctor_record IN 
+        SELECT doctor_id, consultation_duration 
+        FROM doctors 
+        WHERE is_available = TRUE
     LOOP
-        v_consultation_duration := doctor_record.consultation_duration;
+        v_consultation_duration := COALESCE(doctor_record.consultation_duration, 30);
         v_current_date := v_start_date;
         
         -- Loop through each date
@@ -117,54 +83,45 @@ BEGIN
             -- Get day of week (0=Sunday, 1=Monday, ..., 6=Saturday)
             v_day_of_week := EXTRACT(DOW FROM v_current_date);
             
-            -- Check if doctor is on leave
-            SELECT EXISTS(
-                SELECT 1 FROM doctor_leave
-                WHERE doctor_id = doctor_record.doctor_id
-                  AND v_current_date BETWEEN start_date AND end_date
-                  AND status = 'APPROVED'
-            ) INTO v_is_on_leave;
+            -- Check if custom schedule exists for this doctor and day
+            SELECT COUNT(*) INTO v_schedule_count
+            FROM doctor_schedules
+            WHERE doctor_id = doctor_record.doctor_id
+              AND day_of_week = v_day_of_week
+              AND is_active = TRUE;
             
-            IF NOT v_is_on_leave THEN
-                -- Check for special schedule first
-                SELECT * INTO v_special_schedule
-                FROM doctor_special_schedules
-                WHERE doctor_id = doctor_record.doctor_id
-                  AND work_date = v_current_date;
-                
-                IF FOUND THEN
-                    -- Use special schedule
-                    v_slot_start := v_special_schedule.start_time;
-                    WHILE v_slot_start < v_special_schedule.end_time LOOP
+            IF v_schedule_count = 0 THEN
+                -- NO CUSTOM SCHEDULE: Use default 7:00-17:00
+                v_slot_start := v_default_start;
+                WHILE v_slot_start < v_default_end LOOP
+                    v_slot_end := v_slot_start + (v_consultation_duration || ' minutes')::INTERVAL;
+                    IF v_slot_end <= v_default_end THEN
+                        INSERT INTO doctor_available_slots (doctor_id, slot_date, start_time, end_time, status)
+                        VALUES (doctor_record.doctor_id, v_current_date, v_slot_start, v_slot_end, 'AVAILABLE')
+                        ON CONFLICT (doctor_id, slot_date, start_time) DO NOTHING;
+                    END IF;
+                    v_slot_start := v_slot_end;
+                END LOOP;
+            ELSE
+                -- CUSTOM SCHEDULE EXISTS: Use defined hours
+                FOR v_schedule IN
+                    SELECT start_time, end_time
+                    FROM doctor_schedules
+                    WHERE doctor_id = doctor_record.doctor_id
+                      AND day_of_week = v_day_of_week
+                      AND is_active = TRUE
+                LOOP
+                    v_slot_start := v_schedule.start_time;
+                    WHILE v_slot_start < v_schedule.end_time LOOP
                         v_slot_end := v_slot_start + (v_consultation_duration || ' minutes')::INTERVAL;
-                        IF v_slot_end <= v_special_schedule.end_time THEN
+                        IF v_slot_end <= v_schedule.end_time THEN
                             INSERT INTO doctor_available_slots (doctor_id, slot_date, start_time, end_time, status)
                             VALUES (doctor_record.doctor_id, v_current_date, v_slot_start, v_slot_end, 'AVAILABLE')
                             ON CONFLICT (doctor_id, slot_date, start_time) DO NOTHING;
                         END IF;
                         v_slot_start := v_slot_end;
                     END LOOP;
-                ELSE
-                    -- Use normal weekly schedule
-                    FOR v_schedule IN
-                        SELECT start_time, end_time
-                        FROM doctor_schedules
-                        WHERE doctor_id = doctor_record.doctor_id
-                          AND day_of_week = v_day_of_week
-                          AND is_active = TRUE
-                    LOOP
-                        v_slot_start := v_schedule.start_time;
-                        WHILE v_slot_start < v_schedule.end_time LOOP
-                            v_slot_end := v_slot_start + (v_consultation_duration || ' minutes')::INTERVAL;
-                            IF v_slot_end <= v_schedule.end_time THEN
-                                INSERT INTO doctor_available_slots (doctor_id, slot_date, start_time, end_time, status)
-                                VALUES (doctor_record.doctor_id, v_current_date, v_slot_start, v_slot_end, 'AVAILABLE')
-                                ON CONFLICT (doctor_id, slot_date, start_time) DO NOTHING;
-                            END IF;
-                            v_slot_start := v_slot_end;
-                        END LOOP;
-                    END LOOP;
-                END IF;
+                END LOOP;
             END IF;
             
             v_current_date := v_current_date + 1;
@@ -173,7 +130,7 @@ BEGIN
 END $$;
 
 -- ============================================
--- 6. VERIFICATION QUERIES
+-- 4. VERIFICATION QUERIES
 -- ============================================
 -- Count migrated doctors
 DO $$
@@ -193,7 +150,7 @@ BEGIN
 END $$;
 
 -- ============================================
--- 7. CREATE INDEXES FOR BETTER PERFORMANCE
+-- 5. CREATE INDEXES FOR BETTER PERFORMANCE
 -- ============================================
 CREATE INDEX IF NOT EXISTS idx_doctor_slots_date_status 
 ON doctor_available_slots(slot_date, status) 
@@ -203,8 +160,18 @@ CREATE INDEX IF NOT EXISTS idx_doctor_slots_doctor_date_status
 ON doctor_available_slots(doctor_id, slot_date, status);
 
 -- ============================================
--- 8. COMMENTS
+-- 6. COMMENTS
 -- ============================================
-COMMENT ON TABLE doctors IS 'Extended doctor profiles with scheduling settings - migrated from users table';
-COMMENT ON TABLE doctor_schedules IS 'Weekly recurring schedule templates for doctors';
-COMMENT ON TABLE doctor_available_slots IS 'Pre-generated time slots for booking appointments';
+COMMENT ON TABLE doctors IS 'Extended doctor profiles with scheduling settings. Default: 30min slots, 7:00-17:00 every day';
+COMMENT ON TABLE doctor_schedules IS 'OPTIONAL: Custom weekly schedule templates. If empty, system uses default 7:00-17:00';
+COMMENT ON TABLE doctor_available_slots IS 'Pre-generated 30-minute time slots for booking appointments (7:00-17:00 = 20 slots/day)';
+
+-- ============================================
+-- 7. SUMMARY
+-- ============================================
+-- Migration completed with NEW SIMPLIFIED LOGIC:
+-- ✓ All doctors work 7:00-17:00 by default (no doctor_schedules needed)
+-- ✓ Each slot is 30 minutes (consultation_duration = 30)
+-- ✓ 20 slots per day: 7:00-7:30, 7:30-8:00, ..., 16:30-17:00
+-- ✓ Slots generated for next 60 days
+-- ✓ Custom schedules can be added to doctor_schedules if needed

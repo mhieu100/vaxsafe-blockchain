@@ -75,10 +75,11 @@ public class SecurityConfiguration {
     }
 
     @Bean
-    public SecurityFilterChain filterChain(HttpSecurity http, CustomAuthenticationEntryPoint customAuthenticationEntryPoint) throws Exception {
+    public SecurityFilterChain filterChain(HttpSecurity http, CustomAuthenticationEntryPoint customAuthenticationEntryPoint, OAuth2LoginSuccessHandler oAuth2LoginSuccessHandler) throws Exception {
 
         String[] whiteList = {
-                "/", "/auth/login/password", "/auth/refresh", "/auth/register", "/storage/**","/email/**", "/payments/vnpay/return", "/payments/paypal/success", "/payments/paypal/cancel", "/api/v1/hello"
+                "/", "/auth/login/password", "/auth/refresh", "/auth/register", "/auth/complete-profile", "/auth/complete-google-profile", "/storage/**","/email/**", "/payments/vnpay/return", "/payments/paypal/success", "/payments/paypal/cancel", "/api/v1/hello",
+                "/oauth2/**", "/login/oauth2/**"
         };
         http
                 .csrf(AbstractHttpConfigurer::disable)
@@ -92,11 +93,15 @@ public class SecurityConfiguration {
                                 .requestMatchers(HttpMethod.PUT, "/vaccines/**").authenticated()
                                 .requestMatchers(HttpMethod.DELETE, "/vaccines/**").authenticated()
                                 .anyRequest().authenticated())
+                .oauth2Login(oauth2 -> oauth2
+                        .successHandler(oAuth2LoginSuccessHandler)
+                        .permitAll()
+                )
                 .oauth2ResourceServer((oauth2) -> oauth2.jwt(jwt -> jwt
                                 .jwtAuthenticationConverter(jwtAuthenticationConverter()))
                         .authenticationEntryPoint(customAuthenticationEntryPoint))
                 .formLogin(AbstractHttpConfigurer::disable)
-                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
+                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED));
         http.addFilterBefore(new IgnoreExpiredJwtFilter(),
                 BearerTokenAuthenticationFilter.class);
         return http.build();

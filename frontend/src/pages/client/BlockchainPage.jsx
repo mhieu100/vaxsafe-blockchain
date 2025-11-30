@@ -37,7 +37,7 @@ const BlockchainPage = () => {
               title="Total Blocks"
               value={stats?.totalBlocks || 0}
               prefix={<BlockOutlined className="text-blue-600" />}
-              valueStyle={{ color: '#1890ff' }}
+              styles={{ content: { color: '#1890ff' } }}
             />
           </Card>
         </Col>
@@ -48,7 +48,7 @@ const BlockchainPage = () => {
               title="Total Transactions"
               value={stats?.totalTransactions || 0}
               prefix={<DatabaseOutlined className="text-green-600" />}
-              valueStyle={{ color: '#52c41a' }}
+              styles={{ content: { color: '#52c41a' } }}
             />
           </Card>
         </Col>
@@ -59,7 +59,7 @@ const BlockchainPage = () => {
               title="Pending Transactions"
               value={stats?.pendingTransactions || 0}
               prefix={<ClockCircleOutlined className="text-orange-600" />}
-              valueStyle={{ color: '#fa8c16' }}
+              styles={{ content: { color: '#fa8c16' } }}
             />
           </Card>
         </Col>
@@ -70,7 +70,7 @@ const BlockchainPage = () => {
               title="Certificates Issued"
               value={stats?.certificatesIssued || 0}
               prefix={<SafetyCertificateOutlined className="text-purple-600" />}
-              valueStyle={{ color: '#722ed1' }}
+              styles={{ content: { color: '#722ed1' } }}
             />
           </Card>
         </Col>

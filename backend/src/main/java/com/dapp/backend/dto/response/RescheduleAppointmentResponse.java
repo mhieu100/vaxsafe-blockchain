@@ -1,13 +1,13 @@
 package com.dapp.backend.dto.response;
 
 import com.dapp.backend.enums.AppointmentEnum;
+import com.dapp.backend.enums.TimeSlotEnum;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
-import java.time.LocalTime;
 
 @Data
 @Builder
@@ -16,9 +16,9 @@ import java.time.LocalTime;
 public class RescheduleAppointmentResponse {
     private Long appointmentId;
     private LocalDate oldDate;
-    private LocalTime oldTime;
+    private TimeSlotEnum oldTimeSlot;
     private LocalDate newDate;
-    private LocalTime newTime;
+    private TimeSlotEnum newTimeSlot;
     private AppointmentEnum status;
     private String message;
 }

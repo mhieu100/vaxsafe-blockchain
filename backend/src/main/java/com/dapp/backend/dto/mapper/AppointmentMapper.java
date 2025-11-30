@@ -9,17 +9,29 @@ public class AppointmentMapper {
         AppointmentResponse response = new AppointmentResponse();
         response.setId(appointment.getId());
         response.setDoseNumber(appointment.getDoseNumber());
-        response.setScheduledTime(appointment.getScheduledTime());
+        response.setScheduledTimeSlot(appointment.getScheduledTimeSlot());
+        response.setActualScheduledTime(appointment.getActualScheduledTime());
         response.setScheduledDate(appointment.getScheduledDate());
         response.setDesiredDate(appointment.getDesiredDate());
-        response.setDesiredTime(appointment.getDesiredTime());
+        response.setDesiredTimeSlot(appointment.getDesiredTimeSlot());
         response.setRescheduleReason(appointment.getRescheduleReason());
         response.setRescheduledAt(appointment.getRescheduledAt());
         response.setStatus(appointment.getStatus());
         response.setBookingId(appointment.getBooking().getBookingId());
         response.setVaccineName(appointment.getBooking().getVaccine().getName());
-        response.setCenterName(appointment.getCenter().getName());
-        response.setPatientName(appointment.getBooking().getPatient().getFullName());
+        response.setCenterId(appointment.getCenter() != null ? appointment.getCenter().getCenterId() : null);
+        response.setCenterName(appointment.getCenter() != null ? appointment.getCenter().getName() : null);
+        
+        // Get patient name and phone from either User or FamilyMember
+        if (appointment.getBooking().getFamilyMember() != null) {
+            response.setPatientName(appointment.getBooking().getFamilyMember().getFullName());
+            response.setPatientPhone(appointment.getBooking().getFamilyMember().getPhone());
+        } else {
+            response.setPatientName(appointment.getBooking().getPatient().getFullName());
+            response.setPatientPhone(appointment.getBooking().getPatient().getPatientProfile() != null 
+                ? appointment.getBooking().getPatient().getPatientProfile().getPhone() 
+                : null);
+        }
 
         User cashier = appointment.getCashier();
         if (cashier != null) {
@@ -33,6 +45,4 @@ public class AppointmentMapper {
 
         return response;
     }
-
-
 }

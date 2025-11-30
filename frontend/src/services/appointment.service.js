@@ -52,10 +52,12 @@ export const callAllBookings = () => {
   return apiClient.get('/bookings');
 };
 
-export const callUpdateAppointment = (appointmentId, doctorId) => {
+export const callUpdateAppointment = (appointmentId, doctorId, slotId, actualScheduledTime) => {
   return apiClient.put('/appointments', {
     appointmentId,
     doctorId,
+    slotId,
+    actualScheduledTime,
   });
 };
 
