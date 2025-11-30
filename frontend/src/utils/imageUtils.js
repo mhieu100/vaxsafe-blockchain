@@ -1,5 +1,3 @@
-/* eslint-disable no-console */
-
 /**
  * Get image source with fallback handling
  * @param {string|undefined|null} imageUrl - Image URL to process

@@ -35,7 +35,6 @@ const ModalUpdateAvatar = ({ open, setOpen }) => {
       message.success('Cập nhật ảnh đại diện thành công!');
       setOpen(false);
     } catch (error) {
-      console.error('Avatar upload error:', error);
       message.error(error?.message || 'Không thể cập nhật ảnh đại diện');
     } finally {
       setUploading(false);
@@ -60,7 +59,6 @@ const ModalUpdateAvatar = ({ open, setOpen }) => {
       message.success('Đã xóa ảnh đại diện!');
       setOpen(false);
     } catch (error) {
-      console.error('Remove avatar error:', error);
       message.error(error?.message || 'Không thể xóa ảnh đại diện');
     } finally {
       setRemoving(false);

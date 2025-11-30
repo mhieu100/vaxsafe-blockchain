@@ -25,8 +25,7 @@ const VaccinationHistoryTab = () => {
       if (response.data) {
         setHistoryData(response.data);
       }
-    } catch (err) {
-      console.error('Failed to fetch booking history:', err);
+    } catch (_err) {
       setError('Không thể tải lịch sử tiêm chủng');
     } finally {
       setLoading(false);

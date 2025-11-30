@@ -45,18 +45,6 @@ const ModuleApi = (props) => {
         }
       });
 
-      // Debug: Log the permissions object before setting
-      console.log('🐛 Setting initial permissions:', p);
-      console.log('🐛 Module switches:', {
-        ROLE: p.ROLE,
-        FILE: p.FILE,
-        APPOINTMENT: p.APPOINTMENT,
-        VACCINE: p.VACCINE,
-        PERMISSION: p.PERMISSION,
-        USER: p.USER,
-        AUTH: p.AUTH,
-      });
-
       form.setFieldsValue({
         name: singleRole.name,
         active: singleRole.active,

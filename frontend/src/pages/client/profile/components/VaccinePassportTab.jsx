@@ -62,12 +62,10 @@ const VaccinePassportTab = () => {
   };
 
   const handleDownload = () => {
-    console.log('Downloading vaccine passport...');
     // TODO: Implement download logic
   };
 
   const handleShare = () => {
-    console.log('Sharing vaccine passport...');
     // TODO: Implement share logic
   };
 

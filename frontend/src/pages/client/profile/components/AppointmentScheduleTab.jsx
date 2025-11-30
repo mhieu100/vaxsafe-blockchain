@@ -22,7 +22,6 @@ const AppointmentScheduleTab = () => {
         setBookings(response.data);
       }
     } catch (err) {
-      console.error('Fetch bookings error:', err);
       setError(err?.message || 'Không thể tải danh sách lịch hẹn');
     } finally {
       setLoading(false);

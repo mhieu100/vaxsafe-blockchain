@@ -54,8 +54,7 @@ const DoctorDashboard = () => {
       if (res?.data) {
         setTodayAppointments(res.data);
       }
-    } catch (err) {
-      console.error('Error fetching today appointments:', err);
+    } catch (_err) {
       message.error('Không thể tải danh sách lịch hẹn hôm nay');
     } finally {
       setLoading(false);

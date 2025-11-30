@@ -71,8 +71,7 @@ const AssignAppointmentModal = ({ open, onClose, appointment, onSuccess }) => {
       if (res?.data) {
         setDoctors(res.data);
       }
-    } catch (error) {
-      console.error('Error fetching doctors:', error);
+    } catch (_error) {
       notification.error({
         message: 'Lỗi',
         description: 'Không thể tải danh sách bác sĩ',
@@ -91,8 +90,7 @@ const AssignAppointmentModal = ({ open, onClose, appointment, onSuccess }) => {
         setAvailableSlots(res.data);
         setSelectedSlotId(null);
       }
-    } catch (error) {
-      console.error('Error fetching available slots:', error);
+    } catch (_error) {
       notification.error({
         message: 'Lỗi',
         description: 'Không thể tải lịch trống của bác sĩ',
@@ -176,7 +174,6 @@ const AssignAppointmentModal = ({ open, onClose, appointment, onSuccess }) => {
         handleClose();
       }
     } catch (error) {
-      console.error('Error assigning appointment:', error);
       notification.error({
         message: 'Có lỗi xảy ra',
         description:

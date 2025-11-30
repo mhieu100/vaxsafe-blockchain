@@ -39,25 +39,12 @@ const AppointmentSection = ({ bookingForm, vaccine, setCurrentStep, setBookingDa
 
   const timeSlots = useMemo(() => ['08:00', '09:00', '10:00', '14:00', '15:00', '16:00'], []);
 
-  /* eslint-disable no-console */
   useEffect(() => {
-    console.log('🔄 Auto-calculate Effect Triggered');
-    console.log('📅 First Dose Date:', firstDoseDate?.format('DD/MM/YYYY'));
-    console.log('⏰ First Dose Time:', firstDoseTime);
-    console.log('🏥 First Dose Center:', firstDoseCenterId);
-    console.log('💉 Vaccine:', vaccine);
-
     if (!firstDoseDate || !firstDoseTime || !firstDoseCenterId || !vaccine) {
-      console.log('⚠️ Missing requirements - skipping calculation');
-      console.log('   firstDoseDate:', firstDoseDate);
-      console.log('   firstDoseTime:', firstDoseTime);
-      console.log('   firstDoseCenterId:', firstDoseCenterId);
-      console.log('   vaccine:', vaccine);
       return;
     }
 
     const { dosesRequired, duration } = vaccine;
-    console.log(`📊 Vaccine Info: ${dosesRequired} doses, ${duration} days apart`);
 
     const dates = [firstDoseDate];
 
@@ -73,7 +60,6 @@ const AppointmentSection = ({ bookingForm, vaccine, setCurrentStep, setBookingDa
       }
 
       dates.push(nextDate);
-      console.log(`   Mũi ${i + 1}: ${nextDate.format('DD/MM/YYYY')}`);
     }
 
     // Create dose forms for ALL doses (including first dose)
@@ -90,7 +76,6 @@ const AppointmentSection = ({ bookingForm, vaccine, setCurrentStep, setBookingDa
       }
     }
 
-    console.log('✅ Created dose forms:', forms);
     setDoseForms(forms);
 
     // Set form values for all dose schedules - IMPORTANT: Must include ALL required fields
@@ -111,9 +96,6 @@ const AppointmentSection = ({ bookingForm, vaccine, setCurrentStep, setBookingDa
         doseSchedules: doseSchedulesValues,
       }));
     }
-
-    console.log('✅ Set form values for doseSchedules:', doseSchedulesValues);
-    console.log(`✅ Total schedules created: ${doseSchedulesValues.length}/${dosesRequired}`);
   }, [
     firstDoseDate,
     firstDoseTime,
@@ -123,7 +105,6 @@ const AppointmentSection = ({ bookingForm, vaccine, setCurrentStep, setBookingDa
     timeSlots,
     setBookingData,
   ]);
-  /* eslint-enable no-console */
 
   const handleDoseDateChange = (index, value) => {
     if (!value) return;
@@ -218,13 +199,6 @@ const AppointmentSection = ({ bookingForm, vaccine, setCurrentStep, setBookingDa
       const doseSchedules = bookingForm.getFieldValue('doseSchedules') || [];
       const requiredDoses = vaccine?.dosesRequired || 0;
 
-      /* eslint-disable no-console */
-      console.log('🔍 Validation Check:');
-      console.log('   Current doseSchedules:', doseSchedules);
-      console.log('   Required doses:', requiredDoses);
-      console.log('   Length match:', doseSchedules.length === requiredDoses);
-      /* eslint-enable no-console */
-
       if (doseSchedules.length !== requiredDoses) {
         message.error(`Vui lòng hoàn thành tất cả ${requiredDoses} mũi tiêm`);
         return;
@@ -241,10 +215,7 @@ const AppointmentSection = ({ bookingForm, vaccine, setCurrentStep, setBookingDa
       }
 
       setCurrentStep(1);
-    } catch (error) {
-      /* eslint-disable no-console */
-      console.error('❌ Validation failed:', error);
-      /* eslint-enable no-console */
+    } catch (_error) {
       message.error('Vui lòng điền đầy đủ thông tin');
     }
   };

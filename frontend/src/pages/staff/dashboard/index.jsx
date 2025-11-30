@@ -66,8 +66,7 @@ const StaffDashboard = () => {
         setUrgentAppointments(res.data);
         setError(null);
       }
-    } catch (err) {
-      console.error('Error fetching urgent appointments:', err);
+    } catch (_err) {
       setError('Không thể tải danh sách lịch hẹn cần xử lý');
     } finally {
       setLoading(false);
@@ -81,8 +80,7 @@ const StaffDashboard = () => {
       if (res?.data) {
         setTodayAppointments(res.data);
       }
-    } catch (err) {
-      console.error('Error fetching today appointments:', err);
+    } catch (_err) {
     } finally {
       setLoadingToday(false);
     }

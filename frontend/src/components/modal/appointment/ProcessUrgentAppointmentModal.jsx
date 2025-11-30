@@ -67,8 +67,7 @@ const ProcessUrgentAppointmentModal = ({ open, onClose, appointment, onSuccess }
       if (res?.data) {
         setDoctors(res.data);
       }
-    } catch (error) {
-      console.error('Error fetching doctors:', error);
+    } catch (_error) {
       notification.error({
         message: 'Lỗi',
         description: 'Không thể tải danh sách bác sĩ',
@@ -89,8 +88,7 @@ const ProcessUrgentAppointmentModal = ({ open, onClose, appointment, onSuccess }
         // Reset selected slot when slots change
         setSelectedSlotId(null);
       }
-    } catch (error) {
-      console.error('Error fetching available slots:', error);
+    } catch (_error) {
       notification.error({
         message: 'Lỗi',
         description: 'Không thể tải lịch trống của bác sĩ',
@@ -158,7 +156,6 @@ const ProcessUrgentAppointmentModal = ({ open, onClose, appointment, onSuccess }
         handleClose();
       }
     } catch (error) {
-      console.error('Error approving reschedule:', error);
       notification.error({
         message: 'Có lỗi xảy ra',
         description: error.message || 'Không thể phê duyệt yêu cầu đổi lịch',
@@ -177,8 +174,7 @@ const ProcessUrgentAppointmentModal = ({ open, onClose, appointment, onSuccess }
       message.info('Tính năng từ chối đang được phát triển');
 
       handleClose();
-    } catch (error) {
-      console.error('Error rejecting reschedule:', error);
+    } catch (_error) {
     } finally {
       setLoading(false);
     }
@@ -207,7 +203,6 @@ const ProcessUrgentAppointmentModal = ({ open, onClose, appointment, onSuccess }
         handleClose();
       }
     } catch (error) {
-      console.error('Error assigning doctor:', error);
       notification.error({
         message: 'Có lỗi xảy ra',
         description: error.message || 'Không thể phân công bác sĩ',

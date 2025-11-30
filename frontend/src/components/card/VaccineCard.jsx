@@ -49,7 +49,6 @@ const VaccineCard = ({ vaccine }) => {
             />
             <Button
               icon={<HeartOutlined />}
-              onClick={() => console.log('Add to wishlist')}
               title="Add to Wishlist"
               className="w-9 h-9 rounded-full flex items-center justify-center bg-white/90 backdrop-blur-sm border border-gray-300 shadow-md hover:bg-red-500 hover:border-red-500 hover:text-white text-xs"
             />

@@ -28,7 +28,6 @@ const RescheduleAppointmentModal = ({ open, onClose, appointment, onSuccess }) =
       onSuccess();
       onClose();
     } catch (error) {
-      console.error('Reschedule error:', error);
       message.error(error?.message || 'Không thể thay đổi lịch hẹn');
     } finally {
       setLoading(false);

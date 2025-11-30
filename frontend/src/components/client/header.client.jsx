@@ -1,5 +1,4 @@
 import {
-  DashboardOutlined,
   HeartOutlined,
   HomeOutlined,
   LogoutOutlined,

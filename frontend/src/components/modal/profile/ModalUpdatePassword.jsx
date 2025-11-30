@@ -45,7 +45,6 @@ const ModalUpdatePassword = ({ open, setOpen }) => {
     } catch (error) {
       const errorMessage = error?.message || 'An error occurred while updating password';
       message.error(errorMessage);
-      console.error('Change password error:', errorMessage);
     } finally {
       setLoading(false);
     }

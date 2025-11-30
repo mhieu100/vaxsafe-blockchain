@@ -20,8 +20,7 @@ const ModalAppointment = (props) => {
 
   const fetchDoctor = async () => {
     const res = await callFetchDoctor();
-    const list = res.data?.result || [];
-    console.log(list);
+    const _list = res.data?.result || [];
     // list.filter((doctor) => doctor. === user.clinicId);
     if (res?.data) {
       setListDoctor(res.data?.result);
@@ -37,7 +36,6 @@ const ModalAppointment = (props) => {
     const res = await callUpdateAppointment(dataInit.id, doctorId);
 
     if (res) {
-      console.log(res);
       message.success('Appointment updated successfully');
       handleReset();
       reloadTable();

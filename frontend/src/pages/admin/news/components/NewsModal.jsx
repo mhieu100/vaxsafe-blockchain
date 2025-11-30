@@ -34,9 +34,7 @@ const ModalNews = (props) => {
           }));
           setCategories(categoryOptions);
         }
-      } catch (error) {
-        console.error('Error fetching categories:', error);
-      }
+      } catch (_error) {}
     };
     fetchCategories();
   }, []);

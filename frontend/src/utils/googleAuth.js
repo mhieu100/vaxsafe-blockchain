@@ -49,60 +49,54 @@ export const initializeGoogleAuth = () => {
 /**
  * Handle Google OAuth response
  */
-const handleGoogleResponse = (response) => {
+const handleGoogleResponse = (_response) => {
   // This will be handled by the component that calls the Google login
-  console.log('Google OAuth response:', response);
 };
 
 /**
  * Trigger Google OAuth login
  */
 export const triggerGoogleLogin = async () => {
-  try {
-    const _googleAuth = await initializeGoogleAuth();
+  const _googleAuth = await initializeGoogleAuth();
 
-    return new Promise((resolve, reject) => {
-      // Override the callback for this specific login attempt
-      window.google.accounts.id.initialize({
-        client_id: GOOGLE_CLIENT_ID,
-        callback: (response) => {
-          if (response.credential) {
-            resolve(response.credential);
-          } else {
-            reject(new Error('No credential received from Google'));
-          }
-        },
-      });
-
-      // Trigger the Google login popup
-      window.google.accounts.id.prompt((notification) => {
-        if (notification.isNotDisplayed() || notification.isSkippedMoment()) {
-          // Fallback to renderButton if prompt doesn't work
-          const buttonContainer = document.createElement('div');
-          document.body.appendChild(buttonContainer);
-
-          window.google.accounts.id.renderButton(buttonContainer, {
-            theme: 'outline',
-            size: 'large',
-            type: 'standard',
-            text: 'signin_with',
-          });
-
-          // Auto-click the button
-          setTimeout(() => {
-            const button = buttonContainer.querySelector('div[role="button"]');
-            if (button) {
-              button.click();
-            }
-            document.body.removeChild(buttonContainer);
-          }, 100);
+  return new Promise((resolve, reject) => {
+    // Override the callback for this specific login attempt
+    window.google.accounts.id.initialize({
+      client_id: GOOGLE_CLIENT_ID,
+      callback: (response) => {
+        if (response.credential) {
+          resolve(response.credential);
+        } else {
+          reject(new Error('No credential received from Google'));
         }
-      });
+      },
     });
-  } catch (error) {
-    console.error('Google login error:', error);
-    throw error;
-  }
+
+    // Trigger the Google login popup
+    window.google.accounts.id.prompt((notification) => {
+      if (notification.isNotDisplayed() || notification.isSkippedMoment()) {
+        // Fallback to renderButton if prompt doesn't work
+        const buttonContainer = document.createElement('div');
+        document.body.appendChild(buttonContainer);
+
+        window.google.accounts.id.renderButton(buttonContainer, {
+          theme: 'outline',
+          size: 'large',
+          type: 'standard',
+          text: 'signin_with',
+        });
+
+        // Auto-click the button
+        setTimeout(() => {
+          const button = buttonContainer.querySelector('div[role="button"]');
+          if (button) {
+            button.click();
+          }
+          document.body.removeChild(buttonContainer);
+        }, 100);
+      }
+    });
+  });
 };
 
 /**
@@ -119,8 +113,7 @@ export const decodeGoogleToken = (token) => {
         .join('')
     );
     return JSON.parse(jsonPayload);
-  } catch (error) {
-    console.error('Error decoding Google token:', error);
+  } catch (_error) {
     return null;
   }
 };

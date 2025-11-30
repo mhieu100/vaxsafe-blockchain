@@ -50,7 +50,6 @@ public class JwtUtil {
         try {
             return jwtDecoder.decode(token);
         } catch (Exception e) {
-            System.out.println(">>> Refresh Token error: " + e.getMessage());
             throw e;
         }
     }

@@ -66,9 +66,6 @@ const PaymentSection = ({ paymentForm, setCurrentStep, setBookingData }) => {
           <Radio.Group
             className="w-full"
             onChange={(e) => {
-              /* eslint-disable no-console */
-              console.log('💳 Payment method changed to:', e.target.value);
-              /* eslint-enable no-console */
               setBookingData((prev) => ({
                 ...prev,
                 paymentMethod: e.target.value,

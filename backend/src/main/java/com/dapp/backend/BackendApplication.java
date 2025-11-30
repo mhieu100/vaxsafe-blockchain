@@ -26,7 +26,6 @@ public class BackendApplication {
 			dotenv = Dotenv.configure().directory("../").load();
 		}
 		else {
-			System.err.println("WARNING: .env file not found! Using system environment variables.");
 			dotenv = Dotenv.configure().ignoreIfMissing().load();
 		}
 

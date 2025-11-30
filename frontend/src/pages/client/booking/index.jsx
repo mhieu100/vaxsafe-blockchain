@@ -30,10 +30,7 @@ const BookingPage = () => {
 
   const fetchVaccineData = async (slug) => {
     try {
-      console.log('📡 Fetching vaccine data for slug:', slug);
-
       const response = await callGetBySlug(slug);
-      console.log('📦 API Response:', response);
 
       // Handle different response formats
       let vaccineData = null;
@@ -46,14 +43,10 @@ const BookingPage = () => {
       }
 
       if (vaccineData) {
-        console.log('✅ Vaccine data loaded:', vaccineData);
-
         // Validate required fields
         if (!vaccineData.dosesRequired) {
-          console.warn('⚠️ Missing dosesRequired field');
         }
         if (!vaccineData.duration) {
-          console.warn('⚠️ Missing duration field');
         }
 
         setVaccine(vaccineData);
@@ -64,11 +57,9 @@ const BookingPage = () => {
           vaccineId: vaccineData.id,
         }));
       } else {
-        console.error('❌ No vaccine data in response');
         message.error('Không tìm thấy thông tin vắc xin');
       }
-    } catch (error) {
-      console.error('❌ Error fetching vaccine:', error);
+    } catch (_error) {
       message.error('Không thể tải thông tin vắc xin');
     }
   };
@@ -106,30 +97,13 @@ const BookingPage = () => {
       await bookingForm.validateFields();
       await paymentForm.validateFields();
 
-      const paymentValues = paymentForm.getFieldsValue();
-
-      /* eslint-disable no-console */
-      console.log('🔍 Submit Validation Check:');
-      console.log('   paymentValues:', paymentValues);
-      console.log('   paymentMethod from form:', paymentValues.paymentMethod);
-      console.log('   bookingData:', bookingData);
-      console.log('   bookingData.paymentMethod:', bookingData.paymentMethod);
-      console.log('   doseSchedules from state:', bookingData.doseSchedules);
-      console.log('   doseSchedules length:', bookingData.doseSchedules?.length);
-      console.log('   vaccine dosesRequired:', vaccine?.dosesRequired);
-      console.log('   vaccine:', vaccine);
-      /* eslint-enable no-console */
+      const _paymentValues = paymentForm.getFieldsValue();
 
       // Check if all dose schedules are filled
       if (
         !bookingData.doseSchedules ||
         bookingData.doseSchedules.length !== vaccine?.dosesRequired
       ) {
-        /* eslint-disable no-console */
-        console.error('❌ Dose schedules validation failed!');
-        console.error('   Expected:', vaccine?.dosesRequired);
-        console.error('   Got:', bookingData.doseSchedules?.length);
-        /* eslint-enable no-console */
         message.error(
           `Vui lòng hoàn thành tất cả ${vaccine?.dosesRequired} mũi tiêm (hiện có ${bookingData.doseSchedules?.length || 0} mũi)`
         );
@@ -137,13 +111,10 @@ const BookingPage = () => {
       }
 
       // Validate all doses have required fields
-      const hasIncompleteDose = bookingData.doseSchedules.some((dose, index) => {
+      const hasIncompleteDose = bookingData.doseSchedules.some((dose, _index) => {
         const isIncomplete = !dose || !dose.date || !dose.time || !dose.centerId;
-        /* eslint-disable no-console */
         if (isIncomplete) {
-          console.error(`❌ Mũi ${index + 1} thiếu thông tin:`, dose);
         }
-        /* eslint-enable no-console */
         return isIncomplete;
       });
 
@@ -151,10 +122,6 @@ const BookingPage = () => {
         message.error('Vui lòng điền đầy đủ thông tin cho tất cả các mũi tiêm');
         return;
       }
-
-      /* eslint-disable no-console */
-      console.log('✅ All validations passed!');
-      /* eslint-enable no-console */
 
       // Format dose schedules for API - match BookingRequest.DoseSchedule
       const doseSchedules = bookingData.doseSchedules.map((dose) => ({
@@ -178,18 +145,7 @@ const BookingPage = () => {
         paymentMethod: bookingData.paymentMethod || 'CASH',
       };
 
-      /* eslint-disable no-console */
-      console.log('📦 Booking Payload:', bookingPayload);
-      console.log('💉 Vaccine object:', vaccine);
-      console.log('🔑 Vaccine ID:', vaccine?.id);
-      console.log('💰 Total Amount:', totalAmount);
-      /* eslint-enable no-console */
-
       const response = await callCreateBooking(bookingPayload);
-
-      /* eslint-disable no-console */
-      console.log('📨 Booking Response:', response);
-      /* eslint-enable no-console */
 
       // Handle both response.result and response.data formats
       const paymentData = response?.result || response?.data;
@@ -209,10 +165,7 @@ const BookingPage = () => {
       } else {
         message.error('Đặt lịch thất bại. Vui lòng thử lại!');
       }
-    } catch (error) {
-      /* eslint-disable no-console */
-      console.error('❌ Booking submission error:', error);
-      /* eslint-enable no-console */
+    } catch (_error) {
       message.error('Có lỗi xảy ra. Vui lòng thử lại!');
     } finally {
       setLoading(false);

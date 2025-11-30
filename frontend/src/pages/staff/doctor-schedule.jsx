@@ -69,8 +69,7 @@ const DoctorSchedule = () => {
       }));
 
       setDoctors(transformedDoctors);
-    } catch (error) {
-      console.error('Error fetching doctors:', error);
+    } catch (_error) {
       message.error('Không thể tải danh sách bác sĩ. Vui lòng thử lại!');
     } finally {
       setLoading(false);

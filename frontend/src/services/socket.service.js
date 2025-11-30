@@ -1,4 +1,3 @@
-/* eslint-disable no-console */
 /* eslint-disable import/no-extraneous-dependencies */
 import { io } from 'socket.io-client';
 
@@ -45,22 +44,16 @@ class SocketService {
     if (!this.socket) return;
 
     this.socket.on('connect', () => {
-      console.log('✅ Socket.IO Connected!');
       this.reconnectAttempts = 0;
     });
 
-    this.socket.on('disconnect', (reason) => {
-      console.log('❌ Socket.IO Disconnected:', reason);
-    });
+    this.socket.on('disconnect', (_reason) => {});
 
-    this.socket.on('connect_error', (error) => {
-      console.error('❌ Connection Error:', error.message);
+    this.socket.on('connect_error', (_error) => {
       this.reconnectAttempts += 1;
     });
 
-    this.socket.on('error', (error) => {
-      console.error('❌ Socket Error:', error);
-    });
+    this.socket.on('error', (_error) => {});
   }
 
   /**
