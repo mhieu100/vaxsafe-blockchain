@@ -32,7 +32,7 @@ public class OrderService {
     private final PaymentRepository paymentRepository;
     private final PaymentService paymentService;
 
-    public PaymentResponse createOrder(OrderRequest request) throws AppException, PayPalRESTException {
+    public PaymentResponse createOrder(OrderRequest request, String userAgent) throws AppException, PayPalRESTException {
         User user = authService.getCurrentUserLogin();
         Order order = new Order();
         List<OrderItem> orderItems = new ArrayList<>();
@@ -77,7 +77,7 @@ public class OrderService {
 
         switch (request.getPaymentMethod()) {
             case PAYPAL:
-                String paypalUrl = paymentService.createPaypalUrl(request.getTotalAmount(), response.getReferenceId(), response.getPaymentId(), TypeTransactionEnum.ORDER);
+                String paypalUrl = paymentService.createPaypalUrl(request.getTotalAmount(), response.getReferenceId(), response.getPaymentId(), TypeTransactionEnum.ORDER, userAgent);
                 response.setPaymentURL(paypalUrl);
                 break;
             case METAMASK:

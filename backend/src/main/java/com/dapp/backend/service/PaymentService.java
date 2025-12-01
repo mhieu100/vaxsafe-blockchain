@@ -30,15 +30,15 @@ public class PaymentService {
     /**
      * Create VNPay payment URL
      */
-    public String createBankUrl(long amount, Long referenceId, Long paymentId, TypeTransactionEnum type, String ipAddress) throws UnsupportedEncodingException {
-        return vnpayService.createPaymentUrl(amount, referenceId, paymentId, type, ipAddress);
+    public String createBankUrl(long amount, Long referenceId, Long paymentId, TypeTransactionEnum type, String ipAddress, String userAgent) throws UnsupportedEncodingException {
+        return vnpayService.createPaymentUrl(amount, referenceId, paymentId, type, ipAddress, userAgent);
     }
 
     /**
      * Create PayPal payment URL
      */
-    public String createPaypalUrl(Double amount, Long referenceId, Long paymentId, TypeTransactionEnum type) throws PayPalRESTException {
-        return paypalService.createPaymentUrl(amount, referenceId, paymentId, type);
+    public String createPaypalUrl(Double amount, Long referenceId, Long paymentId, TypeTransactionEnum type, String userAgent) throws PayPalRESTException {
+        return paypalService.createPaymentUrl(amount, referenceId, paymentId, type, userAgent);
     }
 
     /**

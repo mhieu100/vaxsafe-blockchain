@@ -40,7 +40,7 @@ public class VnpayService {
     /**
      * Create VNPay payment URL
      */
-    public String createPaymentUrl(long amount, Long referenceId, Long paymentId, TypeTransactionEnum type, String ipAddress) throws UnsupportedEncodingException {
+    public String createPaymentUrl(long amount, Long referenceId, Long paymentId, TypeTransactionEnum type, String ipAddress, String userAgent) throws UnsupportedEncodingException {
         String customReturnUrl = returnUrl;
 
         char separator = customReturnUrl.contains("?") ? '&' : '?';
@@ -48,10 +48,15 @@ public class VnpayService {
         String encodedPaymentId = URLEncoder.encode(paymentId.toString(), StandardCharsets.UTF_8);
         String encodedType = URLEncoder.encode(type.toString(), StandardCharsets.UTF_8);
         String encodedReferenceId = URLEncoder.encode(referenceId.toString(), StandardCharsets.UTF_8);
+        
+        // Detect platform from User-Agent
+        String platform = detectPlatform(userAgent);
+        String encodedPlatform = URLEncoder.encode(platform, StandardCharsets.UTF_8);
 
         customReturnUrl += separator + "payment=" + encodedPaymentId;
         customReturnUrl += "&type=" + encodedType;
         customReturnUrl += "&referenceId=" + encodedReferenceId;
+        customReturnUrl += "&platform=" + encodedPlatform;
 
         // VNPay parameters
         Map<String, String> vnpParams = new HashMap<>();
@@ -92,5 +97,25 @@ public class VnpayService {
         query.append("&vnp_SecureHashType=SHA256&vnp_SecureHash=").append(vnpSecureHash);
 
         return vnpayUrl + "?" + query.toString();
+    }
+    
+    /**
+     * Detect platform from User-Agent header
+     */
+    private String detectPlatform(String userAgent) {
+        if (userAgent == null) {
+            return "web";
+        }
+        userAgent = userAgent.toLowerCase();
+        
+        // Check for mobile app indicators
+        if (userAgent.contains("android") || userAgent.contains("okhttp") || userAgent.contains("retrofit")) {
+            return "mobile";
+        }
+        if (userAgent.contains("ios") || userAgent.contains("cfnetwork") || userAgent.contains("darwin")) {
+            return "mobile";
+        }
+        
+        return "web";
     }
 }

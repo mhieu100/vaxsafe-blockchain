@@ -33,24 +33,34 @@ public class PaymentController {
 
     @GetMapping("/paypal/success")
     @ApiMessage("Handle PayPal payment success callback")
-    public void successPaypal(HttpServletResponse response, @RequestParam String referenceId, @RequestParam String type,@RequestParam String payment) throws AppException, IOException {
+    public void successPaypal(HttpServletResponse response, @RequestParam String referenceId, @RequestParam String type, @RequestParam String payment, @RequestParam(required = false) String platform) throws AppException, IOException {
         PaymentRequest paymentRequest = new PaymentRequest();
         paymentRequest.setPaymentId(Long.parseLong(payment));
         paymentRequest.setReferenceId(referenceId);
         paymentRequest.setType(TypeTransactionEnum.valueOf(type));
         paymentService.successPayment(paymentRequest);
-        response.sendRedirect(frontendSuccessUrl);
+        
+        if ("mobile".equals(platform)) {
+            response.sendRedirect("myapp://payment/success?referenceId=" + referenceId + "&payment=" + payment);
+        } else {
+            response.sendRedirect(frontendSuccessUrl);
+        }
     }
 
     @GetMapping("/paypal/cancel")
     @ApiMessage("Handle PayPal payment cancel callback")
-    public void cancelPaypal(HttpServletResponse response, @RequestParam String referenceId, @RequestParam String type,@RequestParam String payment) throws AppException, IOException {
+    public void cancelPaypal(HttpServletResponse response, @RequestParam String referenceId, @RequestParam String type, @RequestParam String payment, @RequestParam(required = false) String platform) throws AppException, IOException {
         PaymentRequest paymentRequest = new PaymentRequest();
         paymentRequest.setPaymentId(Long.parseLong(payment));
         paymentRequest.setReferenceId(referenceId);
         paymentRequest.setType(TypeTransactionEnum.valueOf(type));
         paymentService.cancelPayment(paymentRequest);
-        response.sendRedirect(frontendCancelUrl);
+        
+        if ("mobile".equals(platform)) {
+            response.sendRedirect("myapp://payment/cancel?referenceId=" + referenceId + "&payment=" + payment);
+        } else {
+            response.sendRedirect(frontendCancelUrl);
+        }
     }
 
     @GetMapping("/vnpay/return")
@@ -62,6 +72,7 @@ public class PaymentController {
         String paymentId = vnpParams.remove("payment");
         String referenceId = vnpParams.remove("referenceId");
         String type = vnpParams.remove("type");
+        String platform = vnpParams.remove("platform");
 
         PaymentRequest paymentRequest = new PaymentRequest();
         paymentRequest.setPaymentId(Long.parseLong(paymentId));
@@ -74,10 +85,18 @@ public class PaymentController {
 
         if ("00".equals(vnpParams.get("vnp_ResponseCode"))) {
             paymentService.successPayment(paymentRequest);
-            redirectUrl = frontendSuccessUrl;
+            if ("mobile".equals(platform)) {
+                redirectUrl = "myapp://payment/success?referenceId=" + referenceId + "&payment=" + paymentId;
+            } else {
+                redirectUrl = frontendSuccessUrl;
+            }
         } else {
             paymentService.cancelPayment(paymentRequest);
-            redirectUrl = frontendCancelUrl;
+            if ("mobile".equals(platform)) {
+                redirectUrl = "myapp://payment/cancel?referenceId=" + referenceId + "&payment=" + paymentId;
+            } else {
+                redirectUrl = frontendCancelUrl;
+            }
         }
         response.sendRedirect(redirectUrl);
     }

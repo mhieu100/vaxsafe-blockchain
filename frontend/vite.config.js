@@ -12,4 +12,23 @@ export default defineConfig({
       '@': path.resolve(__dirname, './src'),
     },
   },
+  build: {
+    rollupOptions: {
+      output: {
+        manualChunks: {
+          antd: ['antd'],
+          vendor: ['react', 'react-dom', 'react-router-dom'],
+        },
+      },
+    },
+    chunkSizeWarningLimit: 1500,
+  },
+  esbuild: {
+    logOverride: { 'this-is-undefined-in-esm': 'silent' },
+  },
+  server: {
+    hmr: {
+      overlay: false, // Tắt overlay warning trong dev
+    },
+  },
 });

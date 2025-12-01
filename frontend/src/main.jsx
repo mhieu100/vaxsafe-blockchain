@@ -9,6 +9,17 @@ import Root from './App.jsx';
 import './i18n'; // Initialize i18n
 import './index.css';
 
+// Suppress findDOMNode warning in development (known issue with antd pro-components)
+if (import.meta.env.DEV) {
+  const originalError = console.error;
+  console.error = (...args) => {
+    if (typeof args[0] === 'string' && args[0].includes('findDOMNode')) {
+      return;
+    }
+    originalError.apply(console, args);
+  };
+}
+
 // Configure React Query
 const queryClient = new QueryClient({
   defaultOptions: {

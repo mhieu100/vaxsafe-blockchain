@@ -115,16 +115,16 @@ const PendingAppointmentPage = () => {
       dataIndex: 'patientName',
       width: 200,
       render: (text, record) => (
-        <Space orientation="vertical" size={0}>
+        <Space direction="vertical" size={4}>
           <Space>
-            <Avatar icon={<UserOutlined />} size="small" />
+            <Avatar icon={<UserOutlined />} size="small" style={{ backgroundColor: '#1890ff' }} />
             <Text strong>{text}</Text>
-            {record.status === 'RESCHEDULE' && (
-              <Tag color="orange" style={{ fontSize: 10 }}>
-                Đổi lịch
-              </Tag>
-            )}
           </Space>
+          {record.status === 'RESCHEDULE' && (
+            <Tag color="orange" icon={<EditOutlined />} style={{ fontSize: 11 }}>
+              Đổi lịch
+            </Tag>
+          )}
           <Text type="secondary" style={{ fontSize: 12 }}>
             <PhoneOutlined /> {record.patientPhone || 'N/A'}
           </Text>
@@ -139,30 +139,30 @@ const PendingAppointmentPage = () => {
     },
     {
       title: 'Ngày Đăng Ký',
-      dataIndex: 'scheduledDate',
-      width: 150,
+      dataIndex: 'desiredDate',
+      width: 160,
       render: (text, record) => {
-        const dateToShow = text || record.scheduledDate;
+        const dateToShow = record.desiredDate || record.scheduledDate;
         const timeSlotToShow = record.desiredTimeSlot || record.scheduledTimeSlot;
-        const isUrgent = dayjs(dateToShow).diff(dayjs(), 'day') <= 1;
-        const _isReschedule = record.status === 'RESCHEDULE';
+        const isUrgent = dateToShow && dayjs(dateToShow).diff(dayjs(), 'day') <= 1;
 
         return (
-          <Space orientation="vertical" size={0}>
+          <Space direction="vertical" size={4}>
             <Space>
+              <ClockCircleOutlined style={{ color: isUrgent ? '#ff4d4f' : '#1890ff' }} />
               <Text strong style={{ color: isUrgent ? '#ff4d4f' : undefined }}>
-                {dayjs(dateToShow).format('DD/MM/YYYY')}
+                {dateToShow ? dayjs(dateToShow).format('DD/MM/YYYY') : 'N/A'}
               </Text>
-              {isUrgent && (
-                <Tag color="red" icon={<ClockCircleOutlined />}>
-                  GẤP
-                </Tag>
-              )}
             </Space>
             {timeSlotToShow && (
               <Text type="secondary" style={{ fontSize: 12 }}>
-                <ClockCircleOutlined /> {TIME_SLOT_LABELS[timeSlotToShow] || timeSlotToShow}
+                {TIME_SLOT_LABELS[timeSlotToShow] || timeSlotToShow}
               </Text>
+            )}
+            {isUrgent && (
+              <Tag color="red" icon={<ClockCircleOutlined />} style={{ fontSize: 11 }}>
+                GẤP
+              </Tag>
             )}
           </Space>
         );
@@ -173,32 +173,38 @@ const PendingAppointmentPage = () => {
       dataIndex: 'scheduledDate',
       width: 180,
       render: (text, record) => {
-        const dateToShow = text || record.scheduledDate;
-        const _timeSlotToShow = record.desiredTimeSlot || record.scheduledTimeSlot;
-        const actualTimeToShow = record.actualDesiredTime || record.actualScheduledTime;
-        const isUrgent = dayjs(dateToShow).diff(dayjs(), 'day') <= 1;
+        const scheduledDate = record.scheduledDate;
+        const actualTime = record.actualScheduledTime || record.actualDesiredTime;
         const isReschedule = record.status === 'RESCHEDULE';
+        const isPending = record.status === AppointmentStatus.PENDING;
 
-        return (
-          <Space orientation="vertical" size={0}>
-            <Space>
-              <Text strong style={{ color: isUrgent ? '#ff4d4f' : undefined }}>
-                {dayjs(dateToShow).format('DD/MM/YYYY')}
-              </Text>
-              {isUrgent && (
-                <Tag color="red" icon={<ClockCircleOutlined />}>
-                  GẤP
-                </Tag>
-              )}
-            </Space>
-
-            {actualTimeToShow ? (
-              <Text strong style={{ fontSize: 12, color: '#52c41a' }}>
-                Giờ chính thức: {actualTimeToShow.substring(0, 5)}
-              </Text>
-            ) : (
+        // Nếu chưa có lịch chính thức
+        if (!scheduledDate || isPending) {
+          return (
+            <Space direction="vertical" size={4}>
               <Text type="secondary" style={{ fontSize: 12, fontStyle: 'italic' }}>
                 Chờ xếp lịch...
+              </Text>
+              {isReschedule && record.rescheduledAt && (
+                <Text type="warning" style={{ fontSize: 11 }}>
+                  Đổi lúc: {dayjs(record.rescheduledAt).format('DD/MM HH:mm')}
+                </Text>
+              )}
+            </Space>
+          );
+        }
+
+        return (
+          <Space direction="vertical" size={4}>
+            <Space>
+              <CalendarOutlined style={{ color: '#52c41a' }} />
+              <Text strong style={{ color: '#52c41a' }}>
+                {dayjs(scheduledDate).format('DD/MM/YYYY')}
+              </Text>
+            </Space>
+            {actualTime && (
+              <Text strong style={{ fontSize: 12, color: '#52c41a' }}>
+                Giờ chính thức: {actualTime.substring(0, 5)}
               </Text>
             )}
             {isReschedule && record.rescheduledAt && (
@@ -226,20 +232,12 @@ const PendingAppointmentPage = () => {
     {
       title: 'Thanh Toán',
       dataIndex: 'paymentStatus',
-      width: 200,
+      width: 180,
       render: (status, record) => {
-        if (!status) {
-          return (
-            <Space orientation="vertical" size={0}>
-              <Tag color="default">Chưa thanh toán</Tag>
-            </Space>
-          );
-        }
-
         const statusLabels = {
-          [PaymentStatus.SUCCESS]: 'Thành công',
+          [PaymentStatus.SUCCESS]: 'Đã phản công',
           [PaymentStatus.PROCESSING]: 'Đang xử lý',
-          [PaymentStatus.INITIATED]: 'Đã tạo',
+          [PaymentStatus.INITIATED]: 'Tiền mặt',
           [PaymentStatus.FAILED]: 'Thất bại',
         };
 
@@ -249,26 +247,30 @@ const PendingAppointmentPage = () => {
             : null;
 
         return (
-          <Space orientation="vertical" size={4} style={{ width: '100%' }}>
-            <Tag color={getPaymentStatusColor(status)} className="!m-0">
-              {statusLabels[status] || status}
+          <Space direction="vertical" size={4}>
+            <Tag color={getPaymentStatusColor(status)} style={{ marginBottom: 4 }}>
+              {statusLabels[status] || status || 'Chưa có'}
             </Tag>
-            {record.paymentMethod && (
-              <Text type="secondary" style={{ fontSize: 12 }}>
-                {getPaymentMethodDisplay(record.paymentMethod)}
-              </Text>
-            )}
-            {paymentDisplay && (
+            {paymentDisplay ? (
               <>
+                {record.paymentMethod && (
+                  <Text type="secondary" style={{ fontSize: 12 }}>
+                    {getPaymentMethodDisplay(record.paymentMethod)}
+                  </Text>
+                )}
                 {paymentDisplay.original && (
-                  <Text type="secondary" style={{ fontSize: 11 }}>
+                  <Text delete type="secondary" style={{ fontSize: 11 }}>
                     {paymentDisplay.original.formatted}
                   </Text>
                 )}
-                <Text strong style={{ fontSize: 13, color: '#1890ff' }}>
+                <Text strong style={{ fontSize: 14, color: '#1890ff' }}>
                   {paymentDisplay.display}
                 </Text>
               </>
+            ) : (
+              <Text type="secondary" style={{ fontSize: 12 }}>
+                Chưa thanh toán
+              </Text>
             )}
           </Space>
         );
@@ -277,7 +279,7 @@ const PendingAppointmentPage = () => {
     {
       title: 'Hành Động',
       key: 'actions',
-      width: 180,
+      width: 200,
       fixed: 'right',
       render: (_, record) => {
         const isPendingSchedule = record.status === AppointmentStatus.PENDING;
@@ -286,37 +288,44 @@ const PendingAppointmentPage = () => {
 
         if (needsAction) {
           return (
-            <Space orientation="vertical" size="small">
-              <Tooltip title={isPendingApproval ? 'Duyệt đổi lịch' : 'Phân công lịch hẹn'}>
-                <Button
-                  type={isPendingApproval ? 'default' : 'primary'}
-                  icon={isPendingApproval ? <CheckSquareOutlined /> : <CalendarOutlined />}
-                  onClick={() => handleAssignAppointment(record)}
-                  style={
-                    isPendingApproval
-                      ? {
-                          background: '#fff7e6',
-                          borderColor: '#ffa940',
-                          color: '#fa8c16',
-                        }
-                      : {}
-                  }
-                  block
-                >
-                  {isPendingApproval ? 'Duyệt Đổi Lịch' : 'Phân Công'}
-                </Button>
-              </Tooltip>
-              {isPendingApproval && (
-                <Text type="secondary" style={{ fontSize: 11 }}>
-                  Yêu cầu đổi lịch
-                </Text>
+            <Space direction="vertical" size={8} style={{ width: '100%' }}>
+              {isPendingApproval ? (
+                <>
+                  <Button
+                    type="primary"
+                    danger
+                    icon={<CheckSquareOutlined />}
+                    onClick={() => handleAssignAppointment(record)}
+                    block
+                    style={{
+                      background: '#ff7a45',
+                      borderColor: '#ff7a45',
+                    }}
+                  >
+                    Duyệt Đổi Lịch
+                  </Button>
+                  <Text type="warning" style={{ fontSize: 11, textAlign: 'center' }}>
+                    Yêu cầu đổi lịch
+                  </Text>
+                </>
+              ) : (
+                <Tooltip title="Phân công lịch hẹn cho bác sĩ">
+                  <Button
+                    type="primary"
+                    icon={<CalendarOutlined />}
+                    onClick={() => handleAssignAppointment(record)}
+                    block
+                  >
+                    Phân Công
+                  </Button>
+                </Tooltip>
               )}
             </Space>
           );
         }
 
         return (
-          <Tag color="success" icon={<CheckCircleOutlined />}>
+          <Tag color="success" icon={<CheckCircleOutlined />} style={{ padding: '4px 12px' }}>
             Đã phân công
           </Tag>
         );
@@ -366,14 +375,18 @@ const PendingAppointmentPage = () => {
             </Title>
             <Text type="secondary">Quản lý và phân công lịch hẹn chưa xếp lịch</Text>
           </div>
-          <Badge count={statistics.pending} style={{ backgroundColor: '#faad14' }} />
+          <Badge
+            count={statistics.pendingSchedule + statistics.pendingApproval}
+            style={{ backgroundColor: '#faad14' }}
+            overflowCount={999}
+          />
         </Space>
       </div>
 
       {/* Statistics Cards */}
       <Row gutter={[16, 16]} style={{ marginBottom: 24 }}>
         <Col xs={24} sm={12} lg={6}>
-          <Card hoverable>
+          <Card hoverable bordered={false}>
             <Statistic
               title={
                 <Space>
@@ -383,12 +396,12 @@ const PendingAppointmentPage = () => {
               }
               value={statistics.pendingSchedule}
               suffix="lịch hẹn"
-              styles={{ content: { color: '#1890ff' } }}
+              valueStyle={{ color: '#1890ff' }}
             />
           </Card>
         </Col>
         <Col xs={24} sm={12} lg={6}>
-          <Card hoverable>
+          <Card hoverable bordered={false}>
             <Statistic
               title={
                 <Space>
@@ -398,12 +411,12 @@ const PendingAppointmentPage = () => {
               }
               value={statistics.pendingApproval}
               suffix="yêu cầu"
-              styles={{ content: { color: '#faad14' } }}
+              valueStyle={{ color: '#faad14' }}
             />
           </Card>
         </Col>
         <Col xs={24} sm={12} lg={6}>
-          <Card hoverable>
+          <Card hoverable bordered={false}>
             <Statistic
               title={
                 <Space>
@@ -413,12 +426,12 @@ const PendingAppointmentPage = () => {
               }
               value={statistics.urgent}
               suffix="lịch hẹn"
-              styles={{ content: { color: '#ff4d4f' } }}
+              valueStyle={{ color: '#ff4d4f' }}
             />
           </Card>
         </Col>
         <Col xs={24} sm={12} lg={6}>
-          <Card hoverable>
+          <Card hoverable bordered={false}>
             <Statistic
               title={
                 <Space>
@@ -428,7 +441,7 @@ const PendingAppointmentPage = () => {
               }
               value={statistics.total}
               suffix="lịch hẹn"
-              styles={{ content: { color: '#52c41a' } }}
+              valueStyle={{ color: '#52c41a' }}
             />
           </Card>
         </Col>

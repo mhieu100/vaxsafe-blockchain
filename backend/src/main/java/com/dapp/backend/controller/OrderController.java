@@ -8,6 +8,7 @@ import com.dapp.backend.dto.response.PaymentResponse;
 import com.dapp.backend.exception.AppException;
 import com.dapp.backend.service.OrderService;
 import com.paypal.base.rest.PayPalRESTException;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -22,8 +23,8 @@ public class OrderController {
     
     @PostMapping
     @ApiMessage("Create a new order")
-    public ResponseEntity<PaymentResponse> create(@RequestBody OrderRequest request) throws AppException, PayPalRESTException {
-        return ResponseEntity.ok(orderService.createOrder(request));
+    public ResponseEntity<PaymentResponse> create(@RequestBody OrderRequest request, HttpServletRequest httpRequest) throws AppException, PayPalRESTException {
+        return ResponseEntity.ok(orderService.createOrder(request, httpRequest.getHeader("User-Agent")));
     }
 
     @GetMapping

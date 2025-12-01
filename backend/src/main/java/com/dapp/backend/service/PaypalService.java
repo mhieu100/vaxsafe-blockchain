@@ -27,9 +27,12 @@ public class PaypalService {
     /**
      * Create PayPal payment URL
      */
-    public String createPaymentUrl(Double amount, Long referenceId, Long paymentId, TypeTransactionEnum type) throws PayPalRESTException {
-        String cancelUrl = paypalCancelUrl + "?referenceId=" + referenceId + "&type=" + type + "&payment=" + paymentId;
-        String successUrl = paypalSuccessUrl + "?referenceId=" + referenceId + "&type=" + type + "&payment=" + paymentId;
+    public String createPaymentUrl(Double amount, Long referenceId, Long paymentId, TypeTransactionEnum type, String userAgent) throws PayPalRESTException {
+        // Detect platform from User-Agent
+        String platform = detectPlatform(userAgent);
+        
+        String cancelUrl = paypalCancelUrl + "?referenceId=" + referenceId + "&type=" + type + "&payment=" + paymentId + "&platform=" + platform;
+        String successUrl = paypalSuccessUrl + "?referenceId=" + referenceId + "&type=" + type + "&payment=" + paymentId + "&platform=" + platform;
 
         Payment payment = createPayment(
                 amount * EXCHANGE_RATE_TO_USD,
@@ -86,5 +89,25 @@ public class PaypalService {
         payment.setRedirectUrls(redirectUrls);
 
         return payment.create(apiContext);
+    }
+    
+    /**
+     * Detect platform from User-Agent header
+     */
+    private String detectPlatform(String userAgent) {
+        if (userAgent == null) {
+            return "web";
+        }
+        userAgent = userAgent.toLowerCase();
+        
+        // Check for mobile app indicators
+        if (userAgent.contains("android") || userAgent.contains("okhttp") || userAgent.contains("retrofit")) {
+            return "mobile";
+        }
+        if (userAgent.contains("ios") || userAgent.contains("cfnetwork") || userAgent.contains("darwin")) {
+            return "mobile";
+        }
+        
+        return "web";
     }
 }

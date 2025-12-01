@@ -156,11 +156,12 @@ public class BookingService {
 
             switch (bookingRequest.getPaymentMethod()) {
                 case BANK:
-                    String bankUrl = paymentService.createBankUrl(Math.round(bookingRequest.getAmount()), paymentResponse.getReferenceId(), paymentResponse.getPaymentId(), TypeTransactionEnum.APPOINTMENT, request.getRemoteAddr());
+                    String bankUrl = paymentService.createBankUrl(Math.round(bookingRequest.getAmount()), paymentResponse.getReferenceId(), paymentResponse.getPaymentId(), TypeTransactionEnum.APPOINTMENT, request.getRemoteAddr(), request.getHeader("User-Agent"));
                     paymentResponse.setPaymentURL(bankUrl);
                     break;
                 case PAYPAL:
-                    String paypalUrl = paymentService.createPaypalUrl(bookingRequest.getAmount(), paymentResponse.getReferenceId(), paymentResponse.getPaymentId(), TypeTransactionEnum.APPOINTMENT);
+                    String paypalUrl = paymentService.createPaypalUrl(bookingRequest.getAmount(), paymentResponse.getReferenceId(), paymentResponse.getPaymentId(), TypeTransactionEnum.APPOINTMENT, request.getHeader("User-Agent"));
+                    System.out.println(paypalUrl);
                     paymentResponse.setPaymentURL(paypalUrl);
                     break;
                 case METAMASK:
