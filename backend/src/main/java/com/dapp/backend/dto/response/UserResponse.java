@@ -18,7 +18,6 @@ public class UserResponse {
     String avatar;
     String fullName;
     String email;
-    String walletAddress;
 
     // Role information
     RoleInfo role;

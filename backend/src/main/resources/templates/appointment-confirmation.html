@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Xác nhận lịch hẹn</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f4f4f4;
+        }
+        .container {
+            background-color: #ffffff;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+        .header {
+            background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+            color: white;
+            padding: 30px 20px;
+            text-align: center;
+        }
+        .header h1 {
+            margin: 0;
+            font-size: 28px;
+        }
+        .content {
+            padding: 30px 20px;
+        }
+        .success-icon {
+            text-align: center;
+            font-size: 60px;
+            margin: 20px 0;
+        }
+        .greeting {
+            font-size: 18px;
+            margin-bottom: 20px;
+            color: #11998e;
+        }
+        .info-box {
+            background-color: #f8f9fa;
+            border-left: 4px solid #11998e;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 5px;
+        }
+        .info-item {
+            display: flex;
+            margin: 10px 0;
+            align-items: center;
+        }
+        .info-label {
+            font-weight: bold;
+            min-width: 120px;
+            color: #555;
+        }
+        .info-value {
+            color: #333;
+        }
+        .highlight {
+            color: #11998e;
+            font-weight: bold;
+        }
+        .footer {
+            background-color: #f8f9fa;
+            padding: 20px;
+            text-align: center;
+            font-size: 12px;
+            color: #666;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>✅ Lịch hẹn đã tạo thành công</h1>
+        </div>
+        
+        <div class="content">
+            <div class="success-icon">✓</div>
+            
+            <p class="greeting">Xin chào <span class="highlight" th:text="${patientName}">Nguyễn Văn A</span>,</p>
+            
+            <p>Lịch hẹn tiêm chủng của bạn đã được tạo thành công và đang chờ xử lý!</p>
+            
+            <div class="info-box">
+                <div class="info-item">
+                    <span class="info-label">🆔 Mã lịch hẹn:</span>
+                    <span class="info-value highlight" th:text="${appointmentId}">12345</span>
+                </div>
+                <div class="info-item">
+                    <span class="info-label">💉 Vaccine:</span>
+                    <span class="info-value" th:text="${vaccineName}">COVID-19 Pfizer</span>
+                </div>
+                <div class="info-item">
+                    <span class="info-label">📅 Ngày hẹn:</span>
+                    <span class="info-value" th:text="${appointmentDate}">15/12/2024</span>
+                </div>
+                <div class="info-item">
+                    <span class="info-label">🕐 Khung giờ:</span>
+                    <span class="info-value" th:text="${timeSlot}">08:00 - 10:00</span>
+                </div>
+                <div class="info-item">
+                    <span class="info-label">🏥 Trung tâm:</span>
+                    <span class="info-value" th:text="${centerName}">Trung tâm Y tế Quận 1</span>
+                </div>
+            </div>
+            
+            <p style="margin-top: 20px;">
+                ⏳ <strong>Lịch hẹn đang chờ xác nhận từ trung tâm y tế.</strong> Chúng tôi sẽ gửi email nhắc nhở trước ngày hẹn. Nếu có bất kỳ thay đổi nào, vui lòng liên hệ:
+            </p>
+            <p style="text-align: center;">
+                <strong>📞 Hotline: 1900-xxxx</strong><br>
+                <strong>📧 Email: support@vaxsafe.com</strong>
+            </p>
+        </div>
+        
+        <div class="footer">
+            <p><strong>VaxSafe - Hệ thống quản lý tiêm chủng</strong></p>
+            <p>© <span th:text="${year}">2024</span> VaxSafe. All rights reserved.</p>
+        </div>
+    </div>
+</body>
+</html>

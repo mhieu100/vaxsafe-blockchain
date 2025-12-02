@@ -78,7 +78,7 @@ const DoctorSchedule = () => {
   // Fetch doctors with schedule when component mounts or date changes
   useEffect(() => {
     fetchDoctorsWithSchedule();
-  }, []);
+  }, [selectedDate]);
 
   // Get color for doctor based on ID
   const getColorForDoctor = (doctorId) => {

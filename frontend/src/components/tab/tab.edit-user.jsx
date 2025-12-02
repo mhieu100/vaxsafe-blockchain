@@ -1,7 +1,9 @@
-import { Button, Col, Form, Input, message, Row, Select, Typography } from 'antd';
+import { Button, Col, DatePicker, Form, Input, message, Row, Select, Typography } from 'antd';
+import dayjs from 'dayjs';
 import { useEffect, useState } from 'react';
-import { updateAccount } from '@/services/auth.service';
+import profileService from '@/services/profileService';
 import useAccountStore from '@/stores/useAccountStore';
+import { birthdayValidation } from '@/utils/birthdayValidation';
 
 const { Text, Paragraph } = Typography;
 
@@ -16,7 +18,7 @@ const TabEditUser = ({ editMode, setEditMode }) => {
         fullName: user.fullName,
         email: user.email,
         phone: user.phone,
-        birthday: user.birthday,
+        birthday: user.birthday ? dayjs(user.birthday) : null,
         gender: user.gender,
         address: user.address,
         identityNumber: user.identityNumber,
@@ -36,26 +38,24 @@ const TabEditUser = ({ editMode, setEditMode }) => {
     try {
       setLoading(true);
 
+      // New payload format for profile API
       const payload = {
-        user: {
-          fullName: values.fullName,
-        },
-        patientProfile: {
-          address: values.address,
-          phone: values.phone,
-          birthday: values.birthday,
-          gender: values.gender,
-          identityNumber: values.identityNumber,
-          bloodType: values.bloodType,
-          heightCm: values.heightCm,
-          weightKg: values.weightKg,
-          occupation: values.occupation,
-          lifestyleNotes: values.lifestyleNotes,
-          insuranceNumber: values.insuranceNumber,
-        },
+        fullName: values.fullName,
+        phone: values.phone,
+        birthday: values.birthday ? values.birthday.format('YYYY-MM-DD') : null,
+        gender: values.gender,
+        address: values.address,
+        identityNumber: values.identityNumber,
+        bloodType: values.bloodType,
+        heightCm: values.heightCm ? parseFloat(values.heightCm) : null,
+        weightKg: values.weightKg ? parseFloat(values.weightKg) : null,
+        occupation: values.occupation,
+        lifestyleNotes: values.lifestyleNotes,
+        insuranceNumber: values.insuranceNumber,
+        consentForAIAnalysis: user.consentForAIAnalysis || false,
       };
 
-      const response = await updateAccount(payload);
+      const response = await profileService.updatePatientProfile(payload);
 
       if (!response?.data) {
         throw new Error('Update failed');
@@ -67,7 +67,8 @@ const TabEditUser = ({ editMode, setEditMode }) => {
       message.success('Profile updated successfully!');
       setEditMode(false);
     } catch (error) {
-      message.error(error?.message || 'Failed to update profile');
+      console.error('Update profile error:', error);
+      message.error(error?.response?.data?.message || error?.message || 'Failed to update profile');
     } finally {
       setLoading(false);
     }
@@ -124,8 +125,18 @@ const TabEditUser = ({ editMode, setEditMode }) => {
               </Form.Item>
             </Col>
             <Col xs={24} sm={12}>
-              <Form.Item label="Date of Birth" name="birthday">
-                <Input placeholder="YYYY-MM-DD" size="large" />
+              <Form.Item
+                label="Date of Birth"
+                name="birthday"
+                rules={birthdayValidation.getFormRules(false)}
+              >
+                <DatePicker
+                  className="w-full"
+                  size="large"
+                  format="DD/MM/YYYY"
+                  placeholder="Select date"
+                  disabledDate={birthdayValidation.disabledDate}
+                />
               </Form.Item>
             </Col>
           </Row>
@@ -151,10 +162,14 @@ const TabEditUser = ({ editMode, setEditMode }) => {
             <Col xs={24} sm={8}>
               <Form.Item label="Blood Type" name="bloodType">
                 <Select placeholder="Select blood type" size="large">
-                  <Select.Option value="A">A</Select.Option>
-                  <Select.Option value="B">B</Select.Option>
-                  <Select.Option value="AB">AB</Select.Option>
-                  <Select.Option value="O">O</Select.Option>
+                  <Select.Option value="A_POSITIVE">A+</Select.Option>
+                  <Select.Option value="A_NEGATIVE">A-</Select.Option>
+                  <Select.Option value="B_POSITIVE">B+</Select.Option>
+                  <Select.Option value="B_NEGATIVE">B-</Select.Option>
+                  <Select.Option value="AB_POSITIVE">AB+</Select.Option>
+                  <Select.Option value="AB_NEGATIVE">AB-</Select.Option>
+                  <Select.Option value="O_POSITIVE">O+</Select.Option>
+                  <Select.Option value="O_NEGATIVE">O-</Select.Option>
                 </Select>
               </Form.Item>
             </Col>
@@ -243,7 +258,11 @@ const TabEditUser = ({ editMode, setEditMode }) => {
             </div>
             <div>
               <Text type="secondary">Blood Type</Text>
-              <div className="text-base font-medium">{user?.bloodType || '--'}</div>
+              <div className="text-base font-medium">
+                {user?.bloodType
+                  ? user.bloodType.replace('_POSITIVE', '+').replace('_NEGATIVE', '-')
+                  : '--'}
+              </div>
             </div>
             <div>
               <Text type="secondary">Height</Text>

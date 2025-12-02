@@ -28,8 +28,8 @@ public class AppointmentMapper {
             response.setPatientPhone(appointment.getBooking().getFamilyMember().getPhone());
         } else {
             response.setPatientName(appointment.getBooking().getPatient().getFullName());
-            response.setPatientPhone(appointment.getBooking().getPatient().getPatientProfile() != null 
-                ? appointment.getBooking().getPatient().getPatientProfile().getPhone() 
+            response.setPatientPhone(appointment.getBooking().getPatient()!= null 
+                ? appointment.getBooking().getPatient().getPhone() 
                 : null);
         }
 

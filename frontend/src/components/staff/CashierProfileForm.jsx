@@ -1,0 +1,279 @@
+import { useEffect, useState } from 'react';
+import { useForm } from 'react-hook-form';
+import { useCashierProfile, useUpdateCashierProfile } from '@/hooks/useProfile';
+
+const CashierProfileForm = () => {
+  const { data: profileData, isLoading, error } = useCashierProfile();
+  const updateProfile = useUpdateCashierProfile();
+  const [isEditing, setIsEditing] = useState(false);
+
+  const {
+    register,
+    handleSubmit,
+    reset,
+    formState: { errors, isDirty },
+  } = useForm();
+
+  useEffect(() => {
+    if (profileData?.data) {
+      reset(profileData.data);
+    }
+  }, [profileData, reset]);
+
+  const onSubmit = async (data) => {
+    try {
+      await updateProfile.mutateAsync(data);
+      setIsEditing(false);
+    } catch (err) {
+      console.error('Failed to update profile:', err);
+    }
+  };
+
+  const handleCancel = () => {
+    reset(profileData?.data);
+    setIsEditing(false);
+  };
+
+  if (isLoading) {
+    return (
+      <div className="flex items-center justify-center p-8">
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="bg-red-50 border border-red-200 rounded-lg p-4">
+        <p className="text-red-600">Failed to load profile: {error.message}</p>
+      </div>
+    );
+  }
+
+  return (
+    <div className="bg-white rounded-lg shadow-md p-6">
+      <div className="flex justify-between items-center mb-6">
+        <h2 className="text-2xl font-bold text-gray-800">Cashier Profile</h2>
+        {!isEditing && (
+          <button
+            type="button"
+            onClick={() => setIsEditing(true)}
+            className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+          >
+            Edit Profile
+          </button>
+        )}
+      </div>
+
+      <form onSubmit={handleSubmit(onSubmit)}>
+        <div className="space-y-6">
+          {/* Personal Information */}
+          <div className="border-b pb-4">
+            <h3 className="text-lg font-semibold text-gray-700 mb-4">Personal Information</h3>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Full Name <span className="text-red-500">*</span>
+                </label>
+                <input
+                  type="text"
+                  disabled={!isEditing}
+                  {...register('fullName', { required: 'Full name is required' })}
+                  className={`w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 ${
+                    !isEditing ? 'bg-gray-50' : ''
+                  }`}
+                />
+                {errors.fullName && (
+                  <p className="text-red-500 text-sm mt-1">{errors.fullName.message}</p>
+                )}
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">Email</label>
+                <input
+                  type="email"
+                  disabled
+                  {...register('email')}
+                  className="w-full px-3 py-2 border rounded-lg bg-gray-50"
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">Phone</label>
+                <input
+                  type="tel"
+                  disabled={!isEditing}
+                  {...register('phone', {
+                    pattern: {
+                      value: /^[0-9]{9,11}$/,
+                      message: 'Phone must be 9-11 digits',
+                    },
+                  })}
+                  className={`w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 ${
+                    !isEditing ? 'bg-gray-50' : ''
+                  }`}
+                />
+                {errors.phone && (
+                  <p className="text-red-500 text-sm mt-1">{errors.phone.message}</p>
+                )}
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">Gender</label>
+                <select
+                  disabled={!isEditing}
+                  {...register('gender')}
+                  className={`w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 ${
+                    !isEditing ? 'bg-gray-50' : ''
+                  }`}
+                >
+                  <option value="">Select gender</option>
+                  <option value="MALE">Male</option>
+                  <option value="FEMALE">Female</option>
+                  <option value="OTHER">Other</option>
+                </select>
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">Birthday</label>
+                <input
+                  type="date"
+                  disabled={!isEditing}
+                  {...register('birthday')}
+                  className={`w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 ${
+                    !isEditing ? 'bg-gray-50' : ''
+                  }`}
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">Address</label>
+                <input
+                  type="text"
+                  disabled={!isEditing}
+                  {...register('address')}
+                  className={`w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 ${
+                    !isEditing ? 'bg-gray-50' : ''
+                  }`}
+                />
+              </div>
+            </div>
+          </div>
+
+          {/* Employment Information */}
+          <div className="border-b pb-4">
+            <h3 className="text-lg font-semibold text-gray-700 mb-4">Employment Information</h3>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Employee Code
+                </label>
+                <input
+                  type="text"
+                  disabled
+                  {...register('employeeCode')}
+                  className="w-full px-3 py-2 border rounded-lg bg-gray-50"
+                />
+                <p className="text-gray-500 text-xs mt-1">Assigned by system</p>
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">Status</label>
+                <input
+                  type="text"
+                  disabled
+                  value={profileData?.data?.isActive ? 'Active' : 'Inactive'}
+                  className="w-full px-3 py-2 border rounded-lg bg-gray-50"
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Shift Start Time
+                </label>
+                <input
+                  type="time"
+                  disabled={!isEditing}
+                  {...register('shiftStartTime')}
+                  className={`w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 ${
+                    !isEditing ? 'bg-gray-50' : ''
+                  }`}
+                />
+                <p className="text-gray-500 text-xs mt-1">Usually managed by admin</p>
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Shift End Time
+                </label>
+                <input
+                  type="time"
+                  disabled={!isEditing}
+                  {...register('shiftEndTime')}
+                  className={`w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 ${
+                    !isEditing ? 'bg-gray-50' : ''
+                  }`}
+                />
+                <p className="text-gray-500 text-xs mt-1">Usually managed by admin</p>
+              </div>
+            </div>
+          </div>
+
+          {/* Center Information */}
+          <div className="border-b pb-4">
+            <h3 className="text-lg font-semibold text-gray-700 mb-4">Center Assignment</h3>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">Center Name</label>
+                <input
+                  type="text"
+                  disabled
+                  {...register('centerName')}
+                  className="w-full px-3 py-2 border rounded-lg bg-gray-50"
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Center Address
+                </label>
+                <input
+                  type="text"
+                  disabled
+                  {...register('centerAddress')}
+                  className="w-full px-3 py-2 border rounded-lg bg-gray-50"
+                />
+              </div>
+            </div>
+            <p className="text-gray-500 text-sm mt-2">Center assignment is managed by admin</p>
+          </div>
+        </div>
+
+        {isEditing && (
+          <div className="flex justify-end space-x-3 mt-6">
+            <button
+              type="button"
+              onClick={handleCancel}
+              disabled={updateProfile.isPending}
+              className="px-6 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 transition-colors"
+            >
+              Cancel
+            </button>
+            <button
+              type="submit"
+              disabled={!isDirty || updateProfile.isPending}
+              className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:bg-gray-400 disabled:cursor-not-allowed transition-colors"
+            >
+              {updateProfile.isPending ? 'Saving...' : 'Save Changes'}
+            </button>
+          </div>
+        )}
+      </form>
+    </div>
+  );
+};
+
+export default CashierProfileForm;

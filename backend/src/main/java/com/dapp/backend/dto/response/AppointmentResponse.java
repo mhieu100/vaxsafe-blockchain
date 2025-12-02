@@ -1,6 +1,6 @@
 package com.dapp.backend.dto.response;
 
-import com.dapp.backend.enums.AppointmentEnum;
+import com.dapp.backend.enums.AppointmentStatus;
 import com.dapp.backend.enums.TimeSlotEnum;
 import lombok.Data;
 
@@ -18,7 +18,7 @@ public class AppointmentResponse {
     TimeSlotEnum desiredTimeSlot;
     String rescheduleReason;
     LocalDateTime rescheduledAt;
-    AppointmentEnum status;
+    AppointmentStatus status;
     Long bookingId;
     String patientName;
     String patientPhone;
@@ -27,8 +27,7 @@ public class AppointmentResponse {
     String vaccineName;
     Long centerId;
     String centerName;
-    
-    // Payment information
+
     Long paymentId;
     String paymentStatus;
     String paymentMethod;

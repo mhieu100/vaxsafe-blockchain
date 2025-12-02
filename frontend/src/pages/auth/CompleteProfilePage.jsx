@@ -9,11 +9,11 @@ import {
   Select,
   Typography,
 } from 'antd';
-import dayjs from 'dayjs';
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { callCompleteProfile } from '@/services/auth.service';
 import useAccountStore from '@/stores/useAccountStore';
+import { birthdayValidation } from '@/utils/birthdayValidation';
 
 const { Title, Text } = Typography;
 const { TextArea } = Input;
@@ -22,26 +22,48 @@ const CompleteProfilePage = () => {
   const navigate = useNavigate();
   const [form] = Form.useForm();
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isReady, setIsReady] = useState(false);
   const { setUserLoginInfo, isActive, isAuthenticated, user } = useAccountStore();
 
   useEffect(() => {
+    // Wait a bit for state to settle after navigation
+    const timer = setTimeout(() => {
+      setIsReady(true);
+    }, 100);
+
+    return () => clearTimeout(timer);
+  }, []);
+
+  useEffect(() => {
+    if (!isReady) return;
+
+    console.log('CompleteProfilePage useEffect:', {
+      isAuthenticated,
+      isActive,
+      user: user?.email,
+      role: user?.role,
+    });
+
     // If not authenticated, redirect to login
     if (!isAuthenticated) {
+      console.log('Not authenticated, redirect to login');
       navigate('/login');
       return;
     }
 
     // Only PATIENT role needs to complete profile
     if (user?.role && user.role !== 'PATIENT') {
+      console.log('Not PATIENT role, redirect to home');
       navigate('/');
       return;
     }
 
     // If profile is already complete, redirect to home
     if (isActive) {
+      console.log('Profile already active, redirect to home');
       navigate('/');
     }
-  }, [isAuthenticated, isActive, user, navigate]);
+  }, [isReady, isAuthenticated, isActive, user, navigate]);
 
   const onSubmit = async (values) => {
     try {
@@ -137,14 +159,14 @@ const CompleteProfilePage = () => {
             <Form.Item
               name="birthday"
               label="Date of Birth"
-              rules={[{ required: true, message: 'Please select your date of birth!' }]}
+              rules={birthdayValidation.getFormRules(true)}
             >
               <DatePicker
                 className="w-full"
                 size="large"
                 format="DD/MM/YYYY"
                 placeholder="Select date"
-                disabledDate={(current) => current && current > dayjs().endOf('day')}
+                disabledDate={birthdayValidation.disabledDate}
               />
             </Form.Item>
 

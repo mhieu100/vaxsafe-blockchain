@@ -9,6 +9,7 @@ import {
   PlusOutlined,
   UserOutlined,
 } from '@ant-design/icons';
+import { useQueryClient } from '@tanstack/react-query';
 import {
   Alert,
   Avatar,
@@ -38,14 +39,14 @@ const FamilyManagerTab = () => {
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [editingMember, setEditingMember] = useState(null);
   const [form] = Form.useForm();
-  const [_refreshKey, setRefreshKey] = useState(0);
+  const _queryClient = useQueryClient();
 
   const filter = {
     current: DEFAULT_PAGE,
     pageSize: DEFAULT_PAGE_SIZE,
   };
 
-  const { data, isLoading, error } = useFamilyMember(filter);
+  const { data, isLoading, error, refetch } = useFamilyMember(filter);
 
   const familyMembers =
     data?.result?.map((member, index) => ({
@@ -88,7 +89,7 @@ const FamilyManagerTab = () => {
     try {
       await callDeleteMember(memberId);
       message.success('Family member removed successfully');
-      setRefreshKey((prev) => prev + 1);
+      await refetch();
     } catch (_error) {
       message.error('Failed to remove family member. Please try again.');
     }
@@ -119,7 +120,7 @@ const FamilyManagerTab = () => {
 
       setIsModalVisible(false);
       form.resetFields();
-      setRefreshKey((prev) => prev + 1);
+      await refetch();
     } catch (_error) {
       message.error(
         editingMember ? 'Failed to update family member' : 'Failed to add family member'
@@ -331,12 +332,8 @@ const FamilyManagerTab = () => {
               <Input placeholder="Enter full name" />
             </Form.Item>
 
-            <Form.Item
-              name="identityNumber"
-              label="Identity Number"
-              rules={[{ required: true, message: 'Please enter identity number' }]}
-            >
-              <Input placeholder="Enter full identity number" />
+            <Form.Item name="identityNumber" label="Identity Number">
+              <Input placeholder="Enter full identity number (optional)" />
             </Form.Item>
 
             <Form.Item

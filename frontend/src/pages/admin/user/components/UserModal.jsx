@@ -60,19 +60,18 @@ const ModalUser = (props) => {
   }, [openModal, dataInit, form]);
 
   const submitUser = async (valuesForm) => {
-    const { fullName, email, phoneNumber, birthday, address, centerName } = valuesForm;
+    const { fullName, email, phoneNumber, birthday, address } = valuesForm;
 
     try {
-      if (dataInit?.walletAddress) {
-        // Update user
+      if (dataInit?.id) {
+        // Update user - map phoneNumber to phone for backend
         const res = await callUpdateUser(
-          dataInit.walletAddress,
+          dataInit.id,
           fullName,
           email,
-          phoneNumber,
+          phoneNumber, // frontend uses phoneNumber
           birthday,
-          address,
-          centerName
+          address
         );
 
         if (res.data) {

@@ -21,14 +21,10 @@ public class Patient {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     long id;
-    String address;
-    String phone;
-    @JsonFormat(pattern = "yyyy-MM-dd")
-    LocalDate birthday;
-    @Enumerated(EnumType.STRING)
-    Gender gender;
+    
     @Column(unique = true)
     String identityNumber;
+    
     @Enumerated(EnumType.STRING)
     BloodType bloodType;
     Double heightCm;
@@ -36,7 +32,7 @@ public class Patient {
     String occupation;
     String lifestyleNotes;
     String insuranceNumber;
-    boolean consentForAIAnalysis = false;
+    boolean consentForAIAnalysis;
 
     @OneToOne
     @JoinColumn(name = "user_id")

@@ -2,6 +2,7 @@ import {
   CalendarOutlined,
   CheckCircleOutlined,
   ClockCircleOutlined,
+  FileTextOutlined,
   HeartOutlined,
   HistoryOutlined,
   MedicineBoxOutlined,
@@ -60,6 +61,11 @@ const ProfileSidebar = ({
       icon: <SafetyCertificateOutlined />,
       label: 'Vaccine Passport',
       className: 'bg-gradient-to-r from-purple-50 to-blue-50',
+    },
+    {
+      key: '7',
+      icon: <FileTextOutlined />,
+      label: 'Vaccine Records',
     },
   ];
 

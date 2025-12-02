@@ -79,7 +79,7 @@ public class SecurityConfiguration {
 
         String[] whiteList = {
                 "/", "/auth/login/password", "/auth/refresh", "/auth/register", "/auth/complete-profile", "/auth/complete-google-profile", "/storage/**","/email/**", "/payments/vnpay/return", "/payments/paypal/success", "/payments/paypal/cancel", "/api/v1/hello",
-                "/oauth2/**", "/login/oauth2/**"
+                "/oauth2/**", "/login/oauth2/**", "/api/test/**", "/api/reminders/**"
         };
         http
                 .csrf(AbstractHttpConfigurer::disable)
@@ -101,6 +101,8 @@ public class SecurityConfiguration {
                                 .jwtAuthenticationConverter(jwtAuthenticationConverter()))
                         .authenticationEntryPoint(customAuthenticationEntryPoint))
                 .formLogin(AbstractHttpConfigurer::disable)
+                .exceptionHandling(exception -> exception
+                        .authenticationEntryPoint(customAuthenticationEntryPoint)) // Handle auth failures globally
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED));
         http.addFilterBefore(new IgnoreExpiredJwtFilter(),
                 BearerTokenAuthenticationFilter.class);

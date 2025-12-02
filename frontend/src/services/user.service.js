@@ -4,22 +4,14 @@ import apiClient from '../services/apiClient';
 Module User
  */
 
-export const callUpdateUser = (
-  walletAddress,
-  fullname,
-  email,
-  phoneNumber,
-  birthday,
-  address,
-  centerName
-) => {
-  return apiClient.put(`/users/${walletAddress}`, {
-    fullname,
+export const callUpdateUser = (id, fullName, email, phone, birthday, address) => {
+  return apiClient.put('/users', {
+    id,
+    fullName,
     email,
-    phoneNumber,
+    phone,
     birthday,
     address,
-    centerName,
   });
 };
 

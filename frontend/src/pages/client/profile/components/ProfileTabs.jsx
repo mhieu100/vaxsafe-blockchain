@@ -1,5 +1,6 @@
 import {
   CalendarOutlined,
+  FileTextOutlined,
   HeartOutlined,
   HistoryOutlined,
   SafetyCertificateOutlined,
@@ -13,6 +14,7 @@ import FamilyManagerTab from './FamilyManagerTab';
 import HealthRemindersTab from './HealthRemindersTab';
 import VaccinationHistoryTab from './VaccinationHistoryTab';
 import VaccinePassportTab from './VaccinePassportTab';
+import VaccineRecordTab from './VaccineRecordTab';
 
 const { Title } = Typography;
 
@@ -47,6 +49,11 @@ const ProfileTabs = ({ activeTab, editMode, setEditMode }) => {
       title: 'Vaccine Passport',
       icon: <SafetyCertificateOutlined className="text-xl" />,
       content: <VaccinePassportTab />,
+    },
+    7: {
+      title: 'Vaccine Records',
+      icon: <FileTextOutlined className="text-xl" />,
+      content: <VaccineRecordTab />,
     },
   };
 

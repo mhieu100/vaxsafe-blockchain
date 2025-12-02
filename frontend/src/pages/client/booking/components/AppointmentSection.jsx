@@ -57,7 +57,20 @@ const AppointmentSection = ({ bookingForm, vaccine, setCurrentStep, setBookingDa
 
   const handleBookingNext = async () => {
     try {
-      await bookingForm.validateFields();
+      const values = await bookingForm.validateFields();
+
+      // Update booking data with all form values
+      if (setBookingData) {
+        setBookingData((prev) => ({
+          ...prev,
+          appointmentDate: values.appointmentDate,
+          appointmentTime: values.appointmentTime,
+          appointmentCenter: values.appointmentCenter,
+          bookingFor: values.bookingFor || 'self',
+          familyMemberId: values.bookingFor === 'family' ? values.familyMemberId : null,
+        }));
+      }
+
       setCurrentStep(1);
     } catch (_error) {
       message.error('Vui lòng điền đầy đủ thông tin');

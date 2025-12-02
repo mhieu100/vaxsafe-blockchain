@@ -12,6 +12,7 @@ import { useTranslation } from 'react-i18next';
 import { Link, useNavigate } from 'react-router-dom';
 import { changeLanguage } from '../../i18n';
 import { callRegister } from '../../services/auth.service';
+import useAccountStore from '../../stores/useAccountStore';
 
 const BACKEND_URL = import.meta.env.VITE_BACKEND_URL || 'http://localhost:8080';
 
@@ -22,6 +23,7 @@ const Register = () => {
   const navigate = useNavigate();
   const [form] = Form.useForm();
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const { setUserLoginInfo } = useAccountStore();
 
   const languageItems = [
     {
@@ -57,8 +59,28 @@ const Register = () => {
       const response = await callRegister(payload);
 
       if (response?.data) {
+        const userData = response.data.user;
+        const token = response.data.accessToken;
+
+        console.log('Register response:', {
+          userData,
+          isActive: userData.isActive,
+          role: userData.role,
+        });
+
+        // Store token in localStorage
+        localStorage.setItem('token', token);
+
+        // Update Zustand store with user data
+        setUserLoginInfo(userData);
+
         message.success(t('auth.register.registerSuccess'));
-        navigate('/login');
+
+        console.log('Navigating to /complete-profile');
+        // Use setTimeout to ensure state is updated before navigation
+        setTimeout(() => {
+          navigate('/complete-profile', { replace: true });
+        }, 100);
       } else {
         message.error(response?.error || t('auth.register.registerFailed'));
       }
@@ -120,7 +142,10 @@ const Register = () => {
               name="fullName"
               label={t('auth.register.fullName')}
               rules={[
-                { required: true, message: t('auth.register.fullNameRequired') },
+                {
+                  required: true,
+                  message: t('auth.register.fullNameRequired'),
+                },
                 { min: 2, message: t('auth.register.fullNameMinLength') },
               ]}
             >
@@ -145,7 +170,10 @@ const Register = () => {
               name="password"
               label={t('auth.register.password')}
               rules={[
-                { required: true, message: t('auth.register.passwordRequired') },
+                {
+                  required: true,
+                  message: t('auth.register.passwordRequired'),
+                },
                 {
                   min: 8,
                   message: t('auth.register.passwordMinLength'),
@@ -163,7 +191,10 @@ const Register = () => {
               label={t('auth.register.confirmPassword')}
               dependencies={['password']}
               rules={[
-                { required: true, message: t('auth.register.confirmPasswordRequired') },
+                {
+                  required: true,
+                  message: t('auth.register.confirmPasswordRequired'),
+                },
                 ({ getFieldValue }) => ({
                   validator(_, value) {
                     if (!value || getFieldValue('password') === value) {

@@ -42,7 +42,7 @@ public class DoctorAvailableSlot {
     @Builder.Default
     SlotStatus status = SlotStatus.AVAILABLE;
 
-    @OneToOne
+    @OneToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     @JoinColumn(name = "appointment_id")
     Appointment appointment;
 

@@ -8,12 +8,15 @@ const App = () => {
   const { fetchAccount } = useAccountStore();
 
   useEffect(() => {
-    // Skip fetchAccount if user is on OAuth callback or complete-profile page
     const path = window.location.pathname;
+    console.log('App.jsx useEffect, path:', path);
+
     if (path === '/oauth2/callback' || path === '/complete-profile') {
+      console.log('Skipping fetchAccount for', path);
       return;
     }
 
+    console.log('Calling fetchAccount');
     fetchAccount();
   }, [fetchAccount]);
 

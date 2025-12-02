@@ -12,8 +12,11 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.web.bind.annotation.*;
 
 import com.dapp.backend.annotation.ApiMessage;
@@ -38,17 +41,23 @@ public class AuthController {
     @PostMapping("/login/password")
     @ApiMessage("Login patient")
     public ResponseEntity<LoginResponse> login(@Valid @RequestBody LoginRequest request) throws AppException {
-        LoginResponse response = this.authService.login(request);
-        String refreshToken = this.jwtUtil.createRefreshToken(request.getUsername());
-        this.authService.updateUserToken(refreshToken, request.getUsername());
-        ResponseCookie cookie = ResponseCookie
-                .from("refresh_token", refreshToken)
-                .httpOnly(true)
-                .secure(true)
-                .path("/")
-                .maxAge(refreshTokenExpiration)
-                .build();
-        return ResponseEntity.ok().header(HttpHeaders.SET_COOKIE, cookie.toString()).body(response);
+        try {
+            LoginResponse response = this.authService.login(request);
+            String refreshToken = this.jwtUtil.createRefreshToken(request.getUsername());
+            this.authService.updateUserToken(refreshToken, request.getUsername());
+            ResponseCookie cookie = ResponseCookie
+                    .from("refresh_token", refreshToken)
+                    .httpOnly(true)
+                    .secure(true)
+                    .path("/")
+                    .maxAge(refreshTokenExpiration)
+                    .build();
+            return ResponseEntity.ok().header(HttpHeaders.SET_COOKIE, cookie.toString()).body(response);
+        } catch (BadCredentialsException e) {
+            throw new AppException("Invalid username or password");
+        } catch (AuthenticationException e) {
+            throw new AppException("Authentication failed: " + e.getMessage());
+        }
     }
 
     @PostMapping("/update-password")
@@ -60,9 +69,38 @@ public class AuthController {
 
     @PostMapping("/register")
     @ApiMessage("Register new patient")
-    public ResponseEntity<RegisterPatientResponse> register(@Valid @RequestBody RegisterPatientRequest request)
+    public ResponseEntity<LoginResponse> register(@Valid @RequestBody RegisterPatientRequest request)
             throws AppException {
-        return ResponseEntity.ok(authService.register(request));
+        RegisterPatientResponse registerResponse = authService.register(request);
+        
+        // Generate tokens for immediate login after registration
+        String accessToken = jwtUtil.createAccessToken(registerResponse.getEmail());
+        String refreshToken = jwtUtil.createRefreshToken(registerResponse.getEmail());
+        authService.updateUserToken(refreshToken, registerResponse.getEmail());
+        
+        // Create login response with tokens
+        LoginResponse.UserLogin userLogin = LoginResponse.UserLogin.builder()
+                .id(registerResponse.getId())
+                .avatar(registerResponse.getAvatar())
+                .fullName(registerResponse.getFullName())
+                .email(registerResponse.getEmail())
+                .role(registerResponse.getRole())
+                .build();
+        
+        LoginResponse loginResponse = LoginResponse.builder()
+                .accessToken(accessToken)
+                .user(userLogin)
+                .build();
+        
+        ResponseCookie cookie = ResponseCookie
+                .from("refresh_token", refreshToken)
+                .httpOnly(true)
+                .secure(true)
+                .path("/")
+                .maxAge(refreshTokenExpiration)
+                .build();
+        
+        return ResponseEntity.ok().header(HttpHeaders.SET_COOKIE, cookie.toString()).body(loginResponse);
     }
 
     @GetMapping("/refresh")

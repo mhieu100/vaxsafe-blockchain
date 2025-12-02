@@ -50,11 +50,6 @@ const UserPage = () => {
       },
     },
     {
-      title: 'Ví',
-      dataIndex: 'walletAddress',
-      hideInSearch: true,
-    },
-    {
       title: 'Họ tên',
       dataIndex: 'fullName',
       sorter: true,

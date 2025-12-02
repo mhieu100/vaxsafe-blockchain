@@ -23,12 +23,41 @@ public class UserMapper {
                 .avatar(user.getAvatar())
                 .fullName(user.getFullName())
                 .email(user.getEmail())
-                .walletAddress(user.getWalletAddress())
                 .role(mapRole(user.getRole()))
                 .patientProfile(mapPatientProfile(user.getPatientProfile()))
-                .center(mapCenter(user.getCenter()))
+                .center(getCenterInfo(user))
                 .isDeleted(user.isDeleted())
                 .build();
+    }
+
+    /**
+     * Get center info from Doctor or Cashier profile
+     */
+    public static UserResponse.CenterInfo getCenterInfo(User user) {
+        // Check if user is a doctor
+        if (user.getDoctor() != null && user.getDoctor().getCenter() != null) {
+            return mapCenter(user.getDoctor().getCenter());
+        }
+        // Check if user is a cashier
+        if (user.getCashier() != null && user.getCashier().getCenter() != null) {
+            return mapCenter(user.getCashier().getCenter());
+        }
+        return null;
+    }
+
+    /**
+     * Get Center entity from User (for services that need Center object)
+     */
+    public static Center getCenter(User user) {
+        // Check if user is a doctor
+        if (user.getDoctor() != null) {
+            return user.getDoctor().getCenter();
+        }
+        // Check if user is a cashier
+        if (user.getCashier() != null) {
+            return user.getCashier().getCenter();
+        }
+        return null;
     }
 
     /**
@@ -79,10 +108,10 @@ public class UserMapper {
 
         return UserResponse.PatientInfo.builder()
                 .id(patient.getId())
-                .address(patient.getAddress())
-                .phone(patient.getPhone())
-                .birthday(patient.getBirthday())
-                .gender(patient.getGender() != null ? patient.getGender().name() : null)
+                .address(patient.getUser().getAddress())
+                .phone(patient.getUser().getPhone())
+                .birthday(patient.getUser().getBirthday())
+                .gender(patient.getUser().getGender() != null ? patient.getUser().getGender().name() : null)
                 .identityNumber(patient.getIdentityNumber())
                 .bloodType(patient.getBloodType() != null ? patient.getBloodType().name() : null)
                 .heightCm(patient.getHeightCm())

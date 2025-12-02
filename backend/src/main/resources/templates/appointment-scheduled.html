@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lịch hẹn đã được xác nhận</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f4f4f4;
+        }
+        .container {
+            background-color: #ffffff;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px 20px;
+            text-align: center;
+        }
+        .header h1 {
+            margin: 0;
+            font-size: 28px;
+        }
+        .content {
+            padding: 30px 20px;
+        }
+        .success-icon {
+            text-align: center;
+            font-size: 60px;
+            margin: 20px 0;
+        }
+        .greeting {
+            font-size: 18px;
+            margin-bottom: 20px;
+            color: #667eea;
+        }
+        .info-box {
+            background-color: #f8f9fa;
+            border-left: 4px solid #667eea;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 5px;
+        }
+        .info-section {
+            margin: 25px 0;
+        }
+        .section-title {
+            font-weight: bold;
+            color: #667eea;
+            font-size: 16px;
+            margin-bottom: 15px;
+            padding-bottom: 5px;
+            border-bottom: 2px solid #667eea;
+        }
+        .info-item {
+            display: flex;
+            margin: 10px 0;
+            align-items: center;
+        }
+        .info-label {
+            font-weight: bold;
+            min-width: 150px;
+            color: #555;
+        }
+        .info-value {
+            color: #333;
+        }
+        .highlight {
+            color: #667eea;
+            font-weight: bold;
+        }
+        .status-badge {
+            display: inline-block;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 8px 20px;
+            border-radius: 20px;
+            font-weight: bold;
+            margin: 15px 0;
+        }
+        .footer {
+            background-color: #f8f9fa;
+            padding: 20px;
+            text-align: center;
+            font-size: 12px;
+            color: #666;
+        }
+        .note-box {
+            background-color: #fff3cd;
+            border-left: 4px solid #ffc107;
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>✅ Lịch hẹn đã được xác nhận</h1>
+        </div>
+        
+        <div class="content">
+            <div class="success-icon">🎉</div>
+            
+            <p class="greeting">Xin chào <span class="highlight" th:text="${patientName}">Nguyễn Văn A</span>,</p>
+            
+            <p>Lịch hẹn tiêm chủng của bạn đã được xác nhận và đã sẵn sàng!</p>
+            
+            <div style="text-align: center;">
+                <span class="status-badge">✓ ĐÃ XÁC NHẬN</span>
+            </div>
+            
+            <!-- Thông tin lịch hẹn -->
+            <div class="info-box">
+                <div class="info-section">
+                    <div class="section-title">📋 THÔNG TIN LỊCH HẸN</div>
+                    <div class="info-item">
+                        <span class="info-label">🆔 Mã lịch hẹn:</span>
+                        <span class="info-value highlight" th:text="${appointmentId}">12345</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">💉 Vaccine:</span>
+                        <span class="info-value" th:text="${vaccineName}">COVID-19 Pfizer</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">💊 Mũi số:</span>
+                        <span class="info-value" th:text="${doseNumber}">1</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">📅 Ngày hẹn:</span>
+                        <span class="info-value highlight" th:text="${appointmentDate}">15/12/2024</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">🕐 Khung giờ:</span>
+                        <span class="info-value" th:text="${timeSlot}">08:00 - 10:00</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">🏥 Trung tâm:</span>
+                        <span class="info-value" th:text="${centerName}">Trung tâm Y tế Quận 1</span>
+                    </div>
+                    <div class="info-item" th:if="${centerAddress}">
+                        <span class="info-label">📍 Địa chỉ:</span>
+                        <span class="info-value" th:text="${centerAddress}">123 Đường ABC, Quận 1</span>
+                    </div>
+                </div>
+                
+                <!-- Thông tin nhân viên -->
+                <div class="info-section">
+                    <div class="section-title">👥 NHÂN VIÊN PHỤ TRÁCH</div>
+                    <div class="info-item" th:if="${cashierName}">
+                        <span class="info-label">👨‍💼 Thu ngân:</span>
+                        <span class="info-value" th:text="${cashierName}">Nguyễn Thị B</span>
+                    </div>
+                    <div class="info-item" th:if="${cashierPhone}">
+                        <span class="info-label">📞 SĐT Thu ngân:</span>
+                        <span class="info-value" th:text="${cashierPhone}">0901234567</span>
+                    </div>
+                    <div class="info-item" th:if="${doctorName}">
+                        <span class="info-label">👨‍⚕️ Bác sĩ:</span>
+                        <span class="info-value" th:text="${doctorName}">BS. Trần Văn C</span>
+                    </div>
+                    <div class="info-item" th:if="${doctorPhone}">
+                        <span class="info-label">📞 SĐT Bác sĩ:</span>
+                        <span class="info-value" th:text="${doctorPhone}">0907654321</span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="note-box">
+                <strong>📌 Lưu ý quan trọng:</strong>
+                <ul style="margin: 10px 0; padding-left: 20px;">
+                    <li>Vui lòng đến đúng giờ theo lịch hẹn</li>
+                    <li>Mang theo CMND/CCCD và sổ tiêm chủng (nếu có)</li>
+                    <li>Ăn uống đầy đủ trước khi tiêm</li>
+                    <li>Thông báo cho nhân viên y tế nếu bạn đang có bất kỳ triệu chứng bệnh nào</li>
+                </ul>
+            </div>
+            
+            <p style="margin-top: 20px;">
+                Chúng tôi sẽ gửi email nhắc nhở trước ngày hẹn. Nếu cần hỗ trợ, vui lòng liên hệ:
+            </p>
+            <p style="text-align: center;">
+                <strong>📞 Hotline: 1900-xxxx</strong><br>
+                <strong>📧 Email: support@vaxsafe.com</strong>
+            </p>
+        </div>
+        
+        <div class="footer">
+            <p><strong>VaxSafe - Hệ thống quản lý tiêm chủng</strong></p>
+            <p>© <span th:text="${year}">2024</span> VaxSafe. All rights reserved.</p>
+        </div>
+    </div>
+</body>
+</html>

@@ -3,6 +3,7 @@ package com.dapp.backend.service;
 import com.dapp.backend.dto.request.FamilyMemberRequest;
 import com.dapp.backend.dto.response.FamilyMemberResponse;
 import com.dapp.backend.dto.response.Pagination;
+import com.dapp.backend.enums.IdentityType;
 import com.dapp.backend.exception.AppException;
 import com.dapp.backend.model.User;
 import com.dapp.backend.model.FamilyMember;
@@ -11,6 +12,7 @@ import com.dapp.backend.repository.FamilyMemberRepository;
 
 import com.dapp.backend.service.spec.FamilyMemberSpecifications;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
@@ -24,10 +26,13 @@ import java.util.stream.Collectors;
 @Service
 @Transactional
 @RequiredArgsConstructor
+@Slf4j
 public class FamilyMemberService {
 
     private final AuthService authService;
     private final FamilyMemberRepository familyMemberRepository;
+    private final IdentityService identityService;
+    private final BlockchainService blockchainService;
 
     public FamilyMember toEntity(FamilyMemberRequest request) {
         FamilyMember entity = new FamilyMember();
@@ -65,7 +70,54 @@ public class FamilyMemberService {
         User user = authService.getCurrentUserLogin();
         FamilyMember familyMember = toEntity(request);
         familyMember.setUser(user);
+        
+        // Generate blockchain identity BEFORE saving (to satisfy NOT NULL constraint)
+        try {
+            // Determine identity type based on date of birth
+            IdentityType idType = identityService.determineIdentityType(familyMember.getDateOfBirth());
+            String identityHash = identityService.generateFamilyMemberIdentityHash(familyMember, "");
+            String did = identityService.generateDID(identityHash, idType);
+            String ipfsDataHash = identityService.generateFamilyMemberDataJson(familyMember);
+            
+            familyMember.setBlockchainIdentityHash(identityHash);
+            familyMember.setDid(did);
+            familyMember.setIpfsDataHash(ipfsDataHash);
+            
+            log.debug("Generated identity for family member: {} (hash: {}, DID: {})", 
+                familyMember.getFullName(), identityHash, did);
+        } catch (Exception e) {
+            log.error("Error generating blockchain identity for family member: {}", familyMember.getFullName(), e);
+            throw new AppException("Failed to generate blockchain identity for family member: " + e.getMessage());
+        }
+        
+        // Save to database with blockchain identity
         FamilyMember savedMember = familyMemberRepository.save(familyMember);
+        
+        // Sync to blockchain (async, non-blocking)
+        try {
+            if (blockchainService.isBlockchainServiceAvailable()) {
+                IdentityType idType = identityService.determineIdentityType(savedMember.getDateOfBirth());
+                var response = blockchainService.createIdentity(
+                    savedMember.getBlockchainIdentityHash(),
+                    savedMember.getDid(),
+                    idType,
+                    savedMember.getIpfsDataHash(),
+                    "family-member-" + savedMember.getFullName()
+                );
+                if (response != null && response.isSuccess()) {
+                    log.info("Blockchain identity created for family member: {} (txHash: {})",
+                        savedMember.getFullName(), response.getData().getTransactionHash());
+                } else {
+                    log.warn("Failed to create blockchain identity for family member: {}", savedMember.getFullName());
+                }
+            } else {
+                log.warn("Blockchain service not available, identity saved to database only");
+            }
+        } catch (Exception e) {
+            log.error("Error syncing blockchain identity for family member: {}", savedMember.getFullName(), e);
+            // Continue - family member is already saved in database
+        }
+        
         return toResponse(savedMember);
     }
 

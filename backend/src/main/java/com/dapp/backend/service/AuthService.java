@@ -3,15 +3,17 @@ package com.dapp.backend.service;
 import com.dapp.backend.dto.request.*;
 import com.dapp.backend.dto.response.LoginResponse;
 import com.dapp.backend.dto.response.RegisterPatientResponse;
+import com.dapp.backend.enums.IdentityType;
 import com.dapp.backend.exception.AppException;
 import com.dapp.backend.model.Center;
 import com.dapp.backend.model.Patient;
 import com.dapp.backend.model.Role;
 import com.dapp.backend.repository.PatientRepository;
+import com.dapp.backend.repository.RoleRepository;
+import com.dapp.backend.repository.UserRepository;
 import com.dapp.backend.security.JwtUtil;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.ResponseEntity;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.core.Authentication;
@@ -19,16 +21,13 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.RestTemplate;
 
 import com.dapp.backend.model.User;
-import com.dapp.backend.repository.RoleRepository;
-import com.dapp.backend.repository.UserRepository;
 
-import java.util.Map;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class AuthService {
     private final AuthenticationManagerBuilder authenticationManagerBuilder;
     private final UserRepository userRepository;
@@ -36,11 +35,20 @@ public class AuthService {
     private final RoleRepository roleRepository;
     private final PasswordEncoder passwordEncoder;
     private final JwtUtil jwtUtil;
+    private final IdentityService identityService;
+    private final BlockchainService blockchainService;
 
 
     private LoginResponse.UserLogin toUserLogin(User user) {
         Patient patient = user.getPatientProfile();
-        Center center = user.getCenter();
+        
+        // Get center from Doctor or Cashier profile
+        Center center = null;
+        if (user.getDoctor() != null) {
+            center = user.getDoctor().getCenter();
+        } else if (user.getCashier() != null) {
+            center = user.getCashier().getCenter();
+        }
 
         return LoginResponse.UserLogin.builder()
                 .id(user.getId())
@@ -48,10 +56,11 @@ public class AuthService {
                 .fullName(user.getFullName())
                 .email(user.getEmail())
                 .role(user.getRole() != null ? user.getRole().getName() : null)
-                .phone(patient != null ? patient.getPhone() : null)
-                .birthday(patient != null ? patient.getBirthday() : null)
-                .gender(patient != null && patient.getGender() != null ? patient.getGender().name() : null)
-                .address(patient != null ? patient.getAddress() : null)
+                .isActive(user.isActive())
+                .phone(user.getPhone())
+                .birthday(user.getBirthday())
+                .gender(user.getGender() != null ? user.getGender().name() : null)
+                .address(user.getAddress())
                 .identityNumber(patient != null ? patient.getIdentityNumber() : null)
                 .bloodType(patient != null && patient.getBloodType() != null ? patient.getBloodType().name() : null)
                 .heightCm(patient != null ? patient.getHeightCm() : null)
@@ -89,7 +98,7 @@ public class AuthService {
         }
 
         User user = User.builder()
-                .avatar("http://localhost:8080/storage/user/default.png")
+                .avatar("https://res-console.cloudinary.com/dcwzhi4tp/thumbnails/v1/image/upload/v1763975729/dmgxY3h1aWtkYmh5aXFqeGJnaG0=/drilldown")
                 .fullName(request.getUser().getFullName())
                 .email(request.getUser().getEmail())
                 .password(passwordEncoder.encode(request.getUser().getPassword()))
@@ -101,15 +110,37 @@ public class AuthService {
                 .orElseThrow(() -> new AppException("Role PATIENT not found"));
         user.setRole(role);
 
-        userRepository.save(user);
+        // Save user first to get ID
+        User savedUser = userRepository.save(user);
+        
+        // Generate blockchain identity hash (deterministic, based on email + name)
+        // Will be synced to blockchain later when profile is completed (has birthday)
+        try {
+            String identityHash = identityService.generateUserIdentityHash(savedUser);
+            String did = identityService.generateDID(identityHash, IdentityType.ADULT);
+            String ipfsDataHash = identityService.generateIdentityDataJson(savedUser);
+            
+            savedUser.setBlockchainIdentityHash(identityHash);
+            savedUser.setDid(did);
+            savedUser.setIpfsDataHash(ipfsDataHash);
+            
+            // Save to database (blockchain sync will happen in completeProfile)
+            savedUser = userRepository.save(savedUser);
+            
+            log.info("Identity hash generated for user: {} (will sync to blockchain after profile completion)", 
+                savedUser.getEmail());
+        } catch (Exception e) {
+            log.error("Error generating identity hash for user: {}", savedUser.getEmail(), e);
+            // Continue - user is still created in database
+        }
 
         return RegisterPatientResponse.builder()
-                .id(user.getId())
-                .avatar(user.getAvatar())
-                .fullName(user.getFullName())
-                .email(user.getEmail())
-                .role(user.getRole().getName())
-                .isActive(user.isActive())
+                .id(savedUser.getId())
+                .avatar(savedUser.getAvatar())
+                .fullName(savedUser.getFullName())
+                .email(savedUser.getEmail())
+                .role(savedUser.getRole().getName())
+                .isActive(savedUser.isActive())
                 .build();
     }
 
@@ -117,11 +148,14 @@ public class AuthService {
         User user = getCurrentUserLogin();
         user.setFullName(request.getUser().getFullName());
 
+        // Update common fields on user
+        user.setAddress(request.getPatientProfile().getAddress());
+        user.setPhone(request.getPatientProfile().getPhone());
+        user.setBirthday(request.getPatientProfile().getBirthday());
+        user.setGender(request.getPatientProfile().getGender());
+
+        // Update patient-specific fields
         Patient patient = user.getPatientProfile();
-        patient.setAddress(request.getPatientProfile().getAddress());
-        patient.setPhone(request.getPatientProfile().getPhone());
-        patient.setBirthday(request.getPatientProfile().getBirthday());
-        patient.setGender(request.getPatientProfile().getGender());
         patient.setIdentityNumber(request.getPatientProfile().getIdentityNumber());
         patient.setBloodType(request.getPatientProfile().getBloodType());
         patient.setHeightCm(request.getPatientProfile().getHeightCm());
@@ -204,11 +238,14 @@ public class AuthService {
             throw new AppException("Identity number already exists");
         }
 
+        // Set common fields on user
+        user.setPhone(request.getPatientProfile().getPhone());
+        user.setAddress(request.getPatientProfile().getAddress());
+        user.setBirthday(request.getPatientProfile().getBirthday());
+        user.setGender(request.getPatientProfile().getGender());
+
+        // Create patient profile with patient-specific fields
         Patient patient = Patient.builder()
-                .phone(request.getPatientProfile().getPhone())
-                .address(request.getPatientProfile().getAddress())
-                .birthday(request.getPatientProfile().getBirthday())
-                .gender(request.getPatientProfile().getGender())
                 .identityNumber(request.getPatientProfile().getIdentityNumber())
                 .bloodType(request.getPatientProfile().getBloodType())
                 .heightCm(request.getPatientProfile().getHeightCm())
@@ -242,11 +279,14 @@ public class AuthService {
             throw new AppException("Identity number already exists");
         }
 
+        // Set common fields on user
+        user.setAddress(request.getPatientProfile().getAddress());
+        user.setPhone(request.getPatientProfile().getPhone());
+        user.setBirthday(request.getPatientProfile().getBirthday());
+        user.setGender(request.getPatientProfile().getGender());
+
+        // Create patient profile with patient-specific fields
         Patient patient = Patient.builder()
-                .address(request.getPatientProfile().getAddress())
-                .phone(request.getPatientProfile().getPhone())
-                .birthday(request.getPatientProfile().getBirthday())
-                .gender(request.getPatientProfile().getGender())
                 .identityNumber(request.getPatientProfile().getIdentityNumber())
                 .bloodType(request.getPatientProfile().getBloodType())
                 .heightCm(request.getPatientProfile().getHeightCm())
@@ -260,7 +300,46 @@ public class AuthService {
 
         user.setPatientProfile(patient);
         user.setActive(true); // Activate account after completing profile
-        userRepository.save(user);
+        
+        // Update identity hash with birthday (regenerate with complete data)
+        // This ensures hash includes birthday for better uniqueness
+        try {
+            String updatedIdentityHash = identityService.generateUserIdentityHash(user);
+            String updatedDid = identityService.generateDID(updatedIdentityHash, IdentityType.ADULT);
+            String updatedIpfsDataHash = identityService.generateIdentityDataJson(user);
+            
+            user.setBlockchainIdentityHash(updatedIdentityHash);
+            user.setDid(updatedDid);
+            user.setIpfsDataHash(updatedIpfsDataHash);
+            
+            log.info("Updated identity hash with birthday for user: {}", user.getEmail());
+            
+            // Save to database first
+            user = userRepository.save(user);
+            
+            // Sync to blockchain (deterministic hash ensures no duplicate)
+            if (blockchainService.isBlockchainServiceAvailable()) {
+                var response = blockchainService.createIdentity(
+                    updatedIdentityHash,
+                    updatedDid,
+                    IdentityType.ADULT,
+                    updatedIpfsDataHash,
+                    user.getEmail()
+                );
+                if (response != null && response.isSuccess()) {
+                    log.info("Blockchain identity created for user: {} (txHash: {})", 
+                        user.getEmail(), response.getData().getTransactionHash());
+                } else {
+                    log.warn("Failed to create blockchain identity for user: {} - {}", 
+                        user.getEmail(), response != null ? response.getMessage() : "null response");
+                }
+            } else {
+                log.warn("Blockchain service not available, identity saved to database only");
+            }
+        } catch (Exception e) {
+            log.error("Error syncing blockchain identity for user: {}", user.getEmail(), e);
+            // Continue - profile is still completed
+        }
 
         return toUserLogin(user);
     }

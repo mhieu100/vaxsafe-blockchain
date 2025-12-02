@@ -27,9 +27,19 @@ public class FamilyMember {
 
     @Column(unique = true)
     String identityNumber;
+    
+    String birthCertificateNumber; 
 
     @Enumerated(EnumType.STRING)
     Gender gender;
+    
+    @Column(unique = true, nullable = false)
+    String blockchainIdentityHash;
+    
+    @Column(unique = true)
+    String did; 
+    
+    String ipfsDataHash; 
 
     @ManyToOne
     @JoinColumn(name = "user_id")

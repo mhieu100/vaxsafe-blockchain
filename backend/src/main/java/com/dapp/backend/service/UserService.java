@@ -7,6 +7,7 @@ import com.dapp.backend.dto.mapper.UserMapper;
 import com.dapp.backend.dto.request.UserRequest;
 import com.dapp.backend.dto.response.DoctorResponse;
 import com.dapp.backend.dto.response.UserResponse;
+import com.dapp.backend.model.Center;
 import com.dapp.backend.service.spec.UserSpecifications;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -14,6 +15,7 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import com.dapp.backend.exception.AppException;
+import com.dapp.backend.model.Patient;
 import com.dapp.backend.model.User;
 import com.dapp.backend.dto.response.Pagination;
 import com.dapp.backend.repository.UserRepository;
@@ -28,7 +30,8 @@ public class UserService {
 
     public Pagination getAllDoctorsOfCenter(Specification<User> specification, Pageable pageable) throws AppException {
         User user = authService.getCurrentUserLogin();
-        specification = Specification.where(specification).and(UserSpecifications.findByRole()).and(UserSpecifications.findByCenter(user.getCenter().getName()));
+        Center center = UserMapper.getCenter(user);
+        specification = Specification.where(specification).and(UserSpecifications.findByRole()).and(UserSpecifications.findByCenter(center != null ? center.getName() : null));
         specification = Specification.where(specification).and(UserSpecifications.findByRole());
         Page<User> page = userRepository.findAll(specification, pageable);
         Pagination pagination = new Pagination();
@@ -70,6 +73,13 @@ public class UserService {
 
         user.setEmail(request.getEmail());
         user.setFullName(request.getFullName());
+        
+        // Update common fields on user
+        if (request.getPhone() != null) {
+            user.setPhone(request.getPhone());
+            user.setBirthday(request.getBirthday());
+            user.setAddress(request.getAddress());
+        }
 
         // Use the new comprehensive mapper
         return UserMapper.toUserResponse(userRepository.save(user));

@@ -1,8 +1,14 @@
-import { CalendarOutlined, CheckCircleOutlined, ClockCircleOutlined } from '@ant-design/icons';
-import { Alert, Button, Card, Empty, Spin, Tag, Timeline, Typography } from 'antd';
+import {
+  CalendarOutlined,
+  CheckCircleOutlined,
+  ClockCircleOutlined,
+  CloseCircleOutlined,
+} from '@ant-design/icons';
+import { Alert, Button, Card, Empty, Modal, message, Spin, Tag, Timeline, Typography } from 'antd';
 import dayjs from 'dayjs';
 import { useEffect, useState } from 'react';
 import { RescheduleAppointmentModal } from '@/components/modal/appointment';
+import { callCancelAppointment } from '@/services/appointment.service';
 import { getMyBookings } from '@/services/booking.service';
 import { formatAppointmentTime } from '@/utils/appointment';
 
@@ -82,6 +88,43 @@ const AppointmentScheduleTab = () => {
 
   const handleRescheduleSuccess = () => {
     fetchBookings(); // Reload data after successful reschedule
+  };
+
+  const handleCancelAppointment = (appointment) => {
+    Modal.confirm({
+      title: 'Xác nhận hủy lịch hẹn',
+      content: (
+        <div>
+          <p>Bạn có chắc chắn muốn hủy lịch hẹn này?</p>
+          <div className="mt-2 p-2 bg-gray-50 rounded">
+            <p className="mb-1">
+              <strong>Vaccine:</strong> {appointment.vaccineName}
+            </p>
+            <p className="mb-1">
+              <strong>Mũi:</strong> {appointment.doseNumber}
+            </p>
+            <p className="mb-1">
+              <strong>Ngày hẹn:</strong> {dayjs(appointment.scheduledDate).format('DD/MM/YYYY')}
+            </p>
+            <p className="mb-0">
+              <strong>Trung tâm:</strong> {appointment.centerName}
+            </p>
+          </div>
+        </div>
+      ),
+      okText: 'Xác nhận hủy',
+      cancelText: 'Quay lại',
+      okButtonProps: { danger: true },
+      onOk: async () => {
+        try {
+          await callCancelAppointment(appointment.appointmentId);
+          message.success('Đã hủy lịch hẹn thành công');
+          fetchBookings(); // Reload data
+        } catch (error) {
+          message.error(error?.message || 'Không thể hủy lịch hẹn');
+        }
+      },
+    });
   };
 
   const allAppointments = bookings
@@ -205,20 +248,30 @@ const AppointmentScheduleTab = () => {
                     </div>
                   </div>
 
-                  {/* Reschedule button */}
+                  {/* Action buttons */}
                   {apt.appointmentStatus !== 'COMPLETED' &&
                     apt.appointmentStatus !== 'CANCELLED' &&
                     apt.appointmentStatus !== 'RESCHEDULE' &&
                     dayjs(apt.scheduledDate).isAfter(dayjs()) && (
-                      <Button
-                        type="link"
-                        size="small"
-                        icon={<CalendarOutlined />}
-                        onClick={() => handleReschedule(apt)}
-                        className="ml-2"
-                      >
-                        Đổi lịch
-                      </Button>
+                      <div className="flex flex-col gap-1 ml-2">
+                        <Button
+                          type="link"
+                          size="small"
+                          icon={<CalendarOutlined />}
+                          onClick={() => handleReschedule(apt)}
+                        >
+                          Đổi lịch
+                        </Button>
+                        <Button
+                          type="link"
+                          danger
+                          size="small"
+                          icon={<CloseCircleOutlined />}
+                          onClick={() => handleCancelAppointment(apt)}
+                        >
+                          Hủy lịch
+                        </Button>
+                      </div>
                     )}
                 </div>
               </div>

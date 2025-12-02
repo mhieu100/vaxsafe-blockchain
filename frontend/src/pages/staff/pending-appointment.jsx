@@ -141,7 +141,7 @@ const PendingAppointmentPage = () => {
       title: 'Ngày Đăng Ký',
       dataIndex: 'desiredDate',
       width: 160,
-      render: (text, record) => {
+      render: (_text, record) => {
         const dateToShow = record.desiredDate || record.scheduledDate;
         const timeSlotToShow = record.desiredTimeSlot || record.scheduledTimeSlot;
         const isUrgent = dateToShow && dayjs(dateToShow).diff(dayjs(), 'day') <= 1;
@@ -172,7 +172,7 @@ const PendingAppointmentPage = () => {
       title: 'Ngày Chính Thức',
       dataIndex: 'scheduledDate',
       width: 180,
-      render: (text, record) => {
+      render: (_text, record) => {
         const scheduledDate = record.scheduledDate;
         const actualTime = record.actualScheduledTime || record.actualDesiredTime;
         const isReschedule = record.status === 'RESCHEDULE';
@@ -217,9 +217,29 @@ const PendingAppointmentPage = () => {
       },
     },
     {
-      title: 'Trung Tâm',
+      title: 'Trung Tâm / Bác Sĩ',
       dataIndex: 'centerName',
-      width: 180,
+      width: 220,
+      render: (text, record) => {
+        const doctorName = record.doctorName;
+        return (
+          <Space direction="vertical" size={4}>
+            <Text strong>{text}</Text>
+            {doctorName ? (
+              <Space>
+                <UserOutlined style={{ color: '#52c41a', fontSize: 12 }} />
+                <Text type="secondary" style={{ fontSize: 12 }}>
+                  {doctorName}
+                </Text>
+              </Space>
+            ) : (
+              <Text type="secondary" style={{ fontSize: 12, fontStyle: 'italic' }}>
+                Chờ chỉ định bác sĩ...
+              </Text>
+            )}
+          </Space>
+        );
+      },
     },
     {
       title: 'Trạng Thái',
@@ -258,11 +278,7 @@ const PendingAppointmentPage = () => {
                     {getPaymentMethodDisplay(record.paymentMethod)}
                   </Text>
                 )}
-                {paymentDisplay.original && (
-                  <Text delete type="secondary" style={{ fontSize: 11 }}>
-                    {paymentDisplay.original.formatted}
-                  </Text>
-                )}
+
                 <Text strong style={{ fontSize: 14, color: '#1890ff' }}>
                   {paymentDisplay.display}
                 </Text>

@@ -1,11 +1,13 @@
 package com.dapp.backend.controller;
 
 import com.dapp.backend.annotation.ApiMessage;
+import com.dapp.backend.dto.mapper.UserMapper;
 import com.dapp.backend.dto.response.DoctorAvailableSlotResponse;
 import com.dapp.backend.dto.response.DoctorResponse;
 import com.dapp.backend.dto.response.DoctorScheduleResponse;
 import com.dapp.backend.dto.response.DoctorWithScheduleResponse;
 import com.dapp.backend.exception.AppException;
+import com.dapp.backend.model.Center;
 import com.dapp.backend.model.User;
 import com.dapp.backend.repository.UserRepository;
 import com.dapp.backend.service.DoctorScheduleService;
@@ -52,11 +54,12 @@ public class DoctorScheduleController {
         User currentUser = userRepository.findByEmail(userEmail)
             .orElseThrow(() -> new AppException("User not found"));
         
-        if (currentUser.getCenter() == null) {
+        Center center = UserMapper.getCenter(currentUser);
+        if (center == null) {
             throw new AppException("User is not assigned to any center");
         }
         
-        Long centerId = currentUser.getCenter().getCenterId();
+        Long centerId = center.getCenterId();
         LocalDate targetDate = date != null ? date : LocalDate.now();
         
         log.info("Getting doctors with schedule for center {} on {}", centerId, targetDate);

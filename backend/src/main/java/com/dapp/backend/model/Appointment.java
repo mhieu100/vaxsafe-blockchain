@@ -1,13 +1,29 @@
 package com.dapp.backend.model;
 
-import com.dapp.backend.enums.AppointmentEnum;
+import com.dapp.backend.enums.AppointmentStatus;
 import com.dapp.backend.enums.TimeSlotEnum;
-import jakarta.persistence.*;
-import lombok.*;
+
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToOne;
+import jakarta.persistence.Table;
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 import lombok.experimental.FieldDefaults;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 
 @Entity
 @Table(name = "appointments")
@@ -16,7 +32,7 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @NoArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class Appointment {
+public class Appointment extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     Long id;
@@ -46,23 +62,22 @@ public class Appointment {
     
     @Enumerated(EnumType.STRING)
     @Column(name = "scheduled_time_slot")
-    TimeSlotEnum scheduledTimeSlot; // Khung giờ dự kiến (2 tiếng, vd: 7:00-9:00)
+    TimeSlotEnum scheduledTimeSlot; 
     
     @Column(name = "actual_scheduled_time")
-    java.time.LocalTime actualScheduledTime; // Giờ chính thức cụ thể (15 phút, do Cashier set)
+    LocalTime actualScheduledTime; 
 
-    // Fields for reschedule functionality
     LocalDate desiredDate;
     
     @Enumerated(EnumType.STRING)
     @Column(name = "desired_time_slot")
-    TimeSlotEnum desiredTimeSlot; // Khung giờ muốn đổi
-    
-    
+    TimeSlotEnum desiredTimeSlot;
     
     String rescheduleReason;
     LocalDateTime rescheduledAt;
 
     @Enumerated(EnumType.STRING)
-    AppointmentEnum status;
+    AppointmentStatus status;
+    
+    LocalDate vaccinationDate; 
 }

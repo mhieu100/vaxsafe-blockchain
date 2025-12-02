@@ -12,7 +12,6 @@ import org.springframework.transaction.annotation.Transactional;
 import com.dapp.backend.model.User;
 
 public interface UserRepository extends JpaRepository<User, Long>, JpaSpecificationExecutor<User> {
-    Optional<User> findByWalletAddress(String walletAddress);
     Optional<User> findByEmail(String email);
     boolean existsByEmail(String email);
     User findByRefreshTokenAndEmail(String refreshToken,String email);

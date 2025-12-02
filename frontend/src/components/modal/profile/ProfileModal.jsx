@@ -12,9 +12,9 @@ const ModalProfile = (props) => {
   const [form] = Form.useForm();
 
   const updateProfile = async (valuesForm) => {
-    const { fullname, phone, birthday, address, email } = valuesForm;
+    const { fullname, phone, birthday, email, address } = valuesForm;
 
-    const res = await callUpdateUser(user.walletAddress, fullname, email, phone, birthday, address);
+    const res = await callUpdateUser(user.id, fullname, email, phone, birthday, address);
 
     if (res.data) {
       message.success('User updated successfully');

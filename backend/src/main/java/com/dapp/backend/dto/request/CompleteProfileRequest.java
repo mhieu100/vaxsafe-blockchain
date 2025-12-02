@@ -2,6 +2,7 @@ package com.dapp.backend.dto.request;
 
 import com.dapp.backend.enums.BloodType;
 import com.dapp.backend.enums.Gender;
+import com.dapp.backend.validation.ValidBirthday;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.*;
 import lombok.AllArgsConstructor;
@@ -38,8 +39,7 @@ public class CompleteProfileRequest {
         @Pattern(regexp = "^[0-9]{9,11}$", message = "Phone must be 9-11 digits")
         private String phone;
 
-        @NotNull(message = "Birthday is required")
-        @Past(message = "Birthday must be in the past")
+        @ValidBirthday(required = true, maxAge = 150)
         private LocalDate birthday;
 
         @NotNull(message = "Gender is required")

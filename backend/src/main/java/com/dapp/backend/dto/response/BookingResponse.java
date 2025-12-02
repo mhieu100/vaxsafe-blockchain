@@ -1,6 +1,6 @@
 package com.dapp.backend.dto.response;
 
-import com.dapp.backend.enums.AppointmentEnum;
+import com.dapp.backend.enums.AppointmentStatus;
 import com.dapp.backend.enums.BookingEnum;
 import com.dapp.backend.enums.TimeSlotEnum;
 import lombok.*;
@@ -45,6 +45,6 @@ public class BookingResponse {
         String doctorName;
         Long cashierId;
         String cashierName;
-        AppointmentEnum appointmentStatus;
+        AppointmentStatus appointmentStatus;
     }
 }

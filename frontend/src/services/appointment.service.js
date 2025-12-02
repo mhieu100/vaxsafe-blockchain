@@ -73,8 +73,18 @@ export const callFetchAppointment = () => {
   return apiClient.get('/appointments');
 };
 
-export const callFetchAppointmentOfCenter = (query) => {
-  return apiClient.get(`/appointments/center?${query}`);
+export const callFetchAppointmentOfCenter = (queryOrFilter) => {
+  // If it contains '=' or '&', treat as full query string
+  if (
+    typeof queryOrFilter === 'string' &&
+    (queryOrFilter.includes('=') || queryOrFilter.includes('&'))
+  ) {
+    return apiClient.get(`/appointments/center?${queryOrFilter}`);
+  }
+  // Otherwise, treat as filter value and use params
+  return apiClient.get('/appointments/center', {
+    params: queryOrFilter ? { filter: queryOrFilter } : {},
+  });
 };
 
 export const callMySchedule = () => {

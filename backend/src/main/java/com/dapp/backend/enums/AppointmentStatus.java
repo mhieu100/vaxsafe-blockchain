@@ -1,6 +1,6 @@
 package com.dapp.backend.enums;
 
-public enum AppointmentEnum {
+public enum AppointmentStatus {
     PENDING,
     RESCHEDULE,
     SCHEDULED,

@@ -1,0 +1,116 @@
+### ========================================
+### FULL FLOW TEST: Vaccination Reminder System
+### Vaccine: Twinrix (2 doses)
+### ========================================
+
+### SETUP: Get your info first
+@baseUrl = http://localhost:8080
+@userId = 36
+@vaccineId = 43
+@centerId = 1
+
+### ========================================
+### STEP 1: Create appointment for Dose 1 (Tomorrow)
+### ========================================
+POST {{baseUrl}}/api/test/create-test-appointment?daysFromNow=1&userId={{userId}}
+Content-Type: application/json
+
+###
+
+### Expected Response:
+# {
+#   "success": true,
+#   "appointmentId": 123,
+#   "appointmentDate": "2025-12-03",
+#   "patientName": "...",
+#   "patientEmail": "...",
+#   "remindersCreated": true,
+#   "reminderDates": ["2025-12-02", "2025-11-30", "2025-11-26"]
+# }
+
+### ========================================
+### STEP 2: Send appointment reminders immediately (for testing)
+### ========================================
+POST {{baseUrl}}/api/test/send-test-reminder
+Content-Type: application/json
+
+###
+
+### Expected: Email sent with subject "Nhắc nhở: Lịch tiêm chủng của bạn"
+### Check your inbox!
+
+### ========================================
+### STEP 3: Check reminders created
+### ========================================
+GET {{baseUrl}}/api/reminders/my-reminders?userId={{userId}}
+Content-Type: application/json
+
+###
+
+### Expected: List of APPOINTMENT_REMINDER with scheduledDate
+
+### ========================================
+### STEP 4: Complete Dose 1 (Mark as completed)
+### ========================================
+# Replace {appointmentId} with actual ID from Step 1
+PUT {{baseUrl}}/appointments/{appointmentId}/complete
+Authorization: Bearer YOUR_DOCTOR_JWT_TOKEN
+Content-Type: application/json
+
+###
+
+### Expected: 
+# - Appointment status = COMPLETED
+# - Next dose reminder created automatically
+# - scheduledDate = completedDate + vaccine.duration
+
+### ========================================
+### STEP 5: Check next dose reminder created
+### ========================================
+GET {{baseUrl}}/api/reminders/my-reminders?userId={{userId}}
+Content-Type: application/json
+
+###
+
+### Expected: New reminder with reminderType = NEXT_DOSE_REMINDER
+
+### ========================================
+### STEP 6: Manually trigger next dose reminder (for testing)
+### ========================================
+# This would normally run automatically when scheduledDate arrives
+POST {{baseUrl}}/api/reminders/send-pending
+Authorization: Bearer YOUR_ADMIN_JWT_TOKEN
+Content-Type: application/json
+
+###
+
+### Expected: Email sent with subject "Nhắc nhở: Đã đến lịch tiêm mũi tiếp theo"
+
+### ========================================
+### STEP 7: Create appointment for Dose 2 (user books)
+### ========================================
+# User books appointment for dose 2 through frontend or API
+POST {{baseUrl}}/api/test/create-test-appointment?daysFromNow=30&userId={{userId}}
+Content-Type: application/json
+
+###
+
+### ========================================
+### STEP 8: Repeat the cycle for Dose 2
+### ========================================
+# - Send appointment reminders for dose 2
+# - Complete dose 2
+# - No more reminders (dosesRequired = 2, current = 2)
+
+### ========================================
+### VERIFICATION QUERIES
+### ========================================
+
+### Check all reminders in database:
+# SELECT * FROM vaccination_reminders WHERE user_id = 1 ORDER BY created_at;
+
+### Check notification logs:
+# SELECT * FROM notification_logs WHERE user_id = 1 ORDER BY sent_at DESC;
+
+### Check appointment statuses:
+# SELECT id, dose_number, status, scheduled_date FROM appointments WHERE user_id = 1;

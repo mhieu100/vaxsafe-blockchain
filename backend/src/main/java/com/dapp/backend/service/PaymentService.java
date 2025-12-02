@@ -26,6 +26,7 @@ public class PaymentService {
     private final PaymentRepository paymentRepository;
     private final VnpayService vnpayService;
     private final PaypalService paypalService;
+    private final EmailService emailService;
 
     /**
      * Create VNPay payment URL
@@ -61,6 +62,29 @@ public class PaymentService {
             booking.setStatus(BookingEnum.CONFIRMED);
             bookingRepository.save(booking);
             payment.setReferenceType(request.getType());
+            
+            // Send appointment confirmation email
+            try {
+                var patient = booking.getPatient();
+                if (patient != null && patient.getEmail() != null && !patient.getEmail().isEmpty() 
+                    && appointment.getScheduledDate() != null && appointment.getCenter() != null) {
+                    String timeSlot = appointment.getScheduledTimeSlot() != null 
+                        ? appointment.getScheduledTimeSlot().toString() 
+                        : "Chưa xác định";
+                    emailService.sendAppointmentConfirmation(
+                        patient.getEmail(),
+                        patient.getFullName(),
+                        booking.getVaccine().getName(),
+                        appointment.getScheduledDate(),
+                        timeSlot,
+                        appointment.getCenter().getName(),
+                        appointment.getId()
+                    );
+                }
+            } catch (Exception e) {
+                // Log but don't fail payment if email fails
+                System.err.println("Failed to send confirmation email: " + e.getMessage());
+            }
         }
         
         payment.setStatus(PaymentEnum.SUCCESS);
@@ -108,5 +132,28 @@ public class PaymentService {
         payment.setStatus(PaymentEnum.SUCCESS);
         bookingRepository.save(booking);
         paymentRepository.save(payment);
+        
+        // Send appointment confirmation email
+        try {
+            var patient = booking.getPatient();
+            if (patient != null && patient.getEmail() != null && !patient.getEmail().isEmpty() 
+                && appointment.getScheduledDate() != null && appointment.getCenter() != null) {
+                String timeSlot = appointment.getScheduledTimeSlot() != null 
+                    ? appointment.getScheduledTimeSlot().toString() 
+                    : "Chưa xác định";
+                emailService.sendAppointmentConfirmation(
+                    patient.getEmail(),
+                    patient.getFullName(),
+                    booking.getVaccine().getName(),
+                    appointment.getScheduledDate(),
+                    timeSlot,
+                    appointment.getCenter().getName(),
+                    appointment.getId()
+                );
+            }
+        } catch (Exception e) {
+            // Log but don't fail payment if email fails
+            System.err.println("Failed to send confirmation email: " + e.getMessage());
+        }
     }
 }

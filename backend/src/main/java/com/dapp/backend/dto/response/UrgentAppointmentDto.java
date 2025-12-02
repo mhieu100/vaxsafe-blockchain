@@ -1,6 +1,6 @@
 package com.dapp.backend.dto.response;
 
-import com.dapp.backend.enums.AppointmentEnum;
+import com.dapp.backend.enums.AppointmentStatus;
 import com.dapp.backend.enums.TimeSlotEnum;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
@@ -38,13 +38,10 @@ public class UrgentAppointmentDto {
     String doctorName;
     String cashierName;
 
-    // Center info
     String centerName;
 
-    // Status
-    AppointmentEnum status;
+    AppointmentStatus status;
 
-    // Urgency info
     String urgencyType; // RESCHEDULE_PENDING, NO_DOCTOR, COMING_SOON, OVERDUE
     String urgencyMessage;
     Integer priorityLevel; // 1 = highest, 5 = lowest

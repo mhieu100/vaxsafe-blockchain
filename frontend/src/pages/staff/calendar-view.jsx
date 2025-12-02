@@ -9,10 +9,10 @@ import {
   UserOutlined,
 } from '@ant-design/icons';
 import {
-  Badge,
   Button,
   Card,
   Col,
+  DatePicker,
   Descriptions,
   Modal,
   message,
@@ -61,22 +61,46 @@ const CalendarView = () => {
       if (viewMode === 'month') {
         const startOfMonth = selectedDate.startOf('month').format('YYYY-MM-DD');
         const endOfMonth = selectedDate.endOf('month').format('YYYY-MM-DD');
-        filter = `scheduledDate >= '${startOfMonth}' AND scheduledDate <= '${endOfMonth}'`;
+        filter = `scheduledDate>='${startOfMonth}' and scheduledDate<='${endOfMonth}'`;
       } else if (viewMode === 'week') {
         const startOfWeek = selectedDate.startOf('isoWeek').format('YYYY-MM-DD');
         const endOfWeek = selectedDate.endOf('isoWeek').format('YYYY-MM-DD');
-        filter = `scheduledDate >= '${startOfWeek}' AND scheduledDate <= '${endOfWeek}'`;
+        filter = `scheduledDate>='${startOfWeek}' and scheduledDate<='${endOfWeek}'`;
       } else if (viewMode === 'day') {
-        filter = `scheduledDate ~ '${selectedDate.format('YYYY-MM-DD')}'`;
+        const dayStr = selectedDate.format('YYYY-MM-DD');
+        filter = `scheduledDate:'${dayStr}'`;
       }
 
       if (selectedDoctor !== 'all') {
-        filter += ` AND doctorId = '${selectedDoctor}'`;
+        filter += ` and doctorId:${selectedDoctor}`;
       }
 
       const response = await callFetchAppointmentOfCenter(`filter=${filter}`);
-      setAppointments(response.data.result || []);
-    } catch {
+      console.log('Calendar appointments response:', response);
+      const rawAppointments = response?.data?.data?.result || response?.data?.result || [];
+
+      // Transform API data to match component structure
+      const transformedAppointments = rawAppointments.map((apt) => ({
+        ...apt,
+        appointmentId: apt.id,
+        user: {
+          firstName: apt.patientName?.split(' ').slice(-1)[0] || '',
+          lastName: apt.patientName?.split(' ').slice(0, -1).join(' ') || apt.patientName || '',
+          phone: apt.patientPhone,
+        },
+        vaccine: {
+          name: apt.vaccineName,
+        },
+        doctor: {
+          firstName: apt.doctorName?.split(' ').slice(-1)[0] || '',
+          lastName: apt.doctorName?.split(' ').slice(0, -1).join(' ') || apt.doctorName || '',
+        },
+      }));
+
+      console.log('Transformed appointments:', transformedAppointments);
+      setAppointments(transformedAppointments);
+    } catch (error) {
+      console.error('Error fetching appointments:', error);
       message.error('Không thể tải danh sách lịch hẹn');
     } finally {
       setLoading(false);
@@ -87,7 +111,7 @@ const CalendarView = () => {
   useEffect(() => {
     fetchAppointments();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [viewMode, selectedDate, selectedDoctor]);
 
   // Navigation handlers
   const handlePrevious = () => {
@@ -134,14 +158,22 @@ const CalendarView = () => {
   const renderWeekView = () => {
     const weekStart = selectedDate.startOf('isoWeek');
     const weekDays = Array.from({ length: 7 }, (_, i) => weekStart.add(i, 'day'));
-    const timeSlots = ['08:00', '09:00', '10:00', '11:00', '14:00', '15:00'];
 
-    // Group appointments by date and time
+    // Generate time slots from 7:00 to 17:00
+    const timeSlots = Array.from({ length: 11 }, (_, i) => {
+      const hour = 7 + i;
+      return `${String(hour).padStart(2, '0')}:00`;
+    });
+
+    // Group appointments by date and hour
     const appointmentsByDateTime = {};
     appointments.forEach((apt) => {
       const date = dayjs(apt.scheduledDate).format('YYYY-MM-DD');
-      const time = formatAppointmentTime(apt).substring(0, 5);
-      const key = `${date}-${time}`;
+      const time = formatAppointmentTime(apt);
+      // Extract hour from time (e.g., "12:30" -> "12:00")
+      const hour = time.substring(0, 2);
+      const timeSlot = `${hour}:00`;
+      const key = `${date}-${timeSlot}`;
       if (!appointmentsByDateTime[key]) {
         appointmentsByDateTime[key] = [];
       }
@@ -542,39 +574,26 @@ const CalendarView = () => {
         </Row>
       </Card>
 
-      {/* Legend */}
-      <Card style={{ marginBottom: '24px' }} bodyStyle={{ padding: '12px 24px' }}>
-        <Space wrap>
-          <Space>
-            <Badge color="blue" />
-            <Text>Viêm Gan B</Text>
-          </Space>
-          <Space>
-            <Badge color="red" />
-            <Text>COVID-19</Text>
-          </Space>
-          <Space>
-            <Badge color="green" />
-            <Text>Cúm</Text>
-          </Space>
-          <Space>
-            <Badge color="orange" />
-            <Text>Viêm Gan A</Text>
-          </Space>
-          <Space>
-            <Badge color="gray" />
-            <Text>Đã hoàn thành</Text>
-          </Space>
-        </Space>
-      </Card>
-
       {/* Current Period Display */}
       <Card
         title={
-          <Space>
-            <CalendarOutlined />
-            <Text strong>{getCurrentPeriodText()}</Text>
-          </Space>
+          <Row justify="space-between" align="middle">
+            <Col>
+              <Space>
+                <CalendarOutlined />
+                <Text strong>{getCurrentPeriodText()}</Text>
+              </Space>
+            </Col>
+            <Col>
+              <DatePicker
+                value={selectedDate}
+                onChange={(date) => date && setSelectedDate(date)}
+                format="DD/MM/YYYY"
+                placeholder="Chọn ngày"
+                allowClear={false}
+              />
+            </Col>
+          </Row>
         }
         loading={loading}
         style={{ marginBottom: '24px' }}

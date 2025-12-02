@@ -11,7 +11,10 @@ public class UserRequest {
     long id;
     String email;
     String fullName;
+    
+    // Patient profile fields
     String phone;
     LocalDate birthday;
+    String address;
 }
 

@@ -37,6 +37,8 @@ public class LoginResponse {
         boolean consentForAIAnalysis;
 
         String role;
+        @com.fasterxml.jackson.annotation.JsonProperty("isActive")
+        boolean isActive;
         Long centerId;
         String centerName;
     }

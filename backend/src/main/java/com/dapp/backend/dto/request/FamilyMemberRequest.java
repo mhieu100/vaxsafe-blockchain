@@ -26,7 +26,6 @@ public class FamilyMemberRequest {
     @NotBlank(message = "Relationship is required.")
     private String relationship;
 
-    @NotBlank(message = "Identity number is required")
     private String identityNumber;
 
     @Pattern(regexp = "^\\+?[0-9\\s()-]{7,20}$", message = "Invalid phone number format.")
