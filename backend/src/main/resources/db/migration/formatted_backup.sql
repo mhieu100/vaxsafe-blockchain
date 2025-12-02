@@ -10,6 +10,7 @@ name
 (3, 'DOCTOR'),
 (4, 'CASHIER');
 
+
 -- ========================
 -- Bảng: centers
 -- ========================
@@ -26,106 +27,13 @@ slug,
 created_at,
 is_deleted
 ) VALUES
+(1, '198 Hoàng Văn Thụ, P. 9, Q. Phú Nhuận, TP.HCM', 100, 'http://localhost:8080/storage/center/1762081698948-cs1.png', 'VNVC Hoàng Văn Thụ 1', '02871026595', '07:30 - 17:00', '2025-11-17 02:43:20.006423', 'vnvc-hoang-van-thu-1', '2025-11-17 02:43:20.006423', false),
 (2, '12 Trường Chinh, P. 4, Q. Tân Bình, TP.HCM', 120, 'http://localhost:8080/storage/center/1762081726309-cs2.png', 'VNVC Trường Chinh', '02871026596', '07:30 - 17:00', '2025-11-17 02:43:20.006423', NULL, '2025-11-17 02:43:20.006423', false),
 (3, 'Lô F1-01, 19 Đ. số 1, Tân Phong, Q. 7, TP.HCM', 80, 'http://localhost:8080/storage/center/1762082168357-cs1.png', 'VNVC Quận 7', '02871026597', '08:00 - 17:00', '2025-11-17 02:43:20.006423', NULL, '2025-11-17 02:43:20.006423', false),
-(5, '240 Võ Văn Ngân, P. Bình Thọ, TP. Thủ Đức, TP.HCM', 110, 'http://localhost:8080/storage/center/1762082176284-cs3.png', 'VNVC Thủ Đức', '02871026599', '07:30 - 17:00', '2025-11-17 02:43:20.006423', NULL, '2025-11-17 02:43:20.006423', false),
-(1, '198 Hoàng Văn Thụ, P. 9, Q. Phú Nhuận, TP.HCM', 100, 'http://localhost:8080/storage/center/1762081698948-cs1.png', 'VNVC Hoàng Văn Thụ 1', '02871026595', '07:30 - 17:00', '2025-11-17 02:43:20.006423', 'vnvc-hoang-van-thu-1', '2025-11-17 02:43:20.006423', false),
-(6, 'To 7, Hoa Xuan, Da Nang', 10001, 'http://localhost:8080/storage/center/1763321345550-8ead601148b6c1e898a7.png', 'NGUYỄN VĂN HIẾU', '31230123', '123123', '2025-11-17 02:43:20.006423', 'nguyen-van-hieu', '2025-11-17 02:43:20.006423', true),
-(4, '1 Quang Trung, P. 10, Q. Gò Vấp, TP.HCM', 90, 'https://res.cloudinary.com/dcwzhi4tp/image/upload/v1764100610/center/sonjjegbazjnwqq6ngwe.jpg', 'VNVC Gò Vấp', '02871026598', '07:30 - 17:00', '2025-11-26 02:56:52.922607', 'vnvc-go-vap', '2025-11-17 02:43:20.006423', false);
+(4, '1 Quang Trung, P. 10, Q. Gò Vấp, TP.HCM', 90, 'https://res.cloudinary.com/dcwzhi4tp/image/upload/v1764100610/center/sonjjegbazjnwqq6ngwe.jpg', 'VNVC Gò Vấp', '02871026598', '07:30 - 17:00', '2025-11-26 02:56:52.922607', 'vnvc-go-vap', '2025-11-17 02:43:20.006423', false),
+(5, '240 Võ Văn Ngân, P. Bình Thọ, TP. Thủ Đức, TP.HCM', 110, 'http://localhost:8080/storage/center/1762082176284-cs3.png', 'VNVC Thủ Đức', '02871026599', '07:30 - 17:00', '2025-11-17 02:43:20.006423', NULL, '2025-11-17 02:43:20.006423', false);
 
 
--- ========================
--- Bảng: users
--- ========================
-INSERT INTO users (
-id,
-email,
-full_name,
-is_deleted,
-password,
-wallet_address,
-center_id,
-role_id,
-refresh_token,
-avatar
-) VALUES
-(66, 'doctor.e@vax.com', 'Bác sĩ Hoàng Văn E', false, '$2a$10$khUSAS5S7gXcMMG6pwIPCeo5raxxdJggD/3fnKwjVTRFaBLD.TIIG', NULL, 2, 3, 'eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJkb2N0b3IuZUB2YXguY29tIiwiZXhwIjoxODQ5ODkwMzc3LCJpYXQiOjE3NjM4OTAzNzd9.YBOsLMSmg4YLLoxU6waIbfsasKFnhzC9WZ4QYCnV6DUi1DSNFrIsaa15wjTAcJQ5rGsSWF8XJQxqx0LoF1YOeA', 'https_example.com/avatars/doc_e.png'),
-(65, 'cashier.d@vax.com', 'Thu ngân Phạm Văn D', false, '$2a$10$khUSAS5S7gXcMMG6pwIPCeo5raxxdJggD/3fnKwjVTRFaBLD.TIIG', NULL, 1, 4, NULL, 'https_example.com/avatars/cash_d.png'),
-(64, 'doctor.c@vax.com', 'Bác sĩ Lê Thị C', false, '$2a$10$khUSAS5S7gXcMMG6pwIPCeo5raxxdJggD/3fnKwjVTRFaBLD.TIIG', NULL, 1, 3, NULL, 'https_example.com/avatars/doc_c.png'),
-(62, 'doctor.a@vax.com', 'Bác sĩ Nguyễn Văn A', false, '$2a$10$khUSAS5S7gXcMMG6pwIPCeo5raxxdJggD/3fnKwjVTRFaBLD.TIIG', NULL, 1, 3, 'eyJhbGciOiJIUzUxMiJ9.eyJleHAiOjE4NDg1MzQ1OTcsInN1YiI6ImRvY3Rvci5hQHZheC5jb20iLCJpYXQiOjE3NjI1MzQ1OTd9.DDg2rhfruCXs5GLAloeRvyax6l6fGmLVBc0l24IPLdDLlaHsJ4BH508xiqY4ryr4rxpgYJVBMMFxD8sCfIc7cw', 'https_example.com/avatars/doc_a.png'),
-(63, 'doctor.b@vax.com', 'Bác sĩ Trần Văn B', false, '$2a$10$khUSAS5S7gXcMMG6pwIPCeo5raxxdJggD/3fnKwjVTRFaBLD.TIIG', NULL, 1, 3, NULL, 'https_example.com/avatars/doc_b.png'),
-(67, 'doctor.f@vax.com', 'Bác sĩ Võ Thị F', false, '$2a$10$khUSAS5S7gXcMMG6pwIPCeo5raxxdJggD/3fnKwjVTRFaBLD.TIIG', NULL, 2, 3, NULL, 'https_example.com/avatars/doc_f.png'),
-(68, 'doctor.g@vax.com', 'Bác sĩ Đặng Văn G', false, '$2a$10$khUSAS5S7gXcMMG6pwIPCeo5raxxdJggD/3fnKwjVTRFaBLD.TIIG', NULL, 2, 3, NULL, 'https_example.com/avatars/doc_g.png'),
-(69, 'doctor.h@vax.com', 'Bác sĩ Bùi Thị H', false, '$2a$10$khUSAS5S7gXcMMG6pwIPCeo5raxxdJggD/3fnKwjVTRFaBLD.TIIG', NULL, 2, 3, NULL, 'https_example.com/avatars/doc_h.png'),
-(71, 'doctor.j@vax.com', 'Bác sĩ Trịnh Văn J', false, '$2a$10$khUSAS5S7gXcMMG6pwIPCeo5raxxdJggD/3fnKwjVTRFaBLD.TIIG', NULL, 3, 3, NULL, 'https_example.com/avatars/doc_j.png'),
-(72, 'doctor.k@vax.com', 'Bác sĩ Mai Thị K', false, '$2a$10$khUSAS5S7gXcMMG6pwIPCeo5raxxdJggD/3fnKwjVTRFaBLD.TIIG', NULL, 3, 3, NULL, 'https_example.com/avatars/doc_k.png'),
-(73, 'doctor.l@vax.com', 'Bác sĩ Phan Văn L', false, '$2a$10$khUSAS5S7gXcMMG6pwIPCeo5raxxdJggD/3fnKwjVTRFaBLD.TIIG', NULL, 3, 3, NULL, 'https_example.com/avatars/doc_l.png'),
-(74, 'doctor.m@vax.com', 'Bác sĩ Dương Thị M', false, '$2a$10$khUSAS5S7gXcMMG6pwIPCeo5raxxdJggD/3fnKwjVTRFaBLD.TIIG', NULL, 3, 3, NULL, 'https_example.com/avatars/doc_m.png'),
-(75, 'doctor.n@vax.com', 'Bác sĩ Hà Văn N', false, '$2a$10$khUSAS5S7gXcMMG6pwIPCeo5raxxdJggD/3fnKwjVTRFaBLD.TIIG', NULL, 3, 3, NULL, 'https_example.com/avatars/doc_n.png'),
-(77, 'doctor.p@vax.com', 'Bác sĩ Vũ Văn P', false, '$2a$10$khUSAS5S7gXcMMG6pwIPCeo5raxxdJggD/3fnKwjVTRFaBLD.TIIG', NULL, 4, 3, NULL, 'https_example.com/avatars/doc_p.png'),
-(78, 'doctor.q@vax.com', 'Bác sĩ Đỗ Thị Q', false, '$2a$10$khUSAS5S7gXcMMG6pwIPCeo5raxxdJggD/3fnKwjVTRFaBLD.TIIG', NULL, 4, 3, NULL, 'https_example.com/avatars/doc_q.png'),
-(79, 'doctor.r@vax.com', 'Bác sĩ Hồ Văn R', false, '$2a$10$khUSAS5S7gXcMMG6pwIPCeo5raxxdJggD/3fnKwjVTRFaBLD.TIIG', NULL, 4, 3, NULL, 'https_example.com/avatars/doc_r.png'),
-(81, 'doctor.t@vax.com', 'Bác sĩ Lâm Văn T', false, '$2a$10$khUSAS5S7gXcMMG6pwIPCeo5raxxdJggD/3fnKwjVTRFaBLD.TIIG', NULL, 5, 3, NULL, 'https_example.com/avatars/doc_t.png'),
-(82, 'doctor.u@vax.com', 'Bác sĩ Trương Thị U', false, '$2a$10$khUSAS5S7gXcMMG6pwIPCeo5raxxdJggD/3fnKwjVTRFaBLD.TIIG', NULL, 5, 3, NULL, 'https_example.com/avatars/doc_u.png'),
-(83, 'doctor.v@vax.com', 'Bác sĩ Mạc Văn V', false, '$2a$10$khUSAS5S7gXcMMG6pwIPCeo5raxxdJggD/3fnKwjVTRFaBLD.TIIG', NULL, 5, 3, NULL, 'https_example.com/avatars/doc_v.png'),
-(84, 'doctor.w@vax.com', 'Bác sĩ Tạ Thị W', false, '$2a$10$khUSAS5S7gXcMMG6pwIPCeo5raxxdJggD/3fnKwjVTRFaBLD.TIIG', NULL, 5, 3, NULL, 'https_example.com/avatars/doc_w.png'),
-(85, 'cashier.x@vax.com', 'Thu ngân Đoàn Văn X', false, '$2a$10$khUSAS5S7gXcMMG6pwIPCeo5raxxdJggD/3fnKwjVTRFaBLD.TIIG', NULL, 5, 4, NULL, 'https_example.com/avatars/cash_x.png'),
-(76, 'cashier.o@vax.com', 'Thu ngân Lương Thị O', false, '$2a$10$khUSAS5S7gXcMMG6pwIPCeo5raxxdJggD/3fnKwjVTRFaBLD.TIIG', NULL, 3, 4, 'eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJjYXNoaWVyLm9AdmF4LmNvbSIsImV4cCI6MTg0OTg5Nzg2NCwiaWF0IjoxNzYzODk3ODY0fQ.G2OyWIkI1dAojcg6NeOSY6pcYPiP2HczI_Fe5Ac1NtNbk1_k1JWHydz7UmPxhNzHRZG2PNr26cKzCmNE0aZDAg', 'http://localhost:8080/storage/user/1762459328103-chungnhan.png'),
-(87, 'admin@gmail.com', 'Super Admin', false, '$2a$10$khUSAS5S7gXcMMG6pwIPCeo5raxxdJggD/3fnKwjVTRFaBLD.TIIG', NULL, NULL, 1, NULL, 'https://res.cloudinary.com/dcwzhi4tp/image/upload/v1764097281/user/syrvax40k3nise2l2uak.jpg'),
-(80, 'cashier.s@vax.com', 'Thu ngân Đinh Thị S', false, '$2a$10$khUSAS5S7gXcMMG6pwIPCeo5raxxdJggD/3fnKwjVTRFaBLD.TIIG', NULL, 4, 4, 'eyJhbGciOiJIUzUxMiJ9.eyJleHAiOjE4NDgwMjQ4MjYsInN1YiI6ImNhc2hpZXIuc0B2YXguY29tIiwiaWF0IjoxNzYyMDI0ODI2fQ.XeCMUGXrl7t1zphdfCwo3jNEH76Wr_w55KBw3BCJQ8sqVh_WQ-bVRwsTpaLjNOe1wrDaBdYaE6KPr5iw6OlQDQ', 'https_example.com/avatars/cash_s.png'),
-(86, 'hieu@gmail.com', 'Nguyen Van Hieu', false, '$2a$10$2m0/qcn4BVVnLhZn36QmN.NelZreBtCxI01PMoyuCw78IWuv2kmLO', NULL, NULL, 2, NULL, 'https://res.cloudinary.com/dcwzhi4tp/image/upload/v1764098547/user/gboznpairqqcivpfqpfu.jpg'),
-(70, 'cashier.i@vax.com', 'Thu ngân Ngô Văn I', false, '$2a$10$khUSAS5S7gXcMMG6pwIPCeo5raxxdJggD/3fnKwjVTRFaBLD.TIIG', NULL, 2, 4, NULL, 'https_example.com/avatars/cash_i.png');
-
-
--- ========================
--- Bảng: doctors
--- ========================
-INSERT INTO doctors (
-doctor_id,
-consultation_duration,
-created_at,
-is_available,
-license_number,
-max_patients_per_day,
-specialization,
-updated_at,
-center_id,
-user_id
-) VALUES
-(1, 30, NULL, true, 'BYT-000066', 20, 'Tiêm chủng trẻ em', NULL, 2, 66),
-(2, 30, NULL, true, 'BYT-000064', 20, 'Tiêm chủng người lớn', NULL, 1, 64),
-(3, 30, NULL, true, 'BYT-000062', 20, 'Tiêm chủng tổng hợp', NULL, 1, 62),
-(4, 30, NULL, true, 'BYT-000063', 20, 'Tiêm chủng trẻ em', NULL, 1, 63),
-(5, 30, NULL, true, 'BYT-000067', 20, 'Tiêm chủng người lớn', NULL, 2, 67),
-(6, 30, NULL, true, 'BYT-000068', 20, 'Tiêm chủng tổng hợp', NULL, 2, 68),
-(7, 30, NULL, true, 'BYT-000069', 20, 'Tiêm chủng trẻ em', NULL, 2, 69),
-(8, 30, NULL, true, 'BYT-000071', 20, 'Tiêm chủng tổng hợp', NULL, 3, 71),
-(9, 30, NULL, true, 'BYT-000072', 20, 'Tiêm chủng trẻ em', NULL, 3, 72),
-(10, 30, NULL, true, 'BYT-000073', 20, 'Tiêm chủng người lớn', NULL, 3, 73),
-(11, 30, NULL, true, 'BYT-000074', 20, 'Tiêm chủng tổng hợp', NULL, 3, 74),
-(12, 30, NULL, true, 'BYT-000075', 20, 'Tiêm chủng trẻ em', NULL, 3, 75),
-(13, 30, NULL, true, 'BYT-000077', 20, 'Tiêm chủng tổng hợp', NULL, 4, 77),
-(14, 30, NULL, true, 'BYT-000078', 20, 'Tiêm chủng trẻ em', NULL, 4, 78),
-(15, 30, NULL, true, 'BYT-000079', 20, 'Tiêm chủng người lớn', NULL, 4, 79),
-(16, 30, NULL, true, 'BYT-000081', 20, 'Tiêm chủng trẻ em', NULL, 5, 81),
-(17, 30, NULL, true, 'BYT-000082', 20, 'Tiêm chủng người lớn', NULL, 5, 82),
-(18, 30, NULL, true, 'BYT-000083', 20, 'Tiêm chủng tổng hợp', NULL, 5, 83),
-(19, 30, NULL, true, 'BYT-000084', 20, 'Tiêm chủng trẻ em', NULL, 5, 84);
-
--- ========================
--- Bảng: family_members
--- ========================
-INSERT INTO family_members (
-id,
-date_of_birth,
-full_name,
-gender,
-phone,
-relationship,
-user_id,
-identity_number
-) VALUES
-(11, '2025-11-11', 'Nguyễn Văn Tèu', 'MALE', '0388 335 845', 'Con gái', 86, '123123123123');
 
 -- ========================
 -- Bảng: news
@@ -150,40 +58,21 @@ thumbnail_image,
 title,
 view_count
 ) VALUES
+(1, '2025-11-16 16:40:24.953524', false, '2025-11-23 21:02:42.043207', 'BS. Nguyễn Văn An', 'HEALTH_GENERAL', '<h2>Giới thiệu</h2><p>Sức khỏe là tài sản quý giá nhất của con người. Dưới đây là 10 thói quen đơn giản bạn nên thực hiện hàng ngày.</p><h3>1. Uống đủ nước</h3><p>Uống ít nhất 2 lít nước mỗi ngày giúp cơ thể hoạt động tốt hơn.</p><h3>2. Tập thể dục đều đặn</h3><p>Ít nhất 30 phút mỗi ngày giúp cơ thể khỏe mạnh.</p><h3>3. Ngủ đủ giấc</h3><p>7-8 tiếng ngủ mỗi đêm rất quan trọng.</p><h3>4. Ăn nhiều rau xanh</h3><p>Bổ sung vitamin và chất xơ từ rau củ.</p><h3>5. Hạn chế đường và muối</h3><p>Giảm nguy cơ bệnh tim mạch và tiểu đường.</p>', '', false, true, NULL, 'Khám phá 10 thói quen đơn giản nhưng hiệu quả giúp bạn duy trì sức khỏe tốt mỗi ngày', '10-thoi-quen-tot-cho-suc-khoe-moi-ngay', 'Bộ Y tế', 'sức khỏe,thói quen,phòng bệnh', 'https://img.freepik.com/free-vector/smiling-young-man-illustration_1308-174669.jpg?semt=ais_hybrid&w=740&q=80', '10 Thói quen tốt cho sức khỏe mỗi ngày', 150),
+(2, '2025-11-17 16:40:26.686587', false, '2025-11-26 02:57:01.475661', 'PGS.TS Trần Thị Hoa', 'VACCINE_INFO', '<h2>Vaccine COVID-19 - Vũ khí chống đại dịch</h2><p>Vaccine COVID-19 đã được chứng minh là an toàn và hiệu quả trong việc phòng ngừa bệnh nặng và tử vong do COVID-19.</p><h3>Lợi ích cá nhân</h3><ul><li>Giảm nguy cơ mắc bệnh nặng</li><li>Giảm tỷ lệ tử vong</li><li>Giảm nguy cơ biến chứng sau COVID-19</li></ul><h3>Lợi ích cộng đồng</h3><ul><li>Giảm tốc độ lây lan</li><li>Bảo vệ người yếu thế</li><li>Phục hồi kinh tế xã hội</li></ul>', NULL, true, false, '2025-11-18 16:40:26.686587', 'Vaccine COVID-19 không chỉ bảo vệ bản thân mà còn góp phần bảo vệ cộng đồng khỏi đại dịch', 'loi-ich-cua-vaccine-covid-19', 'Viện Vệ sinh Dịch tễ Trung ương', 'covid-19,vaccine,phòng bệnh,cộng đồng', NULL, 'Lợi ích của Vaccine COVID-19 đối với sức khỏe cộng đồng', 320),
 (3, '2025-11-15 16:40:28.52991', false, '2025-11-16 16:40:28.52991', 'BS. Lê Văn Minh', 'VACCINATION_SCHEDULE', '<h2>Lịch tiêm chủng mở rộng</h2><p>Chương trình tiêm chủng mở rộng là chương trình quốc gia nhằm bảo vệ trẻ em khỏi các bệnh truyền nhiễm nguy hiểm.</p><h3>Các mũi tiêm quan trọng</h3><table><tr><th>Tuổi</th><th>Loại vaccine</th></tr><tr><td>Sơ sinh</td><td>BCG, Viêm gan B</td></tr><tr><td>2 tháng</td><td>5 trong 1, Rotavirus</td></tr><tr><td>4 tháng</td><td>5 trong 1 (nhắc lại)</td></tr><tr><td>6 tháng</td><td>5 trong 1 (nhắc lại)</td></tr><tr><td>9 tháng</td><td>Sởi</td></tr><tr><td>18 tháng</td><td>Sởi, Viêm não Nhật Bản</td></tr></table>', NULL, true, true, '2025-11-16 16:40:28.52991', 'Hướng dẫn chi tiết về lịch tiêm chủng đầy đủ cho trẻ từ 0-18 tháng tuổi', 'lich-tiem-chung-cho-tre-em', 'Bộ Y tế', 'tiêm chủng,trẻ em,vaccine,lịch tiêm', NULL, 'Lịch tiêm chủng mở rộng cho trẻ em theo khuyến cáo của Bộ Y tế', 280),
 (4, '2025-11-13 16:40:30.02153', false, '2025-11-14 16:40:30.02153', 'BS. Phạm Thị Lan', 'DISEASE_PREVENTION', '<h2>Bệnh cúm mùa và cách phòng ngừa</h2><p>Cúm mùa là bệnh truyền nhiễm đường hô hấp thường xuất hiện vào mùa đông.</p><h3>Triệu chứng</h3><ul><li>Sốt cao đột ngột</li><li>Ho, đau họng</li><li>Nhức đầu, mệt mỏi</li><li>Đau cơ</li></ul><h3>Cách phòng ngừa</h3><ol><li>Tiêm vaccine cúm hàng năm</li><li>Rửa tay thường xuyên</li><li>Đeo khẩu trang nơi đông người</li><li>Tăng cường sức đề kháng</li><li>Tránh tiếp xúc người bệnh</li></ol>', NULL, false, true, '2025-11-14 16:40:30.02153', 'Những biện pháp đơn giản nhưng hiệu quả để phòng tránh bệnh cúm mùa', 'phong-ngua-cum-mua-dong', 'Bệnh viện Bạch Mai', 'cúm,mùa đông,phòng bệnh,vaccine cúm', NULL, 'Cách phòng ngừa bệnh cúm mùa hiệu quả trong mùa đông', 195),
+(5, '2025-11-14 16:40:32.264894', false, '2025-11-19 17:35:49.730289', 'BS. CKI Hoàng Văn Tuấn', 'CHILDREN_HEALTH', '<h2>Dinh dưỡng cho trẻ nhỏ</h2><p>Giai đoạn dưới 5 tuổi là thời kỳ vàng cho sự phát triển thể chất và trí tuệ của trẻ.</p><h3>Nguyên tắc dinh dưỡng</h3><ul><li>Đa dạng thực phẩm</li><li>Đủ 4 nhóm chất: Protein, Tinh bột, Chất béo, Vitamin</li><li>Ưu tiên thực phẩm tươi, sạch</li><li>Hạn chế đồ ngọt, đồ ăn nhanh</li></ul><h3>Thực đơn mẫu</h3><p>Sáng: Cháo thịt + rau xanh<br>Trưa: Cơm + cá/thịt + rau + trái cây<br>Chiều: Sữa + bánh quy<br>Tối: Cơm + canh + rau</p>', NULL, true, false, '2025-11-15 16:40:32.264894', 'Hướng dẫn xây dựng chế độ dinh dưỡng phù hợp giúp trẻ phát triển toàn diện', 'dinh-duong-cho-tre-duoi-5-tuoi', 'Viện Dinh dưỡng Quốc gia', 'trẻ em,dinh dưỡng,sức khỏe,phát triển', NULL, 'Dinh dưỡng cân đối cho trẻ dưới 5 tuổi', 420),
 (6, '2025-11-12 16:40:33.626805', false, '2025-11-13 16:40:33.626805', 'Ths. Đỗ Thị Mai', 'NUTRITION', '<h2>Thực phẩm cho hệ miễn dịch</h2><p>Một số thực phẩm có khả năng tăng cường hệ miễn dịch tự nhiên của cơ thể.</p><h3>15 Siêu thực phẩm</h3><ol><li>Cam, quýt (Vitamin C)</li><li>Ớt chuông đỏ</li><li>Tỏi</li><li>Gừng</li><li>Rau bina</li><li>Sữa chua</li><li>Hạnh nhân</li><li>Nghệ</li><li>Trà xanh</li><li>Đu đủ</li><li>Kiwi</li><li>Cá hồi</li><li>Nấm</li><li>Bông cải xanh</li><li>Mật ong</li></ol>', NULL, true, true, '2025-11-13 16:40:33.626805', 'Danh sách các siêu thực phẩm giúp tăng cường sức đề kháng cho cơ thể', 'thuc-pham-tang-cuong-mien-dich', 'Viện Dinh dưỡng', 'dinh dưỡng,miễn dịch,thực phẩm,sức khỏe', NULL, 'Top 15 thực phẩm tăng cường hệ miễn dịch tự nhiên', 510),
 (7, '2025-11-11 16:40:35.392178', false, '2025-11-12 16:40:35.392178', 'BS. CKII Nguyễn Thị Hương', 'WOMEN_HEALTH', '<h2>Chăm sóc thai kỳ</h2><p>Thai kỳ là giai đoạn quan trọng cần được chăm sóc đặc biệt.</p><h3>Các xét nghiệm quan trọng</h3><ul><li>Siêu âm thai định kỳ</li><li>Xét nghiệm máu, nước tiểu</li><li>Sàng lọc dị tật thai nhi</li><li>Test tiểu đường thai kỳ</li></ul><h3>Chế độ dinh dưỡng</h3><ul><li>Bổ sung acid folic</li><li>Uống đủ nước</li><li>Ăn nhiều rau xanh</li><li>Bổ sung canxi</li></ul><h3>Lưu ý</h3><ul><li>Tập thể dục nhẹ nhàng</li><li>Tránh stress</li><li>Ngủ đủ giấc</li></ul>', NULL, false, true, '2025-11-12 16:40:35.392178', 'Hướng dẫn toàn diện về chăm sóc sức khỏe trong suốt thai kỳ', 'cham-soc-suc-khoe-phu-nu-mang-thai', 'Bệnh viện Phụ sản Hà Nội', 'phụ nữ,thai kỳ,mang thai,sức khỏe bà mẹ', NULL, 'Chăm sóc sức khỏe cho phụ nữ mang thai', 340),
 (8, '2025-11-10 16:40:37.270622', false, '2025-11-11 16:40:37.270622', 'GS.TS Võ Văn Thành', 'MEDICAL_RESEARCH', '<h2>Công nghệ vaccine mRNA</h2><p>Vaccine mRNA là bước đột phá trong y học hiện đại, mở ra kỷ nguyên mới trong phòng chống dịch bệnh.</p><h3>Cơ chế hoạt động</h3><p>Vaccine mRNA chứa mRNA tổng hợp mã hóa cho protein gai của virus. Khi tiêm vào cơ thể, tế bào sẽ sản xuất protein này và kích thích phản ứng miễn dịch.</p><h3>Ưu điểm</h3><ul><li>Sản xuất nhanh chóng</li><li>An toàn, không chứa virus sống</li><li>Dễ điều chỉnh khi virus đột biến</li><li>Hiệu quả cao</li></ul><h3>Ứng dụng tương lai</h3><ul><li>Vaccine phòng ung thư</li><li>Điều trị bệnh hiếm</li><li>Vaccine cá nhân hóa</li></ul>', NULL, false, true, '2025-11-11 16:40:37.270622', 'Tìm hiểu về công nghệ vaccine mRNA đột phá đã thay đổi ngành y học', 'vaccine-mrna-cong-nghe-tuong-lai', 'Đại học Y Hà Nội', 'nghiên cứu,mRNA,vaccine,công nghệ', NULL, 'Vaccine mRNA - Công nghệ y học của tương lai', 180),
-(5, '2025-11-14 16:40:32.264894', false, '2025-11-19 17:35:49.730289', 'BS. CKI Hoàng Văn Tuấn', 'CHILDREN_HEALTH', '<h2>Dinh dưỡng cho trẻ nhỏ</h2><p>Giai đoạn dưới 5 tuổi là thời kỳ vàng cho sự phát triển thể chất và trí tuệ của trẻ.</p><h3>Nguyên tắc dinh dưỡng</h3><ul><li>Đa dạng thực phẩm</li><li>Đủ 4 nhóm chất: Protein, Tinh bột, Chất béo, Vitamin</li><li>Ưu tiên thực phẩm tươi, sạch</li><li>Hạn chế đồ ngọt, đồ ăn nhanh</li></ul><h3>Thực đơn mẫu</h3><p>Sáng: Cháo thịt + rau xanh<br>Trưa: Cơm + cá/thịt + rau + trái cây<br>Chiều: Sữa + bánh quy<br>Tối: Cơm + canh + rau</p>', NULL, true, false, '2025-11-15 16:40:32.264894', 'Hướng dẫn xây dựng chế độ dinh dưỡng phù hợp giúp trẻ phát triển toàn diện', 'dinh-duong-cho-tre-duoi-5-tuoi', 'Viện Dinh dưỡng Quốc gia', 'trẻ em,dinh dưỡng,sức khỏe,phát triển', NULL, 'Dinh dưỡng cân đối cho trẻ dưới 5 tuổi', 420),
-(1, '2025-11-16 16:40:24.953524', false, '2025-11-23 21:02:42.043207', 'BS. Nguyễn Văn An', 'HEALTH_GENERAL', '<h2>Giới thiệu</h2><p>Sức khỏe là tài sản quý giá nhất của con người. Dưới đây là 10 thói quen đơn giản bạn nên thực hiện hàng ngày.</p><h3>1. Uống đủ nước</h3><p>Uống ít nhất 2 lít nước mỗi ngày giúp cơ thể hoạt động tốt hơn.</p><h3>2. Tập thể dục đều đặn</h3><p>Ít nhất 30 phút mỗi ngày giúp cơ thể khỏe mạnh.</p><h3>3. Ngủ đủ giấc</h3><p>7-8 tiếng ngủ mỗi đêm rất quan trọng.</p><h3>4. Ăn nhiều rau xanh</h3><p>Bổ sung vitamin và chất xơ từ rau củ.</p><h3>5. Hạn chế đường và muối</h3><p>Giảm nguy cơ bệnh tim mạch và tiểu đường.</p>', '', false, true, NULL, 'Khám phá 10 thói quen đơn giản nhưng hiệu quả giúp bạn duy trì sức khỏe tốt mỗi ngày', '10-thoi-quen-tot-cho-suc-khoe-moi-ngay', 'Bộ Y tế', 'sức khỏe,thói quen,phòng bệnh', 'https://img.freepik.com/free-vector/smiling-young-man-illustration_1308-174669.jpg?semt=ais_hybrid&w=740&q=80', '10 Thói quen tốt cho sức khỏe mỗi ngày', 150),
 (9, '2025-11-09 16:40:39.150603', false, '2025-11-10 16:40:39.150603', 'HLV Yoga Trần Minh Châu', 'HEALTH_TIPS', '<h2>Yoga - Phương pháp giảm stress tự nhiên</h2><p>Yoga không chỉ giúp rèn luyện cơ thể mà còn mang lại sự thư thái cho tâm hồn.</p><h3>5 Tư thế cơ bản</h3><h4>1. Tư thế con mèo (Cat-Cow)</h4><p>Giúp giãn cơ lưng, giảm căng thẳng.</p><h4>2. Tư thế trẻ em (Child Pose)</h4><p>Thư giãn toàn thân, giảm mệt mỏi.</p><h4>3. Tư thế cây cầu (Bridge Pose)</h4><p>Tăng cường lưu thông máu não.</p><h4>4. Tư thế xoắn nằm (Supine Twist)</h4><p>Giải phóng căng thẳng cột sống.</p><h4>5. Tư thế xác chết (Savasana)</h4><p>Thư giãn sâu, thiền định.</p>', NULL, true, true, '2025-11-10 16:40:39.150603', 'Những bài tập yoga dễ thực hiện tại nhà giúp thư giãn tinh thần', '5-bai-tap-yoga-giam-stress', 'Trung tâm Yoga & Wellness', 'yoga,stress,thư giãn,sức khỏe tinh thần', NULL, '5 Bài tập yoga đơn giản giúp giảm stress hiệu quả', 625),
 (10, '2025-11-08 16:40:41.020013', false, '2025-11-09 16:40:41.020013', 'BS. CKI Lê Thị Hồng', 'SEASONAL_DISEASES', '<h2>Sốt xuất huyết - Căn bệnh nguy hiểm mùa mưa</h2><p>Sốt xuất huyết dengue là bệnh truyền nhiễm cấp tính do virus dengue gây ra, lây truyền qua muỗi Aedes.</p><h3>Triệu chứng</h3><ul><li>Sốt cao đột ngột 39-40°C</li><li>Đau đầu, đau mắt</li><li>Đau cơ, đau khớp</li><li>Xuất huyết dưới da</li><li>Chảy máu cam, nướu</li></ul><h3>Phòng ngừa</h3><ol><li>Diệt lăng quăng, bọ gậy</li><li>Sử dụng màn, mùng</li><li>Xịt thuốc diệt muỗi</li><li>Mặc quần áo dài tay</li><li>Vệ sinh môi trường</li></ol><h3>Khi nào cần đi khám?</h3><ul><li>Sốt trên 3 ngày</li><li>Xuất hiện vết xuất huyết</li><li>Chảy máu bất thường</li><li>Đau bụng, nôn nhiều</li></ul>', NULL, false, true, '2025-11-09 16:40:41.020013', 'Những biện pháp quan trọng để phòng tránh dịch sốt xuất huyết', 'sot-xuat-huyet-mua-mua', 'Viện Pasteur TP.HCM', 'sốt xuất huyết,mùa mưa,phòng bệnh,muỗi', NULL, 'Phòng chúng sốt xuất huyết trong mùa mưa', 290),
 (11, '2025-11-07 16:40:42.854168', false, '2025-11-08 16:40:42.854168', 'BS. Geriatrics Phạm Văn Bình', 'ELDERLY_CARE', '<h2>Chăm sóc người cao tuổi</h2><p>Người cao tuổi cần được chăm sóc đặc biệt về sức khỏe và tinh thần.</p><h3>Chế độ dinh dưỡng</h3><ul><li>Ăn nhiều bữa, mỗi bữa ít</li><li>Thực phẩm mềm, dễ tiêu</li><li>Bổ sung canxi, vitamin D</li><li>Hạn chế muối, đường</li></ul><h3>Hoạt động thể chất</h3><ul><li>Đi bộ nhẹ nhàng</li><li>Tập thể dục buổi sáng</li><li>Yoga, khí công</li></ul><h3>Sức khỏe tinh thần</h3><ul><li>Giao lưu với bạn bè</li><li>Tham gia hoạt động cộng đồng</li><li>Làm việc nhà nhẹ nhàng</li></ul>', NULL, false, true, '2025-11-08 16:40:42.854168', 'Hướng dẫn chăm sóc người cao tuổi về thể chất và tinh thần', 'cham-soc-nguoi-cao-tuoi', 'Bệnh viện Lão khoa Trung ương', 'người cao tuổi,chăm sóc,sức khỏe,dinh dưỡng', NULL, 'Chăm sóc sức khỏe toàn diện cho người cao tuổi', 155),
 (12, '2025-11-17 16:40:45.223938', false, '2025-11-19 17:35:40.634659', 'PGS.TS Mai Văn Khiêm', 'COVID_19', '<h2>Hội chứng hậu COVID-19 (Long COVID)</h2><p>Một số người sau khi khỏi COVID-19 vẫn có triệu chứng kéo dài nhiều tuần hoặc tháng.</p><h3>Triệu chứng thường gặp</h3><ul><li>Mệt mỏi kéo dài</li><li>Khó thở, đau ngực</li><li>Giảm khả năng tập trung</li><li>Mất ngủ</li><li>Đau đầu</li><li>Mất vị giác, khứu giác</li><li>Đau cơ, khớp</li></ul><h3>Cách phục hồi</h3><ol><li>Nghỉ ngơi hợp lý</li><li>Tập thở, tập phổi</li><li>Dinh dưỡng đầy đủ</li><li>Tập thể dục từ từ</li><li>Tái khám định kỳ</li></ol><h3>Khi nào cần gặp bác sĩ?</h3><p>Nếu triệu chứng kéo dài quá 4 tuần hoặc nặng lên, bạn nên đi khám để được theo dõi và điều trị kịp thời.</p>', NULL, true, true, '2025-11-18 16:40:45.223938', 'Tìm hiểu về các biến chứng kéo dài sau COVID-19 và phương pháp phục hồi', 'bien-chung-sau-covid-19', 'Bệnh viện Nhiệt đới TW', 'covid-19,long covid,biến chứng,phục hồi', NULL, 'Hội chứng hậu COVID-19 và cách điều trị', 445),
-(13, '2025-11-19 16:40:46.796821', false, '2025-11-19 17:35:51.871516', 'Admin', 'HEALTH_GENERAL', '<p>Nội dung đang được cập nhật...</p>', '', false, false, '2025-11-19 17:35:44.378052', 'Đây là bài viết đang trong quá trình soạn thảo', 'bai-viet-nhap-chua-xuat-ban-1', '', 'nháp', '', 'Bài viết nháp - Chưa xuất bản 1', 0),
-(2, '2025-11-17 16:40:26.686587', false, '2025-11-26 02:57:01.475661', 'PGS.TS Trần Thị Hoa', 'VACCINE_INFO', '<h2>Vaccine COVID-19 - Vũ khí chống đại dịch</h2><p>Vaccine COVID-19 đã được chứng minh là an toàn và hiệu quả trong việc phòng ngừa bệnh nặng và tử vong do COVID-19.</p><h3>Lợi ích cá nhân</h3><ul><li>Giảm nguy cơ mắc bệnh nặng</li><li>Giảm tỷ lệ tử vong</li><li>Giảm nguy cơ biến chứng sau COVID-19</li></ul><h3>Lợi ích cộng đồng</h3><ul><li>Giảm tốc độ lây lan</li><li>Bảo vệ người yếu thế</li><li>Phục hồi kinh tế xã hội</li></ul>', NULL, true, false, '2025-11-18 16:40:26.686587', 'Vaccine COVID-19 không chỉ bảo vệ bản thân mà còn góp phần bảo vệ cộng đồng khỏi đại dịch', 'loi-ich-cua-vaccine-covid-19', 'Viện Vệ sinh Dịch tễ Trung ương', 'covid-19,vaccine,phòng bệnh,cộng đồng', NULL, 'Lợi ích của Vaccine COVID-19 đối với sức khỏe cộng đồng', 320);
+(13, '2025-11-19 16:40:46.796821', false, '2025-11-19 17:35:51.871516', 'Admin', 'HEALTH_GENERAL', '<p>Nội dung đang được cập nhật...</p>', '', false, false, '2025-11-19 17:35:44.378052', 'Đây là bài viết đang trong quá trình soạn thảo', 'bai-viet-nhap-chua-xuat-ban-1', '', 'nháp', '', 'Bài viết nháp - Chưa xuất bản 1', 0);
 
--- ========================
--- Bảng: patients
--- ========================
-INSERT INTO patients (
-id,
-address,
-birthday,
-blood_type,
-consent_foraianalysis,
-gender,
-height_cm,
-identity_number,
-insurance_number,
-lifestyle_notes,
-occupation,
-phone,
-weight_kg,
-user_id
-) VALUES
-(4, 'Số 10, đường Kim Mã', '1995-06-15', 'O', true, 'MALE', 175, '012345673901', 'BHYT123456789', 'Không hút thuốc, thỉnh thoảng uống rượu, hay đi công tác', 'Software Engineer', '0912345678', 70.5, 86);
+
 
 -- ========================
 -- Bảng: permissions
@@ -195,91 +84,104 @@ method,
 module,
 name
 ) VALUES
-(1, '/appointments', 'GET', 'APPOINTMENT', 'Get all appointments of center'),
-(2, '/appointments/{id}', 'PUT', 'APPOINTMENT', 'Update a appointment of cashier'),
-(3, '/appointments/{id}/cancel', 'PUT', 'APPOINTMENT', 'Cancel a appointment'),
-(4, '/appointments/{id}/complete', 'PUT', 'APPOINTMENT', 'Complete a appointment'),
-(5, '/appointments/cash', 'POST', 'APPOINTMENT', 'Create a appointments with cash'),
-(6, '/appointments/credit-card', 'POST', 'APPOINTMENT', 'Create a appointments with credit card'),
-(7, '/appointments/update-payment', 'POST', 'APPOINTMENT', 'Update status of payment'),
-(8, '/appointments/my-schedule', 'GET', 'APPOINTMENT', 'Get all appointments of doctor'),
-(9, '/auth/account', 'GET', 'AUTH', 'Access profile'),
-(10, '/auth/my-appointments', 'GET', 'AUTH', 'Get all appointments of user'),
-(11, '/centers', 'POST', 'CENTER', 'Create a center'),
-(12, '/centers/{id}', 'GET', 'CENTER', 'Get a center by id'),
-(13, '/centers/{id}', 'PUT', 'CENTER', 'Update a center'),
-(14, '/centers/{id}', 'DELETE', 'CENTER', 'Delete a center'),
-(15, '/vaccines', 'POST', 'VACCINE', 'Create a vaccine'),
-(16, '/vaccines/{id}', 'GET', 'VACCINE', 'Get a vaccine by id'),
-(17, '/vaccines/{id}', 'PUT', 'VACCINE', 'Update a vaccine'),
-(18, '/vaccines/{id}', 'DELETE', 'VACCINE', 'Delete a vaccine'),
-(19, '/permissions', 'POST', 'PERMISSION', 'Create a permission'),
-(20, '/permissions', 'GET', 'PERMISSION', 'Get all permissions'),
-(21, '/permissions', 'PUT', 'PERMISSION', 'Update a permission'),
-(22, '/permissions/{id}', 'DELETE', 'PERMISSION', 'Delete a permission'),
-(23, '/users/{walletAddress}', 'PUT', 'USER', 'Update a user'),
-(24, '/users/{walletAddress}', 'DELETE', 'USER', 'Delete a user'),
-(25, '/users', 'GET', 'USER', 'Get all users'),
-(26, '/users/doctors', 'GET', 'USER', 'Get all doctors of center'),
-(27, '/roles', 'GET', 'ROLE', 'Get all roles'),
-(28, '/roles/{id}', 'PUT', 'ROLE', 'Update a role'),
-(30, '/appointments/all', 'GET', 'APPOINTMENT', 'Get all appointment'),
-(29, '/files', 'POST', 'FILE', 'Upload a file');
-
-
-
--- ========================
--- Bảng: permission_role
--- ========================
-INSERT INTO permission_role (
-role_id,
-permission_id
-) VALUES
-(1, 1),
-(1, 2),
-(1, 3),
-(1, 4),
-(4, 27),
-(4, 28),
-(4, 29),
-(1, 5),
-(1, 6),
-(1, 7),
-(1, 8),
-(1, 9),
-(1, 10),
-(1, 11),
-(1, 12),
-(1, 13),
-(1, 14),
-(1, 15),
-(1, 16),
-(1, 17),
-(1, 18),
-(1, 19),
-(1, 20),
-(1, 21),
-(1, 22),
-(1, 23),
-(1, 24),
-(1, 25),
-(1, 26),
-(1, 27),
-(1, 28),
-(1, 30),
-(1, 29),
-(2, 1),
-(2, 2),
-(2, 3),
-(2, 4),
-(2, 5),
-(2, 6),
-(2, 7),
-(2, 8),
-(2, 9),
-(2, 10),
-(2, 30),
-(2, 29);
+(1, '/auth/login/password', 'POST', 'AUTH', 'Login patient'),
+(2, '/auth/update-password', 'POST', 'AUTH', 'Update password'),
+(3, '/auth/register', 'POST', 'AUTH', 'Register new patient'),
+(4, '/auth/refresh', 'GET', 'AUTH', 'Refresh token'),
+(5, '/auth/update-account', 'POST', 'AUTH', 'Update account'),
+(6, '/auth/account', 'GET', 'AUTH', 'Get profile'),
+(7, '/auth/booking', 'GET', 'AUTH', 'Get booking of user'),
+(8, '/auth/history-booking', 'GET', 'AUTH', 'Get history booking of user'),
+(9, '/auth/logout', 'POST', 'AUTH', 'Logout user'),
+(10, '/auth/avatar', 'POST', 'AUTH', 'Update avatar'),
+(11, '/auth/complete-google-profile', 'POST', 'AUTH', 'Complete Google profile'),
+(12, '/auth/complete-profile', 'POST', 'AUTH', 'Complete patient profile'),
+(13, '/users', 'GET', 'USER', 'Get all users'),
+(14, '/users/doctors', 'GET', 'USER', 'Get all doctors of center'),
+(15, '/users', 'PUT', 'USER', 'Update a user'),
+(16, '/users/{id}', 'DELETE', 'USER', 'Delete a user'),
+(17, '/appointments/center', 'GET', 'APPOINTMENT', 'Get all appointments of center'),
+(18, '/appointments', 'PUT', 'APPOINTMENT', 'Update a appointment of cashier'),
+(19, '/appointments/my-schedules', 'GET', 'APPOINTMENT', 'Get all appointments of doctor'),
+(20, '/appointments/{id}/complete', 'PUT', 'APPOINTMENT', 'Complete a appointment'),
+(21, '/appointments/reschedule', 'PUT', 'APPOINTMENT', 'Reschedule an appointment'),
+(22, '/appointments/{id}/cancel', 'PUT', 'APPOINTMENT', 'Cancel a appointment'),
+(23, '/appointments/urgent', 'GET', 'APPOINTMENT', 'Get urgent appointments for cashier'),
+(24, '/appointments/today', 'GET', 'APPOINTMENT', 'Get today appointments for doctor'),
+(25, '/vaccines', 'GET', 'VACCINE', 'Get all vaccines'),
+(26, '/vaccines/countries', 'GET', 'VACCINE', 'Get all countries'),
+(27, '/vaccines/{slug}', 'GET', 'VACCINE', 'Get vaccine by slug'),
+(28, '/vaccines', 'POST', 'VACCINE', 'Create a new vaccine'),
+(29, '/vaccines/{id}', 'PUT', 'VACCINE', 'Update a vaccine'),
+(30, '/vaccines/{id}', 'DELETE', 'VACCINE', 'Delete a vaccine'),
+(31, '/roles', 'GET', 'ROLE', 'Get all roles'),
+(32, '/roles/{id}', 'GET', 'ROLE', 'Get a role by id'),
+(33, '/roles/{id}', 'PUT', 'ROLE', 'Update a role'),
+(34, '/permissions', 'POST', 'PERMISSION', 'Create a permission'),
+(35, '/permissions', 'GET', 'PERMISSION', 'Get all permissions'),
+(36, '/permissions', 'PUT', 'PERMISSION', 'Update a permission'),
+(37, '/permissions/{id}', 'DELETE', 'PERMISSION', 'Delete a permission'),
+(38, '/files', 'POST', 'FILE', 'Upload single file'),
+(39, '/news', 'GET', 'NEWS', 'Get all news with filtering'),
+(40, '/news/published', 'GET', 'NEWS', 'Get all published news'),
+(41, '/news/featured', 'GET', 'NEWS', 'Get featured news'),
+(42, '/news/slug/{slug}', 'GET', 'NEWS', 'Get news by slug'),
+(43, '/news/{id}', 'GET', 'NEWS', 'Get news by ID'),
+(44, '/news/category/{category}', 'GET', 'NEWS', 'Get news by category'),
+(45, '/news/categories', 'GET', 'NEWS', 'Get all news categories'),
+(46, '/news', 'POST', 'NEWS', 'Create new news article'),
+(47, '/news/{id}', 'PUT', 'NEWS', 'Update news article'),
+(48, '/news/{id}', 'DELETE', 'NEWS', 'Delete news article'),
+(49, '/news/{id}/publish', 'PATCH', 'NEWS', 'Publish news article'),
+(50, '/news/{id}/unpublish', 'PATCH', 'NEWS', 'Unpublish news article'),
+(51, '/centers/{slug}', 'GET', 'CENTER', 'Get center by slug'),
+(52, '/centers', 'GET', 'CENTER', 'Get all centers'),
+(53, '/centers', 'POST', 'CENTER', 'Create a new center'),
+(54, '/centers/{id}', 'PUT', 'CENTER', 'Update a center'),
+(55, '/centers/{id}', 'DELETE', 'CENTER', 'Delete a center'),
+(56, '/bookings', 'POST', 'BOOKING', 'Create a booking'),
+(57, '/bookings', 'GET', 'BOOKING', 'Get all bookings'),
+(58, '/api/v1/doctors/my-center/with-schedule', 'GET', 'DOCTOR_SCHEDULE', 'Get doctors with schedule in my center'),
+(59, '/api/v1/doctors/center/{centerId}/available', 'GET', 'DOCTOR_SCHEDULE', 'Get available doctors by center'),
+(60, '/api/v1/doctors/{doctorId}/schedules', 'GET', 'DOCTOR_SCHEDULE', 'Get doctor weekly schedule template'),
+(61, '/api/v1/doctors/{doctorId}/slots/available', 'GET', 'DOCTOR_SCHEDULE', 'Get available slots for doctor'),
+(62, '/api/v1/doctors/center/{centerId}/slots/available', 'GET', 'DOCTOR_SCHEDULE', 'Get available slots for center'),
+(63, '/api/v1/doctors/center/{centerId}/slots/available-by-timeslot', 'GET', 'DOCTOR_SCHEDULE', 'Get available slots by center and timeslot'),
+(64, '/api/v1/doctors/{doctorId}/slots', 'GET', 'DOCTOR_SCHEDULE', 'Get doctor slots in date range'),
+(65, '/api/v1/doctors/{doctorId}/slots/generate', 'POST', 'DOCTOR_SCHEDULE', 'Generate slots for doctor'),
+(66, '/api/family-members', 'POST', 'FAMILY_MEMBER', 'Add a new family member'),
+(67, '/api/family-members', 'PUT', 'FAMILY_MEMBER', 'Update a family member'),
+(68, '/api/family-members/{id}', 'DELETE', 'FAMILY_MEMBER', 'Delete a family member'),
+(69, '/api/family-members', 'GET', 'FAMILY_MEMBER', 'Get all family members'),
+(70, '/api/family-members/{id}', 'GET', 'FAMILY_MEMBER', 'Get family member by id'),
+(71, '/api/vaccine-records/patient/{userId}', 'GET', 'VACCINE_RECORD', 'Get all vaccine records for patient'),
+(72, '/api/profile/patient', 'GET', 'PROFILE', 'Get patient profile'),
+(73, '/api/profile/patient', 'PUT', 'PROFILE', 'Update patient profile'),
+(74, '/api/profile/doctor', 'GET', 'PROFILE', 'Get doctor profile'),
+(75, '/api/profile/doctor', 'PUT', 'PROFILE', 'Update doctor profile'),
+(76, '/api/profile/cashier', 'GET', 'PROFILE', 'Get cashier profile'),
+(77, '/api/profile/cashier', 'PUT', 'PROFILE', 'Update cashier profile'),
+(78, '/api/profile/admin', 'GET', 'PROFILE', 'Get admin profile'),
+(79, '/api/profile/admin', 'PUT', 'PROFILE', 'Update admin profile'),
+(80, '/payments/paypal/success', 'GET', 'PAYMENT', 'Handle PayPal payment success'),
+(81, '/payments/paypal/cancel', 'GET', 'PAYMENT', 'Handle PayPal payment cancel'),
+(82, '/payments/vnpay/return', 'GET', 'PAYMENT', 'Handle VNPay payment return'),
+(83, '/payments/meta-mask', 'POST', 'PAYMENT', 'Update payment with MetaMask'),
+(84, '/orders', 'POST', 'ORDER', 'Create a new order'),
+(85, '/orders', 'GET', 'ORDER', 'Get all orders of user'),
+(86, '/api/v1/hello', 'GET', 'HEALTH', 'Health check endpoint'),
+(87, '/api/v1/hello-secure', 'GET', 'HEALTH', 'Secure health check endpoint'),
+(88, '/api/notification-settings', 'GET', 'NOTIFICATION_SETTING', 'Get notification settings'),
+(89, '/api/notification-settings', 'PUT', 'NOTIFICATION_SETTING', 'Update notification settings'),
+(90, '/api/reminders/my-reminders', 'GET', 'REMINDER', 'Get user reminders'),
+(91, '/api/reminders/appointment/{appointmentId}', 'GET', 'REMINDER', 'Get appointment reminders'),
+(92, '/api/reminders/send-pending', 'POST', 'REMINDER', 'Send pending reminders'),
+(93, '/api/reminders/retry-failed', 'POST', 'REMINDER', 'Retry failed reminders'),
+(94, '/api/reminders/appointment/{appointmentId}', 'DELETE', 'REMINDER', 'Cancel appointment reminders'),
+(95, '/api/reminders/statistics', 'GET', 'REMINDER', 'Get reminder statistics'),
+(96, '/api/test/create-test-appointment', 'POST', 'TEST', 'Create test appointment'),
+(97, '/api/test/send-test-reminder', 'POST', 'TEST', 'Send test reminder'),
+(98, '/api/test/complete-appointment/{appointmentId}', 'POST', 'TEST', 'Complete test appointment');
 
 
 
@@ -365,3 +267,105 @@ is_deleted
 (47, 'huyet-thanh-uon-van-sat', 'Uốn Ván SAT', 'Việt Nam', 'https://vnvc.vn/wp-content/uploads/2021/02/huyet-thanh-uon-van-SAT.jpg', 'Uốn ván là bệnh nhiễm trùng cấp tính do vi khuẩn yếm khí Clostridium tetani gây ra. Theo Tổ chức Y tế Thế giới (WHO),...', 'Huyết thanh uốn ván SAT được dùng để phòng ngừa uốn ván ở người vừa mới bị vết thương có thể nhiễm bào tử uốn ván, bao gồm những người không tiêm ngừa uốn ván trong 10 năm gần đây, hoặc không nhớ rõ lịch tiêm uốn ván.', 'Huyết thanh uốn ván SAT được nghiên cứu và phát triển bởi Viện Vắc xin và Sinh phẩm Y tế ( IVAC – Việt Nam).', '{"Huyết thanh uốn ván SAT được chỉ định tiêm bắp."}', '{"Bảo quản ở nhiệt độ lạnh (từ 2 – 8 độ C). Không được đóng băng."}', '{"Những trường hợp có tiền sử dị ứng với huyết thanh kháng độc tố uốn ván nguồn gốc từ ngựa. Những trường hợp này nếu bắt buộc dùng nên dùng loại huyết thanh uốn ván nguồn gốc từ người.","Phụ nữ đang mang thai."}', 3, 20, 886289, 20, '2025-11-17 02:43:15.408049', '2025-11-17 02:43:15.408049', false);
 
 
+
+-- ========================
+-- Bảng: users
+-- ========================
+INSERT INTO users (
+id,
+address,
+avatar,
+birthday,
+blockchain_identity_hash,
+did,
+email,
+full_name,
+gender,
+ipfs_data_hash,
+is_active,
+is_deleted,
+password,
+phone,
+refresh_token,
+role_id
+) VALUES
+(1, NULL, 'https_example.com/avatars/doc_a.png', NULL, NULL, NULL, 'doctor.a@vax.com', 'Bác sĩ Nguyễn Văn A', NULL, NULL, true, false, '$2a$10$khUSAS5S7gXcMMG6pwIPCeo5raxxdJggD/3fnKwjVTRFaBLD.TIIG', NULL, 'eyJhbGciOiJIUzUxMiJ9.eyJleHAiOjE4NDg1MzQ1OTcsInN1YiI6ImRvY3Rvci5hQHZheC5jb20iLCJpYXQiOjE3NjI1MzQ1OTd9.DDg2rhfruCXs5GLAloeRvyax6l6fGmLVBc0l24IPLdDLlaHsJ4BH508xiqY4ryr4rxpgYJVBMMFxD8sCfIc7cw', 3),
+(2, NULL, 'https_example.com/avatars/doc_b.png', NULL, NULL, NULL, 'doctor.b@vax.com', 'Bác sĩ Trần Văn B', NULL, NULL, true, false, '$2a$10$khUSAS5S7gXcMMG6pwIPCeo5raxxdJggD/3fnKwjVTRFaBLD.TIIG', NULL, NULL, 3),
+(3, NULL, 'https_example.com/avatars/doc_c.png', NULL, NULL, NULL, 'doctor.c@vax.com', 'Bác sĩ Lê Thị C', NULL, NULL, true, false, '$2a$10$khUSAS5S7gXcMMG6pwIPCeo5raxxdJggD/3fnKwjVTRFaBLD.TIIG', NULL, NULL, 3),
+(4, NULL, 'https_example.com/avatars/cash_d.png', NULL, NULL, NULL, 'cashier.d@vax.com', 'Thu ngân Phạm Văn D', NULL, NULL, true, false, '$2a$10$khUSAS5S7gXcMMG6pwIPCeo5raxxdJggD/3fnKwjVTRFaBLD.TIIG', NULL, NULL, 4),
+(5, NULL, 'https_example.com/avatars/doc_e.png', NULL, NULL, NULL, 'doctor.e@vax.com', 'Bác sĩ Hoàng Văn E', NULL, NULL, true, false, '$2a$10$khUSAS5S7gXcMMG6pwIPCeo5raxxdJggD/3fnKwjVTRFaBLD.TIIG', NULL, 'eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJkb2N0b3IuZUB2YXguY29tIiwiZXhwIjoxODQ5ODkwMzc3LCJpYXQiOjE3NjM4OTAzNzd9.YBOsLMSmg4YLLoxU6waIbfsasKFnhzC9WZ4QYCnV6DUi1DSNFrIsaa15wjTAcJQ5rGsSWF8XJQxqx0LoF1YOeA', 3),
+(6, NULL, 'https_example.com/avatars/doc_f.png', NULL, NULL, NULL, 'doctor.f@vax.com', 'Bác sĩ Võ Thị F', NULL, NULL, true, false, '$2a$10$khUSAS5S7gXcMMG6pwIPCeo5raxxdJggD/3fnKwjVTRFaBLD.TIIG', NULL, NULL, 3),
+(7, NULL, 'https_example.com/avatars/doc_g.png', NULL, NULL, NULL, 'doctor.g@vax.com', 'Bác sĩ Đặng Văn G', NULL, NULL, true, false, '$2a$10$khUSAS5S7gXcMMG6pwIPCeo5raxxdJggD/3fnKwjVTRFaBLD.TIIG', NULL, NULL, 3),
+(8, NULL, 'https_example.com/avatars/doc_h.png', NULL, NULL, NULL, 'doctor.h@vax.com', 'Bác sĩ Bùi Thị H', NULL, NULL, true, false, '$2a$10$khUSAS5S7gXcMMG6pwIPCeo5raxxdJggD/3fnKwjVTRFaBLD.TIIG', NULL, NULL, 3),
+(9, NULL, 'https_example.com/avatars/cash_i.png', NULL, NULL, NULL, 'cashier.i@vax.com', 'Thu ngân Ngô Văn I', NULL, NULL, true, false, '$2a$10$khUSAS5S7gXcMMG6pwIPCeo5raxxdJggD/3fnKwjVTRFaBLD.TIIG', NULL, NULL, 4),
+(10, NULL, 'https_example.com/avatars/doc_j.png', NULL, NULL, NULL, 'doctor.j@vax.com', 'Bác sĩ Trịnh Văn J', NULL, NULL, true, false, '$2a$10$khUSAS5S7gXcMMG6pwIPCeo5raxxdJggD/3fnKwjVTRFaBLD.TIIG', NULL, NULL, 3),
+(11, NULL, 'https_example.com/avatars/doc_k.png', NULL, NULL, NULL, 'doctor.k@vax.com', 'Bác sĩ Mai Thị K', NULL, NULL, true, false, '$2a$10$khUSAS5S7gXcMMG6pwIPCeo5raxxdJggD/3fnKwjVTRFaBLD.TIIG', NULL, NULL, 3),
+(12, NULL, 'https_example.com/avatars/doc_l.png', NULL, NULL, NULL, 'doctor.l@vax.com', 'Bác sĩ Phan Văn L', NULL, NULL, true, false, '$2a$10$khUSAS5S7gXcMMG6pwIPCeo5raxxdJggD/3fnKwjVTRFaBLD.TIIG', NULL, NULL, 3),
+(13, NULL, 'https_example.com/avatars/doc_m.png', NULL, NULL, NULL, 'doctor.m@vax.com', 'Bác sĩ Dương Thị M', NULL, NULL, true, false, '$2a$10$khUSAS5S7gXcMMG6pwIPCeo5raxxdJggD/3fnKwjVTRFaBLD.TIIG', NULL, NULL, 3),
+(14, NULL, 'https_example.com/avatars/doc_n.png', NULL, NULL, NULL, 'doctor.n@vax.com', 'Bác sĩ Hà Văn N', NULL, NULL, true, false, '$2a$10$khUSAS5S7gXcMMG6pwIPCeo5raxxdJggD/3fnKwjVTRFaBLD.TIIG', NULL, NULL, 3),
+(15, NULL, 'http://localhost:8080/storage/user/1762459328103-chungnhan.png', NULL, NULL, NULL, 'cashier.o@vax.com', 'Thu ngân Lương Thị O', NULL, NULL, true, false, '$2a$10$khUSAS5S7gXcMMG6pwIPCeo5raxxdJggD/3fnKwjVTRFaBLD.TIIG', NULL, 'eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJjYXNoaWVyLm9AdmF4LmNvbSIsImV4cCI6MTg0OTg5Nzg2NCwiaWF0IjoxNzYzODk3ODY0fQ.G2OyWIkI1dAojcg6NeOSY6pcYPiP2HczI_Fe5Ac1NtNbk1_k1JWHydz7UmPxhNzHRZG2PNr26cKzCmNE0aZDAg', 4),
+(16, NULL, 'https_example.com/avatars/doc_p.png', NULL, NULL, NULL, 'doctor.p@vax.com', 'Bác sĩ Vũ Văn P', NULL, NULL, true, false, '$2a$10$khUSAS5S7gXcMMG6pwIPCeo5raxxdJggD/3fnKwjVTRFaBLD.TIIG', NULL, NULL, 3),
+(17, NULL, 'https_example.com/avatars/doc_q.png', NULL, NULL, NULL, 'doctor.q@vax.com', 'Bác sĩ Đỗ Thị Q', NULL, NULL, true, false, '$2a$10$khUSAS5S7gXcMMG6pwIPCeo5raxxdJggD/3fnKwjVTRFaBLD.TIIG', NULL, NULL, 3),
+(18, NULL, 'https_example.com/avatars/doc_r.png', NULL, NULL, NULL, 'doctor.r@vax.com', 'Bác sĩ Hồ Văn R', NULL, NULL, true, false, '$2a$10$khUSAS5S7gXcMMG6pwIPCeo5raxxdJggD/3fnKwjVTRFaBLD.TIIG', NULL, NULL, 3),
+(19, NULL, 'https_example.com/avatars/cash_s.png', NULL, NULL, NULL, 'cashier.s@vax.com', 'Thu ngân Đinh Thị S', NULL, NULL, true, false, '$2a$10$khUSAS5S7gXcMMG6pwIPCeo5raxxdJggD/3fnKwjVTRFaBLD.TIIG', NULL, 'eyJhbGciOiJIUzUxMiJ9.eyJleHAiOjE4NDgwMjQ4MjYsInN1YiI6ImNhc2hpZXIuc0B2YXguY29tIiwiaWF0IjoxNzYyMDI0ODI2fQ.XeCMUGXrl7t1zphdfCwo3jNEH76Wr_w55KBw3BCJQ8sqVh_WQ-bVRwsTpaLjNOe1wrDaBdYaE6KPr5iw6OlQDQ', 4),
+(20, NULL, 'https_example.com/avatars/doc_t.png', NULL, NULL, NULL, 'doctor.t@vax.com', 'Bác sĩ Lâm Văn T', NULL, NULL, true, false, '$2a$10$khUSAS5S7gXcMMG6pwIPCeo5raxxdJggD/3fnKwjVTRFaBLD.TIIG', NULL, NULL, 3),
+(21, NULL, 'https_example.com/avatars/doc_u.png', NULL, NULL, NULL, 'doctor.u@vax.com', 'Bác sĩ Trương Thị U', NULL, NULL, true, false, '$2a$10$khUSAS5S7gXcMMG6pwIPCeo5raxxdJggD/3fnKwjVTRFaBLD.TIIG', NULL, NULL, 3),
+(22, NULL, 'https_example.com/avatars/doc_v.png', NULL, NULL, NULL, 'doctor.v@vax.com', 'Bác sĩ Mạc Văn V', NULL, NULL, true, false, '$2a$10$khUSAS5S7gXcMMG6pwIPCeo5raxxdJggD/3fnKwjVTRFaBLD.TIIG', NULL, NULL, 3),
+(23, NULL, 'https_example.com/avatars/doc_w.png', NULL, NULL, NULL, 'doctor.w@vax.com', 'Bác sĩ Tạ Thị W', NULL, NULL, true, false, '$2a$10$khUSAS5S7gXcMMG6pwIPCeo5raxxdJggD/3fnKwjVTRFaBLD.TIIG', NULL, NULL, 3),
+(24, NULL, 'https_example.com/avatars/cash_x.png', NULL, NULL, NULL, 'cashier.x@vax.com', 'Thu ngân Đoàn Văn X', NULL, NULL, true, false, '$2a$10$khUSAS5S7gXcMMG6pwIPCeo5raxxdJggD/3fnKwjVTRFaBLD.TIIG', NULL, NULL, 4),
+(26, NULL, 'https://res.cloudinary.com/dcwzhi4tp/image/upload/v1764097281/user/syrvax40k3nise2l2uak.jpg', NULL, NULL, NULL, 'admin@gmail.com', 'Super Admin', NULL, NULL, true, false, '$2a$10$khUSAS5S7gXcMMG6pwIPCeo5raxxdJggD/3fnKwjVTRFaBLD.TIIG', NULL, NULL, 1);
+
+
+-- ========================
+-- Bảng: doctors
+-- ========================
+INSERT INTO doctors (
+doctor_id,
+consultation_duration,
+created_at,
+is_available,
+license_number,
+max_patients_per_day,
+specialization,
+updated_at,
+center_id,
+user_id
+) VALUES
+(1, 30, NULL, true, 'BYT-000066', 20, 'Tiêm chủng trẻ em', NULL, 2, 5),
+(2, 30, NULL, true, 'BYT-000064', 20, 'Tiêm chủng người lớn', NULL, 1, 3),
+(3, 30, NULL, true, 'BYT-000062', 20, 'Tiêm chủng tổng hợp', NULL, 1, 1),
+(4, 30, NULL, true, 'BYT-000063', 20, 'Tiêm chủng trẻ em', NULL, 1, 2),
+(5, 30, NULL, true, 'BYT-000067', 20, 'Tiêm chủng người lớn', NULL, 2, 6),
+(6, 30, NULL, true, 'BYT-000068', 20, 'Tiêm chủng tổng hợp', NULL, 2, 7),
+(7, 30, NULL, true, 'BYT-000069', 20, 'Tiêm chủng trẻ em', NULL, 2, 8),
+(8, 30, NULL, true, 'BYT-000071', 20, 'Tiêm chủng tổng hợp', NULL, 3, 10),
+(9, 30, NULL, true, 'BYT-000072', 20, 'Tiêm chủng trẻ em', NULL, 3, 11),
+(10, 30, NULL, true, 'BYT-000073', 20, 'Tiêm chủng người lớn', NULL, 3, 12),
+(11, 30, NULL, true, 'BYT-000074', 20, 'Tiêm chủng tổng hợp', NULL, 3, 13),
+(12, 30, NULL, true, 'BYT-000075', 20, 'Tiêm chủng trẻ em', NULL, 3, 14),
+(13, 30, NULL, true, 'BYT-000077', 20, 'Tiêm chủng tổng hợp', NULL, 4, 16),
+(14, 30, NULL, true, 'BYT-000078', 20, 'Tiêm chủng trẻ em', NULL, 4, 17),
+(15, 30, NULL, true, 'BYT-000079', 20, 'Tiêm chủng người lớn', NULL, 4, 18),
+(16, 30, NULL, true, 'BYT-000081', 20, 'Tiêm chủng trẻ em', NULL, 5, 20),
+(17, 30, NULL, true, 'BYT-000082', 20, 'Tiêm chủng người lớn', NULL, 5, 21),
+(18, 30, NULL, true, 'BYT-000083', 20, 'Tiêm chủng tổng hợp', NULL, 5, 22),
+(19, 30, NULL, true, 'BYT-000084', 20, 'Tiêm chủng trẻ em', NULL, 5, 23);
+
+
+
+INSERT INTO cashiers (
+    cashier_id, 
+    created_at, 
+    employee_code, 
+    is_active, 
+    shift_end_time, 
+    shift_start_time, 
+    updated_at, 
+    center_id, 
+    user_id
+) VALUES
+(1, NULL, 'CASHIER-001', true, '17:00:00', '07:30:00', NULL, 1, 4),
+(2, NULL, 'CASHIER-002', true, '17:00:00', '08:00:00', NULL, 2, 9),
+(3, NULL, 'CASHIER-003', true, '17:00:00', '07:30:00', NULL, 3, 15),
+(4, NULL, 'CASHIER-004', true, '17:00:00', '07:30:00', NULL, 4, 19),
+(5, NULL, 'CASHIER-005', true, '17:00:00', '07:30:00', NULL, 5, 24);
