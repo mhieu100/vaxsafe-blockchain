@@ -12,6 +12,10 @@ services:
       - BLOCKCHAIN_URL=http://host.docker.internal:4000/api
       - CORS_ALLOWED_ORIGINS=https://safevax.mhieu100.space
       - APP_BASE_URL=https://backend.mhieu100.space
+      - SPRING_SECURITY_OAUTH2_CLIENT_REGISTRATION_GOOGLE_CLIENT_ID=${GOOGLE_CLIENT_ID}
+      - SPRING_SECURITY_OAUTH2_CLIENT_REGISTRATION_GOOGLE_CLIENT_SECRET=${GOOGLE_CLIENT_SECRET}
+      - SPRING_SECURITY_OAUTH2_CLIENT_REGISTRATION_GOOGLE_SCOPE=profile,email
+      - SPRING_SECURITY_OAUTH2_CLIENT_REGISTRATION_GOOGLE_REDIRECT_URI={baseUrl}/login/oauth2/code/{registrationId}
     env_file:
       - .env
     depends_on:
