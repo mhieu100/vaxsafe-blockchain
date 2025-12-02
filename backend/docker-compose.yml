@@ -9,7 +9,7 @@ services:
       - SPRING_DATASOURCE_USERNAME=postgres
       - SPRING_DATASOURCE_PASSWORD=postgres
       - VNPAY_RETURN_URL=https://backend.mhieu100.space/payments/vnpay/return
-      - BLOCKCHAIN_URL=http://host.docker.internal:4000/api
+      - BLOCKCHAIN_URL=https://blockchain.mhieu100.space/api
       - CORS_ALLOWED_ORIGINS=https://safevax.mhieu100.space
       - APP_BASE_URL=https://backend.mhieu100.space
       - SPRING_SECURITY_OAUTH2_CLIENT_REGISTRATION_GOOGLE_CLIENT_ID=${GOOGLE_CLIENT_ID}

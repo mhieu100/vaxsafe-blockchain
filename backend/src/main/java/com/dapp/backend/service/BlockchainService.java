@@ -18,7 +18,7 @@ public class BlockchainService {
 
     private final RestTemplate restTemplate;
 
-    @Value("${blockchain.service.url:http://localhost:4000}")
+    @Value("${blockchain.service.url}")
     private String blockchainServiceUrl;
 
     /**
