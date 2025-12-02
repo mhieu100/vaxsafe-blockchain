@@ -1,7 +1,7 @@
 -- ============================================
 -- V4 Migration: Seed Doctor Data for Testing
 -- Migrate existing doctors to new schema + Generate slots
--- 
+--
 -- UPDATED LOGIC:
 -- - Default working hours: 7:00 - 17:00 (all days)
 -- - Slot duration: 30 minutes
@@ -13,12 +13,24 @@
 -- 1. MIGRATE EXISTING DOCTORS FROM USERS TABLE
 -- ============================================
 -- Migrate doctors from users table to doctors table
-INSERT INTO doctors (user_id, center_id, license_number, specialization, consultation_duration, max_patients_per_day, is_available)
-SELECT 
+INSERT INTO
+    doctors (
+        user_id,
+        center_id,
+        license_number,
+        specialization,
+        consultation_duration,
+        max_patients_per_day,
+        is_available
+    )
+SELECT
     u.id,
     u.center_id,
-    CONCAT('BYT-', LPAD(u.id::TEXT, 6, '0')), -- Generate license number: BYT-000001
-    CASE 
+    CONCAT(
+        'BYT-',
+        LPAD(u.id::TEXT, 6, '0')
+    ), -- Generate license number: BYT-000001
+    CASE
         WHEN u.id % 3 = 0 THEN 'Tiêm chủng trẻ em'
         WHEN u.id % 3 = 1 THEN 'Tiêm chủng người lớn'
         ELSE 'Tiêm chủng tổng hợp'
@@ -27,9 +39,15 @@ SELECT
     20, -- Max 20 patients per day (20 slots x 30 min = 10 hours)
     TRUE
 FROM users u
-JOIN roles r ON u.role_id = r.id
-WHERE r.name = 'DOCTOR'
-  AND NOT EXISTS (SELECT 1 FROM doctors d WHERE d.user_id = u.id)
+    JOIN roles r ON u.role_id = r.id
+WHERE
+    r.name = 'DOCTOR'
+    AND NOT EXISTS (
+        SELECT 1
+        FROM doctors d
+        WHERE
+            d.user_id = u.id
+    )
 ON CONFLICT (user_id) DO NOTHING;
 
 -- ============================================
@@ -43,8 +61,8 @@ ON CONFLICT (user_id) DO NOTHING;
 -- Example: Custom schedule for doctor_id = 1
 INSERT INTO doctor_schedules (doctor_id, day_of_week, start_time, end_time, is_active)
 VALUES 
-    (1, 1, '08:00', '12:00', TRUE),  -- Monday morning
-    (1, 1, '14:00', '18:00', TRUE);  -- Monday afternoon
+(1, 1, '08:00', '12:00', TRUE),  -- Monday morning
+(1, 1, '14:00', '18:00', TRUE);  -- Monday afternoon
 */
 
 -- ============================================
@@ -75,7 +93,7 @@ BEGIN
         FROM doctors 
         WHERE is_available = TRUE
     LOOP
-        v_consultation_duration := COALESCE(doctor_record.consultation_duration, 30);
+        v_consultation_duration := COALESCE(doctor_record.consultation_duration, 15);
         v_current_date := v_start_date;
         
         -- Loop through each date
@@ -152,18 +170,19 @@ END $$;
 -- ============================================
 -- 5. CREATE INDEXES FOR BETTER PERFORMANCE
 -- ============================================
-CREATE INDEX IF NOT EXISTS idx_doctor_slots_date_status 
-ON doctor_available_slots(slot_date, status) 
-WHERE status = 'AVAILABLE';
+CREATE INDEX IF NOT EXISTS idx_doctor_slots_date_status ON doctor_available_slots (slot_date, status)
+WHERE
+    status = 'AVAILABLE';
 
-CREATE INDEX IF NOT EXISTS idx_doctor_slots_doctor_date_status 
-ON doctor_available_slots(doctor_id, slot_date, status);
+CREATE INDEX IF NOT EXISTS idx_doctor_slots_doctor_date_status ON doctor_available_slots (doctor_id, slot_date, status);
 
 -- ============================================
 -- 6. COMMENTS
 -- ============================================
 COMMENT ON TABLE doctors IS 'Extended doctor profiles with scheduling settings. Default: 30min slots, 7:00-17:00 every day';
+
 COMMENT ON TABLE doctor_schedules IS 'OPTIONAL: Custom weekly schedule templates. If empty, system uses default 7:00-17:00';
+
 COMMENT ON TABLE doctor_available_slots IS 'Pre-generated 30-minute time slots for booking appointments (7:00-17:00 = 20 slots/day)';
 
 -- ============================================
