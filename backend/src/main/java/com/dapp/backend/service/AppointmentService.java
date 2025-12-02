@@ -62,8 +62,7 @@ public class AppointmentService {
     private final VaccinationReminderService reminderService;
     private final NextDoseReminderService nextDoseReminderService;
     private final EmailService emailService;
-    @Value("${blockchainUrl}")
-    private String blockchainUrl;
+    // Removed: blockchainUrl - now using BlockchainService
 
     public Pagination getAllAppointmentOfCenter(Specification<Appointment> specification, Pageable pageable) throws AppException {
         User user = authService.getCurrentUserLogin();
