@@ -19,7 +19,7 @@ public class HealthController {
   public ResponseEntity<HealthResponse> hello() {
     return ResponseEntity.ok(
         HealthResponse.builder()
-            .message("Hello from VaxSafe Backend! update ci cd 1")
+            .message("Hello from VaxSafe Backend! update ci cd 12")
             .status("OK")
             .build()
     );
