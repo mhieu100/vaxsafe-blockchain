@@ -4,7 +4,7 @@ import com.dapp.backend.enums.AppointmentStatus;
 import com.dapp.backend.model.Appointment;
 import com.dapp.backend.model.Booking;
 import com.dapp.backend.model.Center;
-import com.dapp.backend.model.Doctor;
+import com.dapp.backend.model.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Query;
