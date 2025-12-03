@@ -12,7 +12,6 @@ import lombok.NoArgsConstructor;
 public class BlockchainIdentityRequest {
     private String identityHash;
     private String did;
-    private String guardianAddress;
     private String idType; // ADULT, CHILD, NEWBORN
     private String ipfsDataHash;
     private String email; // For logging purposes

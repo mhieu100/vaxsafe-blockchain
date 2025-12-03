@@ -75,7 +75,7 @@ public class FamilyMemberService {
         try {
             // Determine identity type based on date of birth
             IdentityType idType = identityService.determineIdentityType(familyMember.getDateOfBirth());
-            String identityHash = identityService.generateFamilyMemberIdentityHash(familyMember, "");
+            String identityHash = identityService.generateFamilyMemberIdentityHash(familyMember);
             String did = identityService.generateDID(identityHash, idType);
             String ipfsDataHash = identityService.generateFamilyMemberDataJson(familyMember);
             

@@ -13,5 +13,4 @@ public class BlockchainDocumentRequest {
     private String identityHash;
     private String documentType;
     private String ipfsHash;
-    private String guardianAddress;
 }

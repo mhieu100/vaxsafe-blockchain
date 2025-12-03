@@ -23,7 +23,7 @@ public class BlockchainService {
 
     /**
      * Create identity on blockchain
-     * Backend wallet will be used as guardian automatically
+     * Guardian address is automatically set to accounts[0] by blockchain-service
      */
     public BlockchainIdentityResponse createIdentity(
             String identityHash,
@@ -38,7 +38,6 @@ public class BlockchainService {
             BlockchainIdentityRequest request = BlockchainIdentityRequest.builder()
                     .identityHash(identityHash)
                     .did(did)
-                    .guardianAddress(null) // Backend wallet will be used
                     .idType(idType.name())
                     .ipfsDataHash(ipfsDataHash != null ? ipfsDataHash : "")
                     .email(email) // For logging
@@ -70,7 +69,7 @@ public class BlockchainService {
 
     /**
      * Link document to identity on blockchain
-     * Backend wallet will be used for signing automatically
+     * Transaction sender is automatically set to accounts[0] by blockchain-service
      */
     public BlockchainDocumentResponse linkDocument(
             String identityHash,
@@ -84,7 +83,6 @@ public class BlockchainService {
                     .identityHash(identityHash)
                     .documentType(documentType)
                     .ipfsHash(ipfsHash)
-                    .guardianAddress(null) // Backend wallet will be used
                     .build();
 
             HttpHeaders headers = new HttpHeaders();

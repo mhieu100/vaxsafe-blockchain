@@ -56,9 +56,8 @@ public class IdentityService {
      * Hash = SHA256(guardianEmail + childName + dateOfBirth + relationship)
      * 
      * @param familyMember The family member (child)
-     * @param guardianWallet Guardian wallet (not used, kept for compatibility)
      */
-    public String generateFamilyMemberIdentityHash(FamilyMember familyMember, String guardianWallet) {
+    public String generateFamilyMemberIdentityHash(FamilyMember familyMember) {
         try {
             // Dùng tổ hợp: guardian email + child name + DOB + relationship
             // Đảm bảo unique cho mỗi child
