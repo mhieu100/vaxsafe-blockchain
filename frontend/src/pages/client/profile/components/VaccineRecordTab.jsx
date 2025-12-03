@@ -1,12 +1,12 @@
 import {
   CalendarOutlined,
-  CheckCircleOutlined,
+  CheckCircleFilled,
   ExperimentOutlined,
   MedicineBoxOutlined,
   SafetyCertificateOutlined,
   UserOutlined,
 } from '@ant-design/icons';
-import { Alert, Card, Descriptions, Empty, Spin, Table, Tag, Typography } from 'antd';
+import { Alert, Card, Descriptions, Empty, Skeleton, Table, Tag, Typography } from 'antd';
 import { useEffect, useState } from 'react';
 import apiClient from '@/services/apiClient';
 import useAccountStore from '@/stores/useAccountStore';
@@ -51,11 +51,11 @@ const VaccineRecordTab = () => {
       key: 'vaccineName',
       render: (text, record) => (
         <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center">
+          <div className="w-10 h-10 rounded-full bg-blue-50 flex items-center justify-center">
             <MedicineBoxOutlined className="text-blue-600 text-lg" />
           </div>
           <div>
-            <div className="font-medium text-gray-900">{text}</div>
+            <div className="font-medium text-slate-800">{text}</div>
             <Text type="secondary" className="text-xs">
               Dose #{record.doseNumber}
             </Text>
@@ -68,8 +68,8 @@ const VaccineRecordTab = () => {
       dataIndex: 'vaccinationDate',
       key: 'vaccinationDate',
       render: (date) => (
-        <div className="flex items-center gap-2">
-          <CalendarOutlined className="text-green-500" />
+        <div className="flex items-center gap-2 text-slate-600">
+          <CalendarOutlined className="text-emerald-500" />
           <span>{new Date(date).toLocaleDateString('vi-VN')}</span>
         </div>
       ),
@@ -78,7 +78,11 @@ const VaccineRecordTab = () => {
       title: 'Site',
       dataIndex: 'site',
       key: 'site',
-      render: (site) => <Tag color="blue">{site?.replace('_', ' ') || 'N/A'}</Tag>,
+      render: (site) => (
+        <Tag color="blue" className="rounded-md border-0 bg-blue-50 text-blue-600">
+          {site?.replace('_', ' ') || 'N/A'}
+        </Tag>
+      ),
     },
     {
       title: 'Lot Number',
@@ -87,7 +91,7 @@ const VaccineRecordTab = () => {
       render: (lot) => (
         <div className="flex items-center gap-2">
           <ExperimentOutlined className="text-purple-500" />
-          <Text className="font-mono text-sm">{lot || 'N/A'}</Text>
+          <Text className="font-mono text-sm text-slate-600">{lot || 'N/A'}</Text>
         </div>
       ),
     },
@@ -96,8 +100,8 @@ const VaccineRecordTab = () => {
       dataIndex: 'doctorName',
       key: 'doctorName',
       render: (name) => (
-        <div className="flex items-center gap-2">
-          <UserOutlined className="text-gray-400" />
+        <div className="flex items-center gap-2 text-slate-600">
+          <UserOutlined className="text-slate-400" />
           <span>{name || 'N/A'}</span>
         </div>
       ),
@@ -106,13 +110,13 @@ const VaccineRecordTab = () => {
       title: 'Center',
       dataIndex: 'centerName',
       key: 'centerName',
-      render: (name) => <Text type="secondary">{name || 'N/A'}</Text>,
+      render: (name) => <Text className="text-slate-500">{name || 'N/A'}</Text>,
     },
     {
       title: 'Status',
       key: 'status',
       render: () => (
-        <Tag icon={<CheckCircleOutlined />} color="success">
+        <Tag icon={<CheckCircleFilled />} color="success" className="rounded-full px-3 border-0">
           Completed
         </Tag>
       ),
@@ -121,46 +125,74 @@ const VaccineRecordTab = () => {
 
   if (loading) {
     return (
-      <div className="flex justify-center items-center py-20">
-        <Spin size="large" />
+      <div className="space-y-6 animate-fade-in">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+          {[1, 2, 3].map((i) => (
+            <Card key={i} className="rounded-2xl shadow-sm border border-slate-100">
+              <Skeleton active paragraph={{ rows: 1 }} title={{ width: 60 }} />
+            </Card>
+          ))}
+        </div>
+        <Card className="rounded-3xl shadow-sm border border-slate-100 overflow-hidden">
+          <Skeleton active paragraph={{ rows: 5 }} />
+        </Card>
       </div>
     );
   }
 
   if (error) {
-    return <Alert type="error" message={error} showIcon className="mb-4" />;
+    return <Alert type="error" message={error} showIcon className="mb-4 rounded-xl" />;
   }
 
   return (
-    <div>
+    <div className="animate-fade-in">
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
-        <Card size="small" className="border-l-4 border-l-blue-500">
-          <div className="flex items-center justify-between">
+        <Card
+          size="small"
+          className="rounded-2xl shadow-sm border border-slate-100 bg-gradient-to-br from-blue-50 to-white"
+        >
+          <div className="flex items-center justify-between p-2">
             <div>
-              <Text type="secondary">Total Records</Text>
-              <div className="text-2xl font-bold text-blue-600">{records.length}</div>
+              <Text className="text-slate-500 font-medium uppercase text-xs tracking-wider">
+                Total Records
+              </Text>
+              <div className="text-3xl font-bold text-blue-600 mt-1">{records.length}</div>
             </div>
-            <SafetyCertificateOutlined className="text-3xl text-blue-500" />
+            <div className="w-12 h-12 rounded-full bg-blue-100 flex items-center justify-center">
+              <SafetyCertificateOutlined className="text-2xl text-blue-600" />
+            </div>
           </div>
         </Card>
 
-        <Card size="small" className="border-l-4 border-l-green-500">
-          <div className="flex items-center justify-between">
+        <Card
+          size="small"
+          className="rounded-2xl shadow-sm border border-slate-100 bg-gradient-to-br from-emerald-50 to-white"
+        >
+          <div className="flex items-center justify-between p-2">
             <div>
-              <Text type="secondary">Vaccines Taken</Text>
-              <div className="text-2xl font-bold text-green-600">
+              <Text className="text-slate-500 font-medium uppercase text-xs tracking-wider">
+                Vaccines Taken
+              </Text>
+              <div className="text-3xl font-bold text-emerald-600 mt-1">
                 {new Set(records.map((r) => r.vaccineName)).size}
               </div>
             </div>
-            <MedicineBoxOutlined className="text-3xl text-green-500" />
+            <div className="w-12 h-12 rounded-full bg-emerald-100 flex items-center justify-center">
+              <MedicineBoxOutlined className="text-2xl text-emerald-600" />
+            </div>
           </div>
         </Card>
 
-        <Card size="small" className="border-l-4 border-l-purple-500">
-          <div className="flex items-center justify-between">
+        <Card
+          size="small"
+          className="rounded-2xl shadow-sm border border-slate-100 bg-gradient-to-br from-purple-50 to-white"
+        >
+          <div className="flex items-center justify-between p-2">
             <div>
-              <Text type="secondary">Last Vaccination</Text>
-              <div className="text-sm font-bold text-purple-600">
+              <Text className="text-slate-500 font-medium uppercase text-xs tracking-wider">
+                Last Vaccination
+              </Text>
+              <div className="text-lg font-bold text-purple-600 mt-2">
                 {records.length > 0
                   ? new Date(
                       Math.max(...records.map((r) => new Date(r.vaccinationDate)))
@@ -168,15 +200,21 @@ const VaccineRecordTab = () => {
                   : 'N/A'}
               </div>
             </div>
-            <CalendarOutlined className="text-3xl text-purple-500" />
+            <div className="w-12 h-12 rounded-full bg-purple-100 flex items-center justify-center">
+              <CalendarOutlined className="text-2xl text-purple-600" />
+            </div>
           </div>
         </Card>
       </div>
 
-      <Card className="shadow-sm">
-        <Title level={5} className="mb-4">
-          Vaccination Records
-        </Title>
+      <Card className="rounded-3xl shadow-sm border border-slate-100 overflow-hidden">
+        <div className="mb-4 px-2">
+          <Title level={4} className="!mb-1 text-slate-800">
+            Vaccination Records
+          </Title>
+          <Text className="text-slate-500">Official medical records stored on blockchain</Text>
+        </div>
+
         {records.length > 0 ? (
           <Table
             columns={columns}
@@ -191,13 +229,15 @@ const VaccineRecordTab = () => {
             }}
             expandable={{
               expandedRowRender: (record) => (
-                <div className="p-4 bg-gray-50 rounded-lg">
-                  <Descriptions bordered size="small" column={2}>
+                <div className="p-4 bg-slate-50 rounded-xl border border-slate-100 m-2">
+                  <Descriptions bordered size="small" column={2} className="bg-white rounded-lg">
                     <Descriptions.Item label="Patient Identity Hash" span={2}>
-                      <Text className="font-mono text-xs">{record.patientIdentityHash}</Text>
+                      <Text className="font-mono text-xs text-slate-500">
+                        {record.patientIdentityHash}
+                      </Text>
                     </Descriptions.Item>
                     <Descriptions.Item label="Appointment ID">
-                      {record.appointmentId}
+                      <span className="font-mono text-slate-700">{record.appointmentId}</span>
                     </Descriptions.Item>
                     <Descriptions.Item label="Expiry Date">
                       {record.expiryDate
@@ -205,28 +245,35 @@ const VaccineRecordTab = () => {
                         : 'N/A'}
                     </Descriptions.Item>
                     <Descriptions.Item label="IPFS Hash" span={2}>
-                      <Text className="font-mono text-xs">{record.ipfsHash || 'N/A'}</Text>
+                      <Text className="font-mono text-xs text-blue-600">
+                        {record.ipfsHash || 'N/A'}
+                      </Text>
                     </Descriptions.Item>
                     <Descriptions.Item label="Notes" span={2}>
-                      {record.notes || 'No additional notes'}
+                      {record.notes || (
+                        <span className="text-slate-400 italic">No additional notes</span>
+                      )}
                     </Descriptions.Item>
                   </Descriptions>
                 </div>
               ),
             }}
+            className="custom-table"
           />
         ) : (
           <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} description="No vaccination records found" />
         )}
       </Card>
 
-      <Card className="bg-blue-50 mt-4">
-        <Title level={5}>📋 About Vaccine Records</Title>
-        <ul className="text-sm text-gray-600 mt-2 space-y-1">
-          <li>• All vaccination records are stored securely on blockchain</li>
-          <li>• Each record is immutable and verifiable</li>
-          <li>• Records include complete vaccination details and doctor information</li>
-          <li>• You can access your records anytime for verification purposes</li>
+      <Card className="bg-gradient-to-r from-blue-50 to-indigo-50 border-blue-100 mt-6 rounded-2xl">
+        <Title level={5} className="text-blue-900">
+          📋 About Vaccine Records
+        </Title>
+        <ul className="text-sm text-blue-800 mt-2 space-y-1 list-disc pl-4">
+          <li>All vaccination records are stored securely on blockchain</li>
+          <li>Each record is immutable and verifiable</li>
+          <li>Records include complete vaccination details and doctor information</li>
+          <li>You can access your records anytime for verification purposes</li>
         </ul>
       </Card>
     </div>

@@ -1,10 +1,11 @@
 import {
-  CheckCircleOutlined,
-  ClockCircleOutlined,
-  CloseCircleOutlined,
+  CheckCircleFilled,
+  ClockCircleFilled,
+  CloseCircleFilled,
   LoadingOutlined,
+  SyncOutlined,
 } from '@ant-design/icons';
-import { Alert, Card, Spin, Table, Tag, Typography } from 'antd';
+import { Alert, Card, Skeleton, Table, Tag, Typography } from 'antd';
 import dayjs from 'dayjs';
 import { useEffect, useState } from 'react';
 import { getMyBookingHistory } from '@/services/booking.service';
@@ -27,7 +28,7 @@ const VaccinationHistoryTab = () => {
         setHistoryData(response.data);
       }
     } catch (_err) {
-      setError('Không thể tải lịch sử tiêm chủng');
+      setError('Failed to load vaccination history');
     } finally {
       setLoading(false);
     }
@@ -40,12 +41,14 @@ const VaccinationHistoryTab = () => {
   const getStatusIcon = (status) => {
     switch (status?.toUpperCase()) {
       case 'COMPLETED':
-        return <CheckCircleOutlined />;
+        return <CheckCircleFilled />;
       case 'PENDING':
       case 'CONFIRMED':
-        return <ClockCircleOutlined />;
+        return <ClockCircleFilled />;
       case 'CANCELLED':
-        return <CloseCircleOutlined />;
+        return <CloseCircleFilled />;
+      case 'PROGRESS':
+        return <SyncOutlined spin />;
       default:
         return <LoadingOutlined />;
     }
@@ -71,15 +74,15 @@ const VaccinationHistoryTab = () => {
   const getStatusText = (status) => {
     switch (status?.toUpperCase()) {
       case 'COMPLETED':
-        return 'Hoàn thành';
+        return 'Completed';
       case 'PENDING':
-        return 'Chờ xác nhận';
+        return 'Pending';
       case 'CONFIRMED':
-        return 'Đã xác nhận';
+        return 'Confirmed';
       case 'CANCELLED':
-        return 'Đã hủy';
+        return 'Cancelled';
       case 'PROGRESS':
-        return 'Đang tiến hành';
+        return 'In Progress';
       default:
         return status;
     }
@@ -94,25 +97,38 @@ const VaccinationHistoryTab = () => {
 
   if (loading) {
     return (
-      <div className="flex justify-center items-center py-12">
-        <Spin size="large" spinning tip="Đang tải lịch sử tiêm chủng...">
-          <div style={{ minHeight: 100 }} />
-        </Spin>
+      <div className="space-y-6 animate-fade-in">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+          {[1, 2, 3].map((i) => (
+            <Card key={i} className="rounded-2xl shadow-sm border border-slate-100">
+              <Skeleton active paragraph={{ rows: 1 }} title={{ width: 60 }} />
+            </Card>
+          ))}
+        </div>
+        <Card className="rounded-3xl shadow-sm border border-slate-100 overflow-hidden">
+          <Skeleton active paragraph={{ rows: 5 }} />
+        </Card>
       </div>
     );
   }
 
   if (error) {
-    return <Alert title="Lỗi" description={error} type="error" showIcon className="mb-4" />;
+    return (
+      <Alert title="Error" description={error} type="error" showIcon className="mb-4 rounded-xl" />
+    );
   }
 
   // Main booking columns
   const bookingColumns = [
     {
-      title: 'Mã Booking',
+      title: 'Booking ID',
       dataIndex: 'bookingId',
       key: 'bookingId',
-      render: (id) => <Text strong>#{id}</Text>,
+      render: (id) => (
+        <Text strong className="font-mono text-slate-600">
+          #{id}
+        </Text>
+      ),
     },
     {
       title: 'Vaccine',
@@ -120,21 +136,28 @@ const VaccinationHistoryTab = () => {
       key: 'vaccineName',
       render: (text, record) => (
         <div>
-          <Text strong>{text}</Text>
-          <div className="text-xs text-gray-500">{record.totalDoses} mũi tiêm</div>
+          <Text strong className="text-slate-800">
+            {text}
+          </Text>
+          <div className="text-xs text-slate-500">{record.totalDoses} doses</div>
         </div>
       ),
     },
     {
-      title: 'Người tiêm',
+      title: 'Patient',
       key: 'patient',
       render: (_, record) => (
         <div>
-          <Text>{record.familyMemberName || record.patientName}</Text>
+          <Text className="font-medium text-slate-700">
+            {record.familyMemberName || record.patientName}
+          </Text>
           {record.familyMemberName && (
             <div>
-              <Tag color="purple" className="!mt-1">
-                Thành viên gia đình
+              <Tag
+                color="purple"
+                className="!mt-1 rounded-md border-0 bg-purple-50 text-purple-600 text-xs"
+              >
+                Family Member
               </Tag>
             </div>
           )}
@@ -142,38 +165,32 @@ const VaccinationHistoryTab = () => {
       ),
     },
     {
-      title: 'Ngày đặt',
+      title: 'Date',
       dataIndex: 'createdAt',
       key: 'createdAt',
-      render: (date) => dayjs(date).format('DD/MM/YYYY HH:mm'),
+      render: (date) => (
+        <span className="text-slate-600">{dayjs(date).format('DD/MM/YYYY HH:mm')}</span>
+      ),
       sorter: (a, b) => dayjs(a.createdAt).unix() - dayjs(b.createdAt).unix(),
       defaultSortOrder: 'descend',
     },
     {
-      title: 'Tổng tiền',
+      title: 'Total Amount',
       dataIndex: 'totalAmount',
       key: 'totalAmount',
-      render: (amount) => <p className="text-blue-600">{formatPrice(amount)}</p>,
+      render: (amount) => <span className="font-bold text-blue-600">{formatPrice(amount)}</span>,
     },
     {
-      title: 'Trạng thái',
+      title: 'Status',
       key: 'status',
       render: (_, record) => (
-        <div className="space-y-1">
-          <div>
-            <Tag
-              color={getStatusColor(record.bookingStatus)}
-              icon={getStatusIcon(record.bookingStatus)}
-            >
-              {getStatusText(record.bookingStatus)}
-            </Tag>
-          </div>
-          <div>
-            <Tag color={getStatusColor(record.bookingStatus)} className="text-xs">
-              {getStatusText(record.bookingStatus)}
-            </Tag>
-          </div>
-        </div>
+        <Tag
+          color={getStatusColor(record.bookingStatus)}
+          icon={getStatusIcon(record.bookingStatus)}
+          className="rounded-full px-3 py-1 border-0 font-medium"
+        >
+          {getStatusText(record.bookingStatus)}
+        </Tag>
       ),
     },
   ];
@@ -181,23 +198,23 @@ const VaccinationHistoryTab = () => {
   // Appointment detail columns (for expanded row)
   const appointmentColumns = [
     {
-      title: 'Mũi',
+      title: 'Dose',
       dataIndex: 'doseNumber',
       key: 'doseNumber',
       width: 80,
       render: (num) => (
-        <Tag color="blue" className="!m-0">
-          Mũi {num}
+        <Tag color="blue" className="!m-0 rounded-md">
+          Dose {num}
         </Tag>
       ),
     },
     {
-      title: 'Ngày hẹn',
+      title: 'Scheduled Date',
       dataIndex: 'scheduledDate',
       key: 'scheduledDate',
       render: (date, record) => (
         <div>
-          <div>{dayjs(date).format('DD/MM/YYYY')}</div>
+          <div className="font-medium text-slate-700">{dayjs(date).format('DD/MM/YYYY')}</div>
           <Text type="secondary" className="text-xs">
             {formatAppointmentTime(record)}
           </Text>
@@ -205,32 +222,31 @@ const VaccinationHistoryTab = () => {
       ),
     },
     {
-      title: 'Trung tâm',
+      title: 'Center',
       dataIndex: 'centerName',
       key: 'centerName',
+      render: (name) => <span className="text-slate-600">{name}</span>,
     },
     {
-      title: 'Bác sĩ',
+      title: 'Doctor',
       dataIndex: 'doctorName',
       key: 'doctorName',
       render: (text) => (
-        <Text type={!text ? 'secondary' : undefined}>{text || 'Chưa phân công'}</Text>
+        <Text type={!text ? 'secondary' : undefined}>{text || 'Not assigned'}</Text>
       ),
     },
     {
-      title: 'Thu ngân',
+      title: 'Cashier',
       dataIndex: 'cashierName',
       key: 'cashierName',
-      render: (text) => (
-        <Text type={!text ? 'secondary' : undefined}>{text || 'Chưa thanh toán'}</Text>
-      ),
+      render: (text) => <Text type={!text ? 'secondary' : undefined}>{text || 'Unpaid'}</Text>,
     },
     {
-      title: 'Trạng thái',
+      title: 'Status',
       dataIndex: 'appointmentStatus',
       key: 'appointmentStatus',
       render: (status) => (
-        <Tag color={getStatusColor(status)} icon={getStatusIcon(status)}>
+        <Tag color={getStatusColor(status)} className="rounded-md border-0">
           {getStatusText(status)}
         </Tag>
       ),
@@ -239,9 +255,11 @@ const VaccinationHistoryTab = () => {
 
   const expandedRowRender = (record) => {
     return (
-      <div className="bg-gray-50 p-4 rounded-lg">
+      <div className="bg-slate-50 p-4 rounded-xl border border-slate-100">
         <div className="mb-3">
-          <Text strong>Lịch hẹn chi tiết</Text>
+          <Text strong className="text-slate-700">
+            Appointment Details
+          </Text>
         </div>
         <Table
           dataSource={record.appointments}
@@ -249,6 +267,7 @@ const VaccinationHistoryTab = () => {
           pagination={false}
           rowKey="appointmentId"
           size="small"
+          className="bg-transparent"
         />
       </div>
     );
@@ -262,47 +281,60 @@ const VaccinationHistoryTab = () => {
   ).length;
 
   return (
-    <div>
-      <div className="mb-4">
-        <Title level={4}>Lịch sử tiêm chủng</Title>
-        <Text type="secondary">Tất cả các booking tiêm chủng của bạn và gia đình</Text>
+    <div className="animate-fade-in">
+      <div className="mb-6">
+        <Title level={3} className="!mb-1 text-slate-800">
+          Vaccination History
+        </Title>
+        <Text className="text-slate-500 text-lg">
+          Track all vaccination bookings for you and your family
+        </Text>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
-        <Card>
+        <Card className="rounded-2xl shadow-sm border border-slate-100 bg-gradient-to-br from-blue-50 to-white">
           <div className="text-center">
-            <div className="text-2xl font-bold text-blue-600">{historyData.length}</div>
-            <Text type="secondary">Tổng số booking</Text>
+            <div className="text-3xl font-bold text-blue-600 mb-1">{historyData.length}</div>
+            <Text className="text-slate-500 font-medium uppercase text-xs tracking-wider">
+              Total Bookings
+            </Text>
           </div>
         </Card>
-        <Card>
+        <Card className="rounded-2xl shadow-sm border border-slate-100 bg-gradient-to-br from-emerald-50 to-white">
           <div className="text-center">
-            <div className="text-2xl font-bold text-green-600">{totalCompleted}</div>
-            <Text type="secondary">Hoàn thành</Text>
+            <div className="text-3xl font-bold text-emerald-600 mb-1">{totalCompleted}</div>
+            <Text className="text-slate-500 font-medium uppercase text-xs tracking-wider">
+              Completed
+            </Text>
           </div>
         </Card>
-        <Card>
+        <Card className="rounded-2xl shadow-sm border border-slate-100 bg-gradient-to-br from-orange-50 to-white">
           <div className="text-center">
-            <div className="text-2xl font-bold text-orange-600">{totalInProgress}</div>
-            <Text type="secondary">Đang tiến hành</Text>
+            <div className="text-3xl font-bold text-orange-600 mb-1">{totalInProgress}</div>
+            <Text className="text-slate-500 font-medium uppercase text-xs tracking-wider">
+              In Progress
+            </Text>
           </div>
         </Card>
       </div>
 
-      <Table
-        dataSource={historyData}
-        columns={bookingColumns}
-        rowKey="bookingId"
-        expandable={{
-          expandedRowRender,
-          expandRowByClick: true,
-        }}
-        pagination={{
-          pageSize: 10,
-          showSizeChanger: true,
-          showTotal: (total) => `Tổng ${total} booking`,
-        }}
-      />
+      <Card className="rounded-3xl shadow-sm border border-slate-100 overflow-hidden">
+        <Table
+          dataSource={historyData}
+          columns={bookingColumns}
+          rowKey="bookingId"
+          expandable={{
+            expandedRowRender,
+            expandRowByClick: true,
+          }}
+          pagination={{
+            pageSize: 10,
+            showSizeChanger: true,
+            showTotal: (total) => `Total ${total} bookings`,
+          }}
+          className="custom-table"
+        />
+      </Card>
     </div>
   );
 };

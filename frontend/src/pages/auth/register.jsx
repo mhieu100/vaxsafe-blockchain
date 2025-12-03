@@ -4,6 +4,7 @@ import {
   GoogleOutlined,
   LockOutlined,
   MailOutlined,
+  SafetyCertificateFilled,
   UserOutlined,
 } from '@ant-design/icons';
 import { Button, Dropdown, Form, Input, message, Typography } from 'antd';
@@ -28,18 +29,17 @@ const Register = () => {
   const languageItems = [
     {
       key: 'vi',
-      label: 'VI',
+      label: 'Tiếng Việt',
       onClick: () => changeLanguage('vi'),
     },
     {
       key: 'en',
-      label: 'EN',
+      label: 'English',
       onClick: () => changeLanguage('en'),
     },
   ];
 
   const handleGoogleRegister = () => {
-    // Redirect to backend OAuth2 endpoint
     window.location.href = `${BACKEND_URL}/oauth2/authorization/google`;
   };
 
@@ -53,7 +53,7 @@ const Register = () => {
           email: values.email,
           password: values.password,
         },
-        patientProfile: {}, // Empty profile for initial registration
+        patientProfile: {},
       };
 
       const response = await callRegister(payload);
@@ -62,22 +62,11 @@ const Register = () => {
         const userData = response.data.user;
         const token = response.data.accessToken;
 
-        console.log('Register response:', {
-          userData,
-          isActive: userData.isActive,
-          role: userData.role,
-        });
-
-        // Store token in localStorage
         localStorage.setItem('token', token);
-
-        // Update Zustand store with user data
         setUserLoginInfo(userData);
 
         message.success(t('auth.register.registerSuccess'));
 
-        console.log('Navigating to /complete-profile');
-        // Use setTimeout to ensure state is updated before navigation
         setTimeout(() => {
           navigate('/complete-profile', { replace: true });
         }, 100);
@@ -92,42 +81,42 @@ const Register = () => {
   };
 
   return (
-    <div className="min-h-screen flex w-full">
+    <div className="min-h-screen flex w-full bg-slate-50">
       {/* Left Side - Form Area */}
-      <div className="w-full lg:w-1/2 flex flex-col justify-center px-8 md:px-16 lg:px-24 bg-white z-10 relative py-12">
-        {/* Back to Home Button */}
-        <div className="absolute top-8 left-8">
+      <div className="w-full lg:w-1/2 flex flex-col justify-center px-6 md:px-12 lg:px-24 xl:px-32 bg-white z-10 relative shadow-2xl shadow-slate-200/50 py-12">
+        {/* Header Actions */}
+        <div className="absolute top-8 left-8 right-8 flex justify-between items-center">
           <Link
             to="/"
-            className="flex items-center text-gray-600 hover:text-blue-600 transition-colors"
+            className="flex items-center gap-2 text-slate-500 hover:text-blue-600 transition-colors group"
           >
-            <ArrowLeftOutlined className="mr-2" />
+            <div className="w-8 h-8 rounded-full bg-slate-100 flex items-center justify-center group-hover:bg-blue-50 transition-colors">
+              <ArrowLeftOutlined className="text-sm" />
+            </div>
             <span className="font-medium">{t('auth.register.backToHome')}</span>
           </Link>
-        </div>
 
-        {/* Language Switcher */}
-        <div className="absolute top-8 right-8">
-          <Dropdown menu={{ items: languageItems }} placement="bottomRight">
-            <Button icon={<GlobalOutlined />} className="flex items-center">
-              {i18n.language === 'vi' ? 'VI' : 'EN'}
+          <Dropdown menu={{ items: languageItems }} placement="bottomRight" arrow>
+            <Button
+              type="text"
+              icon={<GlobalOutlined />}
+              className="flex items-center text-slate-600 hover:bg-slate-50"
+            >
+              {i18n.language === 'vi' ? 'VN' : 'EN'}
             </Button>
           </Dropdown>
         </div>
 
-        <div className="w-full max-w-md mx-auto mt-12 lg:mt-0">
-          {/* Logo */}
-          <div className="mb-8">
-            <div className="w-12 h-12 bg-blue-600 rounded-lg flex items-center justify-center text-white font-bold text-xl">
-              VS
+        <div className="w-full max-w-[440px] mx-auto mt-16 lg:mt-0">
+          {/* Logo & Title */}
+          <div className="mb-8 text-center lg:text-left">
+            <div className="inline-flex items-center justify-center w-14 h-14 rounded-2xl bg-blue-600 text-white mb-6 shadow-lg shadow-blue-500/30">
+              <SafetyCertificateFilled className="text-2xl" />
             </div>
-          </div>
-
-          <div className="mb-8">
-            <Title level={2} className="!mb-2 !text-3xl !font-bold text-gray-900">
+            <Title level={1} className="!mb-2 !text-3xl !font-bold text-slate-900 tracking-tight">
               {t('auth.register.title')}
             </Title>
-            <Text className="text-gray-500 text-base">{t('auth.register.subtitle')}</Text>
+            <Text className="text-slate-500 text-lg block">{t('auth.register.subtitle')}</Text>
           </div>
 
           <Form
@@ -136,65 +125,68 @@ const Register = () => {
             onFinish={handleRegister}
             layout="vertical"
             requiredMark={false}
+            size="large"
             className="space-y-4"
           >
             <Form.Item
               name="fullName"
-              label={t('auth.register.fullName')}
+              label={
+                <span className="font-medium text-slate-700">{t('auth.register.fullName')}</span>
+              }
               rules={[
-                {
-                  required: true,
-                  message: t('auth.register.fullNameRequired'),
-                },
+                { required: true, message: t('auth.register.fullNameRequired') },
                 { min: 2, message: t('auth.register.fullNameMinLength') },
               ]}
             >
               <Input
-                prefix={<UserOutlined />}
+                prefix={<UserOutlined className="text-slate-400 px-1" />}
                 placeholder={t('auth.register.fullNamePlaceholder')}
+                className="rounded-xl py-2.5 bg-slate-50 border-slate-200 hover:bg-white focus:bg-white transition-all"
               />
             </Form.Item>
 
             <Form.Item
               name="email"
-              label={t('auth.register.email')}
+              label={<span className="font-medium text-slate-700">{t('auth.register.email')}</span>}
               rules={[
                 { required: true, message: t('auth.register.emailRequired') },
                 { type: 'email', message: t('auth.register.emailInvalid') },
               ]}
             >
-              <Input prefix={<MailOutlined />} placeholder={t('auth.register.emailPlaceholder')} />
+              <Input
+                prefix={<MailOutlined className="text-slate-400 px-1" />}
+                placeholder={t('auth.register.emailPlaceholder')}
+                className="rounded-xl py-2.5 bg-slate-50 border-slate-200 hover:bg-white focus:bg-white transition-all"
+              />
             </Form.Item>
 
             <Form.Item
               name="password"
-              label={t('auth.register.password')}
+              label={
+                <span className="font-medium text-slate-700">{t('auth.register.password')}</span>
+              }
               rules={[
-                {
-                  required: true,
-                  message: t('auth.register.passwordRequired'),
-                },
-                {
-                  min: 8,
-                  message: t('auth.register.passwordMinLength'),
-                },
+                { required: true, message: t('auth.register.passwordRequired') },
+                { min: 8, message: t('auth.register.passwordMinLength') },
               ]}
             >
               <Input.Password
-                prefix={<LockOutlined />}
+                prefix={<LockOutlined className="text-slate-400 px-1" />}
                 placeholder={t('auth.register.passwordPlaceholder')}
+                className="rounded-xl py-2.5 bg-slate-50 border-slate-200 hover:bg-white focus:bg-white transition-all"
               />
             </Form.Item>
 
             <Form.Item
               name="confirmPassword"
-              label={t('auth.register.confirmPassword')}
+              label={
+                <span className="font-medium text-slate-700">
+                  {t('auth.register.confirmPassword')}
+                </span>
+              }
               dependencies={['password']}
               rules={[
-                {
-                  required: true,
-                  message: t('auth.register.confirmPasswordRequired'),
-                },
+                { required: true, message: t('auth.register.confirmPasswordRequired') },
                 ({ getFieldValue }) => ({
                   validator(_, value) {
                     if (!value || getFieldValue('password') === value) {
@@ -206,49 +198,49 @@ const Register = () => {
               ]}
             >
               <Input.Password
-                prefix={<LockOutlined />}
+                prefix={<LockOutlined className="text-slate-400 px-1" />}
                 placeholder={t('auth.register.confirmPasswordPlaceholder')}
+                className="rounded-xl py-2.5 bg-slate-50 border-slate-200 hover:bg-white focus:bg-white transition-all"
               />
             </Form.Item>
 
-            <Form.Item className="mb-4">
+            <Form.Item className="!mb-2 pt-2">
               <Button
                 type="primary"
                 htmlType="submit"
                 loading={isSubmitting}
-                disabled={isSubmitting}
-                className="w-full h-11 bg-blue-600 hover:bg-blue-700 font-medium text-lg"
+                className="w-full h-12 rounded-xl bg-blue-600 hover:bg-blue-700 font-semibold text-lg shadow-lg shadow-blue-500/30 border-0"
               >
-                {isSubmitting ? t('auth.register.registering') : t('auth.register.registerButton')}
+                {t('auth.register.registerButton')}
               </Button>
             </Form.Item>
           </Form>
 
-          <div className="relative my-6">
+          <div className="relative my-8">
             <div className="absolute inset-0 flex items-center">
-              <div className="w-full border-t border-gray-200"></div>
+              <div className="w-full border-t border-slate-200"></div>
             </div>
             <div className="relative flex justify-center text-sm">
-              <span className="px-2 bg-white text-gray-500">{t('auth.register.orSignUpWith')}</span>
+              <span className="px-4 bg-white text-slate-400 font-medium">
+                {t('auth.register.orSignUpWith')}
+              </span>
             </div>
           </div>
 
-          <div className="space-y-3 mb-8">
-            <Button
-              icon={<GoogleOutlined />}
-              onClick={handleGoogleRegister}
-              className="w-full h-11 flex items-center justify-center font-medium text-base border-gray-300 hover:border-blue-500 hover:text-blue-500"
-            >
-              {t('auth.register.orSignUpWith')} Google
-            </Button>
-          </div>
+          <Button
+            icon={<GoogleOutlined className="text-lg" />}
+            onClick={handleGoogleRegister}
+            className="w-full h-12 flex items-center justify-center gap-2 font-medium text-slate-700 border-slate-200 rounded-xl hover:border-blue-500 hover:text-blue-600 hover:bg-blue-50 transition-all"
+          >
+            Sign up with Google
+          </Button>
 
-          <div className="text-center">
-            <Text className="text-gray-600">
+          <div className="mt-8 text-center">
+            <Text className="text-slate-500">
               {t('auth.register.haveAccount')}{' '}
               <Link
                 to="/login"
-                className="text-blue-600 hover:text-blue-800 font-semibold hover:underline"
+                className="text-blue-600 hover:text-blue-700 font-bold hover:underline ml-1"
               >
                 {t('auth.register.signIn')}
               </Link>
@@ -258,13 +250,54 @@ const Register = () => {
       </div>
 
       {/* Right Side - Image Area */}
-      <div className="hidden lg:block w-1/2 relative overflow-hidden sticky top-0 h-screen">
+      <div className="hidden lg:block w-1/2 relative overflow-hidden bg-slate-900 sticky top-0 h-screen">
+        <div className="absolute inset-0 bg-gradient-to-br from-indigo-600/90 to-blue-900/90 mix-blend-multiply z-10" />
         <img
           src="/login-bg.jpg"
           alt="Register Background"
-          className="absolute inset-0 w-full h-full object-cover"
+          className="absolute inset-0 w-full h-full object-cover opacity-50 mix-blend-overlay"
         />
-        <div className="absolute inset-0 bg-black/20"></div>
+
+        {/* Decorative Elements */}
+        <div className="absolute inset-0 z-20 flex flex-col justify-center items-center text-white p-12 text-center">
+          <div className="max-w-lg space-y-6 animate-fade-in">
+            <div className="w-20 h-20 bg-white/10 backdrop-blur-md rounded-3xl flex items-center justify-center mx-auto mb-8 border border-white/20">
+              <UserOutlined className="text-4xl text-indigo-300" />
+            </div>
+            <h2 className="text-4xl font-bold leading-tight">
+              Join the Future of <br />
+              <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-200 to-blue-200">
+                Digital Healthcare
+              </span>
+            </h2>
+            <p className="text-lg text-indigo-100/80 leading-relaxed">
+              Create your account today to access secure vaccination records, smart scheduling, and
+              family health management.
+            </p>
+
+            {/* Features List */}
+            <div className="mt-12 text-left space-y-4 bg-white/5 backdrop-blur-sm p-6 rounded-2xl border border-white/10">
+              <div className="flex items-center gap-3">
+                <div className="w-6 h-6 rounded-full bg-green-400/20 flex items-center justify-center text-green-400 text-xs">
+                  ✓
+                </div>
+                <span className="text-indigo-50">Secure Blockchain Storage</span>
+              </div>
+              <div className="flex items-center gap-3">
+                <div className="w-6 h-6 rounded-full bg-green-400/20 flex items-center justify-center text-green-400 text-xs">
+                  ✓
+                </div>
+                <span className="text-indigo-50">Instant Digital Passport</span>
+              </div>
+              <div className="flex items-center gap-3">
+                <div className="w-6 h-6 rounded-full bg-green-400/20 flex items-center justify-center text-green-400 text-xs">
+                  ✓
+                </div>
+                <span className="text-indigo-50">Family Member Management</span>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   );

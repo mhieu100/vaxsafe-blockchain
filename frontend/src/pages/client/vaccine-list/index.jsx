@@ -1,4 +1,4 @@
-import { Skeleton } from 'antd';
+import { Card, Col, Row, Skeleton } from 'antd';
 import { useState } from 'react';
 import { MAX_PRICE, MIN_PRICE } from '@/constants';
 import { useVaccine } from '@/hooks/useVaccine';
@@ -28,16 +28,19 @@ const VaccineListPage = () => {
     sort,
   };
 
-  const { data } = useVaccine(filter);
+  const { data, isPending: isLoading } = useVaccine(filter);
 
   return (
-    <div className="my-5 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-      <div className="flex flex-col md:flex-row gap-6">
-        {!data ? (
-          <Skeleton />
-        ) : (
-          <>
-            <aside className="md:w-64 sticky top-[88px] self-start h-[calc(100vh-88px)] overflow-y-auto">
+    <div className="min-h-screen bg-slate-50 py-8">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="flex flex-col md:flex-row gap-6">
+          {/* Sidebar Filter */}
+          <aside className="md:w-64 sticky top-[88px] self-start h-[calc(100vh-88px)] overflow-y-auto hidden md:block">
+            {isLoading ? (
+              <Card className="rounded-2xl shadow-sm border border-slate-100">
+                <Skeleton active paragraph={{ rows: 8 }} />
+              </Card>
+            ) : (
               <LeftFilterSection
                 country={country}
                 setCountry={setCountry}
@@ -45,22 +48,52 @@ const VaccineListPage = () => {
                 setSortBy={setSortBy}
                 setPriceRange={setPriceRange}
               />
-            </aside>
-            <main className="flex-1 min-w-0">
-              <TopFilterSection
-                meta={data?.meta ?? undefined}
-                currentPage={currentPage}
-                setCurrentPage={setCurrentPage}
-                pageSize={pageSize}
-                setPageSize={setPageSize}
-                viewMode={viewMode}
-                setViewMode={setViewMode}
-              />
-              <ListVaccineSection vaccines={data.result} viewMode={viewMode} />
-              <QuickStatsSection />
-            </main>
-          </>
-        )}
+            )}
+          </aside>
+
+          {/* Main Content */}
+          <main className="flex-1 min-w-0">
+            {isLoading ? (
+              <div className="space-y-6">
+                {/* Top Filter Skeleton */}
+                <Card className="rounded-2xl shadow-sm border border-slate-100">
+                  <div className="flex justify-between items-center">
+                    <Skeleton.Input active size="default" className="!w-48" />
+                    <Skeleton.Button active size="default" />
+                  </div>
+                </Card>
+
+                {/* Grid Skeleton */}
+                <Row gutter={[24, 24]}>
+                  {[1, 2, 3, 4, 5, 6].map((i) => (
+                    <Col key={i} xs={24} sm={12} lg={8}>
+                      <Card className="rounded-3xl shadow-sm border border-slate-100 overflow-hidden h-full">
+                        <Skeleton.Image active className="!w-full !h-48" />
+                        <div className="p-4">
+                          <Skeleton active paragraph={{ rows: 3 }} />
+                        </div>
+                      </Card>
+                    </Col>
+                  ))}
+                </Row>
+              </div>
+            ) : (
+              <>
+                <TopFilterSection
+                  meta={data?.meta ?? undefined}
+                  currentPage={currentPage}
+                  setCurrentPage={setCurrentPage}
+                  pageSize={pageSize}
+                  setPageSize={setPageSize}
+                  viewMode={viewMode}
+                  setViewMode={setViewMode}
+                />
+                <ListVaccineSection vaccines={data?.result || []} viewMode={viewMode} />
+                <QuickStatsSection />
+              </>
+            )}
+          </main>
+        </div>
       </div>
     </div>
   );

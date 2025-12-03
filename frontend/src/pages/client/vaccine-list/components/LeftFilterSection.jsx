@@ -1,5 +1,11 @@
-import { ClearOutlined, FilterOutlined, SortAscendingOutlined } from '@ant-design/icons';
-import { Button, Divider, Select, Slider } from 'antd';
+import {
+  ClearOutlined,
+  DollarOutlined,
+  FilterOutlined,
+  GlobalOutlined,
+  SortAscendingOutlined,
+} from '@ant-design/icons';
+import { Button, Divider, Select, Slider, Tag } from 'antd';
 // eslint-disable-next-line import/no-extraneous-dependencies
 import debounce from 'lodash/debounce';
 import { useEffect, useMemo, useState } from 'react';
@@ -70,75 +76,101 @@ const LeftFilterSection = ({ setPriceRange, country, setCountry, sortBy, setSort
   };
 
   return (
-    <div className="hidden md:block sticky w-64 flex-shrink-0">
-      <div className="bg-amber-50 p-6 rounded-lg shadow-sm top-6">
-        <h3 className="text-lg font-bold mb-6">
-          <FilterOutlined /> {t('vaccine.filters')}
-        </h3>
+    <div className="hidden md:block sticky top-24 w-64 flex-shrink-0">
+      <div className="bg-white p-6 rounded-2xl border border-slate-100 shadow-sm">
+        <div className="flex items-center justify-between mb-6">
+          <h3 className="text-lg font-bold text-slate-800 flex items-center gap-2">
+            <FilterOutlined className="text-blue-600" /> {t('vaccine.filters')}
+          </h3>
+          {(country.length > 0 ||
+            sortBy ||
+            sliderRange[0] !== MIN_PRICE ||
+            sliderRange[1] !== MAX_PRICE) && (
+            <Button
+              type="text"
+              size="small"
+              onClick={clearAllFilters}
+              className="text-xs text-red-500 hover:text-red-600 hover:bg-red-50"
+            >
+              Reset
+            </Button>
+          )}
+        </div>
 
+        {/* Sort Section */}
         <div className="mb-8">
-          <div className="flex flex-wrap gap-3 items-center">
-            <Select
-              mode="multiple"
-              placeholder={t('vaccine.selectCountry')}
-              allowClear
-              style={{ width: '100%' }}
-              value={country}
-              onChange={handleCountryChange}
-              className="shadow-sm"
-            >
-              {countries.map((c) => (
-                <Option key={c} value={c}>
-                  {c}
-                </Option>
-              ))}
-            </Select>
+          <label className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-3 block">
+            Sort By
+          </label>
+          <Select
+            placeholder={t('vaccine.sortBy')}
+            style={{ width: '100%' }}
+            value={sortBy}
+            onChange={handleSortChange}
+            suffixIcon={<SortAscendingOutlined className="text-slate-400" />}
+            className="custom-select"
+            size="large"
+            allowClear
+          >
+            <Option value="price-ascend">{t('vaccine.sortOptions.priceLowToHigh')}</Option>
+            <Option value="price-descend">{t('vaccine.sortOptions.priceHighToLow')}</Option>
+            <Option value="name-ascend">{t('vaccine.sortOptions.nameAZ')}</Option>
+            <Option value="name-descend">{t('vaccine.sortOptions.nameZA')}</Option>
+          </Select>
+        </div>
 
-            <Select
-              placeholder={t('vaccine.sortBy')}
-              style={{ width: '100%' }}
-              value={sortBy}
-              onChange={handleSortChange}
-              suffixIcon={<SortAscendingOutlined />}
-              className="shadow-sm"
-            >
-              <Option value="price-ascend">{t('vaccine.sortOptions.priceLowToHigh')}</Option>
-              <Option value="price-descend">{t('vaccine.sortOptions.priceHighToLow')}</Option>
-              <Option value="name-ascend">{t('vaccine.sortOptions.nameAZ')}</Option>
-              <Option value="name-descend">{t('vaccine.sortOptions.nameZA')}</Option>
-            </Select>
+        {/* Country Section */}
+        <div className="mb-8">
+          <label className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-3 block flex items-center gap-2">
+            <GlobalOutlined /> Origin Country
+          </label>
+          <Select
+            mode="multiple"
+            placeholder="Select countries"
+            allowClear
+            style={{ width: '100%' }}
+            value={country}
+            onChange={handleCountryChange}
+            className="custom-select"
+            size="large"
+            maxTagCount="responsive"
+          >
+            {countries.map((c) => (
+              <Option key={c} value={c}>
+                <div className="flex items-center gap-2">
+                  <span>{c}</span>
+                </div>
+              </Option>
+            ))}
+          </Select>
+        </div>
+
+        {/* Price Section */}
+        <div>
+          <label className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-4 block flex items-center gap-2">
+            <DollarOutlined /> Price Range
+          </label>
+          <div className="px-2">
+            <Slider
+              range
+              min={MIN_PRICE}
+              max={MAX_PRICE}
+              value={sliderRange}
+              onChange={handlePriceRangeChange}
+              tooltip={{ formatter: (value) => formatPrice(value) }}
+              trackStyle={[{ backgroundColor: '#2563eb' }]}
+              handleStyle={[
+                { borderColor: '#2563eb', backgroundColor: 'white' },
+                { borderColor: '#2563eb', backgroundColor: 'white' },
+              ]}
+            />
+          </div>
+          <div className="flex items-center justify-between mt-4 text-sm font-medium text-slate-600 bg-slate-50 p-3 rounded-lg border border-slate-100">
+            <span>{formatPrice(sliderRange[0])}</span>
+            <span className="text-slate-300">-</span>
+            <span>{formatPrice(sliderRange[1])}</span>
           </div>
         </div>
-        <h3 className="text-lg font-bold mb-6">{t('vaccine.priceRange')}</h3>
-        <div className="p-2 rounded-lg">
-          <Slider
-            range
-            min={MIN_PRICE}
-            max={MAX_PRICE}
-            value={sliderRange}
-            onChange={handlePriceRangeChange}
-            marks={{
-              0: '0',
-              1000000: '1tr',
-              2000000: '2tr',
-              3000000: '3tr',
-            }}
-          />
-          <div className="text-center text-sm text-gray-500 bg-white px-2 py-1 rounded">
-            {formatPrice(sliderRange[0])} - {formatPrice(sliderRange[1])}
-          </div>
-        </div>
-        <Divider />
-        <Button
-          type="primary"
-          size="small"
-          onClick={clearAllFilters}
-          icon={<ClearOutlined />}
-          className="w-full"
-          danger
-        >
-          {t('vaccine.clearAll')}
-        </Button>
       </div>
     </div>
   );

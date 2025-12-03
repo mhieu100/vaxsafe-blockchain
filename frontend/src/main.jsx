@@ -49,7 +49,14 @@ const AppWithLocale = () => {
   }, [i18n]);
 
   return (
-    <ConfigProvider locale={locale}>
+    <ConfigProvider
+      locale={locale}
+      theme={{
+        token: {
+          fontFamily: "'Plus Jakarta Sans', sans-serif",
+        },
+      }}
+    >
       <Root />
     </ConfigProvider>
   );

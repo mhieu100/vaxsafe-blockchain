@@ -2,9 +2,11 @@ import {
   ClockCircleOutlined,
   EyeOutlined,
   HeartOutlined,
+  SafetyCertificateFilled,
   ShoppingCartOutlined,
+  StarFilled,
 } from '@ant-design/icons';
-import { Badge, Button, Card, Image, message, Rate } from 'antd';
+import { Badge, Button, Card, Image, message, Rate, Tag, Tooltip } from 'antd';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import useCartStore from '@/stores/useCartStore';
@@ -22,109 +24,139 @@ const VaccineCard = ({ vaccine }) => {
   const navigate = useNavigate();
   const { addItem } = useCartStore();
 
-  const handleAddToCart = (vaccine) => {
+  const handleAddToCart = (e) => {
+    e.stopPropagation();
     addItem(vaccine, 1);
     message.success(t('vaccine.card.addToCartSuccess'));
   };
 
+  const handleBooking = (e) => {
+    e.stopPropagation();
+    navigate(`/booking?slug=${vaccine.slug}`);
+  };
+
   return (
-    <Card
-      hoverable
-      className="rounded-xl overflow-hidden transition-all duration-300 border border-gray-200 hover:-translate-y-1 hover:shadow-2xl hover:border-blue-500 group h-full flex flex-col"
-      cover={
-        <div className="relative overflow-hidden" style={{ height: '150px' }}>
-          <Image
-            {...getImageProps(vaccine.image, vaccine.name)}
-            className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
-            style={{ objectFit: 'cover' }}
-            preview={{
-              cover: <EyeOutlined />,
-              classNames: { cover: 'rounded-lg' },
-            }}
-          />
-          <div className="absolute top-2 right-2 flex flex-col gap-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-            <Button
-              icon={<EyeOutlined />}
-              onClick={() => navigate(`/vaccine/${vaccine.slug}`)}
-              title={t('vaccine.card.quickView')}
-              className="w-9 h-9 rounded-full flex items-center justify-center bg-white/90 backdrop-blur-sm border border-gray-300 shadow-md hover:bg-blue-500 hover:border-blue-500 hover:text-white text-xs"
-            />
-            <Button
-              icon={<HeartOutlined />}
-              title={t('vaccine.card.addToWishlist')}
-              className="w-9 h-9 rounded-full flex items-center justify-center bg-white/90 backdrop-blur-sm border border-gray-300 shadow-md hover:bg-red-500 hover:border-red-500 hover:text-white text-xs"
-            />
-          </div>
-          {vaccine.stock === 0 && (
-            <div className="absolute inset-0 bg-black/50 flex items-center justify-center">
-              <span className="bg-red-500 text-white px-3 py-1 rounded-full text-sm font-medium">
-                {t('vaccine.card.outOfStock')}
-              </span>
-            </div>
+    <div
+      className="group relative bg-white rounded-3xl overflow-hidden border border-slate-100 shadow-sm hover:shadow-xl hover:shadow-blue-900/10 transition-all duration-300 hover:-translate-y-1 flex flex-col h-full cursor-pointer"
+      onClick={() => navigate(`/vaccine/${vaccine.slug}`)}
+    >
+      {/* Image Section */}
+      <div className="relative h-48 overflow-hidden bg-slate-100">
+        <Image
+          {...getImageProps(vaccine.image, vaccine.name)}
+          className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+          style={{ objectFit: 'cover', height: '100%' }}
+          preview={false}
+        />
+
+        {/* Overlay Gradient */}
+        <div className="absolute inset-0 bg-gradient-to-t from-slate-900/40 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+
+        {/* Top Badges */}
+        <div className="absolute top-3 left-3 flex gap-2">
+          {vaccine.stock > 0 ? (
+            <span className="bg-emerald-500/90 backdrop-blur-sm text-white text-[10px] font-bold px-2 py-1 rounded-full uppercase tracking-wider shadow-sm">
+              In Stock
+            </span>
+          ) : (
+            <span className="bg-red-500/90 backdrop-blur-sm text-white text-[10px] font-bold px-2 py-1 rounded-full uppercase tracking-wider shadow-sm">
+              Out of Stock
+            </span>
           )}
         </div>
-      }
-      style={{
-        padding: '6px',
-        flex: 1,
-        display: 'flex',
-        flexDirection: 'column',
-      }}
-      styles={{
-        body: {
-          padding: '10px',
-        },
-      }}
-    >
-      <div className="flex flex-col h-full">
-        <div className="mb-2">
-          <span className="text-xs uppercase tracking-wide font-medium">{vaccine.country}</span>
-        </div>
 
-        <p className="mb-2 flex-grow font-bold">
-          {vaccine.name.length > 20 ? `${vaccine.name.slice(0, 20)}...` : vaccine.name}
-        </p>
-
-        <div className="mb-3">
-          <Rate disabled defaultValue={vaccine.rating || 4} className="text-sm" />
-          <span className="ml-2 text-xs">({vaccine.reviews || 128})</span>
-        </div>
-
-        <div className="flex items-center justify-between mb-3">
-          <div className="flex items-center gap-2">
-            <span className="text-blue-600 m-0">{formatPrice(vaccine.price)}</span>
-          </div>
-          <Badge
-            count={vaccine.stock > 0 ? t('vaccine.card.inStock') : t('vaccine.card.outOfStock')}
-            style={{
-              backgroundColor: vaccine.stock > 0 ? '#52c41a' : '#ff4d4f',
-              fontSize: '10px',
-            }}
-          />
-        </div>
-        <div className="flex flex-col gap-3">
-          <Button
-            type="primary"
-            icon={<ShoppingCartOutlined />}
-            onClick={() => handleAddToCart(vaccine)}
-            disabled={vaccine.stock === 0}
-            className="w-full h-10 rounded-lg font-medium hover:-translate-y-0.5 transition-transform mt-auto"
-          >
-            {vaccine.stock === 0 ? t('vaccine.card.outOfStock') : t('vaccine.card.addToCart')}
-          </Button>
-
-          <Button
-            type="primary"
-            icon={<ClockCircleOutlined />}
-            onClick={() => navigate(`/booking?slug=${vaccine.slug}`)}
-            disabled={vaccine.stock === 0}
-            className="w-full h-10 rounded-lg font-medium hover:-translate-y-0.5 transition-transform mt-auto"
-          >
-            {vaccine.stock === 0 ? t('vaccine.card.outOfStock') : t('vaccine.card.bookingNow')}
-          </Button>
+        {/* Quick Actions */}
+        <div className="absolute top-3 right-3 flex flex-col gap-2 translate-x-10 opacity-0 group-hover:translate-x-0 group-hover:opacity-100 transition-all duration-300">
+          <Tooltip title={t('vaccine.card.addToWishlist')}>
+            <button
+              className="w-8 h-8 rounded-full bg-white/90 backdrop-blur-md flex items-center justify-center text-slate-600 hover:text-red-500 hover:bg-white shadow-lg transition-colors"
+              onClick={(e) => {
+                e.stopPropagation(); /* Add wishlist logic */
+              }}
+            >
+              <HeartOutlined />
+            </button>
+          </Tooltip>
+          <Tooltip title={t('vaccine.card.quickView')}>
+            <button
+              className="w-8 h-8 rounded-full bg-white/90 backdrop-blur-md flex items-center justify-center text-slate-600 hover:text-blue-500 hover:bg-white shadow-lg transition-colors"
+              onClick={(e) => {
+                e.stopPropagation();
+                navigate(`/vaccine/${vaccine.slug}`);
+              }}
+            >
+              <EyeOutlined />
+            </button>
+          </Tooltip>
         </div>
       </div>
-    </Card>
+
+      {/* Content Section */}
+      <div className="p-5 flex flex-col flex-grow">
+        {/* Country & Rating */}
+        <div className="flex justify-between items-center mb-2">
+          <span className="text-[10px] font-bold tracking-wider text-blue-600 uppercase bg-blue-50 px-2 py-0.5 rounded-full">
+            {vaccine.country}
+          </span>
+          <div className="flex items-center gap-1 text-amber-400 text-xs font-bold">
+            <StarFilled />
+            <span>{vaccine.rating || 4.5}</span>
+            <span className="text-slate-400 font-normal">({vaccine.reviews || 128})</span>
+          </div>
+        </div>
+
+        {/* Title */}
+        <h3 className="text-lg font-bold text-slate-800 mb-2 line-clamp-2 leading-tight group-hover:text-blue-600 transition-colors">
+          {vaccine.name}
+        </h3>
+
+        {/* Blockchain Badge */}
+        <div className="mb-4 flex items-center gap-1.5 text-xs text-slate-500">
+          <SafetyCertificateFilled className="text-emerald-500" />
+          <span>Blockchain Verified</span>
+        </div>
+
+        {/* Price & Actions */}
+        <div className="mt-auto pt-4 border-t border-slate-100">
+          <div className="flex items-end justify-between mb-4">
+            <div>
+              <p className="text-xs text-slate-400 mb-0.5">Price per dose</p>
+              <p className="text-xl font-bold text-blue-600 leading-none">
+                {formatPrice(vaccine.price)}
+              </p>
+            </div>
+          </div>
+
+          <div className="grid grid-cols-2 gap-2">
+            <Button
+              icon={<ShoppingCartOutlined />}
+              onClick={handleAddToCart}
+              disabled={vaccine.stock === 0}
+              className={`h-10 rounded-xl border-none font-medium shadow-sm transition-all hover:-translate-y-0.5 ${
+                vaccine.stock === 0
+                  ? 'bg-slate-100 text-slate-400'
+                  : 'bg-blue-50 text-blue-600 hover:bg-blue-100 hover:text-blue-700'
+              }`}
+            >
+              Add
+            </Button>
+            <Button
+              type="primary"
+              icon={<ClockCircleOutlined />}
+              onClick={handleBooking}
+              disabled={vaccine.stock === 0}
+              className={`h-10 rounded-xl border-none font-medium shadow-lg shadow-blue-500/20 transition-all hover:-translate-y-0.5 ${
+                vaccine.stock === 0
+                  ? 'bg-slate-300'
+                  : 'bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500'
+              }`}
+            >
+              Book
+            </Button>
+          </div>
+        </div>
+      </div>
+    </div>
   );
 };
 

@@ -1,80 +1,42 @@
-import {
-  CalendarOutlined,
-  FileTextOutlined,
-  HeartOutlined,
-  HistoryOutlined,
-  SafetyCertificateOutlined,
-  TeamOutlined,
-  UserOutlined,
-} from '@ant-design/icons';
 import { Typography } from 'antd';
-import TabEditUser from '@/components/tab/TabEditUser';
 import AppointmentScheduleTab from './AppointmentScheduleTab';
+import DashboardTab from './DashboardTab';
 import FamilyManagerTab from './FamilyManagerTab';
-import HealthRemindersTab from './HealthRemindersTab';
-import VaccinationHistoryTab from './VaccinationHistoryTab';
-import VaccinePassportTab from './VaccinePassportTab';
-import VaccineRecordTab from './VaccineRecordTab';
+import MyRecordsTab from './MyRecordsTab';
+import SettingsTab from './SettingsTab';
 
 const { Title } = Typography;
 
-const ProfileTabs = ({ activeTab, editMode, setEditMode }) => {
+const ProfileTabs = ({ activeTab, onTabChange, editMode, setEditMode }) => {
   const tabConfig = {
     1: {
-      title: 'Health Profile',
-      icon: <UserOutlined className="text-xl" />,
-      content: <TabEditUser editMode={editMode} setEditMode={setEditMode} />,
+      title: 'Dashboard',
+      content: <DashboardTab onTabChange={onTabChange} />,
     },
     2: {
-      title: 'Vaccination History',
-      icon: <HistoryOutlined className="text-xl" />,
-      content: <VaccinationHistoryTab />,
+      title: 'My Records',
+      content: <MyRecordsTab />,
     },
     3: {
       title: 'Appointments',
-      icon: <CalendarOutlined className="text-xl" />,
       content: <AppointmentScheduleTab />,
     },
     4: {
-      title: 'Health Reminders',
-      icon: <HeartOutlined className="text-xl" />,
-      content: <HealthRemindersTab />,
-    },
-    5: {
-      title: 'Family Manager',
-      icon: <TeamOutlined className="text-xl" />,
+      title: 'Family Members',
       content: <FamilyManagerTab />,
     },
-    6: {
-      title: 'Vaccine Passport',
-      icon: <SafetyCertificateOutlined className="text-xl" />,
-      content: <VaccinePassportTab />,
-    },
-    7: {
-      title: 'Vaccine Records',
-      icon: <FileTextOutlined className="text-xl" />,
-      content: <VaccineRecordTab />,
+    5: {
+      title: 'Settings',
+      content: <SettingsTab editMode={editMode} setEditMode={setEditMode} />,
     },
   };
 
   const currentTab = tabConfig[activeTab] || tabConfig['1'];
 
   return (
-    <div>
-      {/* Page Header */}
-      <div className="mb-6 pb-4 border-b border-gray-200">
-        <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-green-400 to-blue-500 flex items-center justify-center text-white">
-            {currentTab.icon}
-          </div>
-          <Title level={3} className="!mb-0 !text-gray-800">
-            {currentTab.title}
-          </Title>
-        </div>
-      </div>
-
+    <div className="profile-tab-content">
       {/* Tab Content */}
-      <div className="profile-tab-content">{currentTab.content}</div>
+      <div className="animate-fade-in">{currentTab.content}</div>
     </div>
   );
 };

@@ -1,11 +1,9 @@
-import { ArrowRightOutlined, CalendarOutlined, EyeOutlined } from '@ant-design/icons';
-import { Button, Card, Col, Row, Skeleton, Tag, Typography } from 'antd';
+import { ArrowRightOutlined, CalendarOutlined, EyeOutlined, ReadOutlined } from '@ant-design/icons';
+import { Button, Skeleton, Tag } from 'antd';
 import dayjs from 'dayjs';
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { callFetchFeaturedNews, callFetchPublishedNews } from '@/services/news.service';
-
-const { Title, Paragraph } = Typography;
 
 const NewsSection = () => {
   const navigate = useNavigate();
@@ -26,7 +24,7 @@ const NewsSection = () => {
           newsData = res?.data || [];
         }
 
-        // Take top 4 items
+        // Take top 4 items for a balanced layout
         setNews(newsData.slice(0, 4));
       } catch (error) {
         console.error('Failed to fetch news:', error);
@@ -41,17 +39,17 @@ const NewsSection = () => {
   const getCategoryColor = (category) => {
     switch (category) {
       case 'VACCINE_INFO':
-        return 'blue';
+        return 'bg-blue-100 text-blue-700';
       case 'CHILDREN_HEALTH':
-        return 'green';
+        return 'bg-emerald-100 text-emerald-700';
       case 'DISEASE_PREVENTION':
-        return 'orange';
+        return 'bg-orange-100 text-orange-700';
       case 'HEALTH_GENERAL':
-        return 'purple';
+        return 'bg-purple-100 text-purple-700';
       case 'ANNOUNCEMENT':
-        return 'red';
+        return 'bg-red-100 text-red-700';
       default:
-        return 'default';
+        return 'bg-gray-100 text-gray-700';
     }
   };
 
@@ -60,100 +58,106 @@ const NewsSection = () => {
   };
 
   return (
-    <section className="py-16 bg-gray-50">
-      <div className="container mx-auto px-4">
-        <div className="text-center mb-12">
-          <Title level={2} className="mb-4">
-            Latest Health News & Updates
-          </Title>
-          <Paragraph className="text-lg text-gray-600 max-w-2xl mx-auto">
-            Stay informed with the latest vaccination guidelines, health tips, and medical
-            announcements from our experts.
-          </Paragraph>
+    <section className="py-24 bg-white relative">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        {/* Section Header */}
+        <div className="flex flex-col md:flex-row justify-between items-end mb-12 gap-6">
+          <div className="max-w-2xl">
+            <span className="text-blue-600 font-semibold tracking-wider uppercase text-sm mb-2 block">
+              Latest Updates
+            </span>
+            <h2 className="text-4xl font-bold text-slate-900 mb-4">
+              News &{' '}
+              <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-indigo-600">
+                Insights
+              </span>
+            </h2>
+            <p className="text-lg text-slate-600 leading-relaxed">
+              Stay informed with the latest vaccination guidelines, health tips, and medical
+              announcements from our experts.
+            </p>
+          </div>
+          <Button
+            type="default"
+            size="large"
+            className="hidden md:flex items-center gap-2 border-slate-200 hover:border-blue-600 hover:text-blue-600 transition-all rounded-full px-6"
+            onClick={() => navigate('/news')}
+          >
+            View All Articles <ArrowRightOutlined />
+          </Button>
         </div>
 
-        {loading ? (
-          <Row gutter={[24, 24]}>
-            {[1, 2, 3, 4].map((i) => (
-              <Col xs={24} sm={12} lg={6} key={i}>
-                <Card cover={<Skeleton.Image active className="!w-full !h-48" />}>
+        {/* News Grid */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+          {loading
+            ? [1, 2, 3].map((i) => (
+                <div key={i} className="bg-slate-50 rounded-3xl p-4 h-[400px] flex flex-col">
+                  <Skeleton.Image active className="!w-full !h-48 rounded-2xl mb-4" />
                   <Skeleton active paragraph={{ rows: 3 }} />
-                </Card>
-              </Col>
-            ))}
-          </Row>
-        ) : (
-          <Row gutter={[24, 24]}>
-            {news.map((item) => (
-              <Col xs={24} sm={12} lg={6} key={item.id}>
-                <Card
-                  hoverable
-                  className="h-full flex flex-col rounded-xl overflow-hidden border-0 shadow-md transition-all duration-300 hover:shadow-xl hover:-translate-y-1"
-                  cover={
-                    <div className="h-48 overflow-hidden relative group">
-                      <img
-                        alt={item.title}
-                        src={item.thumbnailImage || 'https://placehold.co/600x400?text=News'}
-                        className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
-                      />
-                      <div className="absolute top-3 left-3">
-                        <Tag
-                          color={getCategoryColor(item.category)}
-                          className="m-0 font-semibold border-0 shadow-sm"
-                        >
-                          {formatCategory(item.category)}
-                        </Tag>
-                      </div>
-                    </div>
-                  }
-                  actions={[
-                    <Button
-                      type="link"
-                      key="read"
-                      className="text-blue-600 hover:text-blue-700 p-0 flex items-center justify-center gap-1 w-full"
-                      onClick={() => navigate(`/news/${item.slug}`)}
-                    >
-                      Read Article <ArrowRightOutlined />
-                    </Button>,
-                  ]}
+                </div>
+              ))
+            : news.map((item, index) => (
+                <div
+                  key={item.id}
+                  className="group flex flex-col bg-white rounded-3xl border border-slate-100 overflow-hidden hover:shadow-2xl hover:shadow-blue-900/5 transition-all duration-500 hover:-translate-y-2 cursor-pointer"
+                  onClick={() => navigate(`/news/${item.slug}`)}
                 >
-                  <div className="flex flex-col h-full">
-                    <div className="flex items-center gap-3 text-xs text-gray-500 mb-3">
+                  {/* Image Container */}
+                  <div className="relative h-48 overflow-hidden">
+                    <img
+                      alt={item.title}
+                      src={item.thumbnailImage || 'https://placehold.co/600x400?text=News'}
+                      className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-slate-900/60 to-transparent opacity-60 group-hover:opacity-40 transition-opacity duration-300" />
+
+                    {/* Floating Category Badge */}
+                    <div className="absolute top-3 left-3">
+                      <span
+                        className={`px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wide backdrop-blur-md bg-white/90 ${getCategoryColor(item.category).replace('bg-', 'text-').replace('text-', 'text-')}`}
+                      >
+                        {formatCategory(item.category)}
+                      </span>
+                    </div>
+                  </div>
+
+                  {/* Content */}
+                  <div className="p-5 flex flex-col flex-grow">
+                    <div className="flex items-center gap-3 text-[10px] text-slate-500 mb-3 font-medium uppercase tracking-wider">
                       <span className="flex items-center gap-1">
                         <CalendarOutlined /> {dayjs(item.publishedAt).format('MMM D, YYYY')}
                       </span>
+                      <span className="w-1 h-1 rounded-full bg-slate-300"></span>
                       <span className="flex items-center gap-1">
                         <EyeOutlined /> {item.viewCount || 0} views
                       </span>
                     </div>
 
-                    <Title level={4} className="mb-3 line-clamp-2 min-h-[3.5rem]">
-                      <a
-                        onClick={() => navigate(`/news/${item.slug}`)}
-                        className="text-gray-800 hover:text-blue-600 transition-colors"
-                      >
-                        {item.title}
-                      </a>
-                    </Title>
+                    <h3 className="text-lg font-bold text-slate-900 mb-2 line-clamp-2 group-hover:text-blue-600 transition-colors leading-tight">
+                      {item.title}
+                    </h3>
 
-                    <Paragraph className="text-gray-600 line-clamp-3 mb-4 flex-grow">
-                      {item.shortDescription}
-                    </Paragraph>
+                    <p className="text-slate-600 text-xs line-clamp-3 mb-4 flex-grow leading-relaxed">
+                      {item.shortDescription || 'Click to read more about this article...'}
+                    </p>
+
+                    <div className="flex items-center text-blue-600 text-sm font-semibold group-hover:translate-x-2 transition-transform duration-300">
+                      Read Article <ArrowRightOutlined className="ml-1.5" />
+                    </div>
                   </div>
-                </Card>
-              </Col>
-            ))}
-          </Row>
-        )}
+                </div>
+              ))}
+        </div>
 
-        <div className="text-center mt-12">
+        {/* Mobile View All Button */}
+        <div className="mt-12 text-center md:hidden">
           <Button
-            type="default"
+            type="primary"
             size="large"
-            className="px-8 border-blue-600 text-blue-600 hover:bg-blue-50"
+            className="w-full rounded-full h-12 font-semibold"
             onClick={() => navigate('/news')}
           >
-            View All News
+            View All Articles
           </Button>
         </div>
       </div>

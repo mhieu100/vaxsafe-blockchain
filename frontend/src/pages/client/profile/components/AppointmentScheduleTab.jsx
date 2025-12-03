@@ -1,10 +1,24 @@
 import {
   CalendarOutlined,
-  CheckCircleOutlined,
-  ClockCircleOutlined,
+  CheckCircleFilled,
+  ClockCircleFilled,
   CloseCircleOutlined,
+  EnvironmentOutlined,
+  MedicineBoxOutlined,
+  SyncOutlined,
 } from '@ant-design/icons';
-import { Alert, Button, Card, Empty, Modal, message, Spin, Tag, Timeline, Typography } from 'antd';
+import {
+  Alert,
+  Button,
+  Card,
+  Empty,
+  Modal,
+  message,
+  Skeleton,
+  Tag,
+  Timeline,
+  Typography,
+} from 'antd';
 import dayjs from 'dayjs';
 import { useEffect, useState } from 'react';
 import { RescheduleAppointmentModal } from '@/components/modal/appointment';
@@ -52,7 +66,7 @@ const AppointmentScheduleTab = () => {
       case 'RESCHEDULE':
         return 'gold';
       case 'PROGRESS':
-        return 'orange';
+        return 'processing';
       case 'CANCELLED':
         return 'red';
       default:
@@ -63,19 +77,19 @@ const AppointmentScheduleTab = () => {
   const getStatusText = (status) => {
     switch (status) {
       case 'CONFIRMED':
-        return 'Đã xác nhận';
+        return 'Confirmed';
       case 'COMPLETED':
-        return 'Hoàn thành';
+        return 'Completed';
       case 'SCHEDULED':
-        return 'Đã lên lịch';
+        return 'Scheduled';
       case 'PENDING':
-        return 'Chờ xác nhận';
+        return 'Pending';
       case 'RESCHEDULE':
-        return 'Chờ duyệt đổi lịch';
+        return 'Rescheduling';
       case 'PROGRESS':
-        return 'Đang tiến hành';
+        return 'In Progress';
       case 'CANCELLED':
-        return 'Đã hủy';
+        return 'Cancelled';
       default:
         return status;
     }
@@ -87,41 +101,43 @@ const AppointmentScheduleTab = () => {
   };
 
   const handleRescheduleSuccess = () => {
-    fetchBookings(); // Reload data after successful reschedule
+    fetchBookings();
   };
 
   const handleCancelAppointment = (appointment) => {
     Modal.confirm({
-      title: 'Xác nhận hủy lịch hẹn',
+      title: 'Cancel Appointment',
       content: (
         <div>
-          <p>Bạn có chắc chắn muốn hủy lịch hẹn này?</p>
-          <div className="mt-2 p-2 bg-gray-50 rounded">
+          <p>Are you sure you want to cancel this appointment?</p>
+          <div className="mt-3 p-3 bg-slate-50 rounded-xl border border-slate-100 text-sm">
             <p className="mb-1">
-              <strong>Vaccine:</strong> {appointment.vaccineName}
+              <span className="font-semibold">Vaccine:</span> {appointment.vaccineName}
             </p>
             <p className="mb-1">
-              <strong>Mũi:</strong> {appointment.doseNumber}
+              <span className="font-semibold">Dose:</span> {appointment.doseNumber}
             </p>
             <p className="mb-1">
-              <strong>Ngày hẹn:</strong> {dayjs(appointment.scheduledDate).format('DD/MM/YYYY')}
+              <span className="font-semibold">Date:</span>{' '}
+              {dayjs(appointment.scheduledDate).format('DD/MM/YYYY')}
             </p>
             <p className="mb-0">
-              <strong>Trung tâm:</strong> {appointment.centerName}
+              <span className="font-semibold">Center:</span> {appointment.centerName}
             </p>
           </div>
         </div>
       ),
-      okText: 'Xác nhận hủy',
-      cancelText: 'Quay lại',
-      okButtonProps: { danger: true },
+      okText: 'Yes, Cancel',
+      cancelText: 'Go Back',
+      okButtonProps: { danger: true, shape: 'round' },
+      cancelButtonProps: { shape: 'round' },
       onOk: async () => {
         try {
           await callCancelAppointment(appointment.appointmentId);
-          message.success('Đã hủy lịch hẹn thành công');
-          fetchBookings(); // Reload data
+          message.success('Appointment cancelled successfully');
+          fetchBookings();
         } catch (error) {
-          message.error(error?.message || 'Không thể hủy lịch hẹn');
+          message.error(error?.message || 'Failed to cancel appointment');
         }
       },
     });
@@ -163,23 +179,62 @@ const AppointmentScheduleTab = () => {
     (appointments) => appointments.length > 0 && appointments[0].isFamily
   );
 
+  // Loading Skeleton
   if (loading) {
     return (
-      <div className="flex justify-center items-center py-12">
-        <Spin size="large" spinning tip="Đang tải lịch hẹn...">
-          <div style={{ minHeight: 100 }} />
-        </Spin>
+      <div className="space-y-6 animate-fade-in">
+        <div className="flex justify-between items-end mb-4">
+          <div>
+            <Skeleton.Input active size="small" className="!w-48 mb-2" />
+            <Skeleton.Input active size="small" className="!w-64 block" />
+          </div>
+        </div>
+        {[1, 2].map((i) => (
+          <Card key={i} className="rounded-3xl shadow-sm border border-slate-100 overflow-hidden">
+            <div className="flex justify-between mb-6">
+              <div className="flex gap-4">
+                <Skeleton.Avatar active size="large" shape="square" />
+                <div>
+                  <Skeleton.Input active size="small" className="!w-32 mb-1" />
+                  <Skeleton.Input active size="small" className="!w-24" />
+                </div>
+              </div>
+              <Skeleton.Button active size="small" />
+            </div>
+            <Skeleton active paragraph={{ rows: 2 }} />
+          </Card>
+        ))}
       </div>
     );
   }
 
   if (error) {
-    return <Alert type="error" title="Lỗi tải dữ liệu" description={error} showIcon />;
+    return (
+      <Alert
+        type="error"
+        title="Error loading data"
+        description={error}
+        showIcon
+        className="rounded-xl"
+      />
+    );
   }
 
   if (upcomingAppointments.length === 0) {
     return (
-      <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} description="Chưa có lịch hẹn tiêm chủng nào" />
+      <div className="py-12 text-center">
+        <Empty
+          image={Empty.PRESENTED_IMAGE_SIMPLE}
+          description={<span className="text-slate-500">No upcoming appointments</span>}
+        />
+        <Button
+          type="primary"
+          className="mt-4 rounded-xl shadow-lg shadow-blue-500/20"
+          href="/booking"
+        >
+          Book New Appointment
+        </Button>
+      </div>
     );
   }
 
@@ -188,64 +243,85 @@ const AppointmentScheduleTab = () => {
 
     const firstApt = appointments[0];
     return (
-      <Card className="!mb-4" key={firstApt.bookingId}>
-        <div className="mb-3 flex justify-between items-start">
-          <div>
-            <Title level={5} className="mb-1">
-              {firstApt.vaccineName}
-            </Title>
-            <Text type="secondary">
-              👤 {firstApt.patientName} • {firstApt.totalDoses} mũi tiêm
-            </Text>
+      <Card
+        className="!mb-6 rounded-3xl shadow-sm border border-slate-100 overflow-hidden hover:shadow-md transition-shadow"
+        key={firstApt.bookingId}
+      >
+        <div className="mb-6 flex flex-col md:flex-row justify-between items-start gap-4 pb-4 border-b border-slate-50">
+          <div className="flex items-center gap-4">
+            <div className="w-12 h-12 rounded-2xl bg-blue-50 flex items-center justify-center text-blue-600">
+              <MedicineBoxOutlined className="text-2xl" />
+            </div>
+            <div>
+              <Title level={5} className="!mb-0 text-slate-800">
+                {firstApt.vaccineName}
+              </Title>
+              <Text className="text-slate-500 text-sm">
+                Patient: <span className="font-medium text-slate-700">{firstApt.patientName}</span>{' '}
+                • {firstApt.totalDoses} Doses
+              </Text>
+            </div>
           </div>
-          <Tag color={getStatusColor(firstApt.bookingStatus)}>
-            Booking: {getStatusText(firstApt.bookingStatus)}
+          <Tag
+            color={getStatusColor(firstApt.bookingStatus)}
+            className="rounded-full px-3 py-1 text-xs font-bold uppercase border-0"
+          >
+            {getStatusText(firstApt.bookingStatus)}
           </Tag>
         </div>
 
         <Timeline
+          className="ml-2"
           items={appointments.map((apt) => ({
             dot:
               apt.appointmentStatus === 'CONFIRMED' ? (
-                <CheckCircleOutlined className="text-green-500" />
+                <CheckCircleFilled className="text-emerald-500 text-lg" />
               ) : (
-                <ClockCircleOutlined className="text-orange-500" />
+                <ClockCircleFilled className="text-blue-500 text-lg" />
               ),
             children: (
-              <div className="pb-2">
-                <div className="flex justify-between items-start">
+              <div className="pb-6 pl-2">
+                <div className="flex flex-col md:flex-row justify-between items-start gap-4">
                   <div className="flex-1">
-                    <div className="flex items-center gap-2 mb-2">
-                      <Text strong>Mũi {apt.doseNumber}</Text>
-                      <Tag color={getStatusColor(apt.appointmentStatus)} className="!m-0">
+                    <div className="flex items-center gap-3 mb-2">
+                      <Text strong className="text-slate-700 text-lg">
+                        Dose {apt.doseNumber}
+                      </Text>
+                      <Tag
+                        color={getStatusColor(apt.appointmentStatus)}
+                        className="rounded-lg border-0 font-medium"
+                      >
                         {getStatusText(apt.appointmentStatus)}
                       </Tag>
                     </div>
 
-                    <div className="space-y-1 text-sm">
-                      <div>
-                        <Text type="secondary">
-                          📅 {dayjs(apt.scheduledDate).format('DD/MM/YYYY')} lúc{' '}
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-y-2 gap-x-8 text-sm">
+                      <div className="flex items-center gap-2 text-slate-600">
+                        <CalendarOutlined className="text-blue-400" />
+                        <span>
+                          {dayjs(apt.scheduledDate).format('DD/MM/YYYY')} at{' '}
                           {formatAppointmentTime(apt)}
-                        </Text>
+                        </span>
                       </div>
-                      <div>
-                        <Text type="secondary">📍 {apt.centerName}</Text>
+                      <div className="flex items-center gap-2 text-slate-600">
+                        <EnvironmentOutlined className="text-red-400" />
+                        <span>{apt.centerName}</span>
                       </div>
                       {apt.doctorName && (
-                        <div>
-                          <Text type="secondary">👨‍⚕️ BS: {apt.doctorName}</Text>
-                        </div>
-                      )}
-                      {apt.appointmentStatus === 'RESCHEDULE' && (
-                        <div className="mt-2 p-2 bg-yellow-50 rounded border border-yellow-200">
-                          <Text type="warning" className="text-xs">
-                            ⏳ Đã gửi yêu cầu đổi lịch. Vui lòng chờ nhân viên cơ sở liên hệ xác
-                            nhận.
-                          </Text>
+                        <div className="flex items-center gap-2 text-slate-600 md:col-span-2">
+                          <span className="font-medium">Doctor:</span> {apt.doctorName}
                         </div>
                       )}
                     </div>
+
+                    {apt.appointmentStatus === 'RESCHEDULE' && (
+                      <div className="mt-3 p-3 bg-amber-50 rounded-xl border border-amber-100 flex items-start gap-2">
+                        <SyncOutlined spin className="text-amber-500 mt-1" />
+                        <Text className="text-amber-700 text-xs">
+                          Reschedule request sent. Waiting for confirmation.
+                        </Text>
+                      </div>
+                    )}
                   </div>
 
                   {/* Action buttons */}
@@ -253,23 +329,24 @@ const AppointmentScheduleTab = () => {
                     apt.appointmentStatus !== 'CANCELLED' &&
                     apt.appointmentStatus !== 'RESCHEDULE' &&
                     dayjs(apt.scheduledDate).isAfter(dayjs()) && (
-                      <div className="flex flex-col gap-1 ml-2">
+                      <div className="flex gap-2">
                         <Button
-                          type="link"
                           size="small"
-                          icon={<CalendarOutlined />}
+                          className="rounded-lg border-slate-200 text-slate-600 hover:text-blue-600 hover:border-blue-200"
+                          icon={<SyncOutlined />}
                           onClick={() => handleReschedule(apt)}
                         >
-                          Đổi lịch
+                          Reschedule
                         </Button>
                         <Button
-                          type="link"
                           danger
                           size="small"
+                          type="text"
+                          className="rounded-lg hover:bg-red-50"
                           icon={<CloseCircleOutlined />}
                           onClick={() => handleCancelAppointment(apt)}
                         >
-                          Hủy lịch
+                          Cancel
                         </Button>
                       </div>
                     )}
@@ -283,48 +360,56 @@ const AppointmentScheduleTab = () => {
   };
 
   return (
-    <div>
-      <div className="mb-4">
-        <Title level={4}>Lịch hẹn tiêm chủng sắp tới</Title>
-        <Text type="secondary">
-          Tổng cộng {upcomingAppointments.length} lịch hẹn từ{' '}
-          {selfBookings.length + familyBookings.length} vaccine
-        </Text>
+    <div className="animate-fade-in">
+      <div className="mb-6">
+        <Title level={3} className="!mb-1 text-slate-800">
+          Appointments
+        </Title>
+        <Text className="text-slate-500 text-lg">Manage your upcoming vaccination schedules</Text>
       </div>
 
       {selfBookings.length > 0 && (
-        <div className="mb-6">
-          <div className="mb-3 flex items-center gap-2">
-            <Title level={5} className="!mb-0">
-              Lịch tiêm của bạn
-            </Title>
-            <Tag color="blue">{selfBookings.length} vaccine</Tag>
+        <div className="mb-8">
+          <div className="mb-4 flex items-center gap-3">
+            <h4 className="text-lg font-bold text-slate-700 m-0">My Schedule</h4>
+            <Tag color="blue" className="rounded-full px-2">
+              {selfBookings.length}
+            </Tag>
           </div>
           {selfBookings.map((appointments) => renderVaccineTimeline(appointments))}
         </div>
       )}
 
       {familyBookings.length > 0 && (
-        <div className="mb-6">
-          <div className="mb-3 flex items-center gap-2">
-            <Title level={5} className="!mb-0">
-              Lịch tiêm cho thành viên gia đình
-            </Title>
-            <Tag color="purple">{familyBookings.length} vaccine</Tag>
+        <div className="mb-8">
+          <div className="mb-4 flex items-center gap-3">
+            <h4 className="text-lg font-bold text-slate-700 m-0">Family Schedule</h4>
+            <Tag color="purple" className="rounded-full px-2">
+              {familyBookings.length}
+            </Tag>
           </div>
           {familyBookings.map((appointments) => renderVaccineTimeline(appointments))}
         </div>
       )}
 
-      <Card className="mt-4 bg-blue-50">
-        <Title level={5}>📋 Hướng dẫn trước khi tiêm</Title>
-        <ul className="text-sm text-gray-600 mt-2 space-y-1">
-          <li>• Vui lòng đến trước 15 phút so với giờ hẹn</li>
-          <li>• Mang theo CCCD/CMND và thẻ bảo hiểm y tế</li>
-          <li>• Mặc quần áo thoải mái, dễ tiêm</li>
-          <li>• Thông báo cho nhân viên y tế nếu có dị ứng hoặc đang dùng thuốc</li>
-          <li>• Ăn uống đầy đủ trước khi tiêm</li>
-        </ul>
+      <Card className="mt-6 bg-gradient-to-r from-blue-50 to-indigo-50 border-blue-100 rounded-3xl">
+        <div className="flex items-start gap-4">
+          <div className="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center text-blue-600 flex-shrink-0">
+            <CalendarOutlined />
+          </div>
+          <div>
+            <Title level={5} className="!mb-2 text-blue-900">
+              Pre-vaccination Instructions
+            </Title>
+            <ul className="text-sm text-blue-800 space-y-2 m-0 pl-4 list-disc">
+              <li>Please arrive 15 minutes before your appointment time.</li>
+              <li>Bring your ID card and health insurance card.</li>
+              <li>Wear comfortable clothing for easy injection access.</li>
+              <li>Inform medical staff of any allergies or medications.</li>
+              <li>Eat properly before your vaccination.</li>
+            </ul>
+          </div>
+        </div>
       </Card>
 
       {/* Reschedule Modal */}

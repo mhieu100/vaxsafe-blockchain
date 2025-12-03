@@ -1,17 +1,20 @@
 import {
+  BarcodeOutlined,
   CalendarOutlined,
-  CheckCircleOutlined,
+  CheckCircleFilled,
   ClockCircleOutlined,
-  DollarOutlined,
   EnvironmentOutlined,
+  MedicineBoxOutlined,
+  SafetyCertificateFilled,
   UserOutlined,
 } from '@ant-design/icons';
-import { Alert, Button, Card, Checkbox, Descriptions, Divider, Image, Tag, Typography } from 'antd';
+import { Button, Checkbox, Divider, Tag, Typography } from 'antd';
 import dayjs from 'dayjs';
 import { useState } from 'react';
 import { DEFAULT_PAGE, DEFAULT_PAGE_SIZE } from '@/constants';
 import { useCenter } from '@/hooks/useCenter';
 import { useFamilyMember } from '@/hooks/useFamilyMember';
+import { formatPrice } from '@/utils/formatPrice';
 
 const { Title, Text } = Typography;
 
@@ -29,16 +32,12 @@ const ReviewSection = ({ bookingData, vaccine, setCurrentStep, handleBookingSubm
 
   const vaccineInfo = vaccine;
   const paymentMethod = bookingData.paymentMethod || 'CASH';
-
-  // Calculate total price - only first dose price (backend creates all appointments)
   const totalPrice = vaccineInfo?.price || 0;
 
-  // Helper function to get center info by ID
   const getCenterById = (centerId) => {
     return centers?.result?.find((center) => String(center.centerId) === String(centerId));
   };
 
-  // Helper function to get family member info by ID
   const getFamilyMemberById = (memberId) => {
     return families?.result?.find((member) => member.id === memberId);
   };
@@ -55,263 +54,191 @@ const ReviewSection = ({ bookingData, vaccine, setCurrentStep, handleBookingSubm
   };
 
   return (
-    <Card title="Xác nhận đặt lịch" className="mb-8 shadow-md">
-      <div className="flex items-center gap-3 mb-6">
-        <div className="w-10 h-10 bg-purple-100 rounded-full flex items-center justify-center">
-          <CheckCircleOutlined className="text-purple-600" />
-        </div>
-        <Title level={3} className="mb-0">
-          Xem lại thông tin đặt lịch
-        </Title>
+    <div className="animate-fade-in max-w-6xl mx-auto">
+      <div className="text-center mb-10">
+        <h2 className="text-3xl font-bold text-slate-900 mb-3">Review & Confirm</h2>
+        <p className="text-slate-500 text-lg">
+          Please review your booking details before confirming
+        </p>
       </div>
 
-      <Alert
-        message="Vui lòng kiểm tra kỹ thông tin trước khi xác nhận"
-        description="Sau khi xác nhận, bạn sẽ nhận được email xác nhận đặt lịch"
-        type="info"
-        className="mb-6"
-        showIcon
-      />
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        {/* Left Column: Details */}
+        <div className="lg:col-span-2 space-y-6">
+          {/* Vaccine Info Card */}
+          <div className="bg-white p-6 rounded-3xl shadow-sm border border-slate-100">
+            <div className="flex items-center gap-3 mb-4">
+              <div className="w-10 h-10 rounded-full bg-blue-50 flex items-center justify-center text-blue-600">
+                <MedicineBoxOutlined className="text-xl" />
+              </div>
+              <h3 className="text-lg font-bold text-slate-800 m-0">Vaccine Information</h3>
+            </div>
 
-      {/* Vaccine Information */}
-      {vaccineInfo && (
-        <Card
-          className="mb-6 bg-gradient-to-r from-blue-50 to-blue-100 border-blue-300"
-          size="small"
-        >
-          <Title level={5} className="text-blue-800 mb-4">
-            🔬 Thông tin vaccine
-          </Title>
-          <div className="flex flex-col md:flex-row items-start gap-4">
-            {vaccineInfo.image && (
-              <div className="flex-shrink-0">
-                <Image
-                  src={vaccineInfo.image}
-                  alt={vaccineInfo.name}
-                  className="w-20 h-20 object-cover rounded-xl border-2 border-blue-300"
-                  fallback="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMIAAADDCAYAAADQvc6UAAABRWlDQ1BJQ0MgUHJvZmlsZQAAKJFjYGASSSwoyGFhYGDIzSspCnJ3UoiIjFJgf8LAwSDCIMogwMCcmFxc4BgQ4ANUwgCjUcG3awyMIPqyLsis7PPOq3QdDFcvjV3jOD1boQVTPQrgSkktTgbSf4A4LbmgqISBgTEFyFYuLykAsTuAbJEioKOA7DkgdjqEvQHEToKwj4DVhAQ5A9k3gGyB5IxEoBmML4BsnSQk8XQkNtReEOBxcfXxUQg1Mjc0dyHgXNJBSWpFCYh2zi+oLMpMzyhRcASGUqqCZ16yno6CkYGRAQMDKMwhqj/fAIcloxgHQqxAjIHBEugw5sUIsSQpBobtQPdLciLEVJYzMPBHMDBsayhILEqEO4DxG0txmrERhM29nYGBddr//5/DGRjYNRkY/l7////39v///y4Dmn+LgeHANwDrkl1AuO+pmgAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAwqADAAQAAAABAAAAwwAAAAD9b/HnAAAHlklEQVR4Ae3dP3Ik1xnG4W+Q2yCQYRqEAjQBJ9BW2XjeAhMBAh4iI3P/k="
+            <div className="flex gap-4">
+              <div className="w-24 h-24 rounded-xl overflow-hidden bg-slate-100 flex-shrink-0">
+                <img
+                  src={vaccineInfo?.image}
+                  alt={vaccineInfo?.name}
+                  className="w-full h-full object-cover"
                 />
               </div>
-            )}
-
-            <div className="flex-1">
-              <Text strong className="block text-xl text-blue-800 mb-2">
-                {vaccineInfo.name}
-              </Text>
-
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div className="bg-white p-3 rounded-lg border">
-                  <Text className="text-xs text-gray-500 block">🌍 Xuất xứ</Text>
-                  <Text strong className="text-sm">
-                    {vaccineInfo.country}
-                  </Text>
+              <div>
+                <h4 className="text-xl font-bold text-slate-900 mb-1">{vaccineInfo?.name}</h4>
+                <div className="flex flex-wrap gap-2 mb-2">
+                  <Tag color="blue">{vaccineInfo?.country}</Tag>
+                  <Tag color="cyan">{vaccineInfo?.dosesRequired} Doses</Tag>
                 </div>
-                <div className="bg-white p-3 rounded-lg border">
-                  <Text className="text-xs text-gray-500 block">💉 Số mũi tiêm</Text>
-                  <Text strong className="text-sm">
-                    {vaccineInfo.dosesRequired} mũi
-                  </Text>
-                </div>
-                <div className="bg-white p-3 rounded-lg border">
-                  <Text className="text-xs text-gray-500 block">📅 Khoảng cách</Text>
-                  <Text strong className="text-sm">
-                    {vaccineInfo.duration} ngày
-                  </Text>
-                </div>
-                <div className="bg-white p-3 rounded-lg border">
-                  <Text className="text-xs text-gray-500 block">💰 Giá/mũi</Text>
-                  <Text strong className="text-sm text-green-600">
-                    {vaccineInfo.price?.toLocaleString('vi-VN')} VNĐ
-                  </Text>
-                </div>
+                <p className="text-slate-500 text-sm">Interval: {vaccineInfo?.duration} days</p>
               </div>
             </div>
           </div>
-        </Card>
-      )}
 
-      {/* Booking Information */}
-      <Card className="mb-6" size="small">
-        <Title level={5} className="mb-4">
-          📋 Thông tin đặt lịch
-        </Title>
-        <Descriptions column={1} bordered>
-          <Descriptions.Item
-            label={
-              <span>
-                <UserOutlined className="mr-2" />
-                Đặt lịch cho
-              </span>
-            }
-          >
-            <Tag color={bookingData.bookingFor === 'self' ? 'blue' : 'green'}>
-              {bookingData.bookingFor === 'self' ? 'Bản thân' : 'Người thân'}
-            </Tag>
-            {bookingData.bookingFor === 'family' && bookingData.familyMemberId && (
-              <span className="ml-2">
-                {getFamilyMemberById(bookingData.familyMemberId)?.fullName ||
-                  `ID: ${bookingData.familyMemberId}`}
-              </span>
-            )}
-          </Descriptions.Item>
-        </Descriptions>
-      </Card>
+          {/* Appointment Info Card */}
+          <div className="bg-white p-6 rounded-3xl shadow-sm border border-slate-100">
+            <div className="flex items-center gap-3 mb-4">
+              <div className="w-10 h-10 rounded-full bg-purple-50 flex items-center justify-center text-purple-600">
+                <CalendarOutlined className="text-xl" />
+              </div>
+              <h3 className="text-lg font-bold text-slate-800 m-0">Appointment Details</h3>
+            </div>
 
-      {/* Appointment Schedule - First Dose Only */}
-      {bookingData.appointmentDate &&
-        bookingData.appointmentTime &&
-        bookingData.appointmentCenter && (
-          <div className="mb-6">
-            <Title level={5} className="mb-4">
-              💉 Lịch tiêm mũi đầu tiên
-            </Title>
-            <Alert
-              message="Lưu ý"
-              description={`Vaccine này yêu cầu tiêm ${vaccineInfo?.dosesRequired || 0} mũi. Bạn đang đặt lịch cho mũi đầu tiên. Các mũi tiếp theo sẽ được nhân viên trung tâm sắp xếp sau.`}
-              type="info"
-              className="mb-4"
-              showIcon
-            />
-            <Card size="small" className="border-2 border-blue-400 bg-blue-50">
-              <div className="flex items-start gap-4">
-                <div className="w-10 h-10 rounded-full flex items-center justify-center font-bold bg-blue-500 text-white">
-                  1
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div className="bg-slate-50 p-4 rounded-2xl">
+                <div className="text-slate-500 text-xs font-bold uppercase tracking-wider mb-1">
+                  Date & Time
                 </div>
-                <div className="flex-1">
-                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                    <div>
-                      <div className="flex items-center gap-2 text-gray-500 text-sm mb-1">
-                        <CalendarOutlined />
-                        <span>Ngày tiêm</span>
-                      </div>
-                      <div className="font-semibold">
-                        {bookingData.appointmentDate
-                          ? dayjs(bookingData.appointmentDate).format('DD/MM/YYYY')
-                          : 'Chưa xác định'}
-                      </div>
+                <div className="flex items-center gap-2 text-slate-800 font-bold text-lg">
+                  <CalendarOutlined className="text-blue-500" />
+                  {bookingData.appointmentDate
+                    ? dayjs(bookingData.appointmentDate).format('DD/MM/YYYY')
+                    : 'N/A'}
+                </div>
+                <div className="flex items-center gap-2 text-slate-600 font-medium mt-1">
+                  <ClockCircleOutlined className="text-blue-500" />
+                  {bookingData.appointmentTime || 'N/A'}
+                </div>
+              </div>
+
+              <div className="bg-slate-50 p-4 rounded-2xl">
+                <div className="text-slate-500 text-xs font-bold uppercase tracking-wider mb-1">
+                  Location
+                </div>
+                <div className="flex items-start gap-2 text-slate-800 font-bold">
+                  <EnvironmentOutlined className="text-red-500 mt-1" />
+                  <span>
+                    {getCenterById(bookingData.appointmentCenter)?.name || 'Unknown Center'}
+                  </span>
+                </div>
+              </div>
+
+              <div className="bg-slate-50 p-4 rounded-2xl md:col-span-2">
+                <div className="text-slate-500 text-xs font-bold uppercase tracking-wider mb-1">
+                  Patient
+                </div>
+                <div className="flex items-center gap-2 text-slate-800 font-bold text-lg">
+                  <UserOutlined className="text-green-500" />
+                  {bookingData.bookingFor === 'self'
+                    ? 'Myself'
+                    : getFamilyMemberById(bookingData.familyMemberId)?.fullName || 'Family Member'}
+                </div>
+                <Tag color={bookingData.bookingFor === 'self' ? 'blue' : 'green'} className="mt-2">
+                  {bookingData.bookingFor === 'self' ? 'Self Booking' : 'Family Booking'}
+                </Tag>
+              </div>
+            </div>
+          </div>
+
+          {/* Terms */}
+          <div className="bg-white p-6 rounded-3xl shadow-sm border border-slate-100">
+            <div className="space-y-3">
+              <Checkbox checked={acceptTerms} onChange={(e) => setAcceptTerms(e.target.checked)}>
+                <span className="text-slate-600">
+                  I agree to the{' '}
+                  <a href="#" className="text-blue-600 font-medium hover:underline">
+                    Terms of Service
+                  </a>
+                </span>
+              </Checkbox>
+              <Checkbox checked={acceptPolicy} onChange={(e) => setAcceptPolicy(e.target.checked)}>
+                <span className="text-slate-600">
+                  I agree to the{' '}
+                  <a href="#" className="text-blue-600 font-medium hover:underline">
+                    Privacy Policy
+                  </a>
+                </span>
+              </Checkbox>
+            </div>
+          </div>
+        </div>
+
+        {/* Right Column: Ticket Summary */}
+        <div className="lg:col-span-1">
+          <div className="sticky top-24">
+            <div className="bg-white rounded-3xl shadow-xl overflow-hidden border border-slate-100 relative">
+              {/* Ticket Header */}
+              <div className="bg-slate-900 p-6 text-white relative overflow-hidden">
+                <div className="absolute top-0 right-0 w-32 h-32 bg-blue-500 rounded-full blur-3xl opacity-20 -translate-y-1/2 translate-x-1/2" />
+                <div className="relative z-10 flex justify-between items-start">
+                  <div>
+                    <div className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">
+                      Total Amount
                     </div>
-                    <div>
-                      <div className="flex items-center gap-2 text-gray-500 text-sm mb-1">
-                        <ClockCircleOutlined />
-                        <span>Giờ tiêm</span>
-                      </div>
-                      <div className="font-semibold">
-                        {bookingData.appointmentTime || 'Chưa xác định'}
-                      </div>
-                    </div>
-                    <div>
-                      <div className="flex items-center gap-2 text-gray-500 text-sm mb-1">
-                        <EnvironmentOutlined />
-                        <span>Địa điểm</span>
-                      </div>
-                      <div className="font-semibold">
-                        {getCenterById(bookingData.appointmentCenter)?.name ||
-                          `ID: ${bookingData.appointmentCenter}`}
-                      </div>
-                    </div>
+                    <div className="text-3xl font-bold text-white">{formatPrice(totalPrice)}</div>
+                  </div>
+                  <div className="bg-white/10 backdrop-blur-md p-2 rounded-lg">
+                    <BarcodeOutlined className="text-3xl text-white/80" />
                   </div>
                 </div>
               </div>
-            </Card>
+
+              {/* Ticket Body */}
+              <div className="p-6 relative">
+                {/* Perforated Line Effect */}
+                <div className="absolute top-0 left-0 w-full -translate-y-1/2 flex justify-between px-4">
+                  <div className="w-6 h-6 bg-slate-50 rounded-full" />
+                  <div className="flex-1 border-t-2 border-dashed border-slate-200 mx-2 self-center" />
+                  <div className="w-6 h-6 bg-slate-50 rounded-full" />
+                </div>
+
+                <div className="space-y-4 mt-2">
+                  <div className="flex justify-between items-center">
+                    <span className="text-slate-500">Payment Method</span>
+                    <span className="font-bold text-slate-900">{paymentMethod}</span>
+                  </div>
+                  <Divider className="my-2" />
+                  <div className="flex justify-between items-center">
+                    <span className="text-slate-500">Vaccine Price</span>
+                    <span className="font-medium text-slate-900">
+                      {formatPrice(vaccineInfo?.price)}
+                    </span>
+                  </div>
+                  <div className="flex justify-between items-center">
+                    <span className="text-slate-500">Doses</span>
+                    <span className="font-medium text-slate-900">x 1 (First Dose)</span>
+                  </div>
+                  <Divider className="my-2" />
+                  <div className="bg-emerald-50 p-3 rounded-xl flex items-center gap-2 text-emerald-700 text-sm font-medium">
+                    <SafetyCertificateFilled />
+                    Blockchain Verified Transaction
+                  </div>
+                </div>
+
+                <Button
+                  type="primary"
+                  size="large"
+                  onClick={handleConfirm}
+                  disabled={!acceptTerms || !acceptPolicy}
+                  loading={loading}
+                  className="w-full mt-6 h-12 rounded-xl font-bold text-lg shadow-lg shadow-blue-500/30 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 border-none"
+                >
+                  Confirm Booking
+                </Button>
+              </div>
+            </div>
           </div>
-        )}
-
-      {/* Payment Information */}
-      <Card className="mb-6" size="small">
-        <Title level={5} className="mb-4">
-          💳 Thông tin thanh toán
-        </Title>
-        <Descriptions column={1} bordered>
-          <Descriptions.Item
-            label={
-              <span>
-                <DollarOutlined className="mr-2" />
-                Phương thức thanh toán
-              </span>
-            }
-          >
-            <Tag color="blue">
-              {paymentMethod === 'CASH'
-                ? 'Tiền mặt'
-                : paymentMethod === 'PAYPAL'
-                  ? 'PayPal'
-                  : paymentMethod === 'BANK'
-                    ? 'Chuyển khoản'
-                    : paymentMethod === 'METAMASK'
-                      ? 'MetaMask'
-                      : paymentMethod}
-            </Tag>
-          </Descriptions.Item>
-          <Descriptions.Item label="Giá vaccine / mũi">
-            <span className="text-base">
-              {vaccineInfo?.price?.toLocaleString('vi-VN') || '0'} VNĐ
-            </span>
-          </Descriptions.Item>
-          <Descriptions.Item label="Tổng số mũi tiêm yêu cầu">
-            <span className="text-base">{vaccineInfo?.dosesRequired || 0} mũi</span>
-          </Descriptions.Item>
-          <Descriptions.Item label="Thanh toán cho mũi đầu tiên">
-            <span className="text-lg font-bold text-blue-600">
-              {totalPrice.toLocaleString('vi-VN')} VNĐ
-            </span>
-          </Descriptions.Item>
-          <Descriptions.Item label="Lưu ý">
-            <span className="text-sm text-gray-600">
-              Bạn chỉ thanh toán cho mũi đầu tiên. Các mũi tiếp theo sẽ thanh toán sau khi được sắp
-              xếp lịch.
-            </span>
-          </Descriptions.Item>
-        </Descriptions>
-      </Card>
-
-      <Divider />
-
-      {/* Terms and Conditions */}
-      <div className="mb-6">
-        <div className="space-y-3">
-          <Checkbox checked={acceptTerms} onChange={(e) => setAcceptTerms(e.target.checked)}>
-            <span className="text-sm">
-              Tôi đã đọc và đồng ý với{' '}
-              <a href="/terms" className="text-blue-600">
-                Điều khoản sử dụng dịch vụ
-              </a>
-            </span>
-          </Checkbox>
-          <Checkbox checked={acceptPolicy} onChange={(e) => setAcceptPolicy(e.target.checked)}>
-            <span className="text-sm">
-              Tôi đã đọc và đồng ý với{' '}
-              <a href="/privacy" className="text-blue-600">
-                Chính sách bảo mật thông tin
-              </a>
-            </span>
-          </Checkbox>
         </div>
       </div>
-
-      {(!acceptTerms || !acceptPolicy) && (
-        <Alert
-          message="Vui lòng đồng ý với các điều khoản và chính sách"
-          type="warning"
-          className="mb-6"
-          showIcon
-        />
-      )}
-
-      <div className="flex justify-between mt-8">
-        <Button onClick={handleReviewPrev} className="px-8 rounded-lg">
-          Quay lại
-        </Button>
-        <Button
-          type="primary"
-          onClick={handleConfirm}
-          disabled={!acceptTerms || !acceptPolicy}
-          loading={loading}
-          className="px-8 rounded-lg"
-        >
-          Xác nhận đặt lịch
-        </Button>
-      </div>
-    </Card>
+    </div>
   );
 };
 

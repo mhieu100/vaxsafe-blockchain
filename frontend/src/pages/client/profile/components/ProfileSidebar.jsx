@@ -1,71 +1,38 @@
 import {
+  AppstoreOutlined,
   CalendarOutlined,
-  CheckCircleOutlined,
-  ClockCircleOutlined,
-  FileTextOutlined,
-  HeartOutlined,
-  HistoryOutlined,
   MedicineBoxOutlined,
-  SafetyCertificateOutlined,
+  SettingOutlined,
   TeamOutlined,
-  UserOutlined,
 } from '@ant-design/icons';
-import { Badge, Card, Col, Menu, Row, Statistic } from 'antd';
+import { Card, Menu } from 'antd';
 
-const ProfileSidebar = ({
-  totalVaccines,
-  upcomingAppointments,
-  coveragePercentage,
-  nextAppointment,
-  onTabChange,
-  activeTab,
-}) => {
+const ProfileSidebar = ({ activeTab, onTabChange }) => {
   const menuItems = [
     {
       key: '1',
-      icon: <UserOutlined />,
-      label: 'Health Profile',
+      icon: <AppstoreOutlined className="text-lg" />,
+      label: 'Dashboard',
     },
     {
       key: '2',
-      icon: <HistoryOutlined />,
-      label: (
-        <span className="flex justify-between items-center w-full">
-          Vaccination History
-          <Badge count={totalVaccines} style={{ backgroundColor: '#52c41a' }} />
-        </span>
-      ),
+      icon: <MedicineBoxOutlined className="text-lg" />,
+      label: 'My Records',
     },
     {
       key: '3',
-      icon: <CalendarOutlined />,
-      label: (
-        <span className="flex justify-between items-center w-full">
-          Appointments
-          <Badge count={upcomingAppointments} />
-        </span>
-      ),
+      icon: <CalendarOutlined className="text-lg" />,
+      label: 'Appointments',
     },
     {
       key: '4',
-      icon: <HeartOutlined />,
-      label: 'Health Reminders',
+      icon: <TeamOutlined className="text-lg" />,
+      label: 'Family Members',
     },
     {
       key: '5',
-      icon: <TeamOutlined />,
-      label: 'Family Manager',
-    },
-    {
-      key: '6',
-      icon: <SafetyCertificateOutlined />,
-      label: 'Vaccine Passport',
-      className: 'bg-gradient-to-r from-purple-50 to-blue-50',
-    },
-    {
-      key: '7',
-      icon: <FileTextOutlined />,
-      label: 'Vaccine Records',
+      icon: <SettingOutlined className="text-lg" />,
+      label: 'Settings',
     },
   ];
 
@@ -74,66 +41,23 @@ const ProfileSidebar = ({
   };
 
   return (
-    <>
-      <Card className="rounded-xl shadow-sm border-0 !mb-6">
-        <Menu
-          mode="inline"
-          selectedKeys={[activeTab]}
-          onClick={handleMenuClick}
-          items={menuItems}
-          className="border-0"
-          style={{
-            background: 'transparent',
-          }}
-        />
-      </Card>
-
-      <Card className="rounded-xl shadow-sm border-0 ">
-        <div className="text-center mb-4">
-          <h3 className="text-lg font-semibold text-gray-800">Health Overview</h3>
-        </div>
-        <Row gutter={[16, 16]}>
-          <Col span={24}>
-            <Card className="bg-gradient-to-br from-green-50 to-emerald-50 border-green-200">
-              <Statistic
-                title={<span className="text-green-700 font-medium">Total Vaccines</span>}
-                value={totalVaccines}
-                prefix={<MedicineBoxOutlined className="text-green-600" />}
-                styles={{ content: { color: '#059669', fontWeight: 'bold' } }}
-              />
-            </Card>
-          </Col>
-          <Col span={24}>
-            <Card className="bg-gradient-to-br from-blue-50 to-cyan-50 border-blue-200">
-              <Statistic
-                title={<span className="text-blue-700 font-medium">Upcoming</span>}
-                value={upcomingAppointments}
-                prefix={<ClockCircleOutlined className="text-blue-600" />}
-                suffix="appointments"
-                styles={{ content: { color: '#0284c7', fontWeight: 'bold' } }}
-              />
-            </Card>
-          </Col>
-          <Col span={24}>
-            <Card className="bg-gradient-to-br from-purple-50 to-pink-50 border-purple-200">
-              <Statistic
-                title={<span className="text-purple-700 font-medium">Coverage</span>}
-                value={coveragePercentage}
-                prefix={<CheckCircleOutlined className="text-purple-600" />}
-                suffix="%"
-                styles={{ content: { color: '#9333ea', fontWeight: 'bold' } }}
-              />
-            </Card>
-          </Col>
-        </Row>
-        {nextAppointment && (
-          <div className="mt-4 p-3 bg-gradient-to-r from-orange-50 to-amber-50 rounded-lg border border-orange-200">
-            <p className="text-xs text-orange-700 font-medium mb-1">NEXT APPOINTMENT</p>
-            <p className="text-sm font-semibold text-orange-900">{nextAppointment}</p>
-          </div>
-        )}
-      </Card>
-    </>
+    <Card className="rounded-3xl shadow-sm border border-slate-100 overflow-hidden sticky top-24">
+      <div className="p-4 pb-0">
+        <h3 className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-2 px-4">
+          Menu
+        </h3>
+      </div>
+      <Menu
+        mode="inline"
+        selectedKeys={[activeTab]}
+        onClick={handleMenuClick}
+        items={menuItems}
+        className="border-0 custom-profile-menu"
+        style={{
+          background: 'transparent',
+        }}
+      />
+    </Card>
   );
 };
 

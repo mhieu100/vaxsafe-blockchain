@@ -43,17 +43,17 @@ const TabEditUser = ({ editMode, setEditMode }) => {
         updateUserInfo(values);
       }
 
-      message.success('Cập nhật thông tin thành công!');
+      message.success('Profile updated successfully!');
       setEditMode(false);
     } catch (error) {
-      message.error(error?.message || 'Không thể cập nhật thông tin');
+      message.error(error?.message || 'Failed to update profile');
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <div className="py-4">
+    <div className="py-4 animate-fade-in">
       {editMode ? (
         <Form
           form={form}
@@ -79,57 +79,57 @@ const TabEditUser = ({ editMode, setEditMode }) => {
               : undefined
           }
         >
-          <Row gutter={16}>
+          <Row gutter={24}>
             <Col xs={24} sm={12}>
               <Form.Item
                 label="Full Name"
                 name="fullName"
-                rules={[{ required: true, message: 'Vui lòng nhập họ tên' }]}
+                rules={[{ required: true, message: 'Please enter full name' }]}
               >
-                <Input />
+                <Input className="rounded-lg" />
               </Form.Item>
             </Col>
             <Col xs={24} sm={12}>
               <Form.Item label="Email" name="email" rules={[{ required: true, type: 'email' }]}>
-                <Input disabled />
+                <Input disabled className="rounded-lg bg-slate-50 text-slate-500" />
               </Form.Item>
             </Col>
           </Row>
 
-          <Row gutter={16}>
+          <Row gutter={24}>
             <Col xs={24} sm={12}>
               <Form.Item label="Phone" name="phone">
-                <Input />
+                <Input className="rounded-lg" />
               </Form.Item>
             </Col>
             <Col xs={24} sm={12}>
               <Form.Item label="Date of Birth" name="birthday">
-                <Input placeholder="YYYY-MM-DD" />
+                <Input placeholder="YYYY-MM-DD" className="rounded-lg" />
               </Form.Item>
             </Col>
           </Row>
 
-          <Row gutter={16}>
+          <Row gutter={24}>
             <Col xs={24} sm={12}>
               <Form.Item label="Gender" name="gender">
-                <Select placeholder="Chọn giới tính">
-                  <Select.Option value="MALE">Nam</Select.Option>
-                  <Select.Option value="FEMALE">Nữ</Select.Option>
-                  <Select.Option value="OTHER">Khác</Select.Option>
+                <Select placeholder="Select gender" className="rounded-lg">
+                  <Select.Option value="MALE">Male</Select.Option>
+                  <Select.Option value="FEMALE">Female</Select.Option>
+                  <Select.Option value="OTHER">Other</Select.Option>
                 </Select>
               </Form.Item>
             </Col>
             <Col xs={24} sm={12}>
               <Form.Item label="Identity Number" name="identityNumber">
-                <Input placeholder="CCCD/CMND" />
+                <Input placeholder="ID Card / Passport" className="rounded-lg" />
               </Form.Item>
             </Col>
           </Row>
 
-          <Row gutter={16}>
+          <Row gutter={24}>
             <Col xs={24} sm={8}>
               <Form.Item label="Blood Type" name="bloodType">
-                <Select placeholder="Chọn nhóm máu">
+                <Select placeholder="Select type" className="rounded-lg">
                   <Select.Option value="A">A</Select.Option>
                   <Select.Option value="B">B</Select.Option>
                   <Select.Option value="AB">AB</Select.Option>
@@ -139,121 +139,217 @@ const TabEditUser = ({ editMode, setEditMode }) => {
             </Col>
             <Col xs={24} sm={8}>
               <Form.Item label="Height (cm)" name="heightCm">
-                <Input type="number" placeholder="170" />
+                <Input type="number" placeholder="170" className="rounded-lg" />
               </Form.Item>
             </Col>
             <Col xs={24} sm={8}>
               <Form.Item label="Weight (kg)" name="weightKg">
-                <Input type="number" placeholder="65" />
+                <Input type="number" placeholder="65" className="rounded-lg" />
               </Form.Item>
             </Col>
           </Row>
 
           <Form.Item label="Address" name="address">
-            <Input.TextArea rows={2} />
+            <Input.TextArea rows={2} className="rounded-lg" />
           </Form.Item>
 
-          <Row gutter={16}>
+          <Row gutter={24}>
             <Col xs={24} sm={12}>
               <Form.Item label="Occupation" name="occupation">
-                <Input placeholder="Nghề nghiệp" />
+                <Input placeholder="Occupation" className="rounded-lg" />
               </Form.Item>
             </Col>
             <Col xs={24} sm={12}>
               <Form.Item label="Insurance Number" name="insuranceNumber">
-                <Input placeholder="Số bảo hiểm y tế" />
+                <Input placeholder="Health Insurance Number" className="rounded-lg" />
               </Form.Item>
             </Col>
           </Row>
 
           <Form.Item label="Lifestyle Notes" name="lifestyleNotes">
-            <Input.TextArea rows={3} placeholder="Ghi chú về lối sống, sở thích..." />
+            <Input.TextArea
+              rows={3}
+              placeholder="Notes about lifestyle, hobbies, etc."
+              className="rounded-lg"
+            />
           </Form.Item>
 
-          <div className="flex gap-2">
-            <Button type="primary" htmlType="submit" loading={loading} disabled={loading}>
+          <div className="flex gap-3 mt-4">
+            <Button
+              type="primary"
+              htmlType="submit"
+              loading={loading}
+              disabled={loading}
+              className="bg-blue-600 hover:bg-blue-700 rounded-xl px-6 h-10 shadow-lg shadow-blue-500/30"
+            >
               Save Changes
             </Button>
-            <Button onClick={() => setEditMode(false)} disabled={loading}>
+            <Button
+              onClick={() => setEditMode(false)}
+              disabled={loading}
+              className="rounded-xl px-6 h-10 hover:bg-slate-100"
+            >
               Cancel
             </Button>
           </div>
         </Form>
       ) : (
-        <div className="space-y-6">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div>
-              <Text type="secondary">Full Name</Text>
-              <div className="text-base font-medium">{user?.fullName || '--'}</div>
+        <div className="space-y-8">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-8">
+            <div className="border-b border-slate-100 pb-2">
+              <Text
+                type="secondary"
+                className="text-xs uppercase tracking-wider font-semibold text-slate-400"
+              >
+                Full Name
+              </Text>
+              <div className="text-lg font-medium text-slate-800 mt-1">
+                {user?.fullName || '--'}
+              </div>
             </div>
-            <div>
-              <Text type="secondary">Email</Text>
-              <div className="text-base font-medium">{user?.email || '--'}</div>
+            <div className="border-b border-slate-100 pb-2">
+              <Text
+                type="secondary"
+                className="text-xs uppercase tracking-wider font-semibold text-slate-400"
+              >
+                Email
+              </Text>
+              <div className="text-lg font-medium text-slate-800 mt-1">{user?.email || '--'}</div>
             </div>
-            <div>
-              <Text type="secondary">Phone</Text>
-              <div className="text-base font-medium">{user?.phone || '--'}</div>
+            <div className="border-b border-slate-100 pb-2">
+              <Text
+                type="secondary"
+                className="text-xs uppercase tracking-wider font-semibold text-slate-400"
+              >
+                Phone
+              </Text>
+              <div className="text-lg font-medium text-slate-800 mt-1">{user?.phone || '--'}</div>
             </div>
-            <div>
-              <Text type="secondary">Date of Birth</Text>
-              <div className="text-base font-medium">{user?.birthday || '--'}</div>
+            <div className="border-b border-slate-100 pb-2">
+              <Text
+                type="secondary"
+                className="text-xs uppercase tracking-wider font-semibold text-slate-400"
+              >
+                Date of Birth
+              </Text>
+              <div className="text-lg font-medium text-slate-800 mt-1">
+                {user?.birthday || '--'}
+              </div>
             </div>
-            <div>
-              <Text type="secondary">Gender</Text>
-              <div className="text-base font-medium">
+            <div className="border-b border-slate-100 pb-2">
+              <Text
+                type="secondary"
+                className="text-xs uppercase tracking-wider font-semibold text-slate-400"
+              >
+                Gender
+              </Text>
+              <div className="text-lg font-medium text-slate-800 mt-1">
                 {user?.gender === 'MALE'
-                  ? 'Nam'
+                  ? 'Male'
                   : user?.gender === 'FEMALE'
-                    ? 'Nữ'
+                    ? 'Female'
                     : user?.gender === 'OTHER'
-                      ? 'Khác'
+                      ? 'Other'
                       : '--'}
               </div>
             </div>
-            <div>
-              <Text type="secondary">Identity Number</Text>
-              <div className="text-base font-medium">{user?.identityNumber || '--'}</div>
+            <div className="border-b border-slate-100 pb-2">
+              <Text
+                type="secondary"
+                className="text-xs uppercase tracking-wider font-semibold text-slate-400"
+              >
+                Identity Number
+              </Text>
+              <div className="text-lg font-medium text-slate-800 mt-1">
+                {user?.identityNumber || '--'}
+              </div>
             </div>
-            <div>
-              <Text type="secondary">Blood Type</Text>
-              <div className="text-base font-medium">{user?.bloodType || '--'}</div>
+            <div className="border-b border-slate-100 pb-2">
+              <Text
+                type="secondary"
+                className="text-xs uppercase tracking-wider font-semibold text-slate-400"
+              >
+                Blood Type
+              </Text>
+              <div className="text-lg font-medium text-slate-800 mt-1">
+                {user?.bloodType || '--'}
+              </div>
             </div>
-            <div>
-              <Text type="secondary">Height</Text>
-              <div className="text-base font-medium">
+            <div className="border-b border-slate-100 pb-2">
+              <Text
+                type="secondary"
+                className="text-xs uppercase tracking-wider font-semibold text-slate-400"
+              >
+                Height
+              </Text>
+              <div className="text-lg font-medium text-slate-800 mt-1">
                 {user?.heightCm ? `${user.heightCm} cm` : '--'}
               </div>
             </div>
-            <div>
-              <Text type="secondary">Weight</Text>
-              <div className="text-base font-medium">
+            <div className="border-b border-slate-100 pb-2">
+              <Text
+                type="secondary"
+                className="text-xs uppercase tracking-wider font-semibold text-slate-400"
+              >
+                Weight
+              </Text>
+              <div className="text-lg font-medium text-slate-800 mt-1">
                 {user?.weightKg ? `${user.weightKg} kg` : '--'}
               </div>
             </div>
-            <div>
-              <Text type="secondary">Occupation</Text>
-              <div className="text-base font-medium">{user?.occupation || '--'}</div>
+            <div className="border-b border-slate-100 pb-2">
+              <Text
+                type="secondary"
+                className="text-xs uppercase tracking-wider font-semibold text-slate-400"
+              >
+                Occupation
+              </Text>
+              <div className="text-lg font-medium text-slate-800 mt-1">
+                {user?.occupation || '--'}
+              </div>
             </div>
-            <div>
-              <Text type="secondary">Insurance Number</Text>
-              <div className="text-base font-medium">{user?.insuranceNumber || '--'}</div>
+            <div className="border-b border-slate-100 pb-2">
+              <Text
+                type="secondary"
+                className="text-xs uppercase tracking-wider font-semibold text-slate-400"
+              >
+                Insurance Number
+              </Text>
+              <div className="text-lg font-medium text-slate-800 mt-1">
+                {user?.insuranceNumber || '--'}
+              </div>
             </div>
           </div>
 
-          <div>
-            <Text type="secondary">Address</Text>
-            <div className="text-base font-medium">{user?.address || '--'}</div>
+          <div className="border-b border-slate-100 pb-2">
+            <Text
+              type="secondary"
+              className="text-xs uppercase tracking-wider font-semibold text-slate-400"
+            >
+              Address
+            </Text>
+            <div className="text-lg font-medium text-slate-800 mt-1">{user?.address || '--'}</div>
           </div>
 
-          <div>
-            <Text type="secondary">Lifestyle Notes</Text>
-            <Paragraph className="text-base whitespace-pre-line">
+          <div className="border-b border-slate-100 pb-2">
+            <Text
+              type="secondary"
+              className="text-xs uppercase tracking-wider font-semibold text-slate-400"
+            >
+              Lifestyle Notes
+            </Text>
+            <Paragraph className="text-base whitespace-pre-line text-slate-800 mt-1">
               {user?.lifestyleNotes || '--'}
             </Paragraph>
           </div>
 
-          <div>
-            <Button type="primary" onClick={() => setEditMode(true)} disabled={!user}>
+          <div className="pt-4">
+            <Button
+              type="primary"
+              onClick={() => setEditMode(true)}
+              disabled={!user}
+              className="bg-blue-600 hover:bg-blue-700 rounded-xl px-8 h-10 shadow-lg shadow-blue-500/30"
+            >
               Edit Profile
             </Button>
           </div>

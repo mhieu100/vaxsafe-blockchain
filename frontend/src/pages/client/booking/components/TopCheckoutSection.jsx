@@ -3,49 +3,60 @@ import {
   CalendarOutlined,
   CheckCircleOutlined,
   CreditCardOutlined,
-  LockOutlined,
+  SafetyCertificateFilled,
 } from '@ant-design/icons';
-import { Button, Card, Steps } from 'antd';
+import { Button, Steps } from 'antd';
 import { useNavigate } from 'react-router-dom';
 
-const TopCheckoutSection = ({ currentStep, setCurrentStep }) => {
+const TopCheckoutSection = ({ currentStep }) => {
   const navigate = useNavigate();
 
   return (
-    <div className="mb-8">
-      <div className="flex justify-between items-center gap-4 mb-6">
+    <div className="mb-10">
+      {/* Header */}
+      <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-8">
         <div>
-          <span className="font-semibold text-2xl mb-0">Tạo lịch đặt tiêm</span>
-          <span className="flex items-center gap-1 text-blue-400">
-            <LockOutlined /> SSL Encrypted & Secure
-          </span>
+          <h1 className="text-3xl font-bold text-slate-900 mb-2">Book Appointment</h1>
+          <div className="flex items-center gap-2 text-emerald-600 bg-emerald-50 px-3 py-1 rounded-full w-fit">
+            <SafetyCertificateFilled />
+            <span className="text-xs font-bold uppercase tracking-wider">
+              Secure Blockchain Transaction
+            </span>
+          </div>
         </div>
-        <Button icon={<ArrowLeftOutlined />} onClick={() => navigate('/')} className="rounded-lg">
-          Hủy đặt lịch
+        <Button
+          icon={<ArrowLeftOutlined />}
+          onClick={() => navigate('/')}
+          className="rounded-full border-slate-200 hover:border-red-500 hover:text-red-500 transition-colors"
+        >
+          Cancel Booking
         </Button>
       </div>
 
-      <Card className="rounded-xl shadow-sm border-0">
+      {/* Steps */}
+      <div className="bg-white p-6 rounded-3xl shadow-sm border border-slate-100">
         <Steps
           current={currentStep}
-          onChange={(value) => setCurrentStep(value)}
-          className="checkout-steps"
+          className="premium-steps"
           items={[
             {
-              title: 'Lịch hẹn',
-              icon: <CalendarOutlined />,
+              title: 'Appointment',
+              description: 'Choose date & center',
+              icon: <CalendarOutlined className={currentStep >= 0 ? 'text-blue-600' : ''} />,
             },
             {
-              title: 'Thanh toán',
-              icon: <CreditCardOutlined />,
+              title: 'Payment',
+              description: 'Select method',
+              icon: <CreditCardOutlined className={currentStep >= 1 ? 'text-blue-600' : ''} />,
             },
             {
-              title: 'Xem lại',
-              icon: <CheckCircleOutlined />,
+              title: 'Review',
+              description: 'Confirm details',
+              icon: <CheckCircleOutlined className={currentStep >= 2 ? 'text-blue-600' : ''} />,
             },
           ]}
         />
-      </Card>
+      </div>
     </div>
   );
 };

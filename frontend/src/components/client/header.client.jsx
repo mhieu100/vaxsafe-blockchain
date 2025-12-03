@@ -1,14 +1,16 @@
 import {
   HeartOutlined,
   HomeOutlined,
+  InfoCircleOutlined,
   LogoutOutlined,
   MenuOutlined,
+  PhoneOutlined,
   SafetyCertificateOutlined,
   ShoppingCartOutlined,
   ShoppingOutlined,
   UserOutlined,
 } from '@ant-design/icons';
-import { Avatar, Badge, Button, Drawer, Input, Layout, Menu, message, Space } from 'antd';
+import { Avatar, Badge, Button, Drawer, Layout, Menu, message, Space } from 'antd';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
@@ -19,7 +21,6 @@ import useCartStore from '@/stores/useCartStore';
 import DropdownUser from '../dropdown/DropdownUser';
 
 const { Header: AntHeader } = Layout;
-const { Search } = Input;
 
 const Navbar = () => {
   const { t } = useTranslation('common');
@@ -32,7 +33,6 @@ const Navbar = () => {
   const location = useLocation();
 
   const [mobileMenuVisible, setMobileMenuVisible] = useState(false);
-  const [_searchValue, setSearchValue] = useState('');
 
   const handleLogout = async () => {
     const res = await callLogout();
@@ -66,13 +66,6 @@ const Navbar = () => {
     setMobileMenuVisible(false);
   };
 
-  const onSearch = (value) => {
-    if (value.trim()) {
-      navigate(`/search?q=${encodeURIComponent(value)}`);
-      setSearchValue('');
-    }
-  };
-
   const menuItems = [
     {
       key: '/',
@@ -83,6 +76,16 @@ const Navbar = () => {
       key: '/vaccine',
       icon: <ShoppingOutlined />,
       label: t('header.vaccines'),
+    },
+    {
+      key: '/about',
+      icon: <InfoCircleOutlined />,
+      label: 'About Us',
+    },
+    {
+      key: '/contact',
+      icon: <PhoneOutlined />,
+      label: 'Contact',
     },
   ];
 
@@ -108,44 +111,37 @@ const Navbar = () => {
 
   return (
     <>
-      <AntHeader className="sticky top-0 z-50 !bg-white px-4 shadow-sm md:px-6">
+      <AntHeader className="sticky top-0 z-50 glass-panel-light px-4 md:px-6 transition-all duration-300">
         <div className="mx-auto flex h-full max-w-[1220px] items-center justify-between">
-          <div className="flex items-center gap-8">
+          {/* Left: Logo */}
+          <div className="flex items-center flex-1">
             <Link
               to="/"
               className="flex cursor-pointer items-center gap-2 text-xl font-bold text-blue-600 md:text-2xl"
             >
               <SafetyCertificateOutlined className="text-xl md:text-2xl text-brand-primary" />
-              <span className="hidden text-lg font-bold text-gray-900 sm:block md:text-xl">
+              <span className="hidden text-xl font-bold text-gradient-premium sm:block md:text-2xl">
                 SafeVax
               </span>
             </Link>
+          </div>
 
+          {/* Center: Menu */}
+          <div className="hidden lg:flex flex-1 justify-center">
             <Menu
               mode="horizontal"
               onClick={handleMenuClick}
               selectedKeys={[location.pathname?.split('?')?.[0] ?? '']}
               items={menuItems}
-              className="hidden lg:flex !border-0 !bg-transparent"
+              className="!border-0 !bg-transparent min-w-[400px] justify-center"
               style={{
-                minWidth: '300px',
                 lineHeight: '64px',
               }}
             />
           </div>
 
-          <div className="flex items-center gap-2 md:gap-4">
-            <div className="hidden md:block">
-              <Search
-                placeholder={t('header.searchPlaceholder')}
-                allowClear
-                onSearch={onSearch}
-                size="middle"
-                style={{ width: 250 }}
-                className="align-middle"
-              />
-            </div>
-
+          {/* Right: Actions */}
+          <div className="flex items-center justify-end gap-2 md:gap-4 flex-1">
             <Space className="hidden sm:flex" size="small">
               <LanguageSelect />
 
