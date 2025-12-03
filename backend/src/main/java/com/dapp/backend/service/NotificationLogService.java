@@ -3,15 +3,18 @@ package com.dapp.backend.service;
 import com.dapp.backend.enums.ReminderChannel;
 import com.dapp.backend.enums.ReminderStatus;
 import com.dapp.backend.enums.ReminderType;
+import com.dapp.backend.exception.AppException;
 import com.dapp.backend.model.*;
 import com.dapp.backend.repository.NotificationLogRepository;
 import com.dapp.backend.repository.UserNotificationSettingRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.util.Optional;
 
 /**
  * Service to manage notification logs and prevent spam/duplicate sends
@@ -129,7 +132,18 @@ public class NotificationLogService {
      * Get user notification settings
      */
     public UserNotificationSetting getUserSettings(User user) {
-        return settingRepository.findByUserId(user.getId())
-                .orElseGet(() -> createDefaultSettings(user));
+        Optional<UserNotificationSetting> existing = settingRepository.findByUserId(user.getId());
+        if (existing.isPresent()) {
+            return existing.get();
+        }
+        
+        // Double-check to handle race condition
+        try {
+            return createDefaultSettings(user);
+        } catch (DataIntegrityViolationException e) {
+            // Another thread created it, fetch again
+            return settingRepository.findByUserId(user.getId())
+                    .orElseThrow(() -> new AppException("Failed to get user notification settings"));
+        }
     }
 }
