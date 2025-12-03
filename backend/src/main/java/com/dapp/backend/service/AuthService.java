@@ -36,6 +36,7 @@ public class AuthService {
     private final JwtUtil jwtUtil;
     private final IdentityService identityService;
     private final BlockchainService blockchainService;
+    private final NotificationLogService notificationLogService;
 
     @org.springframework.beans.factory.annotation.Value("${google.mobile.client-id}")
     private String googleClientId;
@@ -113,6 +114,15 @@ public class AuthService {
 
         // Save user first to get ID
         User savedUser = userRepository.save(user);
+
+        // Create default notification settings for new user
+        try {
+            notificationLogService.createDefaultSettings(savedUser);
+            log.info("Default notification settings created for user: {}", savedUser.getEmail());
+        } catch (Exception e) {
+            log.error("Error creating notification settings for user: {}", savedUser.getEmail(), e);
+            // Continue - user is still created successfully
+        }
 
         // Generate blockchain identity hash (deterministic, based on email + name)
         // Will be synced to blockchain later when profile is completed (has birthday)
@@ -351,6 +361,15 @@ public class AuthService {
                         .build();
 
                 user = userRepository.save(user);
+
+                // Create default notification settings for new Google user
+                try {
+                    notificationLogService.createDefaultSettings(user);
+                    log.info("Default notification settings created for Google user: {}", user.getEmail());
+                } catch (Exception e) {
+                    log.error("Error creating notification settings for Google user: {}", user.getEmail(), e);
+                    // Continue - user is still created successfully
+                }
             }
 
             // 3. Generate Tokens

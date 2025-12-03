@@ -14,7 +14,8 @@ import com.dapp.backend.model.Role;
 import com.dapp.backend.model.User;
 import com.dapp.backend.repository.RoleRepository;
 import com.dapp.backend.repository.UserRepository;
-
+import com.dapp.backend.security.JwtUtil;
+import com.dapp.backend.service.NotificationLogService;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
@@ -28,6 +29,7 @@ public class OAuth2LoginSuccessHandler extends SimpleUrlAuthenticationSuccessHan
     private final UserRepository userRepository;
     private final RoleRepository roleRepository;
     private final JwtUtil jwtUtil;
+    private final NotificationLogService notificationLogService;
 
     @Value("${cors.allowed-origins}")
     private String frontendUrl;
@@ -63,7 +65,18 @@ public class OAuth2LoginSuccessHandler extends SimpleUrlAuthenticationSuccessHan
                     return userRepository.save(newUser);
                 });
 
-        // Generate JWT tokens
+        // Create default notification settings for new OAuth user if not exists
+        if (user.getId() != null) {
+            try {
+                // Check if settings already exist (in case of race condition)
+                if (!notificationLogService.hasUserSettings(user)) {
+                    notificationLogService.createDefaultSettings(user);
+                }
+            } catch (Exception e) {
+                // Log error but don't fail the login process
+                System.err.println("Error creating notification settings for OAuth user: " + user.getEmail() + " - " + e.getMessage());
+            }
+        }
         String accessToken = jwtUtil.createAccessToken(user.getEmail());
         String refreshToken = jwtUtil.createRefreshToken(user.getEmail());
 

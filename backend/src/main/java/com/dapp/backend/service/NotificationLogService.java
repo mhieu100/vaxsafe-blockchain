@@ -32,7 +32,7 @@ public class NotificationLogService {
      */
     public boolean isNotificationAllowed(User user, ReminderType type, ReminderChannel channel) {
         UserNotificationSetting setting = settingRepository.findByUserId(user.getId())
-                .orElse(createDefaultSettings(user));
+                .orElseGet(() -> createDefaultSettings(user));
 
         // Check if reminder type is enabled
         if (type == ReminderType.APPOINTMENT_REMINDER && !setting.getAppointmentReminderEnabled()) {
@@ -112,17 +112,10 @@ public class NotificationLogService {
     }
 
     /**
-     * Create default settings for new user
+     * Check if user already has notification settings
      */
-    private UserNotificationSetting createDefaultSettings(User user) {
-        UserNotificationSetting setting = UserNotificationSetting.builder()
-                .user(user)
-                .emailEnabled(true)
-                .appointmentReminderEnabled(true)
-                .nextDoseReminderEnabled(true)
-                .build();
-        
-        return settingRepository.save(setting);
+    public boolean hasUserSettings(User user) {
+        return settingRepository.findByUserId(user.getId()).isPresent();
     }
 
     /**
@@ -172,5 +165,19 @@ public class NotificationLogService {
         existing.setNextDoseReminderEnabled(newSettings.getNextDoseReminderEnabled());
         
         return settingRepository.save(existing);
+    }
+
+    /**
+     * Create default settings for new user (public method for AuthService)
+     */
+    public UserNotificationSetting createDefaultSettings(User user) {
+        UserNotificationSetting setting = UserNotificationSetting.builder()
+                .user(user)
+                .emailEnabled(true)
+                .appointmentReminderEnabled(true)
+                .nextDoseReminderEnabled(true)
+                .build();
+        
+        return settingRepository.save(setting);
     }
 }
