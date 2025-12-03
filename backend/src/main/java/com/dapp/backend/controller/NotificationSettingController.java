@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.*;
  * API for user email notification preferences
  */
 @RestController
-@RequestMapping("/api/notification-settings")
+@RequestMapping({"/api/notification-settings", "/notification-settings"})
 @RequiredArgsConstructor
 @Slf4j
 public class NotificationSettingController {
