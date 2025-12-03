@@ -1,13 +1,13 @@
 import { DeleteOutlined, EditOutlined } from '@ant-design/icons';
-import { Badge, message, notification, Popconfirm, Space } from 'antd';
+import { message, notification, Popconfirm, Space } from 'antd';
 import queryString from 'query-string';
 import { useRef, useState } from 'react';
 import { sfLike } from 'spring-filter-query-builder';
 import DataTable from '@/components/data-table';
-import { callDeleteUser, callFetchPatients } from '@/services/user.service';
-import ModalUser from './components/UserModal';
+import { callDeleteUser, callFetchCashiers } from '@/services/user.service';
+import ModalUser from '../user/components/UserModal';
 
-const UserPage = () => {
+const CashierPage = () => {
   const tableRef = useRef();
   const [dataInit, setDataInit] = useState(null);
   const [openModal, setOpenModal] = useState(false);
@@ -24,10 +24,10 @@ const UserPage = () => {
     tableRef?.current?.reload();
   };
 
-  const fetchUser = async (query) => {
+  const fetchCashiers = async (query) => {
     setLoading(true);
     try {
-      const res = await callFetchPatients(query);
+      const res = await callFetchCashiers(query);
       if (res?.data) {
         setUsers(res.data.result || []);
         setMeta(res.data.meta || meta);
@@ -35,7 +35,7 @@ const UserPage = () => {
     } catch (error) {
       notification.error({
         message: 'Lỗi',
-        description: 'Không thể tải danh sách người dùng',
+        description: 'Không thể tải danh sách thu ngân',
       });
     } finally {
       setLoading(false);
@@ -46,7 +46,7 @@ const UserPage = () => {
     if (id) {
       const res = await callDeleteUser(id);
       if (res && (res.statusCode === 200 || res.statusCode === 204)) {
-        message.success('Xóa người dùng thành công');
+        message.success('Xóa thu ngân thành công');
         reloadTable();
       } else {
         notification.error({
@@ -80,13 +80,8 @@ const UserPage = () => {
     },
     {
       title: 'Điện thoại',
-      dataIndex: ['patientProfile', 'phone'],
+      dataIndex: 'phone',
       hideInSearch: true,
-    },
-    {
-      title: 'Địa chỉ',
-      dataIndex: ['patientProfile', 'address'],
-      sorter: true,
     },
     {
       title: 'Cơ sở',
@@ -94,31 +89,8 @@ const UserPage = () => {
       hideInSearch: true,
     },
     {
-      title: 'Vai trò',
-      dataIndex: ['role', 'name'],
-      hideInSearch: true,
-      render: (_value, entity) => {
-        const roleName = entity?.role?.name || '';
-        let color;
-        switch (roleName) {
-          case 'ADMIN':
-            color = '#faad14';
-            break;
-          case 'DOCTOR':
-            color = '#52c41a';
-            break;
-          case 'CASHIER':
-            color = '#1890ff';
-            break;
-          default:
-            color = '#d9d9d9';
-        }
-        return <Badge count={roleName} showZero color={color} />;
-      },
-    },
-    {
       title: 'Ngày sinh',
-      dataIndex: ['patientProfile', 'birthday'],
+      dataIndex: 'birthday',
       hideInSearch: true,
     },
     {
@@ -140,8 +112,8 @@ const UserPage = () => {
 
           <Popconfirm
             placement="leftTop"
-            title="Xác nhận xóa người dùng"
-            description="Bạn có chắc chắn muốn xóa người dùng này?"
+            title="Xác nhận xóa thu ngân"
+            description="Bạn có chắc chắn muốn xóa thu ngân này?"
             onConfirm={() => handleDeleteUser(entity.id)}
             okText="Xác nhận"
             cancelText="Hủy"
@@ -163,11 +135,10 @@ const UserPage = () => {
   const buildQuery = (params, sort) => {
     const clone = { ...params };
     const q = {
-      page: clone.current, // Backend configured for one-indexed pages
+      page: clone.current,
       size: clone.pageSize,
     };
 
-    // Build filter
     const filters = [];
     if (clone.fullName) {
       filters.push(sfLike('fullName', clone.fullName));
@@ -175,25 +146,16 @@ const UserPage = () => {
     if (clone.email) {
       filters.push(sfLike('email', clone.email));
     }
-    if (clone.address) {
-      filters.push(sfLike('patientProfile.address', clone.address));
-    }
 
     if (filters.length > 0) {
       q.filter = filters.join(' and ');
     }
 
-    // Build sort
     if (sort?.fullName) {
       q.sort = `fullName,${sort.fullName === 'ascend' ? 'asc' : 'desc'}`;
-    }
-    if (sort?.email) {
+    } else if (sort?.email) {
       q.sort = `email,${sort.email === 'ascend' ? 'asc' : 'desc'}`;
-    }
-    if (sort?.address) {
-      q.sort = `patientProfile.address,${sort.address === 'ascend' ? 'asc' : 'desc'}`;
-    }
-    if (!q.sort) {
+    } else {
       q.sort = 'fullName,asc';
     }
 
@@ -204,14 +166,14 @@ const UserPage = () => {
     <>
       <DataTable
         actionRef={tableRef}
-        headerTitle="Danh sách người dùng"
+        headerTitle="Danh sách thu ngân"
         rowKey="id"
         loading={loading}
         columns={columns}
         dataSource={users}
         request={async (params, sort, filter) => {
           const query = buildQuery(params, sort, filter);
-          await fetchUser(query);
+          await fetchCashiers(query);
         }}
         scroll={{ x: true }}
         pagination={{
@@ -240,4 +202,4 @@ const UserPage = () => {
   );
 };
 
-export default UserPage;
+export default CashierPage;

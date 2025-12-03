@@ -23,6 +23,7 @@ public class Doctor {
 
     @OneToOne
     @JoinColumn(name = "user_id", nullable = false, unique = true)
+    @EqualsAndHashCode.Exclude
     User user;
 
     @ManyToOne
@@ -55,10 +56,12 @@ public class Doctor {
 
     @OneToMany(mappedBy = "doctor", cascade = CascadeType.ALL, orphanRemoval = true)
     @Builder.Default
+    @EqualsAndHashCode.Exclude
     List<DoctorSchedule> schedules = new ArrayList<>();
 
     @OneToMany(mappedBy = "doctor", cascade = CascadeType.ALL, orphanRemoval = true)
     @Builder.Default
+    @EqualsAndHashCode.Exclude
     List<DoctorAvailableSlot> availableSlots = new ArrayList<>();
 
     @PrePersist

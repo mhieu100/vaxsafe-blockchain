@@ -31,7 +31,14 @@ WHERE reference_id IN (
 );
 
 -- Step 5: Delete appointments
+DELETE FROM vaccine_records;
+
+-- Step 5: Delete appointments
 DELETE FROM appointments;
+
+
+DELETE FROM doctor_available_slots;
+
 
 -- Step 6: Delete bookings
 DELETE FROM bookings;

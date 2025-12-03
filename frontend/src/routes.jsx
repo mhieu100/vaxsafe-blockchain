@@ -9,9 +9,12 @@ import ProtectedUserRoute from '@/components/common/guards/protected-user-route'
 import PublicRoute from '@/components/common/guards/public-route';
 // Staff pages
 import LayoutStaff from '@/components/staff/layout.staff';
+import CashierPage from '@/pages/admin/cashier';
 import CenterPage from '@/pages/admin/center';
 import DashboardPage from '@/pages/admin/dashboard';
+import DoctorPage from '@/pages/admin/doctor';
 import NewsPage from '@/pages/admin/news';
+import PatientPage from '@/pages/admin/patient';
 import PermissionPage from '@/pages/admin/permission';
 import AdminProfilePage from '@/pages/admin/profile';
 import RolePage from '@/pages/admin/role';
@@ -42,6 +45,7 @@ import DoctorSchedule from '@/pages/staff/doctor-schedule';
 import MySchedulePage from '@/pages/staff/my-schedule';
 import PendingAppointmentPage from '@/pages/staff/pending-appointment';
 import StaffProfilePage from '@/pages/staff/profile';
+import WalkInBookingPage from '@/pages/staff/walk-in-booking';
 
 const router = createBrowserRouter([
   {
@@ -138,6 +142,18 @@ const router = createBrowserRouter([
         element: <UserPage />,
       },
       {
+        path: 'patients',
+        element: <PatientPage />,
+      },
+      {
+        path: 'cashiers',
+        element: <CashierPage />,
+      },
+      {
+        path: 'doctors',
+        element: <DoctorPage />,
+      },
+      {
         path: 'centers',
         element: <CenterPage />,
       },
@@ -179,6 +195,10 @@ const router = createBrowserRouter([
       {
         path: 'pending-appointments',
         element: <PendingAppointmentPage />,
+      },
+      {
+        path: 'walk-in-booking',
+        element: <WalkInBookingPage />,
       },
       {
         path: 'calendar-view',

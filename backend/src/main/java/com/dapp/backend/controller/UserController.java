@@ -29,20 +29,34 @@ public class UserController {
 
     private final UserService userService;
 
-    @GetMapping
-    @ApiMessage("Get all users")
-    public ResponseEntity<Pagination> getAllUsers(@Filter Specification<User> specification,
+    @GetMapping("/patients")
+    @ApiMessage("Get all patients")
+    public ResponseEntity<Pagination> getAllPatients(@Filter Specification<User> specification,
             Pageable pageable) {
-                specification = Specification.where(specification).and((root, query, criteriaBuilder) -> criteriaBuilder
-                                .equal(root.get("isDeleted"), false));
+        specification = Specification.where(specification)
+                .and((root, query, criteriaBuilder) -> criteriaBuilder.equal(root.get("isDeleted"), false))
+                .and((root, query, criteriaBuilder) -> criteriaBuilder.equal(root.get("role").get("name"), "PATIENT"));
+        return ResponseEntity.ok().body(userService.getAllUsers(specification, pageable));
+    }
+
+    @GetMapping("/cashiers")
+    @ApiMessage("Get all cashiers")
+    public ResponseEntity<Pagination> getAllCashiers(@Filter Specification<User> specification,
+            Pageable pageable) {
+        specification = Specification.where(specification)
+                .and((root, query, criteriaBuilder) -> criteriaBuilder.equal(root.get("isDeleted"), false))
+                .and((root, query, criteriaBuilder) -> criteriaBuilder.equal(root.get("role").get("name"), "CASHIER"));
         return ResponseEntity.ok().body(userService.getAllUsers(specification, pageable));
     }
 
     @GetMapping("/doctors")
-    @ApiMessage("Get all doctors of center")
-    public ResponseEntity<Pagination> getAllDoctorsOfCenter(@Filter Specification<User> specification,
-            Pageable pageable) throws AppException {
-        return ResponseEntity.ok().body(userService.getAllDoctorsOfCenter(specification, pageable));
+    @ApiMessage("Get all doctors")
+    public ResponseEntity<Pagination> getAllDoctors(@Filter Specification<User> specification,
+            Pageable pageable) {
+        specification = Specification.where(specification)
+                .and((root, query, criteriaBuilder) -> criteriaBuilder.equal(root.get("isDeleted"), false))
+                .and((root, query, criteriaBuilder) -> criteriaBuilder.equal(root.get("role").get("name"), "DOCTOR"));
+        return ResponseEntity.ok().body(userService.getAllUsers(specification, pageable));
     }
 
     @PutMapping

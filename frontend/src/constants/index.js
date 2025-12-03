@@ -10,7 +10,6 @@ export const TIME_SLOT_LABELS = {
   SLOT_11_00: '11:00 - 13:00',
   SLOT_13_00: '13:00 - 15:00',
   SLOT_15_00: '15:00 - 17:00',
-  SLOT_17_00: '17:00 - 19:00',
 };
 
 // Get time range from time slot enum (for validation)
@@ -21,7 +20,6 @@ export const getTimeSlotRange = (timeSlot) => {
     SLOT_11_00: ['11:00', '12:59'],
     SLOT_13_00: ['13:00', '14:59'],
     SLOT_15_00: ['15:00', '16:59'],
-    SLOT_17_00: ['17:00', '18:59'],
   };
   return ranges[timeSlot] || ['00:00', '23:59'];
 };

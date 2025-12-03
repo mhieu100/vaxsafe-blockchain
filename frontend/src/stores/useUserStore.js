@@ -1,6 +1,8 @@
 import { create } from 'zustand';
-import { callFetchUser } from '../services/user.service';
+import { callFetchPatients } from '../services/user.service';
 
+// This store is deprecated - new pages use local state
+// Keeping for backward compatibility with old user page
 const useUserStore = create((set) => ({
   // State
   isFetching: true,
@@ -16,7 +18,8 @@ const useUserStore = create((set) => ({
   fetchUser: async (query) => {
     set({ isFetching: true });
     try {
-      const response = await callFetchUser(query);
+      // Default to patients if used
+      const response = await callFetchPatients(query);
       if (response?.data) {
         set({
           isFetching: false,

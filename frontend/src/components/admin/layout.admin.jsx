@@ -66,9 +66,23 @@ const LayoutAdmin = () => {
       label: t('admin:dashboard.title'),
     },
     {
-      key: '/admin/users',
+      key: 'user-management',
       icon: <TeamOutlined />,
-      label: t('admin:users.title'),
+      label: 'Quản lý người dùng',
+      children: [
+        {
+          key: '/admin/patients',
+          label: 'Bệnh nhân',
+        },
+        {
+          key: '/admin/cashiers',
+          label: 'Thu ngân',
+        },
+        {
+          key: '/admin/doctors',
+          label: 'Bác sĩ',
+        },
+      ],
     },
     {
       key: '/admin/vaccines',

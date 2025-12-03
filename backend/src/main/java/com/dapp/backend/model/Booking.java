@@ -23,8 +23,6 @@ public class Booking {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     Long bookingId;
 
-    String transactionHash;
-
     Integer totalDoses;
 
     @ManyToOne
@@ -47,5 +45,5 @@ public class Booking {
     LocalDateTime createdAt;
 
     @OneToMany(mappedBy = "booking", orphanRemoval = true, cascade = CascadeType.ALL)
-    List<Appointment> appointments = new ArrayList<>();
+    List<Appointment> appointments;
 }

@@ -4,6 +4,7 @@ import {
   EditOutlined,
   LogoutOutlined,
   SafetyCertificateOutlined,
+  UserAddOutlined,
   UserOutlined,
 } from '@ant-design/icons';
 import { ProLayout } from '@ant-design/pro-components';
@@ -71,6 +72,12 @@ const LayoutStaff = () => {
       icon: <CalendarOutlined />,
       name: <Link to="/staff/my-schedule">{t('staff:doctorSchedule.mySchedule')}</Link>,
       roles: ['DOCTOR'],
+    },
+    {
+      path: '/staff/walk-in-booking',
+      name: <Link to="/staff/walk-in-booking">Đặt lịch Walk-in</Link>,
+      icon: <UserAddOutlined />,
+      roles: ['CASHIER'],
     },
     {
       path: '/staff/pending-appointments',
