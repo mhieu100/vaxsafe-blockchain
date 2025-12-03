@@ -12,7 +12,6 @@ import com.dapp.backend.util.TokenExtractor;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 
-import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -297,6 +296,7 @@ public class BookingService {
                 appointment.setActualScheduledTime(request.getActualScheduledTime());
                 appointment.setCenter(center);
                 appointment.setDoctor(doctor.getUser()); // Use User entity here
+                appointment.setCashier(cashier); // Set cashier who created the walk-in booking
                 appointment.setSlot(slot);
                 appointment.setStatus(AppointmentStatus.SCHEDULED); // Skip PENDING
                 
