@@ -186,24 +186,30 @@ const VaccinePassportTab = () => {
                 Blockchain Verification
               </Title>
               <Card className="bg-gradient-to-br from-purple-50 to-blue-50 border-purple-200">
-                <Space orientation="vertical" className="w-full">
-                  <div className="flex items-center justify-between">
+                <div className="grid grid-cols-1 gap-4">
+                  <div className="flex items-center justify-between p-2 bg-white/50 rounded-lg">
                     <Text type="secondary">Network Type:</Text>
-                    <Tag color="purple">Permissioned Blockchain</Tag>
+                    <Tag color="purple" className="m-0">
+                      Permissioned Blockchain
+                    </Tag>
                   </div>
-                  <div className="flex items-center justify-between">
+                  <div className="flex items-center justify-between p-2 bg-white/50 rounded-lg">
                     <Text type="secondary">Consensus:</Text>
-                    <Tag color="blue">Proof of Authority</Tag>
+                    <Tag color="blue" className="m-0">
+                      Proof of Authority
+                    </Tag>
                   </div>
-                  <div className="flex items-center justify-between">
+                  <div className="flex items-center justify-between p-2 bg-white/50 rounded-lg">
                     <Text type="secondary">Total Records:</Text>
-                    <Tag color="green">{vaccineRecords.length} Verified</Tag>
+                    <Tag color="green" className="m-0">
+                      {vaccineRecords.length} Verified
+                    </Tag>
                   </div>
-                  <div className="flex items-center justify-between">
+                  <div className="flex items-center justify-between p-2 bg-white/50 rounded-lg">
                     <Text type="secondary">Last Updated:</Text>
                     <Text className="font-mono text-xs">{vaccineRecords[0]?.date}</Text>
                   </div>
-                </Space>
+                </div>
               </Card>
             </div>
 
@@ -306,43 +312,58 @@ const VaccinePassportTab = () => {
               <BlockOutlined className="mr-2 text-purple-600" />
               Blockchain Stats
             </Title>
-            <Space orientation="vertical" className="w-full" size="middle">
-              <Card size="small" className="bg-gradient-to-r from-green-50 to-green-100">
+            <div className="space-y-4">
+              <Card
+                size="small"
+                className="bg-gradient-to-r from-green-50 to-green-100 border-green-200"
+              >
                 <div className="flex items-center justify-between">
                   <div>
-                    <Text type="secondary" className="text-xs">
+                    <Text type="secondary" className="text-xs block mb-1">
                       Verified Records
                     </Text>
                     <div className="text-2xl font-bold text-green-600">{vaccineRecords.length}</div>
                   </div>
-                  <Avatar size={48} icon={<CheckCircleFilled />} className="bg-green-500" />
+                  <div className="p-2 bg-green-200 rounded-full">
+                    <CheckCircleFilled className="text-2xl text-green-600" />
+                  </div>
                 </div>
               </Card>
 
-              <Card size="small" className="bg-gradient-to-r from-purple-50 to-purple-100">
+              <Card
+                size="small"
+                className="bg-gradient-to-r from-purple-50 to-purple-100 border-purple-200"
+              >
                 <div className="flex items-center justify-between">
                   <div>
-                    <Text type="secondary" className="text-xs">
+                    <Text type="secondary" className="text-xs block mb-1">
                       Chain Confirmations
                     </Text>
                     <div className="text-2xl font-bold text-purple-600">1,247</div>
                   </div>
-                  <Avatar size={48} icon={<LinkOutlined />} className="bg-purple-500" />
+                  <div className="p-2 bg-purple-200 rounded-full">
+                    <LinkOutlined className="text-2xl text-purple-600" />
+                  </div>
                 </div>
               </Card>
 
-              <Card size="small" className="bg-gradient-to-r from-blue-50 to-blue-100">
+              <Card
+                size="small"
+                className="bg-gradient-to-r from-blue-50 to-blue-100 border-blue-200"
+              >
                 <div className="flex items-center justify-between">
                   <div>
-                    <Text type="secondary" className="text-xs">
+                    <Text type="secondary" className="text-xs block mb-1">
                       Trust Score
                     </Text>
                     <div className="text-2xl font-bold text-blue-600">99.8%</div>
                   </div>
-                  <Avatar size={48} icon={<SafetyCertificateOutlined />} className="bg-blue-500" />
+                  <div className="p-2 bg-blue-200 rounded-full">
+                    <SafetyCertificateOutlined className="text-2xl text-blue-600" />
+                  </div>
                 </div>
               </Card>
-            </Space>
+            </div>
           </Card>
         </div>
       </div>

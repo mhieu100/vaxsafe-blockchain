@@ -1,4 +1,5 @@
 import HeroSection from './components/HeroSection';
+import NewsSection from './components/NewsSection';
 import ServiceSection from './components/ServiceSection';
 
 const HomePage = () => {
@@ -6,6 +7,7 @@ const HomePage = () => {
     <div className="flex flex-col ">
       <HeroSection />
       <ServiceSection />
+      <NewsSection />
     </div>
   );
 };
