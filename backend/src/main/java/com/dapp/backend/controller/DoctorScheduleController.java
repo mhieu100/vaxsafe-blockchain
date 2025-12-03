@@ -44,29 +44,28 @@ public class DoctorScheduleController {
     @GetMapping("/my-center/with-schedule")
     @ApiMessage("Get all doctors with today's schedule in current user's center")
     public ResponseEntity<List<DoctorWithScheduleResponse>> getDoctorsWithScheduleInMyCenter(
-            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date) 
+            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date)
             throws AppException {
-        
+
         // Get current logged-in user
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String userEmail = authentication.getName();
-        
+
         User currentUser = userRepository.findByEmail(userEmail)
-            .orElseThrow(() -> new AppException("User not found"));
-        
+                .orElseThrow(() -> new AppException("User not found"));
+
         Center center = UserMapper.getCenter(currentUser);
         if (center == null) {
             throw new AppException("User is not assigned to any center");
         }
-        
+
         Long centerId = center.getCenterId();
         LocalDate targetDate = date != null ? date : LocalDate.now();
-        
+
         log.info("Getting doctors with schedule for center {} on {}", centerId, targetDate);
-        
+
         return ResponseEntity.ok(
-            doctorScheduleService.getDoctorsWithTodaySchedule(centerId, targetDate)
-        );
+                doctorScheduleService.getDoctorsWithTodaySchedule(centerId, targetDate));
     }
 
     /**
@@ -112,10 +111,11 @@ public class DoctorScheduleController {
             @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date) {
         return ResponseEntity.ok(doctorScheduleService.getAvailableSlotsByCenter(centerId, date));
     }
-    
+
     /**
      * Get all available slots for a center on a specific date and time slot
-     * GET /api/v1/doctors/center/{centerId}/slots/available-by-timeslot?date=2025-11-20&timeSlot=SLOT_07_00
+     * GET
+     * /api/v1/doctors/center/{centerId}/slots/available-by-timeslot?date=2025-11-20&timeSlot=SLOT_07_00
      */
     @GetMapping("/center/{centerId}/slots/available-by-timeslot")
     @ApiMessage("Get all available slots for a center filtered by date and time slot")
@@ -124,8 +124,7 @@ public class DoctorScheduleController {
             @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date,
             @RequestParam com.dapp.backend.enums.TimeSlotEnum timeSlot) {
         return ResponseEntity.ok(
-            doctorScheduleService.getAvailableSlotsByCenterAndTimeSlot(centerId, date, timeSlot)
-        );
+                doctorScheduleService.getAvailableSlotsByCenterAndTimeSlot(centerId, date, timeSlot));
     }
 
     /**
@@ -137,7 +136,7 @@ public class DoctorScheduleController {
     public ResponseEntity<List<DoctorAvailableSlotResponse>> getDoctorSlotsInRange(
             @PathVariable Long doctorId,
             @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,
-            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate) {
+            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate) throws AppException {
         return ResponseEntity.ok(doctorScheduleService.getDoctorSlotsInRange(doctorId, startDate, endDate));
     }
 
@@ -153,15 +152,14 @@ public class DoctorScheduleController {
             @RequestBody Map<String, String> request) throws AppException {
         LocalDate startDate = LocalDate.parse(request.get("startDate"));
         LocalDate endDate = LocalDate.parse(request.get("endDate"));
-        
+
         int slotsGenerated = doctorScheduleService.generateDoctorSlots(doctorId, startDate, endDate);
-        
+
         return ResponseEntity.ok(Map.of(
-            "message", "Slots generated successfully",
-            "doctorId", doctorId,
-            "slotsGenerated", slotsGenerated,
-            "startDate", startDate,
-            "endDate", endDate
-        ));
+                "message", "Slots generated successfully",
+                "doctorId", doctorId,
+                "slotsGenerated", slotsGenerated,
+                "startDate", startDate,
+                "endDate", endDate));
     }
 }

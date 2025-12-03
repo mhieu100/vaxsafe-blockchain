@@ -39,6 +39,7 @@ const AssignAppointmentModal = ({ open, onClose, appointment, onSuccess }) => {
   const [loading, setLoading] = useState(false);
   const [loadingSlots, setLoadingSlots] = useState(false);
   const [selectedSlotId, setSelectedSlotId] = useState(null);
+  const [selectedSlot, setSelectedSlot] = useState(null);
   const [selectedDate, setSelectedDate] = useState(null);
   const [availableSlots, setAvailableSlots] = useState([]);
 
@@ -56,6 +57,7 @@ const AssignAppointmentModal = ({ open, onClose, appointment, onSuccess }) => {
     if (!open) {
       form.resetFields();
       setSelectedSlotId(null);
+      setSelectedSlot(null);
       setSelectedDate(null);
       setAvailableSlots([]);
     }
@@ -89,6 +91,7 @@ const AssignAppointmentModal = ({ open, onClose, appointment, onSuccess }) => {
         if (res?.data) {
           setAvailableSlots(res.data);
           setSelectedSlotId(null);
+          setSelectedSlot(null);
         }
       } catch (error) {
         notification.error({
@@ -108,27 +111,28 @@ const AssignAppointmentModal = ({ open, onClose, appointment, onSuccess }) => {
 
   if (!appointment) return null;
 
-  const handleSlotSelect = (slotId) => {
-    setSelectedSlotId(slotId);
-    form.setFieldsValue({ slotId });
+  const handleSlotSelect = (uniqueId, slot) => {
+    setSelectedSlotId(uniqueId);
+    setSelectedSlot(slot);
+    form.setFieldsValue({ slotId: uniqueId });
   };
 
   const handleConfirmAssign = async () => {
     try {
       setLoading(true);
-      const values = await form.validateFields(['slotId']);
-
-      const slotIdNumber = Number(values.slotId);
-      const selectedSlot = availableSlots.find((slot) => slot.slotId === slotIdNumber);
+      await form.validateFields(['slotId']);
 
       if (!selectedSlot) {
         throw new Error('Không tìm thấy thông tin khung giờ');
       }
 
+      // Nếu là virtual slot (slotId = null), gửi null; nếu là real slot, gửi slotId
+      const slotIdToSend = selectedSlot.slotId || null;
+
       const res = await callUpdateAppointment(
         appointment.id,
         selectedSlot.doctorId,
-        values.slotId,
+        slotIdToSend,
         selectedSlot.startTime
       );
 
@@ -151,6 +155,7 @@ const AssignAppointmentModal = ({ open, onClose, appointment, onSuccess }) => {
     onClose();
     form.resetFields();
     setSelectedSlotId(null);
+    setSelectedSlot(null);
     setSelectedDate(null);
     setAvailableSlots([]);
   };
@@ -172,6 +177,7 @@ const AssignAppointmentModal = ({ open, onClose, appointment, onSuccess }) => {
       if (res?.data) {
         setAvailableSlots(res.data);
         setSelectedSlotId(null);
+        setSelectedSlot(null);
       }
     } catch (_error) {
       notification.error({
@@ -231,54 +237,56 @@ const AssignAppointmentModal = ({ open, onClose, appointment, onSuccess }) => {
           padding: 16,
         }}
       >
-        <Radio.Group
-          value={selectedSlotId}
-          onChange={(e) => handleSlotSelect(e.target.value)}
-          style={{ width: '100%' }}
-        >
+        <Radio.Group value={selectedSlotId} style={{ width: '100%' }}>
           <Row gutter={[12, 12]}>
-            {availableSlots.map((slot) => (
-              <Col key={slot.slotId} xs={24} sm={12} md={8}>
-                <Radio
-                  value={slot.slotId}
-                  disabled={slot.status !== 'AVAILABLE'}
-                  style={{
-                    width: '100%',
-                    height: '100%',
-                    padding: 12,
-                    background: slot.status === 'AVAILABLE' ? '#f6ffed' : '#fff2e8',
-                    border: `2px solid ${
-                      selectedSlotId === slot.slotId
-                        ? '#1890ff'
-                        : slot.status === 'AVAILABLE'
-                          ? '#b7eb8f'
-                          : '#ffbb96'
-                    }`,
-                    borderRadius: 8,
-                    display: 'flex',
-                    alignItems: 'flex-start',
-                  }}
-                >
-                  <Space direction="vertical" size="small" style={{ width: '100%' }}>
-                    <Space>
-                      <ClockCircleOutlined style={{ color: '#1890ff' }} />
-                      <Text strong style={{ fontSize: 14 }}>
-                        {slot.startTime?.substring(0, 5)} - {slot.endTime?.substring(0, 5)}
-                      </Text>
+            {availableSlots.map((slot, index) => {
+              // Tạo unique key và value cho virtual slots (slotId = null)
+              const uniqueId = slot.slotId || `virtual_${slot.doctorId}_${slot.startTime}_${index}`;
+
+              return (
+                <Col key={uniqueId} xs={24} sm={12} md={8}>
+                  <Radio
+                    value={uniqueId}
+                    disabled={slot.status !== 'AVAILABLE'}
+                    onClick={() => handleSlotSelect(uniqueId, slot)}
+                    style={{
+                      width: '100%',
+                      height: '100%',
+                      padding: 12,
+                      background: slot.status === 'AVAILABLE' ? '#f6ffed' : '#fff2e8',
+                      border: `2px solid ${
+                        selectedSlotId === uniqueId
+                          ? '#1890ff'
+                          : slot.status === 'AVAILABLE'
+                            ? '#b7eb8f'
+                            : '#ffbb96'
+                      }`,
+                      borderRadius: 8,
+                      display: 'flex',
+                      alignItems: 'flex-start',
+                    }}
+                  >
+                    <Space direction="vertical" size="small" style={{ width: '100%' }}>
+                      <Space>
+                        <ClockCircleOutlined style={{ color: '#1890ff' }} />
+                        <Text strong style={{ fontSize: 14 }}>
+                          {slot.startTime?.substring(0, 5)} - {slot.endTime?.substring(0, 5)}
+                        </Text>
+                      </Space>
+                      <Tag color="blue" icon={<UserOutlined />} style={{ marginLeft: 0 }}>
+                        Bs. {slot.doctorName}
+                      </Tag>
+                      <Tag
+                        color={slot.status === 'AVAILABLE' ? 'success' : 'error'}
+                        style={{ marginLeft: 0 }}
+                      >
+                        {slot.status === 'AVAILABLE' ? 'Trống' : 'Đã đặt'}
+                      </Tag>
                     </Space>
-                    <Tag color="blue" icon={<UserOutlined />} style={{ marginLeft: 0 }}>
-                      Bs. {slot.doctorName}
-                    </Tag>
-                    <Tag
-                      color={slot.status === 'AVAILABLE' ? 'success' : 'error'}
-                      style={{ marginLeft: 0 }}
-                    >
-                      {slot.status === 'AVAILABLE' ? 'Trống' : 'Đã đặt'}
-                    </Tag>
-                  </Space>
-                </Radio>
-              </Col>
-            ))}
+                  </Radio>
+                </Col>
+              );
+            })}
           </Row>
         </Radio.Group>
       </div>

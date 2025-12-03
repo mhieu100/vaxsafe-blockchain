@@ -42,6 +42,7 @@ import org.springframework.web.client.RestTemplate;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.List;
 
 @Service
@@ -170,9 +171,10 @@ public class AppointmentService {
             slotRepository.save(oldSlot);
         }
         
-        // Get and validate new slot if provided
+        // Get and validate new slot if provided, or create virtual slot
         DoctorAvailableSlot slot = null;
         if (processAppointmentRequest.getSlotId() != null) {
+            // Real slot - get from database
             slot = slotRepository.findById(processAppointmentRequest.getSlotId())
                 .orElseThrow(() -> new AppException("Slot not found with id: " + processAppointmentRequest.getSlotId()));
             
@@ -185,6 +187,41 @@ public class AppointmentService {
             slot.setStatus(SlotStatus.BOOKED);
             slot.setAppointment(appointment);
             slotRepository.save(slot);
+        } else if (processAppointmentRequest.getActualScheduledTime() != null) {
+            // Virtual slot - create new slot in database
+            LocalTime startTime = processAppointmentRequest.getActualScheduledTime();
+            LocalTime endTime = startTime.plusMinutes(15);
+            LocalDate slotDate = appointment.getScheduledDate();
+            
+            // Check if slot already exists for this doctor/date/time
+            slot = slotRepository.findByDoctorIdAndSlotDateAndStartTime(
+                processAppointmentRequest.getDoctorId(), 
+                slotDate, 
+                startTime
+            ).orElse(null);
+            
+            if (slot != null && slot.getStatus() != SlotStatus.AVAILABLE) {
+                throw new AppException("This time slot is already booked for this doctor");
+            }
+            
+            if (slot == null) {
+                // Create new slot
+                slot = new DoctorAvailableSlot();
+                slot.setDoctor(doctorEntity);
+                slot.setSlotDate(slotDate);
+                slot.setStartTime(startTime);
+                slot.setEndTime(endTime);
+            }
+            
+            // Mark as booked
+            slot.setStatus(SlotStatus.BOOKED);
+            slot.setAppointment(appointment);
+            slot = slotRepository.save(slot);
+            
+            log.info("Created virtual slot: doctorId={}, date={}, time={}-{}", 
+                doctorEntity.getUser().getId(), slotDate, startTime, endTime);
+        } else {
+            throw new AppException("Either slotId or actualScheduledTime must be provided");
         }
 
         // If appointment is in RESCHEDULE status (rescheduled), apply the desired date/time
@@ -230,12 +267,15 @@ public class AppointmentService {
                 String doctorName = doctor.getFullName() != null ? "BS. " + doctor.getFullName() : "Chưa xác định";
                 String doctorPhone = doctor.getPhone() != null ? doctor.getPhone() : "";
                 
+                // Get time slot string from the saved slot
+                String timeSlotString = slot.getStartTime() + " - " + slot.getEndTime();
+                
                 emailService.sendAppointmentScheduled(
                     patient.getEmail(),
                     patient.getFullName(),
                     savedAppointment.getBooking().getVaccine().getName(),
                     savedAppointment.getScheduledDate(),
-                    slot.getStartTime() + " - " + slot.getEndTime(),
+                    timeSlotString,
                     savedAppointment.getCenter().getName(),
                     centerAddress,
                     savedAppointment.getId(),
