@@ -145,7 +145,7 @@ const CompleteProfilePage = () => {
               name="identityNumber"
               label={
                 <span>
-                  Identity Number / Personal ID Code <span className="text-red-500">*</span>
+                  Identity No. / Personal ID <span className="text-red-500">*</span>
                 </span>
               }
               tooltip="For children under 14, please use the Personal ID Code found on the Birth Certificate."
