@@ -24,7 +24,6 @@ import org.springframework.stereotype.Service;
 
 import com.dapp.backend.model.User;
 
-
 @Service
 @RequiredArgsConstructor
 @Slf4j
@@ -38,10 +37,9 @@ public class AuthService {
     private final IdentityService identityService;
     private final BlockchainService blockchainService;
 
-
     private LoginResponse.UserLogin toUserLogin(User user) {
         Patient patient = user.getPatientProfile();
-        
+
         // Get center from Doctor or Cashier profile
         Center center = null;
         if (user.getDoctor() != null) {
@@ -75,8 +73,8 @@ public class AuthService {
     }
 
     public LoginResponse login(LoginRequest request) throws AppException {
-        UsernamePasswordAuthenticationToken authenticationToken =
-                new UsernamePasswordAuthenticationToken(request.getUsername(), request.getPassword());
+        UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(
+                request.getUsername(), request.getPassword());
 
         Authentication authentication = authenticationManagerBuilder.getObject().authenticate(authenticationToken);
         SecurityContextHolder.getContext().setAuthentication(authentication);
@@ -112,23 +110,23 @@ public class AuthService {
 
         // Save user first to get ID
         User savedUser = userRepository.save(user);
-        
+
         // Generate blockchain identity hash (deterministic, based on email + name)
         // Will be synced to blockchain later when profile is completed (has birthday)
         try {
             String identityHash = identityService.generateUserIdentityHash(savedUser);
             String did = identityService.generateDID(identityHash, IdentityType.ADULT);
             String ipfsDataHash = identityService.generateIdentityDataJson(savedUser);
-            
+
             savedUser.setBlockchainIdentityHash(identityHash);
             savedUser.setDid(did);
             savedUser.setIpfsDataHash(ipfsDataHash);
-            
+
             // Save to database (blockchain sync will happen in completeProfile)
             savedUser = userRepository.save(savedUser);
-            
-            log.info("Identity hash generated for user: {} (will sync to blockchain after profile completion)", 
-                savedUser.getEmail());
+
+            log.info("Identity hash generated for user: {} (will sync to blockchain after profile completion)",
+                    savedUser.getEmail());
         } catch (Exception e) {
             log.error("Error generating identity hash for user: {}", savedUser.getEmail(), e);
             // Continue - user is still created in database
@@ -193,7 +191,8 @@ public class AuthService {
     }
 
     public boolean updatePassword(UpdatePasswordRequest request) throws AppException {
-        User user = userRepository.findByEmail(request.getEmail()).orElseThrow(() -> new AppException("User not found"));
+        User user = userRepository.findByEmail(request.getEmail())
+                .orElseThrow(() -> new AppException("User not found"));
 
         if (!passwordEncoder.matches(request.getOldPassword(), user.getPassword())) {
             return false;
@@ -220,48 +219,9 @@ public class AuthService {
         this.userRepository.save(user);
     }
 
-    public User getCurrentUserLogin()throws AppException {
+    public User getCurrentUserLogin() throws AppException {
         String email = JwtUtil.getCurrentEmailLogin().isPresent() ? JwtUtil.getCurrentEmailLogin().get() : "";
         return userRepository.findByEmail(email).orElseThrow(() -> new AppException("User not found"));
-    }
-
-
-
-    public LoginResponse.UserLogin completeGoogleProfile(CompleteGoogleProfileRequest request) throws AppException {
-        User user = getCurrentUserLogin();
-
-        if (user.getPatientProfile() != null) {
-            throw new AppException("Profile already completed");
-        }
-
-        if (patientRepository.existsByIdentityNumber(request.getPatientProfile().getIdentityNumber())) {
-            throw new AppException("Identity number already exists");
-        }
-
-        // Set common fields on user
-        user.setPhone(request.getPatientProfile().getPhone());
-        user.setAddress(request.getPatientProfile().getAddress());
-        user.setBirthday(request.getPatientProfile().getBirthday());
-        user.setGender(request.getPatientProfile().getGender());
-
-        // Create patient profile with patient-specific fields
-        Patient patient = Patient.builder()
-                .identityNumber(request.getPatientProfile().getIdentityNumber())
-                .bloodType(request.getPatientProfile().getBloodType())
-                .heightCm(request.getPatientProfile().getHeightCm())
-                .weightKg(request.getPatientProfile().getWeightKg())
-                .occupation(request.getPatientProfile().getOccupation())
-                .lifestyleNotes(request.getPatientProfile().getLifestyleNotes())
-                .insuranceNumber(request.getPatientProfile().getInsuranceNumber())
-                .consentForAIAnalysis(request.getPatientProfile().isConsentForAIAnalysis())
-                .user(user)
-                .build();
-
-        user.setPatientProfile(patient);
-        user.setActive(true); // Activate account after completing profile
-        userRepository.save(user);
-
-        return toUserLogin(user);
     }
 
     /**
@@ -300,47 +260,51 @@ public class AuthService {
 
         user.setPatientProfile(patient);
         user.setActive(true); // Activate account after completing profile
-        
-        // Update identity hash with birthday (regenerate with complete data)
-        // This ensures hash includes birthday for better uniqueness
+
+        // Generate and sync identity to blockchain
+        generateAndSyncBlockchainIdentity(user);
+
+        return toUserLogin(user);
+    }
+
+    private void generateAndSyncBlockchainIdentity(User user) {
         try {
-            String updatedIdentityHash = identityService.generateUserIdentityHash(user);
-            String updatedDid = identityService.generateDID(updatedIdentityHash, IdentityType.ADULT);
-            String updatedIpfsDataHash = identityService.generateIdentityDataJson(user);
-            
-            user.setBlockchainIdentityHash(updatedIdentityHash);
-            user.setDid(updatedDid);
-            user.setIpfsDataHash(updatedIpfsDataHash);
-            
-            log.info("Updated identity hash with birthday for user: {}", user.getEmail());
-            
+            // Generate identity data
+            String identityHash = identityService.generateUserIdentityHash(user);
+            String did = identityService.generateDID(identityHash, IdentityType.ADULT);
+            String ipfsDataHash = identityService.generateIdentityDataJson(user);
+
+            user.setBlockchainIdentityHash(identityHash);
+            user.setDid(did);
+            user.setIpfsDataHash(ipfsDataHash);
+
+            log.info("Generated identity hash for user: {}", user.getEmail());
+
             // Save to database first
-            user = userRepository.save(user);
-            
-            // Sync to blockchain (deterministic hash ensures no duplicate)
+            userRepository.save(user);
+
+            // Sync to blockchain
             if (blockchainService.isBlockchainServiceAvailable()) {
                 var response = blockchainService.createIdentity(
-                    updatedIdentityHash,
-                    updatedDid,
-                    IdentityType.ADULT,
-                    updatedIpfsDataHash,
-                    user.getEmail()
-                );
+                        identityHash,
+                        did,
+                        IdentityType.ADULT,
+                        ipfsDataHash,
+                        user.getEmail());
                 if (response != null && response.isSuccess()) {
-                    log.info("Blockchain identity created for user: {} (txHash: {})", 
-                        user.getEmail(), response.getData().getTransactionHash());
+                    log.info("Blockchain identity created for user: {} (txHash: {})",
+                            user.getEmail(), response.getData().getTransactionHash());
                 } else {
-                    log.warn("Failed to create blockchain identity for user: {} - {}", 
-                        user.getEmail(), response != null ? response.getMessage() : "null response");
+                    log.warn("Failed to create blockchain identity for user: {} - {}",
+                            user.getEmail(), response != null ? response.getMessage() : "null response");
                 }
             } else {
                 log.warn("Blockchain service not available, identity saved to database only");
             }
         } catch (Exception e) {
             log.error("Error syncing blockchain identity for user: {}", user.getEmail(), e);
-            // Continue - profile is still completed
+            // Ensure user is saved even if blockchain sync fails
+            userRepository.save(user);
         }
-
-        return toUserLogin(user);
     }
 }

@@ -103,7 +103,7 @@ export async function updateAccount(payload) {
  * @returns {Promise} Updated user information
  */
 export async function callCompleteGoogleProfile(payload) {
-  return await apiClient.post('/auth/complete-google-profile', payload);
+  return await apiClient.post('/auth/complete-profile', payload);
 }
 
 /**

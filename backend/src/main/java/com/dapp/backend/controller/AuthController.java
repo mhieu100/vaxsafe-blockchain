@@ -12,7 +12,6 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -72,12 +71,12 @@ public class AuthController {
     public ResponseEntity<LoginResponse> register(@Valid @RequestBody RegisterPatientRequest request)
             throws AppException {
         RegisterPatientResponse registerResponse = authService.register(request);
-        
+
         // Generate tokens for immediate login after registration
         String accessToken = jwtUtil.createAccessToken(registerResponse.getEmail());
         String refreshToken = jwtUtil.createRefreshToken(registerResponse.getEmail());
         authService.updateUserToken(refreshToken, registerResponse.getEmail());
-        
+
         // Create login response with tokens
         LoginResponse.UserLogin userLogin = LoginResponse.UserLogin.builder()
                 .id(registerResponse.getId())
@@ -86,12 +85,12 @@ public class AuthController {
                 .email(registerResponse.getEmail())
                 .role(registerResponse.getRole())
                 .build();
-        
+
         LoginResponse loginResponse = LoginResponse.builder()
                 .accessToken(accessToken)
                 .user(userLogin)
                 .build();
-        
+
         ResponseCookie cookie = ResponseCookie
                 .from("refresh_token", refreshToken)
                 .httpOnly(true)
@@ -99,7 +98,7 @@ public class AuthController {
                 .path("/")
                 .maxAge(refreshTokenExpiration)
                 .build();
-        
+
         return ResponseEntity.ok().header(HttpHeaders.SET_COOKIE, cookie.toString()).body(loginResponse);
     }
 
@@ -168,35 +167,15 @@ public class AuthController {
         return ResponseEntity.ok(this.authService.updateAvatar(request));
     }
 
-    @PostMapping("/complete-google-profile")
-    @ApiMessage("Complete Google profile with patient information")
-    public ResponseEntity<LoginResponse.UserLogin> completeGoogleProfile(
-            @Valid @RequestBody CompleteGoogleProfileRequest request) throws AppException {
-        LoginResponse.UserLogin user = authService.completeGoogleProfile(request);
-        
-        String refreshToken = jwtUtil.createRefreshToken(user.getEmail());
-        authService.updateUserToken(refreshToken, user.getEmail());
-        
-        ResponseCookie cookie = ResponseCookie
-                .from("refresh_token", refreshToken)
-                .httpOnly(true)
-                .secure(true)
-                .path("/")
-                .maxAge(refreshTokenExpiration)
-                .build();
-        
-        return ResponseEntity.ok().header(HttpHeaders.SET_COOKIE, cookie.toString()).body(user);
-    }
-
     @PostMapping("/complete-profile")
     @ApiMessage("Complete patient profile after registration")
     public ResponseEntity<LoginResponse.UserLogin> completeProfile(
             @Valid @RequestBody CompleteProfileRequest request) throws AppException {
         LoginResponse.UserLogin user = authService.completeProfile(request);
-        
+
         String refreshToken = jwtUtil.createRefreshToken(user.getEmail());
         authService.updateUserToken(refreshToken, user.getEmail());
-        
+
         ResponseCookie cookie = ResponseCookie
                 .from("refresh_token", refreshToken)
                 .httpOnly(true)
@@ -204,7 +183,7 @@ public class AuthController {
                 .path("/")
                 .maxAge(refreshTokenExpiration)
                 .build();
-        
+
         return ResponseEntity.ok().header(HttpHeaders.SET_COOKIE, cookie.toString()).body(user);
     }
 
