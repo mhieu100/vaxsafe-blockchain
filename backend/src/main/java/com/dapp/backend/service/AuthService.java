@@ -37,6 +37,9 @@ public class AuthService {
     private final IdentityService identityService;
     private final BlockchainService blockchainService;
 
+    @org.springframework.beans.factory.annotation.Value("${google.mobile.client-id}")
+    private String googleClientId;
+
     private LoginResponse.UserLogin toUserLogin(User user) {
         Patient patient = user.getPatientProfile();
 
@@ -305,6 +308,62 @@ public class AuthService {
             log.error("Error syncing blockchain identity for user: {}", user.getEmail(), e);
             // Ensure user is saved even if blockchain sync fails
             userRepository.save(user);
+        }
+    }
+
+    public LoginResponse loginGoogleMobile(GoogleMobileLoginRequest request) throws AppException {
+        try {
+            // 1. Verify ID Token
+            com.google.api.client.googleapis.auth.oauth2.GoogleIdTokenVerifier verifier = new com.google.api.client.googleapis.auth.oauth2.GoogleIdTokenVerifier.Builder(
+                    new com.google.api.client.http.javanet.NetHttpTransport(),
+                    new com.google.api.client.json.gson.GsonFactory())
+                    .setAudience(java.util.Collections.singletonList(googleClientId))
+                    .build();
+
+            com.google.api.client.googleapis.auth.oauth2.GoogleIdToken idToken = verifier.verify(request.getIdToken());
+
+            if (idToken == null) {
+                throw new AppException("Invalid Google ID Token");
+            }
+
+            com.google.api.client.googleapis.auth.oauth2.GoogleIdToken.Payload payload = idToken.getPayload();
+            String email = payload.getEmail();
+            String name = (String) payload.get("name");
+            String pictureUrl = (String) payload.get("picture");
+
+            // 2. Check if user exists
+            User user = userRepository.findByEmail(email).orElse(null);
+
+            if (user == null) {
+                // Register new user
+                Role role = roleRepository.findByName("PATIENT")
+                        .orElseThrow(() -> new AppException("Role PATIENT not found"));
+
+                user = User.builder()
+                        .email(email)
+                        .fullName(name)
+                        .avatar(pictureUrl)
+                        .role(role)
+                        .isActive(false) // Inactive until profile completed
+                        .isDeleted(false)
+                        .password(passwordEncoder.encode("GOOGLE_AUTH_" + java.util.UUID.randomUUID())) // Dummy
+                                                                                                        // password
+                        .build();
+
+                user = userRepository.save(user);
+            }
+
+            // 3. Generate Tokens
+            String accessToken = jwtUtil.createAccessToken(email);
+
+            return LoginResponse.builder()
+                    .accessToken(accessToken)
+                    .user(toUserLogin(user))
+                    .build();
+
+        } catch (Exception e) {
+            log.error("Error verifying Google ID Token", e);
+            throw new AppException("Google authentication failed: " + e.getMessage());
         }
     }
 }

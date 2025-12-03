@@ -107,11 +107,13 @@ const CompleteProfilePage = () => {
       <Card className="w-full max-w-2xl shadow-2xl border-0 rounded-xl">
         <div className="text-center mb-6">
           <Title level={2} className="mb-2">
-            Complete Your Health Profile
+            Create Your Digital Medicine Card
           </Title>
           <Text type="secondary">
-            Help us provide personalized vaccination recommendations by completing your health
-            information
+            Please provide your information to generate your unique blockchain-based Digital
+            Medicine Card.
+            <br />
+            Fields marked with <span className="text-red-500">*</span> are required.
           </Text>
         </div>
 
@@ -120,13 +122,17 @@ const CompleteProfilePage = () => {
           name="complete-profile"
           onFinish={onSubmit}
           layout="vertical"
-          requiredMark={false}
+          requiredMark={false} // We will manually add asterisks
           className="space-y-4"
         >
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <Form.Item
               name="phone"
-              label="Phone Number"
+              label={
+                <span>
+                  Phone Number <span className="text-red-500">*</span>
+                </span>
+              }
               rules={[
                 { required: true, message: 'Please input your phone number!' },
                 { pattern: /^[0-9]{10,11}$/, message: 'Please enter a valid phone number!' },
@@ -137,7 +143,12 @@ const CompleteProfilePage = () => {
 
             <Form.Item
               name="identityNumber"
-              label="Identity Number (CMND/CCCD)"
+              label={
+                <span>
+                  Identity Number / Personal ID Code <span className="text-red-500">*</span>
+                </span>
+              }
+              tooltip="For children under 14, please use the Personal ID Code found on the Birth Certificate."
               rules={[
                 { required: true, message: 'Please input your identity number!' },
                 { pattern: /^[0-9]{9,12}$/, message: 'Please enter a valid identity number!' },
@@ -149,7 +160,11 @@ const CompleteProfilePage = () => {
 
           <Form.Item
             name="address"
-            label="Address"
+            label={
+              <span>
+                Address <span className="text-red-500">*</span>
+              </span>
+            }
             rules={[{ required: true, message: 'Please input your address!' }]}
           >
             <Input placeholder="Enter your address" size="large" />
@@ -158,7 +173,11 @@ const CompleteProfilePage = () => {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <Form.Item
               name="birthday"
-              label="Date of Birth"
+              label={
+                <span>
+                  Date of Birth <span className="text-red-500">*</span>
+                </span>
+              }
               rules={birthdayValidation.getFormRules(true)}
             >
               <DatePicker
@@ -172,7 +191,11 @@ const CompleteProfilePage = () => {
 
             <Form.Item
               name="gender"
-              label="Gender"
+              label={
+                <span>
+                  Gender <span className="text-red-500">*</span>
+                </span>
+              }
               rules={[{ required: true, message: 'Please select your gender!' }]}
             >
               <Select placeholder="Select gender" size="large">
@@ -183,44 +206,21 @@ const CompleteProfilePage = () => {
             </Form.Item>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            <Form.Item
-              name="bloodType"
-              label="Blood Type"
-              rules={[{ required: true, message: 'Please select your blood type!' }]}
-            >
-              <Select placeholder="Select blood type" size="large">
-                <Select.Option value="A">A</Select.Option>
-                <Select.Option value="B">B</Select.Option>
-                <Select.Option value="AB">AB</Select.Option>
-                <Select.Option value="O">O</Select.Option>
-              </Select>
-            </Form.Item>
-
-            <Form.Item name="heightCm" label="Height (cm)">
-              <InputNumber className="w-full" placeholder="170" min={50} max={250} size="large" />
-            </Form.Item>
-
-            <Form.Item name="weightKg" label="Weight (kg)">
-              <InputNumber className="w-full" placeholder="70" min={20} max={300} size="large" />
-            </Form.Item>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <Form.Item name="occupation" label="Occupation">
-              <Input placeholder="Your occupation" size="large" />
-            </Form.Item>
-
-            <Form.Item name="insuranceNumber" label="Insurance Number">
-              <Input placeholder="Insurance number" size="large" />
-            </Form.Item>
-          </div>
-
-          <Form.Item name="lifestyleNotes" label="Lifestyle Notes (optional)">
-            <TextArea
-              placeholder="Any lifestyle notes, allergies, or medical conditions we should know about"
-              rows={3}
-            />
+          <Form.Item
+            name="bloodType"
+            label={
+              <span>
+                Blood Type <span className="text-red-500">*</span>
+              </span>
+            }
+            rules={[{ required: true, message: 'Please select your blood type!' }]}
+          >
+            <Select placeholder="Select blood type" size="large">
+              <Select.Option value="A">A</Select.Option>
+              <Select.Option value="B">B</Select.Option>
+              <Select.Option value="AB">AB</Select.Option>
+              <Select.Option value="O">O</Select.Option>
+            </Select>
           </Form.Item>
 
           <Form.Item className="mb-4">
@@ -232,7 +232,7 @@ const CompleteProfilePage = () => {
               className="w-full bg-blue-600 hover:bg-blue-700"
               size="large"
             >
-              {isSubmitting ? 'Saving your profile...' : 'Complete Profile & Start Booking'}
+              {isSubmitting ? 'Creating Digital Card...' : 'Create Digital Medicine Card'}
             </Button>
           </Form.Item>
         </Form>

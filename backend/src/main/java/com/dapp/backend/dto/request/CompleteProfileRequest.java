@@ -21,7 +21,7 @@ import java.time.LocalDate;
 @NoArgsConstructor
 @AllArgsConstructor
 public class CompleteProfileRequest {
-    
+
     @Valid
     @NotNull(message = "Patient profile is required")
     private PatientProfile patientProfile;
@@ -31,7 +31,7 @@ public class CompleteProfileRequest {
     @NoArgsConstructor
     @AllArgsConstructor
     public static class PatientProfile {
-        
+
         @NotBlank(message = "Address is required")
         private String address;
 
@@ -45,7 +45,7 @@ public class CompleteProfileRequest {
         @NotNull(message = "Gender is required")
         private Gender gender;
 
-        @NotBlank(message = "Identity number is required")
+        @NotBlank(message = "Identity number / Personal ID code is required")
         @Pattern(regexp = "^[0-9]{9,12}$", message = "Identity number must be 9-12 digits")
         private String identityNumber;
 
@@ -61,7 +61,7 @@ public class CompleteProfileRequest {
         private String occupation;
         private String lifestyleNotes;
         private String insuranceNumber;
-        
+
         @Builder.Default
         private boolean consentForAIAnalysis = false;
     }

@@ -187,4 +187,24 @@ public class AuthController {
         return ResponseEntity.ok().header(HttpHeaders.SET_COOKIE, cookie.toString()).body(user);
     }
 
+    @PostMapping("/login/google-mobile")
+    @ApiMessage("Login with Google (Mobile)")
+    public ResponseEntity<LoginResponse> loginGoogleMobile(@Valid @RequestBody GoogleMobileLoginRequest request)
+            throws AppException {
+        LoginResponse response = authService.loginGoogleMobile(request);
+
+        String refreshToken = jwtUtil.createRefreshToken(response.getUser().getEmail());
+        authService.updateUserToken(refreshToken, response.getUser().getEmail());
+
+        ResponseCookie cookie = ResponseCookie
+                .from("refresh_token", refreshToken)
+                .httpOnly(true)
+                .secure(true)
+                .path("/")
+                .maxAge(refreshTokenExpiration)
+                .build();
+
+        return ResponseEntity.ok().header(HttpHeaders.SET_COOKIE, cookie.toString()).body(response);
+    }
+
 }
