@@ -600,7 +600,7 @@ public class AppointmentService {
         // Find all appointments for this doctor on today's date
         List<Appointment> todayAppointments = appointmentRepository
                 .findByDoctorAndScheduledDateOrderByScheduledTimeSlotAsc(
-                        currentUser.getDoctor(),
+                        currentUser,
                         today
                 );
 

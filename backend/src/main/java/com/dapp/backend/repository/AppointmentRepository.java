@@ -32,5 +32,5 @@ public interface AppointmentRepository extends JpaRepository<Appointment, Long>,
     );
 
     // Find appointments for a doctor on a specific date, ordered by time slot
-    List<Appointment> findByDoctorAndScheduledDateOrderByScheduledTimeSlotAsc(Doctor doctor, LocalDate scheduledDate);
+    List<Appointment> findByDoctorAndScheduledDateOrderByScheduledTimeSlotAsc(User doctor, LocalDate scheduledDate);
 }
