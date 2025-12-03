@@ -23,7 +23,17 @@ public class BlockchainService {
 
     /**
      * Create identity on blockchain
-     * Guardian address is automatically set to accounts[0] by blockchain-service
+     * 
+     * Guardian address is automatically set to accounts[0] by blockchain-service.
+     * This is a simplified approach for MVP:
+     * - All identities (users and family members) have the same guardian on-chain
+     * - Parent-child relationship exists only in database, not on blockchain
+     * - Suitable for use cases where backend acts as trusted guardian
+     * 
+     * Future considerations:
+     * - Option 1: Keep simplified (backend as universal guardian) - easier
+     * - Option 2: Create wallets for each parent, pass real guardian address - complex
+     * - Option 3: Multi-sig guardian with backend + parent - most secure
      */
     public BlockchainIdentityResponse createIdentity(
             String identityHash,

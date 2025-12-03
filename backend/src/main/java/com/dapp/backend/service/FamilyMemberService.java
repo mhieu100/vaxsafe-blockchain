@@ -68,6 +68,20 @@ public class FamilyMemberService {
 
     public FamilyMemberResponse addFamilyMember(FamilyMemberRequest request) throws AppException {
         User user = authService.getCurrentUserLogin();
+        
+        // Validate identity number (9-12 digits for Vietnam ID/Birth Certificate)
+        if (request.getIdentityNumber() == null || request.getIdentityNumber().trim().isEmpty()) {
+            throw new AppException("Identity number is required for family member");
+        }
+        if (!request.getIdentityNumber().matches("^\\d{9,12}$")) {
+            throw new AppException("Identity number must be 9-12 digits");
+        }
+        
+        // Check for duplicate identity number
+        if (familyMemberRepository.existsByIdentityNumber(request.getIdentityNumber())) {
+            throw new AppException("Identity number already exists");
+        }
+        
         FamilyMember familyMember = toEntity(request);
         familyMember.setUser(user);
         
