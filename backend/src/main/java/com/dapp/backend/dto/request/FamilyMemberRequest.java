@@ -26,6 +26,8 @@ public class FamilyMemberRequest {
     @NotBlank(message = "Relationship is required.")
     private String relationship;
 
+    @NotBlank(message = "Identity number / Personal ID code is required")
+    @Pattern(regexp = "^[0-9]{9,12}$", message = "Identity number must be 9-12 digits")
     private String identityNumber;
 
     @Pattern(regexp = "^\\+?[0-9\\s()-]{7,20}$", message = "Invalid phone number format.")

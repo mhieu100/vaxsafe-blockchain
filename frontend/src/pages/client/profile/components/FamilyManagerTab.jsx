@@ -332,8 +332,23 @@ const FamilyManagerTab = () => {
               <Input placeholder="Enter full name" />
             </Form.Item>
 
-            <Form.Item name="identityNumber" label="Identity Number">
-              <Input placeholder="Enter full identity number (optional)" />
+            <Form.Item
+              name="identityNumber"
+              label={
+                <span>
+                  Identity Number / Personal ID Code <span className="text-red-500">*</span>
+                </span>
+              }
+              tooltip="For children under 14, please use the Personal ID Code found on the Birth Certificate."
+              rules={[
+                { required: true, message: 'Please enter identity number' },
+                {
+                  pattern: /^[0-9]{9,12}$/,
+                  message: 'Please enter a valid identity number (9-12 digits)',
+                },
+              ]}
+            >
+              <Input placeholder="Enter Identity Number or Personal ID Code" />
             </Form.Item>
 
             <Form.Item
@@ -389,18 +404,6 @@ const FamilyManagerTab = () => {
               </Select>
             </Form.Item>
           </div>
-
-          <Form.Item name="allergies" label="Known Allergies">
-            <Input.TextArea rows={2} placeholder="Enter any known allergies" />
-          </Form.Item>
-
-          <Form.Item name="emergencyContact" label="Emergency Contact">
-            <Input placeholder="Name and phone number" />
-          </Form.Item>
-
-          <Form.Item name="insuranceNumber" label="Insurance Number">
-            <Input placeholder="Enter insurance number" />
-          </Form.Item>
         </Form>
       </Modal>
     </div>
