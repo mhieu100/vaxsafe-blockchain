@@ -26,16 +26,23 @@ public class IdentityService {
      * Generate blockchain identity hash for User (Adult)
      * DETERMINISTIC: Hash chỉ phụ thuộc vào thông tin user, không dùng timestamp
      * Đảm bảo cùng 1 user luôn có cùng 1 identity hash
-     * Hash = SHA256(email + fullName + birthday + "VAXSAFE_IDENTITY")
+     * Hash = SHA256(email + fullName + birthday + identityNumber + "VAXSAFE_IDENTITY")
      */
     public String generateUserIdentityHash(User user) {
         try {
             // Dùng email làm unique identifier chính
             // Birthday có thể null khi register, sẽ được fill sau
-            String data = String.format("%s:%s:%s:VAXSAFE_IDENTITY",
+            // Identity number thêm uniqueness (CCCD cho adult)
+            String identityNum = "";
+            if (user.getPatientProfile() != null && user.getPatientProfile().getIdentityNumber() != null) {
+                identityNum = user.getPatientProfile().getIdentityNumber().trim();
+            }
+            
+            String data = String.format("%s:%s:%s:%s:VAXSAFE_IDENTITY",
                     user.getEmail().toLowerCase().trim(), // Normalize email
                     user.getFullName().trim(),
-                    user.getBirthday() != null ? user.getBirthday().toString() : "PENDING"
+                    user.getBirthday() != null ? user.getBirthday().toString() : "PENDING",
+                    identityNum
             );
             
             String hash = generateSha256Hash(data);
@@ -53,23 +60,29 @@ public class IdentityService {
      * Generate blockchain identity hash for FamilyMember (Child)
      * DETERMINISTIC: Hash chỉ phụ thuộc vào thông tin child, không dùng timestamp
      * Đảm bảo cùng 1 child luôn có cùng 1 identity hash
-     * Hash = SHA256(guardianEmail + childName + dateOfBirth + relationship)
+     * Hash = SHA256(guardianEmail + childName + dateOfBirth + relationship + identityNumber)
      * 
      * @param familyMember The family member (child)
      */
     public String generateFamilyMemberIdentityHash(FamilyMember familyMember) {
         try {
-            // Dùng tổ hợp: guardian email + child name + DOB + relationship
-            // Đảm bảo unique cho mỗi child
+            // Dùng tổ hợp: guardian email + child name + DOB + relationship + identity number
+            // Đảm bảo unique cho mỗi child (identity number là unique)
             String guardianEmail = familyMember.getUser() != null 
                 ? familyMember.getUser().getEmail().toLowerCase().trim()
                 : "UNKNOWN_GUARDIAN";
             
-            String data = String.format("%s:%s:%s:%s:VAXSAFE_CHILD_IDENTITY",
+            // Identity number is unique per person in Vietnam
+            String identityNum = familyMember.getIdentityNumber() != null 
+                ? familyMember.getIdentityNumber().trim()
+                : "";
+            
+            String data = String.format("%s:%s:%s:%s:%s:VAXSAFE_CHILD_IDENTITY",
                     guardianEmail,
                     familyMember.getFullName().trim(),
                     familyMember.getDateOfBirth().toString(),
-                    familyMember.getRelationship() != null ? familyMember.getRelationship() : "CHILD"
+                    familyMember.getRelationship() != null ? familyMember.getRelationship() : "CHILD",
+                    identityNum
             );
             
             String hash = generateSha256Hash(data);
@@ -103,7 +116,18 @@ public class IdentityService {
     }
 
     /**
-     * Determine identity type based on age
+     * Determine identity type based on age at the time of creation
+     * 
+     * IMPORTANT: Identity type is STATIC on blockchain after creation
+     * - A child created at age 5 will remain CHILD type even at age 20
+     * - This is by design for immutability and simplicity
+     * 
+     * Options for handling age transitions:
+     * 1. Keep static (current approach) - simpler, identity type reflects creation time
+     * 2. Create new identity when turning 18 - preserves history
+     * 3. Add updateIdentityType function - complex, breaks immutability
+     * 
+     * For queries: Always recalculate current type from DOB, don't rely on stored type
      */
     public IdentityType determineIdentityType(LocalDate dateOfBirth) {
         if (dateOfBirth == null) {
@@ -124,6 +148,14 @@ public class IdentityService {
         } else {
             return IdentityType.ADULT;
         }
+    }
+    
+    /**
+     * Get current identity type based on current age
+     * Use this for display/UI purposes, not for blockchain operations
+     */
+    public IdentityType getCurrentIdentityType(LocalDate dateOfBirth) {
+        return determineIdentityType(dateOfBirth);
     }
 
     /**
@@ -164,11 +196,18 @@ public class IdentityService {
 
     /**
      * Generate IPFS-compatible JSON for identity data
-     * This would be uploaded to IPFS and the hash stored on blockchain
+     * TODO: In production, upload this JSON to IPFS and return the hash (QmXxx...)
+     * Currently returns JSON string for database storage only
+     * 
+     * Future implementation:
+     * 1. Create JSON with sensitive data encrypted
+     * 2. Upload to IPFS via ipfs.infura.io or local node
+     * 3. Return IPFS hash: "QmT5NvUtoM5nWFfrQdVrFtvGfKFmG7AHE8P34isapyhCxX"
+     * 4. Store hash in database and on blockchain
      */
     public String generateIdentityDataJson(User user) {
-        // In production, this would create a structured JSON and upload to IPFS
-        // For now, return a simple representation
+        // TODO: Replace with real IPFS upload
+        // String ipfsHash = ipfsService.uploadJson(jsonData);
         return String.format("""
             {
                 "type": "USER_IDENTITY",
@@ -187,8 +226,11 @@ public class IdentityService {
 
     /**
      * Generate IPFS-compatible JSON for family member identity
+     * TODO: Upload to real IPFS in production
+     * Note: Do NOT include identityNumber or sensitive PII in IPFS data
      */
     public String generateFamilyMemberDataJson(FamilyMember member) {
+        // TODO: Real IPFS upload with encryption for sensitive fields
         return String.format("""
             {
                 "type": "CHILD_IDENTITY",

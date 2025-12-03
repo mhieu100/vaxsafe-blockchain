@@ -11,4 +11,6 @@ public interface FamilyMemberRepository extends JpaRepository<FamilyMember, Long
     List<FamilyMember> findByUser(User user);
     
     List<FamilyMember> findByUserId(Long userId);
+    
+    boolean existsByIdentityNumber(String identityNumber);
 }
