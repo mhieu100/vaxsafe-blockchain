@@ -33,7 +33,7 @@ public class BlockchainService {
             String email
     ) {
         try {
-            String url = blockchainServiceUrl + "/api/identity/create";
+            String url = blockchainServiceUrl + "/identity/create";
             
             BlockchainIdentityRequest request = BlockchainIdentityRequest.builder()
                     .identityHash(identityHash)
@@ -78,7 +78,7 @@ public class BlockchainService {
             String ipfsHash
     ) {
         try {
-            String url = blockchainServiceUrl + "/api/identity/link-document";
+            String url = blockchainServiceUrl + "/identity/link-document";
             
             BlockchainDocumentRequest request = BlockchainDocumentRequest.builder()
                     .identityHash(identityHash)
@@ -116,7 +116,7 @@ public class BlockchainService {
      */
     public BlockchainIdentityDetails getIdentity(String identityHash) {
         try {
-            String url = blockchainServiceUrl + "/api/identity/" + identityHash;
+            String url = blockchainServiceUrl + "/identity/" + identityHash;
             
             ResponseEntity<BlockchainIdentityDetails> response = restTemplate.getForEntity(
                     url,
@@ -140,7 +140,7 @@ public class BlockchainService {
      */
     public BlockchainVaccineRecordResponse createVaccineRecord(VaccineRecord record) {
         try {
-            String url = blockchainServiceUrl + "/api/vaccine-records/create";
+            String url = blockchainServiceUrl + "/vaccine-records/create";
             
             BlockchainVaccineRecordRequest request = BlockchainVaccineRecordRequest.builder()
                     .identityHash(record.getPatientIdentityHash())
@@ -190,7 +190,7 @@ public class BlockchainService {
      */
     public BlockchainVaccineRecordDetails getVaccineRecord(Long recordId) {
         try {
-            String url = blockchainServiceUrl + "/api/vaccine-records/" + recordId;
+            String url = blockchainServiceUrl + "/vaccine-records/" + recordId;
             
             ResponseEntity<BlockchainVaccineRecordDetails> response = restTemplate.getForEntity(
                     url,
@@ -214,7 +214,7 @@ public class BlockchainService {
      */
     public BlockchainVaccineRecordList getVaccineRecordsByIdentity(String identityHash) {
         try {
-            String url = blockchainServiceUrl + "/api/vaccine-records/identity/" + identityHash;
+            String url = blockchainServiceUrl + "/vaccine-records/identity/" + identityHash;
             
             ResponseEntity<BlockchainVaccineRecordList> response = restTemplate.getForEntity(
                     url,
@@ -238,7 +238,7 @@ public class BlockchainService {
      */
     public boolean isBlockchainServiceAvailable() {
         try {
-            String url = blockchainServiceUrl + "/api/ganache/status";
+            String url = blockchainServiceUrl + "/ganache/status";
             ResponseEntity<String> response = restTemplate.getForEntity(url, String.class);
             return response.getStatusCode() == HttpStatus.OK;
         } catch (Exception e) {
