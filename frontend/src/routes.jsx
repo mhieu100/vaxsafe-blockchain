@@ -29,6 +29,8 @@ import CancelPage from '@/pages/client/CancelPage';
 import CheckoutPage from '@/pages/client/CheckoutPage';
 import CartPage from '@/pages/client/cart';
 import HomePage from '@/pages/client/home';
+import ClientNewsPage from '@/pages/client/news';
+import ClientNewsDetailPage from '@/pages/client/news/detail';
 import UserProfilePage from '@/pages/client/profile';
 import SuccessPage from '@/pages/client/SuccessPage';
 import VaccineDetailPage from '@/pages/client/vaccine-detail';
@@ -55,6 +57,8 @@ const router = createBrowserRouter([
       { path: 'vaccine', element: <VaccineListPage /> },
       { path: 'vaccine/:id', element: <VaccineDetailPage /> },
       { path: 'cart', element: <CartPage /> },
+      { path: 'news', element: <ClientNewsPage /> },
+      { path: 'news/:slug', element: <ClientNewsDetailPage /> },
 
       {
         path: 'profile',

@@ -5,8 +5,7 @@ import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { callFetchFeaturedNews, callFetchPublishedNews } from '@/services/news.service';
 
-const { Title, Paragraph, Text } = Typography;
-const { Meta } = Card;
+const { Title, Paragraph } = Typography;
 
 const NewsSection = () => {
   const navigate = useNavigate();
@@ -27,8 +26,8 @@ const NewsSection = () => {
           newsData = res?.data || [];
         }
 
-        // Take top 3 items
-        setNews(newsData.slice(0, 3));
+        // Take top 4 items
+        setNews(newsData.slice(0, 4));
       } catch (error) {
         console.error('Failed to fetch news:', error);
       } finally {
@@ -75,8 +74,8 @@ const NewsSection = () => {
 
         {loading ? (
           <Row gutter={[24, 24]}>
-            {[1, 2, 3].map((i) => (
-              <Col xs={24} md={8} key={i}>
+            {[1, 2, 3, 4].map((i) => (
+              <Col xs={24} sm={12} lg={6} key={i}>
                 <Card cover={<Skeleton.Image active className="!w-full !h-48" />}>
                   <Skeleton active paragraph={{ rows: 3 }} />
                 </Card>
@@ -86,7 +85,7 @@ const NewsSection = () => {
         ) : (
           <Row gutter={[24, 24]}>
             {news.map((item) => (
-              <Col xs={24} md={8} key={item.id}>
+              <Col xs={24} sm={12} lg={6} key={item.id}>
                 <Card
                   hoverable
                   className="h-full flex flex-col rounded-xl overflow-hidden border-0 shadow-md transition-all duration-300 hover:shadow-xl hover:-translate-y-1"

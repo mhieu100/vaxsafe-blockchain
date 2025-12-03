@@ -9,7 +9,7 @@ import {
   ShareAltOutlined,
   VerifiedOutlined,
 } from '@ant-design/icons';
-import { Avatar, Button, Card, Divider, QRCode, Space, Tag, Timeline, Typography } from 'antd';
+import { Button, Card, Divider, QRCode, Space, Tag, Timeline, Typography } from 'antd';
 import { useState } from 'react';
 import { useAccountStore } from '@/stores/useAccountStore';
 

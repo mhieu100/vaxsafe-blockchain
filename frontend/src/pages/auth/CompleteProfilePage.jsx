@@ -1,14 +1,4 @@
-import {
-  Button,
-  Card,
-  DatePicker,
-  Form,
-  Input,
-  InputNumber,
-  message,
-  Select,
-  Typography,
-} from 'antd';
+import { Button, Card, DatePicker, Form, Input, message, Select, Typography } from 'antd';
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { callCompleteProfile } from '@/services/auth.service';
@@ -16,7 +6,6 @@ import useAccountStore from '@/stores/useAccountStore';
 import { birthdayValidation } from '@/utils/birthdayValidation';
 
 const { Title, Text } = Typography;
-const { TextArea } = Input;
 
 const CompleteProfilePage = () => {
   const navigate = useNavigate();
