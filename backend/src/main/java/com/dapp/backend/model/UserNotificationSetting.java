@@ -1,12 +1,11 @@
 package com.dapp.backend.model;
 
-import com.dapp.backend.enums.ReminderChannel;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
 /**
- * User preferences for notification channels
+ * User preferences for email notifications
  */
 @Entity
 @Table(name = "user_notification_settings")
@@ -27,16 +26,6 @@ public class UserNotificationSetting extends BaseEntity {
 
     @Builder.Default
     Boolean emailEnabled = true;
-
-    @Builder.Default
-    Boolean smsEnabled = false;
-
-    @Builder.Default
-    Boolean zaloEnabled = false;
-
-    @Enumerated(EnumType.STRING)
-    @Builder.Default
-    ReminderChannel preferredChannel = ReminderChannel.EMAIL;
 
     @Builder.Default
     Boolean appointmentReminderEnabled = true;

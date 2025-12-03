@@ -118,9 +118,6 @@ public class NotificationLogService {
         UserNotificationSetting setting = UserNotificationSetting.builder()
                 .user(user)
                 .emailEnabled(true)
-                .smsEnabled(false)
-                .zaloEnabled(false)
-                .preferredChannel(ReminderChannel.EMAIL)
                 .appointmentReminderEnabled(true)
                 .nextDoseReminderEnabled(true)
                 .build();
@@ -130,6 +127,7 @@ public class NotificationLogService {
 
     /**
      * Get user notification settings
+     * Uses synchronized block to prevent race condition when creating default settings
      * @throws AppException 
      */
     public UserNotificationSetting getUserSettings(User user) throws AppException {
@@ -138,13 +136,41 @@ public class NotificationLogService {
             return existing.get();
         }
         
-        // Double-check to handle race condition
-        try {
-            return createDefaultSettings(user);
-        } catch (DataIntegrityViolationException e) {
-            // Another thread created it, fetch again
-            return settingRepository.findByUserId(user.getId())
-                    .orElseThrow(() -> new AppException("Failed to get user notification settings"));
+        // Synchronize on user ID to prevent multiple threads creating settings for same user
+        synchronized (("user_settings_" + user.getId()).intern()) {
+            // Double-check after acquiring lock
+            existing = settingRepository.findByUserId(user.getId());
+            if (existing.isPresent()) {
+                return existing.get();
+            }
+            
+            try {
+                return createDefaultSettings(user);
+            } catch (DataIntegrityViolationException e) {
+                // Race condition still occurred, fetch the created settings
+                log.warn("Race condition detected when creating settings for user {}, fetching existing", user.getId());
+                return settingRepository.findByUserId(user.getId())
+                        .orElseThrow(() -> new AppException("Failed to get user notification settings"));
+            }
         }
+    }
+
+    /**
+     * Update user notification settings
+     * @param user User to update settings for
+     * @param newSettings New settings values
+     * @return Updated settings
+     * @throws AppException if user not found
+     */
+    @Transactional
+    public UserNotificationSetting updateUserSettings(User user, UserNotificationSetting newSettings) throws AppException {
+        UserNotificationSetting existing = getUserSettings(user);
+        
+        // Update only email-related settings
+        existing.setEmailEnabled(newSettings.getEmailEnabled());
+        existing.setAppointmentReminderEnabled(newSettings.getAppointmentReminderEnabled());
+        existing.setNextDoseReminderEnabled(newSettings.getNextDoseReminderEnabled());
+        
+        return settingRepository.save(existing);
     }
 }

@@ -12,7 +12,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 /**
- * API for user notification preferences
+ * API for user email notification preferences
  */
 @RestController
 @RequestMapping("/api/notification-settings")
@@ -44,14 +44,9 @@ public class NotificationSettingController {
     @PutMapping
     @ApiMessage("Update notification settings")
     public ResponseEntity<UserNotificationSetting> updateSettings(
-            @RequestBody UserNotificationSetting settings) throws AppException {
+            @RequestBody UserNotificationSetting newSettings) throws AppException {
         User user = authService.getCurrentUserLogin();
-        settings.setUser(user);
-        settings.setId(notificationLogService.getUserSettings(user).getId());
-        
-        // Save via repository (need to add method to NotificationLogService)
-        UserNotificationSetting updated = notificationLogService.getUserSettings(user);
-        
+        UserNotificationSetting updated = notificationLogService.updateUserSettings(user, newSettings);
         return ResponseEntity.ok(updated);
     }
 }

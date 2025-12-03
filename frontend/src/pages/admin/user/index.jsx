@@ -32,7 +32,7 @@ const UserPage = () => {
         setUsers(res.data.result || []);
         setMeta(res.data.meta || meta);
       }
-    } catch (error) {
+    } catch (_error) {
       notification.error({
         message: 'Lỗi',
         description: 'Không thể tải danh sách người dùng',

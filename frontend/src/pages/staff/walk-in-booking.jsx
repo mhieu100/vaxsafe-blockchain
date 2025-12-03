@@ -20,7 +20,7 @@ const WalkInBookingPage = () => {
     pages: 0,
   });
 
-  const reloadTable = () => {
+  const _reloadTable = () => {
     tableRef?.current?.reload();
   };
 
@@ -32,10 +32,10 @@ const WalkInBookingPage = () => {
         setPatients(res.data.result || []);
         setMeta(res.data.meta || meta);
       }
-    } catch (error) {
+    } catch (_error) {
       notification.error({
         message: 'Lỗi',
-        description: 'Không thể tải danh sách bệnh nhân',
+        description: 'Không thể tải danh sách lịch hẹn',
       });
     } finally {
       setLoading(false);

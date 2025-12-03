@@ -236,7 +236,6 @@ public class NextDoseReminderService {
         if (user.getEmail() != null && !user.getEmail().isEmpty() && settings.getEmailEnabled()) {
             channels.add(ReminderChannel.EMAIL);
         }
-        // Future: Add SMS, ZALO
 
         return channels;
     }
