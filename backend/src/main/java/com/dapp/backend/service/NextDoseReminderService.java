@@ -3,6 +3,7 @@ package com.dapp.backend.service;
 import com.dapp.backend.enums.ReminderChannel;
 import com.dapp.backend.enums.ReminderStatus;
 import com.dapp.backend.enums.ReminderType;
+import com.dapp.backend.exception.AppException;
 import com.dapp.backend.model.*;
 import com.dapp.backend.repository.AppointmentRepository;
 import com.dapp.backend.repository.VaccinationReminderRepository;
@@ -35,9 +36,10 @@ public class NextDoseReminderService {
     /**
      * Create next dose reminder after completing an appointment
      * Called when appointment status = COMPLETED
+     * @throws AppException 
      */
     @Transactional
-    public List<VaccinationReminder> createNextDoseReminder(Appointment completedAppointment) {
+    public List<VaccinationReminder> createNextDoseReminder(Appointment completedAppointment) throws AppException {
         log.info("Creating next dose reminder for completed appointment ID: {}", completedAppointment.getId());
 
         List<VaccinationReminder> reminders = new ArrayList<>();

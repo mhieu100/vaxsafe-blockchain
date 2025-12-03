@@ -130,8 +130,9 @@ public class NotificationLogService {
 
     /**
      * Get user notification settings
+     * @throws AppException 
      */
-    public UserNotificationSetting getUserSettings(User user) {
+    public UserNotificationSetting getUserSettings(User user) throws AppException {
         Optional<UserNotificationSetting> existing = settingRepository.findByUserId(user.getId());
         if (existing.isPresent()) {
             return existing.get();
