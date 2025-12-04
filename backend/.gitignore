@@ -34,5 +34,3 @@ build/
 docs/
 ### Environment Variables ###
 .env
-
-knowledge/

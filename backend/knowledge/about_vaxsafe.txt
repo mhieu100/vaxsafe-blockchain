@@ -1,0 +1,6 @@
+GIỚI THIỆU VỀ VAXSAFE:
+VaxSafe là hệ thống quản lý và tiêm chủng vắc xin an toàn, minh bạch sử dụng công nghệ Blockchain.
+Chúng tôi cung cấp các dịch vụ:
+- Tiêm chủng trọn gói cho trẻ em và người lớn.
+- Tư vấn dinh dưỡng và sức khỏe trước tiêm.
+- Lưu trữ hồ sơ tiêm chủng vĩnh viễn trên Blockchain.

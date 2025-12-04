@@ -50,6 +50,7 @@ public class RagService {
         List<Vaccine> vaccines = vaccineRepository.findAll();
         List<String> documents = new ArrayList<>();
 
+        // 1. Add Vaccine Data
         for (Vaccine v : vaccines) {
             String content = String.format("""
                     THÔNG TIN VACCINE:
@@ -77,10 +78,67 @@ public class RagService {
             documents.add(content);
         }
 
+        // 2. Add System Knowledge (Booking, Contact, etc.)
+        documents.addAll(getSystemKnowledge());
+
         if (!documents.isEmpty()) {
             addDocuments(documents);
         }
         return documents.size();
+    }
+
+    private List<String> getSystemKnowledge() {
+        List<String> knowledge = new ArrayList<>();
+        try {
+            java.nio.file.Path knowledgeDir = java.nio.file.Paths.get("knowledge");
+            if (java.nio.file.Files.exists(knowledgeDir) && java.nio.file.Files.isDirectory(knowledgeDir)) {
+                try (java.util.stream.Stream<java.nio.file.Path> stream = java.nio.file.Files.list(knowledgeDir)) {
+                    stream.filter(file -> !java.nio.file.Files.isDirectory(file) && file.toString().endsWith(".txt"))
+                            .forEach(file -> {
+                                try {
+                                    String content = java.nio.file.Files.readString(file);
+                                    knowledge.add(content);
+                                } catch (Exception e) {
+                                    System.err
+                                            .println("Failed to read knowledge file: " + file + " - " + e.getMessage());
+                                }
+                            });
+                }
+            }
+        } catch (Exception e) {
+            System.err.println("Error accessing knowledge directory: " + e.getMessage());
+        }
+
+        // Fallback if no files found or error occurs
+        if (knowledge.isEmpty()) {
+            return List.of(
+                    """
+                            HƯỚNG DẪN ĐẶT LỊCH TIÊM CHỦNG / TƯ VẤN:
+                            Để đặt lịch hẹn tại VaxSafe, bạn hãy thực hiện các bước sau:
+                            1. Truy cập vào trang "Đặt lịch" trên thanh menu của website.
+                            2. Chọn Trung tâm tiêm chủng gần bạn nhất.
+                            3. Chọn loại vắc xin mong muốn (hoặc chọn "Tư vấn" nếu chưa rõ).
+                            4. Chọn ngày và giờ còn trống.
+                            5. Điền thông tin người được tiêm và xác nhận đặt lịch.
+
+                            Nếu bạn muốn đặt lịch ngay bây giờ, hãy truy cập đường dẫn: /client/booking
+                            """,
+                    """
+                            GIỚI THIỆU VỀ VAXSAFE:
+                            VaxSafe là hệ thống quản lý và tiêm chủng vắc xin an toàn, minh bạch sử dụng công nghệ Blockchain.
+                            Chúng tôi cung cấp các dịch vụ:
+                            - Tiêm chủng trọn gói cho trẻ em và người lớn.
+                            - Tư vấn dinh dưỡng và sức khỏe trước tiêm.
+                            - Lưu trữ hồ sơ tiêm chủng vĩnh viễn trên Blockchain.
+                            """,
+                    """
+                            LIÊN HỆ VÀ HỖ TRỢ:
+                            - Hotline: 1900 123 456
+                            - Email: support@vaxsafe.com
+                            - Thời gian làm việc: 7:30 - 17:00 (Tất cả các ngày trong tuần)
+                            """);
+        }
+        return knowledge;
     }
 
     public List<Document> similaritySearch(String query) {
@@ -118,9 +176,8 @@ public class RagService {
             // 2. Construct System Prompt (Expert Consultant)
             String systemPromptText = """
                     Bạn là Bác sĩ AI chuyên gia về tiêm chủng của hệ thống VaxSafe.
-                    Nhiệm vụ của bạn là tư vấn lịch tiêm và giải đáp thắc mắc dựa trên hồ sơ sức khỏe cụ thể của trẻ.
 
-                    HỒ SƠ NGƯỜNG DÙNG:
+                    HỒ SƠ CHỦ TÀI KHOẢN (Người đang chat):
                     - Tuổi: {age}
                     - Lịch sử tiêm chủng: {history}
                     - Tình trạng sức khỏe: {condition}
@@ -128,12 +185,21 @@ public class RagService {
                     KIẾN THỨC Y KHOA (Từ cơ sở dữ liệu):
                     {information}
 
-                    CHỈ DẪN TƯ VẤN:
-                    1. Phân tích tuổi và lịch sử tiêm để xác định các mũi còn thiếu theo lịch chuẩn.
-                    2. Kiểm tra các chống chỉ định nếu người dùng có vấn đề sức khỏe.
-                    3. Trả lời câu hỏi của người dùng dựa trên các thông tin trên.
-                    4. Nếu thông tin trong Kiến thức y khoa không đủ, hãy nói rõ và khuyên đi khám bác sĩ.
-                    5. Giọng văn: Chuyên nghiệp, ân cần, dễ hiểu.
+                    CHỈ DẪN QUAN TRỌNG:
+                    1. XÁC ĐỊNH ĐỐI TƯỢNG CẦN TƯ VẤN:
+                       - Nếu người dùng hỏi cho chính họ (hoặc không nói rõ): Sử dụng "HỒ SƠ CHỦ TÀI KHOẢN" để tư vấn.
+                       - Nếu người dùng hỏi cho người khác (ví dụ: "con tôi", "bé nhà tôi", "bố mẹ", "người thân"):
+                         -> HÃY BỎ QUA "HỒ SƠ CHỦ TÀI KHOẢN".
+                         -> Nếu trong câu hỏi chưa có tuổi hoặc thông tin sức khỏe của người đó, HÃY HỎI LẠI người dùng để có thông tin chính xác trước khi tư vấn.
+
+                    2. QUY TRÌNH TƯ VẤN:
+                       - Phân tích tuổi và lịch sử tiêm (của đúng đối tượng) để xác định các mũi còn thiếu theo lịch chuẩn.
+                       - Kiểm tra các chống chỉ định.
+                       - Nếu thông tin trong Kiến thức y khoa không đủ, hãy nói rõ và khuyên đi khám bác sĩ.
+
+                    3. PHONG CÁCH:
+                       - Chuyên nghiệp, ân cần, dễ hiểu.
+                       - Trả lời ngắn gọn, định dạng đẹp (dùng gạch đầu dòng).
 
                     Hãy trả lời câu hỏi sau của người dùng:
                     """;

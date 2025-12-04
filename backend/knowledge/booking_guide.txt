@@ -1,0 +1,9 @@
+HƯỚNG DẪN ĐẶT LỊCH TIÊM CHỦNG / TƯ VẤN:
+Để đặt lịch hẹn tại VaxSafe, bạn hãy thực hiện các bước sau:
+1. Truy cập vào trang "Đặt lịch" trên thanh menu của website.
+2. Chọn Trung tâm tiêm chủng gần bạn nhất.
+3. Chọn loại vắc xin mong muốn (hoặc chọn "Tư vấn" nếu chưa rõ).
+4. Chọn ngày và giờ còn trống.
+5. Điền thông tin người được tiêm và xác nhận đặt lịch.
+
+Nếu bạn muốn đặt lịch ngay bây giờ, hãy truy cập đường dẫn: /client/booking

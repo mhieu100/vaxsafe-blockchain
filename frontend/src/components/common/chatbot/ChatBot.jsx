@@ -7,9 +7,13 @@ import {
   SettingOutlined,
 } from '@ant-design/icons';
 import { useMutation } from '@tanstack/react-query';
-import { Avatar, Button, Form, Input, Select, Spin } from 'antd';
+import { Button, Form, Input, Spin } from 'antd';
+import dayjs from 'dayjs';
 import { useEffect, useRef, useState } from 'react';
+import ReactMarkdown from 'react-markdown';
+import remarkGfm from 'remark-gfm';
 import ragService from '@/services/rag.service';
+import useAccountStore from '@/stores/useAccountStore';
 
 const ChatBot = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -23,12 +27,39 @@ const ChatBot = () => {
   ]);
   const [inputValue, setInputValue] = useState('');
 
+  const { user, isAuthenticated } = useAccountStore();
+
   // Medical Profile State
   const [profile, setProfile] = useState({
     age: '',
     vaccinationHistory: '',
     healthCondition: '',
   });
+
+  // Auto-fill profile from user data when authenticated
+  useEffect(() => {
+    if (isAuthenticated && user) {
+      let ageString = '';
+      if (user.birthday) {
+        const birthDate = dayjs(user.birthday);
+        const now = dayjs();
+        const years = now.diff(birthDate, 'year');
+        const months = now.diff(birthDate, 'month');
+
+        if (years > 0) {
+          ageString = `${years} tuổi`;
+        } else {
+          ageString = `${months} tháng`;
+        }
+      }
+
+      setProfile((prev) => ({
+        ...prev,
+        age: ageString || prev.age,
+        // We could fetch vaccination history from backend here if available
+      }));
+    }
+  }, [isAuthenticated, user]);
 
   const messagesEndRef = useRef(null);
 
@@ -175,13 +206,21 @@ const ChatBot = () => {
                     className={`flex ${msg.sender === 'user' ? 'justify-end' : 'justify-start'}`}
                   >
                     <div
-                      className={`max-w-[80%] rounded-2xl p-3 text-sm shadow-sm ${
+                      className={`max-w-[85%] rounded-2xl p-3 text-sm shadow-sm overflow-hidden ${
                         msg.sender === 'user'
                           ? 'bg-blue-600 text-white rounded-tr-none'
                           : 'bg-white text-slate-700 border border-slate-100 rounded-tl-none'
                       }`}
                     >
-                      {msg.text}
+                      <div
+                        className={`prose prose-sm max-w-none break-words ${
+                          msg.sender === 'user'
+                            ? 'prose-invert prose-p:text-white prose-headings:text-white prose-strong:text-white'
+                            : 'prose-slate'
+                        } prose-p:my-1 prose-ul:my-1 prose-li:my-0 prose-headings:my-2`}
+                      >
+                        <ReactMarkdown remarkPlugins={[remarkGfm]}>{msg.text}</ReactMarkdown>
+                      </div>
                     </div>
                   </div>
                 ))}
