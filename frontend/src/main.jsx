@@ -1,5 +1,5 @@
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { ConfigProvider } from 'antd';
+import { App, ConfigProvider } from 'antd';
 import enUS from 'antd/locale/en_US';
 import viVN from 'antd/locale/vi_VN';
 import { useEffect, useState } from 'react';
@@ -57,7 +57,9 @@ const AppWithLocale = () => {
         },
       }}
     >
-      <Root />
+      <App>
+        <Root />
+      </App>
     </ConfigProvider>
   );
 };

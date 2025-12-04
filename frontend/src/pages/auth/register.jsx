@@ -83,9 +83,9 @@ const Register = () => {
   return (
     <div className="min-h-screen flex w-full bg-slate-50">
       {/* Left Side - Form Area */}
-      <div className="w-full lg:w-1/2 flex flex-col justify-center px-6 md:px-12 lg:px-24 xl:px-32 bg-white z-10 relative shadow-2xl shadow-slate-200/50 py-12">
+      <div className="w-full lg:w-1/2 flex flex-col justify-center px-6 md:px-12 lg:px-24 xl:px-32 bg-white z-10 relative shadow-2xl shadow-slate-200/50 py-6">
         {/* Header Actions */}
-        <div className="absolute top-8 left-8 right-8 flex justify-between items-center">
+        <div className="absolute top-6 left-8 right-8 flex justify-between items-center">
           <Link
             to="/"
             className="flex items-center gap-2 text-slate-500 hover:text-blue-600 transition-colors group"
@@ -107,16 +107,16 @@ const Register = () => {
           </Dropdown>
         </div>
 
-        <div className="w-full max-w-[440px] mx-auto mt-16 lg:mt-0">
+        <div className="w-full max-w-[440px] mx-auto mt-8 lg:mt-0">
           {/* Logo & Title */}
-          <div className="mb-8 text-center lg:text-left">
-            <div className="inline-flex items-center justify-center w-14 h-14 rounded-2xl bg-blue-600 text-white mb-6 shadow-lg shadow-blue-500/30">
-              <SafetyCertificateFilled className="text-2xl" />
+          <div className="mb-4 text-center lg:text-left">
+            <div className="inline-flex items-center justify-center w-12 h-12 rounded-2xl bg-blue-600 text-white mb-3 shadow-lg shadow-blue-500/30">
+              <SafetyCertificateFilled className="text-xl" />
             </div>
-            <Title level={1} className="!mb-2 !text-3xl !font-bold text-slate-900 tracking-tight">
+            <Title level={1} className="!mb-1 !text-2xl !font-bold text-slate-900 tracking-tight">
               {t('auth.register.title')}
             </Title>
-            <Text className="text-slate-500 text-lg block">{t('auth.register.subtitle')}</Text>
+            <Text className="text-slate-500 text-base block">{t('auth.register.subtitle')}</Text>
           </div>
 
           <Form
@@ -126,13 +126,16 @@ const Register = () => {
             layout="vertical"
             requiredMark={false}
             size="large"
-            className="space-y-4"
+            className="space-y-2"
           >
             <Form.Item
               name="fullName"
               label={
-                <span className="font-medium text-slate-700">{t('auth.register.fullName')}</span>
+                <span className="font-medium text-slate-700 text-sm">
+                  {t('auth.register.fullName')}
+                </span>
               }
+              className="mb-2"
               rules={[
                 { required: true, message: t('auth.register.fullNameRequired') },
                 { min: 2, message: t('auth.register.fullNameMinLength') },
@@ -141,13 +144,18 @@ const Register = () => {
               <Input
                 prefix={<UserOutlined className="text-slate-400 px-1" />}
                 placeholder={t('auth.register.fullNamePlaceholder')}
-                className="rounded-xl py-2.5 bg-slate-50 border-slate-200 hover:bg-white focus:bg-white transition-all"
+                className="rounded-xl py-2 bg-slate-50 border-slate-200 hover:bg-white focus:bg-white transition-all"
               />
             </Form.Item>
 
             <Form.Item
               name="email"
-              label={<span className="font-medium text-slate-700">{t('auth.register.email')}</span>}
+              label={
+                <span className="font-medium text-slate-700 text-sm">
+                  {t('auth.register.email')}
+                </span>
+              }
+              className="mb-2"
               rules={[
                 { required: true, message: t('auth.register.emailRequired') },
                 { type: 'email', message: t('auth.register.emailInvalid') },
@@ -156,15 +164,18 @@ const Register = () => {
               <Input
                 prefix={<MailOutlined className="text-slate-400 px-1" />}
                 placeholder={t('auth.register.emailPlaceholder')}
-                className="rounded-xl py-2.5 bg-slate-50 border-slate-200 hover:bg-white focus:bg-white transition-all"
+                className="rounded-xl py-2 bg-slate-50 border-slate-200 hover:bg-white focus:bg-white transition-all"
               />
             </Form.Item>
 
             <Form.Item
               name="password"
               label={
-                <span className="font-medium text-slate-700">{t('auth.register.password')}</span>
+                <span className="font-medium text-slate-700 text-sm">
+                  {t('auth.register.password')}
+                </span>
               }
+              className="mb-2"
               rules={[
                 { required: true, message: t('auth.register.passwordRequired') },
                 { min: 8, message: t('auth.register.passwordMinLength') },
@@ -173,17 +184,18 @@ const Register = () => {
               <Input.Password
                 prefix={<LockOutlined className="text-slate-400 px-1" />}
                 placeholder={t('auth.register.passwordPlaceholder')}
-                className="rounded-xl py-2.5 bg-slate-50 border-slate-200 hover:bg-white focus:bg-white transition-all"
+                className="rounded-xl py-2 bg-slate-50 border-slate-200 hover:bg-white focus:bg-white transition-all"
               />
             </Form.Item>
 
             <Form.Item
               name="confirmPassword"
               label={
-                <span className="font-medium text-slate-700">
+                <span className="font-medium text-slate-700 text-sm">
                   {t('auth.register.confirmPassword')}
                 </span>
               }
+              className="mb-2"
               dependencies={['password']}
               rules={[
                 { required: true, message: t('auth.register.confirmPasswordRequired') },
@@ -200,7 +212,7 @@ const Register = () => {
               <Input.Password
                 prefix={<LockOutlined className="text-slate-400 px-1" />}
                 placeholder={t('auth.register.confirmPasswordPlaceholder')}
-                className="rounded-xl py-2.5 bg-slate-50 border-slate-200 hover:bg-white focus:bg-white transition-all"
+                className="rounded-xl py-2 bg-slate-50 border-slate-200 hover:bg-white focus:bg-white transition-all"
               />
             </Form.Item>
 
@@ -209,18 +221,18 @@ const Register = () => {
                 type="primary"
                 htmlType="submit"
                 loading={isSubmitting}
-                className="w-full h-12 rounded-xl bg-blue-600 hover:bg-blue-700 font-semibold text-lg shadow-lg shadow-blue-500/30 border-0"
+                className="w-full h-10 rounded-xl bg-blue-600 hover:bg-blue-700 font-semibold text-base shadow-lg shadow-blue-500/30 border-0"
               >
                 {t('auth.register.registerButton')}
               </Button>
             </Form.Item>
           </Form>
 
-          <div className="relative my-8">
+          <div className="relative my-4">
             <div className="absolute inset-0 flex items-center">
               <div className="w-full border-t border-slate-200"></div>
             </div>
-            <div className="relative flex justify-center text-sm">
+            <div className="relative flex justify-center text-xs">
               <span className="px-4 bg-white text-slate-400 font-medium">
                 {t('auth.register.orSignUpWith')}
               </span>
@@ -228,15 +240,15 @@ const Register = () => {
           </div>
 
           <Button
-            icon={<GoogleOutlined className="text-lg" />}
+            icon={<GoogleOutlined className="text-base" />}
             onClick={handleGoogleRegister}
-            className="w-full h-12 flex items-center justify-center gap-2 font-medium text-slate-700 border-slate-200 rounded-xl hover:border-blue-500 hover:text-blue-600 hover:bg-blue-50 transition-all"
+            className="w-full h-10 flex items-center justify-center gap-2 font-medium text-slate-700 border-slate-200 rounded-xl hover:border-blue-500 hover:text-blue-600 hover:bg-blue-50 transition-all text-sm"
           >
             Sign up with Google
           </Button>
 
-          <div className="mt-8 text-center">
-            <Text className="text-slate-500">
+          <div className="mt-4 text-center">
+            <Text className="text-slate-500 text-sm">
               {t('auth.register.haveAccount')}{' '}
               <Link
                 to="/login"

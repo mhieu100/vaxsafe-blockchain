@@ -26,6 +26,7 @@ import LoginPage from '@/pages/auth/login';
 import OAuth2Callback from '@/pages/auth/OAuth2Callback';
 import ResetPasswordPage from '@/pages/auth/ResetPasswordPage';
 import RegisterPage from '@/pages/auth/register';
+import AboutPage from '@/pages/client/about';
 import BlockchainPage from '@/pages/client/BlockchainPage';
 import BookingPage from '@/pages/client/booking';
 import CancelPage from '@/pages/client/CancelPage';
@@ -63,6 +64,7 @@ const router = createBrowserRouter([
       { path: 'cart', element: <CartPage /> },
       { path: 'news', element: <ClientNewsPage /> },
       { path: 'news/:slug', element: <ClientNewsDetailPage /> },
+      { path: 'about', element: <AboutPage /> },
 
       {
         path: 'profile',

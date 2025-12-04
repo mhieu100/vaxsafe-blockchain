@@ -78,6 +78,11 @@ const Navbar = () => {
       label: t('header.vaccines'),
     },
     {
+      key: '/news',
+      icon: <InfoCircleOutlined />,
+      label: 'News',
+    },
+    {
       key: '/about',
       icon: <InfoCircleOutlined />,
       label: 'About Us',
