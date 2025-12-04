@@ -30,7 +30,7 @@ public class Center extends BaseEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "center_id")
     Long centerId;
-    
+
     String slug;
     String name;
     String image;
@@ -38,4 +38,6 @@ public class Center extends BaseEntity {
     String phoneNumber;
     int capacity;
     String workingHours;
+    Double latitude;
+    Double longitude;
 }

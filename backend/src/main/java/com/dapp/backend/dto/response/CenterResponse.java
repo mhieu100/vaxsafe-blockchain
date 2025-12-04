@@ -23,6 +23,8 @@ public class CenterResponse {
     String phoneNumber;
     Integer capacity;
     String workingHours;
+    Double latitude;
+    Double longitude;
     LocalDateTime createdAt;
     LocalDateTime updatedAt;
 }

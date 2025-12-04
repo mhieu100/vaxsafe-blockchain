@@ -116,7 +116,7 @@ const Navbar = () => {
 
   return (
     <>
-      <AntHeader className="sticky top-0 z-50 glass-panel-light px-4 md:px-6 transition-all duration-300">
+      <AntHeader className="sticky top-0 z-[2000] glass-panel-light px-4 md:px-6 transition-all duration-300">
         <div className="mx-auto flex h-full max-w-[1220px] items-center justify-between">
           {/* Left: Logo */}
           <div className="flex items-center flex-1">

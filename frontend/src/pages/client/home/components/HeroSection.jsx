@@ -2,6 +2,7 @@ import {
   ArrowRightOutlined,
   CheckCircleOutlined,
   QrcodeOutlined,
+  SafetyCertificateOutlined,
   SafetyOutlined,
 } from '@ant-design/icons';
 import { Button } from 'antd';
@@ -162,10 +163,10 @@ const HeroSection = () => {
 
               {/* Floating Badge Behind */}
               <div
-                className="absolute -right-8 top-1/2 -translate-y-1/2 glass-panel p-4 rounded-2xl floating-element card-3d-content"
+                className="absolute -right-10 top-1/2 -translate-y-1/2 glass-panel p-4 rounded-2xl floating-element card-3d-content"
                 style={{ animationDelay: '1s' }}
               >
-                <SafetyOutlined className="text-3xl text-emerald-400" />
+                <SafetyCertificateOutlined className="text-3xl text-emerald-400" />
               </div>
             </div>
           </div>

@@ -18,21 +18,24 @@ import lombok.experimental.FieldDefaults;
 public class CenterRequest {
     // Slug will be auto-generated from name, but can be provided if needed
     String slug;
-    
+
     @NotBlank(message = "Center name is required")
     String name;
-    
+
     String image;
-    
+
     @NotBlank(message = "Address is required")
     String address;
-    
+
     String phoneNumber;
-    
+
     @NotNull(message = "Capacity is required")
     @Positive(message = "Capacity must be positive")
     Integer capacity;
-    
+
     @NotBlank(message = "Working hours is required")
     String workingHours;
+
+    Double latitude;
+    Double longitude;
 }

@@ -33,6 +33,7 @@ import BookingPage from '@/pages/client/booking';
 import CancelPage from '@/pages/client/CancelPage';
 import CheckoutPage from '@/pages/client/CheckoutPage';
 import CartPage from '@/pages/client/cart';
+import ContactPage from '@/pages/client/contact';
 import HomePage from '@/pages/client/home';
 import ClientNewsPage from '@/pages/client/news';
 import ClientNewsDetailPage from '@/pages/client/news/detail';
@@ -66,6 +67,7 @@ const router = createBrowserRouter([
       { path: 'news', element: <ClientNewsPage /> },
       { path: 'news/:slug', element: <ClientNewsDetailPage /> },
       { path: 'about', element: <AboutPage /> },
+      { path: 'contact', element: <ContactPage /> },
 
       {
         path: 'profile',

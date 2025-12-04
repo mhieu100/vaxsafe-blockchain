@@ -10,7 +10,8 @@ public class CenterMapper {
      * Convert Center entity to CenterResponse DTO
      */
     public static CenterResponse toResponse(Center center) {
-        if (center == null) return null;
+        if (center == null)
+            return null;
         return CenterResponse.builder()
                 .centerId(center.getCenterId())
                 .slug(center.getSlug())
@@ -20,6 +21,8 @@ public class CenterMapper {
                 .phoneNumber(center.getPhoneNumber())
                 .capacity(center.getCapacity())
                 .workingHours(center.getWorkingHours())
+                .latitude(center.getLatitude())
+                .longitude(center.getLongitude())
                 .createdAt(center.getCreatedAt())
                 .updatedAt(center.getUpdatedAt())
                 .build();
@@ -29,7 +32,8 @@ public class CenterMapper {
      * Convert CenterRequest to Center entity for creation
      */
     public static Center toEntity(CenterRequest request) {
-        if (request == null) return null;
+        if (request == null)
+            return null;
         return Center.builder()
                 .slug(request.getSlug())
                 .name(request.getName())
@@ -38,6 +42,8 @@ public class CenterMapper {
                 .phoneNumber(request.getPhoneNumber())
                 .capacity(request.getCapacity())
                 .workingHours(request.getWorkingHours())
+                .latitude(request.getLatitude())
+                .longitude(request.getLongitude())
                 .build();
     }
 
@@ -45,7 +51,8 @@ public class CenterMapper {
      * Update existing Center entity with data from CenterRequest
      */
     public static void updateEntity(Center center, CenterRequest request) {
-        if (center == null || request == null) return;
+        if (center == null || request == null)
+            return;
 
         // Only set slug if it's provided (not null or empty)
         if (request.getSlug() != null && !request.getSlug().trim().isEmpty()) {
@@ -57,5 +64,7 @@ public class CenterMapper {
         center.setPhoneNumber(request.getPhoneNumber());
         center.setCapacity(request.getCapacity());
         center.setWorkingHours(request.getWorkingHours());
+        center.setLatitude(request.getLatitude());
+        center.setLongitude(request.getLongitude());
     }
 }
