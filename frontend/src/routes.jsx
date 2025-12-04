@@ -9,6 +9,7 @@ import ProtectedUserRoute from '@/components/common/guards/protected-user-route'
 import PublicRoute from '@/components/common/guards/public-route';
 // Staff pages
 import LayoutStaff from '@/components/staff/layout.staff';
+import AiKnowledgePage from '@/pages/admin/ai-knowledge/AiKnowledgePage';
 import CashierPage from '@/pages/admin/cashier';
 import CenterPage from '@/pages/admin/center';
 import DashboardPage from '@/pages/admin/dashboard';
@@ -166,6 +167,10 @@ const router = createBrowserRouter([
       {
         path: 'roles',
         element: <RolePage />,
+      },
+      {
+        path: 'ai-knowledge',
+        element: <AiKnowledgePage />,
       },
       {
         path: 'profile',

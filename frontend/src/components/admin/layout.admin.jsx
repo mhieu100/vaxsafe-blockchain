@@ -8,6 +8,7 @@ import {
   MenuFoldOutlined,
   MenuUnfoldOutlined,
   NotificationOutlined,
+  RobotOutlined,
   SafetyCertificateFilled,
   SafetyOutlined,
   SearchOutlined,
@@ -128,6 +129,11 @@ const LayoutAdmin = () => {
       key: '/admin/roles',
       icon: <KeyOutlined />,
       label: t('admin:roles.title'),
+    },
+    {
+      key: '/admin/ai-knowledge',
+      icon: <RobotOutlined />,
+      label: 'AI Knowledge',
     },
   ];
 
