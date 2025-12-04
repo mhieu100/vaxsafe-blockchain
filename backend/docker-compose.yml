@@ -15,6 +15,10 @@ services:
       - SPRING_SECURITY_OAUTH2_CLIENT_REGISTRATION_GOOGLE_CLIENT_SECRET=${GOOGLE_CLIENT_SECRET}
       - SPRING_SECURITY_OAUTH2_CLIENT_REGISTRATION_GOOGLE_SCOPE=profile,email
       - SPRING_SECURITY_OAUTH2_CLIENT_REGISTRATION_GOOGLE_REDIRECT_URI=https://backend.mhieu100.space/login/oauth2/code/{registrationId}
+      - SPRING_AI_VECTORSTORE_QDRANT_HOST=${QDRANT_HOST}
+      - SPRING_AI_VECTORSTORE_QDRANT_PORT=${QDRANT_PORT}
+      - SPRING_AI_VECTORSTORE_QDRANT_API_KEY=${QDRANT_API_KEY}
+      - SPRING_AI_VECTORSTORE_QDRANT_USE_TLS=true
     env_file:
       - .env
     depends_on:
@@ -24,7 +28,7 @@ services:
     restart: always
 
   db:
-    image: pgvector/pgvector:pg15
+    image: postgres:15
     container_name: vaxsafe-db
     environment:
       - POSTGRES_DB=dapp
