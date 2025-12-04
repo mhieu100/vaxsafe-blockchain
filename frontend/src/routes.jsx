@@ -15,6 +15,7 @@ import CenterPage from '@/pages/admin/center';
 import DashboardPage from '@/pages/admin/dashboard';
 import DoctorPage from '@/pages/admin/doctor';
 import NewsPage from '@/pages/admin/news';
+import MonitorPage from '@/pages/admin/monitor';
 import PatientPage from '@/pages/admin/patient';
 import PermissionPage from '@/pages/admin/permission';
 import AdminProfilePage from '@/pages/admin/profile';
@@ -132,6 +133,10 @@ const router = createBrowserRouter([
       {
         index: true,
         element: <DashboardPage />,
+      },
+      {
+        path: 'monitor',
+        element: <MonitorPage />,
       },
       {
         path: 'news',

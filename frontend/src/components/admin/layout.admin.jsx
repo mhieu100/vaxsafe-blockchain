@@ -135,6 +135,11 @@ const LayoutAdmin = () => {
       icon: <RobotOutlined />,
       label: 'AI Knowledge',
     },
+    {
+      key: '/admin/monitor',
+      icon: <SafetyCertificateFilled />,
+      label: 'Blockchain Monitor',
+    },
   ];
 
   const getRole = (role) => {
@@ -202,9 +207,8 @@ const LayoutAdmin = () => {
           <div className="p-4 border-t border-slate-800/50 flex-shrink-0">
             <Dropdown menu={{ items: userMenuItems }} placement="topRight" trigger={['click']}>
               <div
-                className={`flex items-center gap-3 cursor-pointer p-2 rounded-xl hover:bg-slate-800 transition-all duration-200 ${
-                  collapsed ? 'justify-center' : ''
-                }`}
+                className={`flex items-center gap-3 cursor-pointer p-2 rounded-xl hover:bg-slate-800 transition-all duration-200 ${collapsed ? 'justify-center' : ''
+                  }`}
               >
                 <Badge dot={user?.isVerified} offset={[-4, 4]} color="green">
                   <Avatar

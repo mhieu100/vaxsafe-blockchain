@@ -101,6 +101,58 @@ class SocketService {
   }
 
   /**
+   * Request blockchain statistics
+   */
+  getStats() {
+    if (!this.socket) return;
+    this.socket.emit('getStats');
+  }
+
+  /**
+   * Listen for contract transactions
+   * @param {Function} callback - Callback function to handle transaction data
+   */
+  onContractTransaction(callback) {
+    if (!this.socket) return;
+    this.socket.on('contractTransaction', callback);
+  }
+
+  /**
+   * Stop listening for contract transactions
+   * @param {Function} [callback] - Optional specific callback to remove
+   */
+  offContractTransaction(callback) {
+    if (!this.socket) return;
+    if (callback) {
+      this.socket.off('contractTransaction', callback);
+    } else {
+      this.socket.off('contractTransaction');
+    }
+  }
+
+  /**
+   * Listen for contract events
+   * @param {Function} callback - Callback function to handle event data
+   */
+  onContractEvent(callback) {
+    if (!this.socket) return;
+    this.socket.on('contractEvent', callback);
+  }
+
+  /**
+   * Stop listening for contract events
+   * @param {Function} [callback] - Optional specific callback to remove
+   */
+  offContractEvent(callback) {
+    if (!this.socket) return;
+    if (callback) {
+      this.socket.off('contractEvent', callback);
+    } else {
+      this.socket.off('contractEvent');
+    }
+  }
+
+  /**
    * Disconnect from Socket.io server
    */
   disconnect() {
