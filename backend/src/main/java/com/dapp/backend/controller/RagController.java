@@ -1,5 +1,6 @@
 package com.dapp.backend.controller;
 
+import com.dapp.backend.dto.ConsultationRequest;
 import com.dapp.backend.service.RagService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -36,5 +37,17 @@ public class RagController {
     public ResponseEntity<String> chat(@RequestParam String query) {
         String response = ragService.chat(query);
         return ResponseEntity.ok(response);
+    }
+
+    @PostMapping("/consult")
+    public ResponseEntity<String> consult(@RequestBody ConsultationRequest request) {
+        String response = ragService.consult(request);
+        return ResponseEntity.ok(response);
+    }
+
+    @PostMapping("/sync")
+    public ResponseEntity<String> sync() {
+        int count = ragService.syncVaccinesFromDatabase();
+        return ResponseEntity.ok("Synced " + count + " vaccines from database to vector store.");
     }
 }

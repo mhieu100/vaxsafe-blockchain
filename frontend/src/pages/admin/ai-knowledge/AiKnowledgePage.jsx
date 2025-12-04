@@ -53,6 +53,21 @@ const AiKnowledgePage = () => {
     }
   };
 
+  const [loadingSync, setLoadingSync] = useState(false);
+
+  const handleSync = async () => {
+    setLoadingSync(true);
+    try {
+      const response = await ragService.sync();
+      message.success(response || 'Successfully synced vaccines from database.');
+    } catch (error) {
+      console.error(error);
+      message.error('Failed to sync vaccines.');
+    } finally {
+      setLoadingSync(false);
+    }
+  };
+
   return (
     <div className="p-6">
       <div className="mb-6">
@@ -127,6 +142,30 @@ const AiKnowledgePage = () => {
               locale={{ emptyText: 'No relevant documents found.' }}
               className="max-h-[400px] overflow-y-auto"
             />
+          </div>
+        </Card>
+
+        {/* Database Sync Section */}
+        <Card
+          title="Database Synchronization"
+          bordered={false}
+          className="shadow-sm md:col-span-2 lg:col-span-1"
+        >
+          <div className="mb-4">
+            <Text type="secondary" className="block mb-4">
+              Automatically sync vaccine data from the main database to the AI Knowledge Base. This
+              ensures the chatbot has the latest vaccine information.
+            </Text>
+            <Button
+              type="primary"
+              icon={<CloudUploadOutlined />}
+              onClick={handleSync}
+              loading={loadingSync}
+              block
+              className="bg-green-600 hover:bg-green-500"
+            >
+              Sync Vaccines from DB
+            </Button>
           </div>
         </Card>
       </div>

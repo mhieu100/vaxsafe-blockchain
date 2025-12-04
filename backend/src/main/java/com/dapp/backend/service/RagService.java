@@ -1,5 +1,8 @@
 package com.dapp.backend.service;
 
+import com.dapp.backend.dto.ConsultationRequest;
+import com.dapp.backend.model.Vaccine;
+import com.dapp.backend.repository.VaccineRepository;
 import org.springframework.ai.chat.model.ChatModel;
 import org.springframework.ai.chat.prompt.Prompt;
 import org.springframework.ai.chat.prompt.SystemPromptTemplate;
@@ -11,6 +14,7 @@ import org.springframework.ai.transformer.splitter.TokenTextSplitter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -20,11 +24,13 @@ public class RagService {
 
     private final VectorStore vectorStore;
     private final ChatModel chatModel;
+    private final VaccineRepository vaccineRepository;
 
     @Autowired
-    public RagService(VectorStore vectorStore, ChatModel chatModel) {
+    public RagService(VectorStore vectorStore, ChatModel chatModel, VaccineRepository vaccineRepository) {
         this.vectorStore = vectorStore;
         this.chatModel = chatModel;
+        this.vaccineRepository = vaccineRepository;
     }
 
     public void addDocuments(List<String> contents) {
@@ -40,32 +46,104 @@ public class RagService {
         vectorStore.add(splitDocuments);
     }
 
+    public int syncVaccinesFromDatabase() {
+        List<Vaccine> vaccines = vaccineRepository.findAll();
+        List<String> documents = new ArrayList<>();
+
+        for (Vaccine v : vaccines) {
+            String content = String.format("""
+                    THÔNG TIN VACCINE:
+                    - Tên: %s
+                    - Nước sản xuất: %s
+                    - Nhà sản xuất: %s
+                    - Giá tham khảo: %d VNĐ
+                    - Mô tả: %s
+                    - Đối tượng tiêm/Lịch tiêm: %s
+                    - Chống chỉ định: %s
+                    - Bảo quản: %s
+                    - Số mũi cần tiêm: %d
+                    - Khoảng cách mũi tiếp theo: %d ngày
+                    """,
+                    v.getName(),
+                    v.getCountry(),
+                    v.getManufacturer(),
+                    v.getPrice(),
+                    v.getDescription(),
+                    v.getInjection(), // Assuming 'injection' field contains schedule/target info
+                    v.getContraindications(),
+                    v.getPreserve(),
+                    v.getDosesRequired(),
+                    v.getDaysForNextDose() != null ? v.getDaysForNextDose() : 0);
+            documents.add(content);
+        }
+
+        if (!documents.isEmpty()) {
+            addDocuments(documents);
+        }
+        return documents.size();
+    }
+
     public List<Document> similaritySearch(String query) {
         // Increase top-k to retrieve more relevant context
         return vectorStore.similaritySearch(SearchRequest.query(query).withTopK(5));
     }
 
     public String chat(String query) {
+        return consult(new ConsultationRequest() {
+            {
+                setQuery(query);
+            }
+        });
+    }
+
+    public String consult(ConsultationRequest request) {
         try {
+            String query = request.getQuery();
+            String age = request.getAge() != null ? request.getAge() : "Không rõ";
+            String history = request.getVaccinationHistory() != null
+                    ? String.join(", ", request.getVaccinationHistory())
+                    : "Chưa có thông tin";
+            String condition = request.getHealthCondition() != null ? request.getHealthCondition() : "Bình thường";
+
             // 1. Retrieve similar documents with higher top-k
-            List<Document> similarDocuments = vectorStore.similaritySearch(SearchRequest.query(query).withTopK(5));
+            // We combine query with age/keywords to find relevant schedule info
+            String searchContext = query + " lịch tiêm chủng " + age;
+            List<Document> similarDocuments = vectorStore
+                    .similaritySearch(SearchRequest.query(searchContext).withTopK(6));
 
             String information = similarDocuments.stream()
                     .map(Document::getContent)
                     .collect(Collectors.joining("\n\n"));
 
-            // 2. Construct System Prompt (Vietnamese)
+            // 2. Construct System Prompt (Expert Consultant)
             String systemPromptText = """
-                    Bạn là trợ lý y tế ảo hữu ích của VaxSafe.
-                    Sử dụng thông tin sau đây để trả lời câu hỏi của người dùng.
-                    Nếu thông tin không đủ để trả lời, hãy nói rằng bạn không biết và khuyên người dùng nên tham khảo ý kiến bác sĩ.
-                    Trả lời bằng tiếng Việt, ngắn gọn và chính xác.
+                    Bạn là Bác sĩ AI chuyên gia về tiêm chủng của hệ thống VaxSafe.
+                    Nhiệm vụ của bạn là tư vấn lịch tiêm và giải đáp thắc mắc dựa trên hồ sơ sức khỏe cụ thể của trẻ.
 
-                    Thông tin:
+                    HỒ SƠ NGƯỜNG DÙNG:
+                    - Tuổi: {age}
+                    - Lịch sử tiêm chủng: {history}
+                    - Tình trạng sức khỏe: {condition}
+
+                    KIẾN THỨC Y KHOA (Từ cơ sở dữ liệu):
                     {information}
+
+                    CHỈ DẪN TƯ VẤN:
+                    1. Phân tích tuổi và lịch sử tiêm để xác định các mũi còn thiếu theo lịch chuẩn.
+                    2. Kiểm tra các chống chỉ định nếu người dùng có vấn đề sức khỏe.
+                    3. Trả lời câu hỏi của người dùng dựa trên các thông tin trên.
+                    4. Nếu thông tin trong Kiến thức y khoa không đủ, hãy nói rõ và khuyên đi khám bác sĩ.
+                    5. Giọng văn: Chuyên nghiệp, ân cần, dễ hiểu.
+
+                    Hãy trả lời câu hỏi sau của người dùng:
                     """;
+
             SystemPromptTemplate systemPromptTemplate = new SystemPromptTemplate(systemPromptText);
-            var systemMessage = systemPromptTemplate.createMessage(Map.of("information", information));
+            var systemMessage = systemPromptTemplate.createMessage(Map.of(
+                    "age", age,
+                    "history", history,
+                    "condition", condition,
+                    "information", information));
 
             // 3. Call Chat Model
             var userMessage = new UserMessage(query);
@@ -77,7 +155,6 @@ public class RagService {
             }
             return "Xin lỗi, tôi không thể tạo câu trả lời. Vui lòng thử lại.";
         } catch (NullPointerException e) {
-            // Handle case where usage statistics are not available (e.g., Gemini API)
             return "Xin lỗi, có lỗi xảy ra khi xử lý yêu cầu. Có thể do vấn đề tương thích API. Vui lòng thử lại.";
         } catch (Exception e) {
             return "Xin lỗi, đã xảy ra lỗi: " + e.getMessage();
