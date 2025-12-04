@@ -5,7 +5,6 @@ import com.dapp.backend.enums.ReminderStatus;
 import com.dapp.backend.enums.ReminderType;
 import com.dapp.backend.exception.AppException;
 import com.dapp.backend.model.*;
-import com.dapp.backend.repository.AppointmentRepository;
 import com.dapp.backend.repository.VaccinationReminderRepository;
 import com.dapp.backend.repository.VaccineRepository;
 import lombok.RequiredArgsConstructor;
@@ -28,7 +27,6 @@ import java.util.Set;
 public class NextDoseReminderService {
 
     private final VaccinationReminderRepository reminderRepository;
-    private final AppointmentRepository appointmentRepository;
     private final VaccineRepository vaccineRepository;
     private final EmailService emailService;
     private final NotificationLogService notificationLogService;

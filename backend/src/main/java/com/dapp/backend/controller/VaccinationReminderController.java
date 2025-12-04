@@ -1,7 +1,6 @@
 package com.dapp.backend.controller;
 
 import com.dapp.backend.annotation.ApiMessage;
-import com.dapp.backend.exception.AppException;
 import com.dapp.backend.model.VaccinationReminder;
 import com.dapp.backend.service.VaccinationReminderService;
 import lombok.RequiredArgsConstructor;

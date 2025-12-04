@@ -1,7 +1,6 @@
 package com.dapp.backend.service;
 
 import com.dapp.backend.dto.response.VaccineRecordResponse;
-import com.dapp.backend.enums.IdentityType;
 import com.dapp.backend.enums.VaccinationSite;
 import com.dapp.backend.exception.AppException;
 import com.dapp.backend.model.*;

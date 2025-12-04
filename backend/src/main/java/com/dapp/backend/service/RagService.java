@@ -11,7 +11,6 @@ import org.springframework.ai.document.Document;
 import org.springframework.ai.vectorstore.SearchRequest;
 import org.springframework.ai.vectorstore.VectorStore;
 import org.springframework.ai.transformer.splitter.TokenTextSplitter;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -26,7 +25,6 @@ public class RagService {
     private final ChatModel chatModel;
     private final VaccineRepository vaccineRepository;
 
-    @Autowired
     public RagService(VectorStore vectorStore, ChatModel chatModel, VaccineRepository vaccineRepository) {
         this.vectorStore = vectorStore;
         this.chatModel = chatModel;

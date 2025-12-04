@@ -15,7 +15,6 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import com.dapp.backend.exception.AppException;
-import com.dapp.backend.model.Patient;
 import com.dapp.backend.model.User;
 import com.dapp.backend.dto.response.Pagination;
 import com.dapp.backend.repository.UserRepository;

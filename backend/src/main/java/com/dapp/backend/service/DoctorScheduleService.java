@@ -349,15 +349,6 @@ public class DoctorScheduleService {
         return 0;
     }
 
-    /**
-     * Helper method to generate slots for a time range
-     * Default slot duration: 30 minutes
-     */
-    private int generateSlotsForTimeRange(Doctor doctor, LocalDate date,
-            LocalTime startTime, LocalTime endTime) {
-        return 0; // Deprecated
-    }
-
     // Mapper methods
     private DoctorResponse toDoctorResponse(Doctor doctor) {
         return DoctorResponse.builder()

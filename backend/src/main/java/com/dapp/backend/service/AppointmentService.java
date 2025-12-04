@@ -25,20 +25,17 @@ import com.dapp.backend.repository.BookingRepository;
 import com.dapp.backend.repository.DoctorAvailableSlotRepository;
 import com.dapp.backend.repository.DoctorRepository;
 import com.dapp.backend.repository.PaymentRepository;
-import com.dapp.backend.repository.UserRepository;
 import com.dapp.backend.service.spec.AppointmentSpecifications;
 import com.dapp.backend.util.TokenExtractor;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.*;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.client.RestTemplate;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -51,19 +48,16 @@ import java.util.List;
 public class AppointmentService {
 
     private final AuthService authService;
-    private final UserRepository userRepository;
     private final BookingRepository bookingRepository;
     private final AppointmentRepository appointmentRepository;
     private final DoctorRepository doctorRepository;
     private final DoctorAvailableSlotRepository slotRepository;
-    private final RestTemplate restTemplate;
     private final TokenExtractor tokenExtractor;
     private final PaymentRepository paymentRepository;
     private final VaccineRecordService vaccineRecordService;
     private final VaccinationReminderService reminderService;
     private final NextDoseReminderService nextDoseReminderService;
     private final EmailService emailService;
-    // Removed: blockchainUrl - now using BlockchainService
 
     public Pagination getAllAppointmentOfCenter(Specification<Appointment> specification, Pageable pageable) throws AppException {
         User user = authService.getCurrentUserLogin();

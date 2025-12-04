@@ -5,7 +5,6 @@ import com.dapp.backend.enums.ReminderStatus;
 import com.dapp.backend.enums.ReminderType;
 import com.dapp.backend.exception.AppException;
 import com.dapp.backend.model.*;
-import com.dapp.backend.repository.AppointmentRepository;
 import com.dapp.backend.repository.VaccinationReminderRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -24,9 +23,7 @@ import java.util.stream.Collectors;
 public class VaccinationReminderService {
 
     private final VaccinationReminderRepository reminderRepository;
-    private final AppointmentRepository appointmentRepository;
     private final EmailService emailService;
-    private final NotificationLogService notificationLogService;
 
     @Value("${reminder.days.before:1,3,7}")
     private String reminderDaysBeforeConfig;

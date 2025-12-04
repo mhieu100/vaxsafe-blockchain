@@ -89,6 +89,8 @@ public class OrderService {
                 order.setStatus(OrderStatus.PROCESSING);
                 orderRepository.save(order);
                 break;
+            default:
+                break;
         }
 
         return response;

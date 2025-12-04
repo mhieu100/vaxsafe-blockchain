@@ -4,7 +4,6 @@ import com.dapp.backend.dto.request.UpdateProfileRequest;
 import com.dapp.backend.dto.response.ProfileResponse;
 import com.dapp.backend.exception.AppException;
 import com.dapp.backend.model.*;
-import com.dapp.backend.repository.CashierRepository;
 import com.dapp.backend.repository.PatientRepository;
 import com.dapp.backend.repository.UserRepository;
 import com.dapp.backend.security.JwtUtil;
@@ -20,7 +19,6 @@ public class ProfileService {
 
     private final UserRepository userRepository;
     private final PatientRepository patientRepository;
-    private final CashierRepository cashierRepository;
 
     /**
      * Get current logged in user
