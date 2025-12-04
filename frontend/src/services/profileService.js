@@ -10,7 +10,7 @@ const profileService = {
    * @returns {Promise} Profile data
    */
   getProfile: async (role) => {
-    const response = await apiClient.get(`/profile/${role.toLowerCase()}`);
+    const response = await apiClient.get(`/api/profile/${role.toLowerCase()}`);
     return response.data;
   },
 
@@ -21,7 +21,7 @@ const profileService = {
    * @returns {Promise} Updated profile data
    */
   updateProfile: async (role, data) => {
-    const response = await apiClient.put(`/profile/${role.toLowerCase()}`, data);
+    const response = await apiClient.put(`/api/profile/${role.toLowerCase()}`, data);
     return response.data;
   },
 
@@ -31,7 +31,7 @@ const profileService = {
    * Get patient profile
    */
   getPatientProfile: async () => {
-    const response = await apiClient.get('/profile/patient');
+    const response = await apiClient.get('/api/profile/patient');
     return response.data;
   },
 
@@ -40,7 +40,7 @@ const profileService = {
    * @param {Object} data - Patient profile data
    */
   updatePatientProfile: async (data) => {
-    const response = await apiClient.put('/profile/patient', data);
+    const response = await apiClient.put('/api/profile/patient', data);
     return response.data;
   },
 
@@ -48,7 +48,7 @@ const profileService = {
    * Get doctor profile
    */
   getDoctorProfile: async () => {
-    const response = await apiClient.get('/profile/doctor');
+    const response = await apiClient.get('/api/profile/doctor');
     return response.data;
   },
 
@@ -57,7 +57,7 @@ const profileService = {
    * @param {Object} data - Doctor profile data
    */
   updateDoctorProfile: async (data) => {
-    const response = await apiClient.put('/profile/doctor', data);
+    const response = await apiClient.put('/api/profile/doctor', data);
     return response.data;
   },
 
@@ -65,7 +65,7 @@ const profileService = {
    * Get cashier profile
    */
   getCashierProfile: async () => {
-    const response = await apiClient.get('/profile/cashier');
+    const response = await apiClient.get('/api/profile/cashier');
     return response.data;
   },
 
@@ -74,7 +74,7 @@ const profileService = {
    * @param {Object} data - Cashier profile data
    */
   updateCashierProfile: async (data) => {
-    const response = await apiClient.put('/profile/cashier', data);
+    const response = await apiClient.put('/api/profile/cashier', data);
     return response.data;
   },
 
@@ -82,7 +82,7 @@ const profileService = {
    * Get admin profile
    */
   getAdminProfile: async () => {
-    const response = await apiClient.get('/profile/admin');
+    const response = await apiClient.get('/api/profile/admin');
     return response.data;
   },
 
@@ -91,7 +91,7 @@ const profileService = {
    * @param {Object} data - Admin profile data
    */
   updateAdminProfile: async (data) => {
-    const response = await apiClient.put('/profile/admin', data);
+    const response = await apiClient.put('/api/profile/admin', data);
     return response.data;
   },
 };

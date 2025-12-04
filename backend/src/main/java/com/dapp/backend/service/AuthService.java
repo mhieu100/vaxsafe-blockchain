@@ -86,7 +86,7 @@ public class AuthService {
         User user = userRepository.findByEmail(request.getUsername())
                 .orElseThrow(() -> new AppException("User not found"));
 
-        String accessToken = jwtUtil.createAccessToken(request.getUsername());
+        String accessToken = jwtUtil.createAccessToken(request.getUsername(), user.getRole().getName());
 
         return LoginResponse.builder()
                 .accessToken(accessToken)
@@ -100,7 +100,8 @@ public class AuthService {
         }
 
         User user = User.builder()
-                .avatar(request.getAvatar() != null ? request.getAvatar() : "https://res-console.cloudinary.com/dcwzhi4tp/thumbnails/v1/image/upload/v1763975729/dmgxY3h1aWtkYmh5aXFqeGJnaG0=/drilldown")
+                .avatar(request.getAvatar() != null ? request.getAvatar()
+                        : "https://res-console.cloudinary.com/dcwzhi4tp/thumbnails/v1/image/upload/v1763975729/dmgxY3h1aWtkYmh5aXFqeGJnaG0=/drilldown")
                 .fullName(request.getFullName())
                 .email(request.getEmail())
                 .password(passwordEncoder.encode(request.getPassword()))
@@ -193,7 +194,7 @@ public class AuthService {
         if (user == null) {
             throw new AppException("Refresh token invalid!");
         }
-        String newAccessToken = jwtUtil.createAccessToken(user.getEmail());
+        String newAccessToken = jwtUtil.createAccessToken(user.getEmail(), user.getRole().getName());
         return LoginResponse.builder().accessToken(newAccessToken).user(toUserLogin(user)).build();
     }
 
@@ -371,8 +372,7 @@ public class AuthService {
                         .role(role)
                         .isActive(false) // Inactive until profile completed
                         .isDeleted(false)
-                        .password(passwordEncoder.encode("GOOGLE_AUTH_" + java.util.UUID.randomUUID())) // Dummy
-                                                                                                        // password
+                        .password(passwordEncoder.encode("GOOGLE_AUTH_" + java.util.UUID.randomUUID()))
                         .build();
 
                 user = userRepository.save(user);
@@ -383,12 +383,11 @@ public class AuthService {
                     log.info("Default notification settings created for Google user: {}", user.getEmail());
                 } catch (Exception e) {
                     log.error("Error creating notification settings for Google user: {}", user.getEmail(), e);
-                    // Continue - user is still created successfully
                 }
             }
 
             // 3. Generate Tokens
-            String accessToken = jwtUtil.createAccessToken(email);
+            String accessToken = jwtUtil.createAccessToken(email, user.getRole().getName());
 
             return LoginResponse.builder()
                     .accessToken(accessToken)

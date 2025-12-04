@@ -1,5 +1,6 @@
 import { Button, Col, Form, Input, message, Row, Select, Typography } from 'antd';
 import { useEffect, useState } from 'react';
+import profileService from '@/services/profileService';
 import { useAccountStore } from '@/stores/useAccountStore';
 
 const { Text, Paragraph } = Typography;
@@ -35,10 +36,20 @@ const TabEditUser = ({ editMode, setEditMode }) => {
     try {
       setLoading(true);
 
-      // TODO: Call API to update user profile
-      // const response = await updateAccount(payload);
+      // Call API to update user profile based on role
+      // Assuming 'patient' role for now as this component seems to be used for patients
+      // Ideally, we should get the role from the user object or props
+      const role = user.role || 'patient';
 
-      // For now, just update local store
+      // Filter out empty values to avoid sending nulls where not appropriate
+      // But for update, we usually want to send all fields from the form
+
+      // Note: birthday and identityNumber are disabled in form but might be in values if not handled correctly
+      // The backend ignores them anyway, but good to be clean
+
+      await profileService.updateProfile(role, values);
+
+      // Update local store
       if (updateUserInfo) {
         updateUserInfo(values);
       }
@@ -46,7 +57,8 @@ const TabEditUser = ({ editMode, setEditMode }) => {
       message.success('Profile updated successfully!');
       setEditMode(false);
     } catch (error) {
-      message.error(error?.message || 'Failed to update profile');
+      console.error('Update profile error:', error);
+      message.error(error?.response?.data?.message || error?.message || 'Failed to update profile');
     } finally {
       setLoading(false);
     }
@@ -103,8 +115,16 @@ const TabEditUser = ({ editMode, setEditMode }) => {
               </Form.Item>
             </Col>
             <Col xs={24} sm={12}>
-              <Form.Item label="Date of Birth" name="birthday">
-                <Input placeholder="YYYY-MM-DD" className="rounded-lg" />
+              <Form.Item
+                label="Date of Birth"
+                name="birthday"
+                tooltip="Cannot be changed - used for blockchain identity"
+              >
+                <Input
+                  disabled
+                  placeholder="YYYY-MM-DD"
+                  className="rounded-lg bg-slate-50 text-slate-500"
+                />
               </Form.Item>
             </Col>
           </Row>
@@ -120,8 +140,16 @@ const TabEditUser = ({ editMode, setEditMode }) => {
               </Form.Item>
             </Col>
             <Col xs={24} sm={12}>
-              <Form.Item label="Identity Number" name="identityNumber">
-                <Input placeholder="ID Card / Passport" className="rounded-lg" />
+              <Form.Item
+                label="Identity Number"
+                name="identityNumber"
+                tooltip="Cannot be changed - used for blockchain identity"
+              >
+                <Input
+                  disabled
+                  placeholder="ID Card / Passport"
+                  className="rounded-lg bg-slate-50 text-slate-500"
+                />
               </Form.Item>
             </Col>
           </Row>

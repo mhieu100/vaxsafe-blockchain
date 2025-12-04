@@ -29,7 +29,6 @@ public class JwtUtil {
     private final JwtEncoder jwtEncoder;
     public static final MacAlgorithm JWT_ALGORITHM = MacAlgorithm.HS512;
 
-
     @Value("${jwt.base64-secret}")
     private String jwtKey;
 
@@ -44,7 +43,7 @@ public class JwtUtil {
         return new SecretKeySpec(keyBytes, 0, keyBytes.length, JwtUtil.JWT_ALGORITHM.getName());
     }
 
-    public Jwt checkValidRefreshToken(String token){
+    public Jwt checkValidRefreshToken(String token) {
         NimbusJwtDecoder jwtDecoder = NimbusJwtDecoder.withSecretKey(
                 getSecretKey()).macAlgorithm(JWT_ALGORITHM).build();
         try {
@@ -54,7 +53,7 @@ public class JwtUtil {
         }
     }
 
-    public String createAccessToken(String email) {
+    public String createAccessToken(String email, String role) {
         Instant now = Instant.now();
         Instant validity = now.plus(this.accessTokenExpiration, ChronoUnit.SECONDS);
         // @formatter:off
@@ -62,6 +61,7 @@ public class JwtUtil {
                 .issuedAt(now)
                 .expiresAt(validity)
                 .subject(email)
+                .claim("role", "ROLE_" + role)
                 .build();
         JwsHeader jwsHeader = JwsHeader.with(JWT_ALGORITHM).build();
         return this.jwtEncoder.encode(JwtEncoderParameters.from(jwsHeader, claims)).getTokenValue();

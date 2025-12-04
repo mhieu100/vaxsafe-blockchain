@@ -1,6 +1,5 @@
 package com.dapp.backend.security;
 
-
 import com.dapp.backend.exception.AppException;
 import com.dapp.backend.repository.UserRepository;
 import com.dapp.backend.service.UserService;
@@ -21,7 +20,8 @@ public class UserDetailCustom implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        com.dapp.backend.model.User user = userRepository.findByEmail(username).orElseThrow(() -> new UsernameNotFoundException("User not found"));
+        com.dapp.backend.model.User user = userRepository.findByEmail(username)
+                .orElseThrow(() -> new UsernameNotFoundException("User not found"));
 
         return new User(
                 user.getEmail(),

@@ -8,6 +8,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
+import com.fasterxml.jackson.annotation.JsonFormat;
 
 public class ProfileResponse {
 
@@ -25,6 +26,7 @@ public class ProfileResponse {
         private String email;
         private String phone;
         private Gender gender;
+        @JsonFormat(pattern = "yyyy-MM-dd")
         private LocalDate birthday;
         private String address;
         private String role;
@@ -45,6 +47,7 @@ public class ProfileResponse {
         private String email;
         private String phone;
         private Gender gender;
+        @JsonFormat(pattern = "yyyy-MM-dd")
         private LocalDate birthday;
         private String address;
         private String role;
@@ -76,6 +79,7 @@ public class ProfileResponse {
         private String email;
         private String phone;
         private Gender gender;
+        @JsonFormat(pattern = "yyyy-MM-dd")
         private LocalDate birthday;
         private String address;
         private String role;
@@ -87,7 +91,7 @@ public class ProfileResponse {
         private Integer consultationDuration;
         private Integer maxPatientsPerDay;
         private Boolean isAvailable;
-        
+
         // Center info
         private Long centerId;
         private String centerName;
@@ -109,6 +113,7 @@ public class ProfileResponse {
         private String email;
         private String phone;
         private Gender gender;
+        @JsonFormat(pattern = "yyyy-MM-dd")
         private LocalDate birthday;
         private String address;
         private String role;
@@ -119,7 +124,7 @@ public class ProfileResponse {
         private String shiftStartTime;
         private String shiftEndTime;
         private Boolean isActive;
-        
+
         // Center info
         private Long centerId;
         private String centerName;
@@ -141,6 +146,7 @@ public class ProfileResponse {
         private String email;
         private String phone;
         private Gender gender;
+        @JsonFormat(pattern = "yyyy-MM-dd")
         private LocalDate birthday;
         private String address;
         private String role;

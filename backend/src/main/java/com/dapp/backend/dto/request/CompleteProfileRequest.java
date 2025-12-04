@@ -30,6 +30,7 @@ public class CompleteProfileRequest {
     private String phone;
 
     @ValidBirthday(required = true, maxAge = 150)
+    @com.fasterxml.jackson.annotation.JsonFormat(pattern = "yyyy-MM-dd")
     private LocalDate birthday;
 
     @NotNull(message = "Gender is required")

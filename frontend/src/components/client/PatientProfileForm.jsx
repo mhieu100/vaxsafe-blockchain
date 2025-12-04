@@ -22,6 +22,7 @@ const PatientProfileForm = () => {
   }, [profileData, reset]);
 
   const onSubmit = async (data) => {
+    console.log('Submitting profile update:', data);
     try {
       await updateProfile.mutateAsync(data);
       setIsEditing(false);
@@ -66,7 +67,7 @@ const PatientProfileForm = () => {
         )}
       </div>
 
-      <form onSubmit={handleSubmit(onSubmit)}>
+      <form onSubmit={handleSubmit(onSubmit, (errors) => console.error('Form errors:', errors))}>
         {/* Common User Fields */}
         <div className="space-y-6">
           <div className="border-b pb-4">
@@ -107,9 +108,9 @@ const PatientProfileForm = () => {
                   type="tel"
                   disabled={!isEditing}
                   {...register('phone', {
-                    pattern: {
-                      value: /^[0-9]{9,11}$/,
-                      message: 'Phone must be 9-11 digits',
+                    validate: (value) => {
+                      if (!value) return true;
+                      return /^[0-9]{9,11}$/.test(value) || 'Phone must be 9-11 digits';
                     },
                   })}
                   className={`w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 ${
@@ -141,12 +142,11 @@ const PatientProfileForm = () => {
                 <label className="block text-sm font-medium text-gray-700 mb-2">Birthday</label>
                 <input
                   type="date"
-                  disabled={!isEditing}
+                  disabled
                   {...register('birthday')}
-                  className={`w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 ${
-                    !isEditing ? 'bg-gray-50' : ''
-                  }`}
+                  className="w-full px-3 py-2 border rounded-lg bg-gray-50"
                 />
+                <p className="text-gray-500 text-xs mt-1">Birthday cannot be changed</p>
               </div>
 
               <div>
@@ -174,20 +174,11 @@ const PatientProfileForm = () => {
                 </label>
                 <input
                   type="text"
-                  disabled={!isEditing}
-                  {...register('identityNumber', {
-                    pattern: {
-                      value: /^[0-9]{9,12}$/,
-                      message: 'Identity number must be 9-12 digits',
-                    },
-                  })}
-                  className={`w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 ${
-                    !isEditing ? 'bg-gray-50' : ''
-                  }`}
+                  disabled
+                  {...register('identityNumber')}
+                  className="w-full px-3 py-2 border rounded-lg bg-gray-50"
                 />
-                {errors.identityNumber && (
-                  <p className="text-red-500 text-sm mt-1">{errors.identityNumber.message}</p>
-                )}
+                <p className="text-gray-500 text-xs mt-1">Identity number cannot be changed</p>
               </div>
 
               <div>

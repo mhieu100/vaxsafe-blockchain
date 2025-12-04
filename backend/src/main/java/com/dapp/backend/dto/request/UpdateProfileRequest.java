@@ -10,6 +10,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
+import com.fasterxml.jackson.annotation.JsonFormat;
 
 public class UpdateProfileRequest {
 
@@ -30,6 +31,7 @@ public class UpdateProfileRequest {
         private Gender gender;
 
         @ValidBirthday(required = false, maxAge = 150)
+        @JsonFormat(pattern = "yyyy-MM-dd")
         private LocalDate birthday;
 
         private String address;
@@ -70,6 +72,7 @@ public class UpdateProfileRequest {
         private Gender gender;
 
         @ValidBirthday(required = false, maxAge = 150)
+        @JsonFormat(pattern = "yyyy-MM-dd")
         private LocalDate birthday;
 
         private String address;
@@ -98,6 +101,7 @@ public class UpdateProfileRequest {
         private Gender gender;
 
         @ValidBirthday(required = false, maxAge = 150)
+        @JsonFormat(pattern = "yyyy-MM-dd")
         private LocalDate birthday;
 
         private String address;
@@ -125,6 +129,7 @@ public class UpdateProfileRequest {
         private Gender gender;
 
         @ValidBirthday(required = false, maxAge = 150)
+        @JsonFormat(pattern = "yyyy-MM-dd")
         private LocalDate birthday;
 
         private String address;

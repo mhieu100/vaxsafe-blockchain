@@ -35,7 +35,7 @@ public class ProfileService {
      */
     public ProfileResponse.PatientProfile getPatientProfile() throws AppException {
         User user = getCurrentUser();
-        
+
         if (user.getPatientProfile() == null) {
             throw new AppException("Patient profile not found");
         }
@@ -68,49 +68,64 @@ public class ProfileService {
      * Update patient profile
      */
     @Transactional
-    public ProfileResponse.PatientProfile updatePatientProfile(UpdateProfileRequest.PatientProfileUpdate request) throws AppException {
+    public ProfileResponse.PatientProfile updatePatientProfile(UpdateProfileRequest.PatientProfileUpdate request)
+            throws AppException {
         User user = getCurrentUser();
-        
+
         log.info("Updating patient profile for user: {}", user.getEmail());
         log.debug("Update request data: {}", request);
-        
+
         if (user.getPatientProfile() == null) {
             throw new AppException("Patient profile not found");
         }
 
         Patient patient = user.getPatientProfile();
 
+        // Validate: Birthday and Identity Number cannot be changed (used for blockchain identity)
+        if (request.getBirthday() != null) {
+            log.warn("Attempt to update birthday for user: {} - rejected", user.getEmail());
+            throw new AppException("Birthday cannot be changed as it's used for blockchain identity");
+        }
+        if (request.getIdentityNumber() != null && 
+            !request.getIdentityNumber().equals(patient.getIdentityNumber())) {
+            log.warn("Attempt to update identity number for user: {} - rejected", user.getEmail());
+            throw new AppException("Identity number cannot be changed as it's used for blockchain identity");
+        }
+
         // Update common user fields
         if (request.getFullName() != null && !request.getFullName().isBlank()) {
             user.setFullName(request.getFullName());
         }
-        if (request.getPhone() != null) user.setPhone(request.getPhone());
-        if (request.getGender() != null) user.setGender(request.getGender());
-        if (request.getBirthday() != null) user.setBirthday(request.getBirthday());
-        if (request.getAddress() != null) user.setAddress(request.getAddress());
+        if (request.getPhone() != null)
+            user.setPhone(request.getPhone());
+        if (request.getGender() != null)
+            user.setGender(request.getGender());
+        if (request.getAddress() != null)
+            user.setAddress(request.getAddress());
 
         // Update patient specific fields
-        if (request.getIdentityNumber() != null) {
-            // Check if identity number already exists for another patient
-            if (patientRepository.existsByIdentityNumber(request.getIdentityNumber()) 
-                && !patient.getIdentityNumber().equals(request.getIdentityNumber())) {
-                throw new AppException("Identity number already exists");
-            }
-            patient.setIdentityNumber(request.getIdentityNumber());
-        }
-        
-        if (request.getBloodType() != null) patient.setBloodType(request.getBloodType());
-        if (request.getHeightCm() != null) patient.setHeightCm(request.getHeightCm());
-        if (request.getWeightKg() != null) patient.setWeightKg(request.getWeightKg());
-        if (request.getOccupation() != null) patient.setOccupation(request.getOccupation());
-        if (request.getLifestyleNotes() != null) patient.setLifestyleNotes(request.getLifestyleNotes());
-        if (request.getInsuranceNumber() != null) patient.setInsuranceNumber(request.getInsuranceNumber());
-        if (request.getConsentForAIAnalysis() != null) patient.setConsentForAIAnalysis(request.getConsentForAIAnalysis());
+        // Note: Identity number and Birthday are used for blockchain identity and
+        // cannot be updated
+
+        if (request.getBloodType() != null)
+            patient.setBloodType(request.getBloodType());
+        if (request.getHeightCm() != null)
+            patient.setHeightCm(request.getHeightCm());
+        if (request.getWeightKg() != null)
+            patient.setWeightKg(request.getWeightKg());
+        if (request.getOccupation() != null)
+            patient.setOccupation(request.getOccupation());
+        if (request.getLifestyleNotes() != null)
+            patient.setLifestyleNotes(request.getLifestyleNotes());
+        if (request.getInsuranceNumber() != null)
+            patient.setInsuranceNumber(request.getInsuranceNumber());
+        if (request.getConsentForAIAnalysis() != null)
+            patient.setConsentForAIAnalysis(request.getConsentForAIAnalysis());
 
         // Save patient first to ensure changes persist
         Patient savedPatient = patientRepository.save(patient);
         log.debug("Patient saved: {}", savedPatient.getId());
-        
+
         // Then save user
         User savedUser = userRepository.save(user);
         log.info("User profile updated successfully for: {}", savedUser.getEmail());
@@ -123,7 +138,7 @@ public class ProfileService {
      */
     public ProfileResponse.DoctorProfile getDoctorProfile() throws AppException {
         User user = getCurrentUser();
-        
+
         if (user.getDoctor() == null) {
             throw new AppException("Doctor profile not found");
         }
@@ -157,9 +172,10 @@ public class ProfileService {
      * Update doctor profile
      */
     @Transactional
-    public ProfileResponse.DoctorProfile updateDoctorProfile(UpdateProfileRequest.DoctorProfileUpdate request) throws AppException {
+    public ProfileResponse.DoctorProfile updateDoctorProfile(UpdateProfileRequest.DoctorProfileUpdate request)
+            throws AppException {
         User user = getCurrentUser();
-        
+
         if (user.getDoctor() == null) {
             throw new AppException("Doctor profile not found");
         }
@@ -168,15 +184,21 @@ public class ProfileService {
 
         // Update common user fields
         user.setFullName(request.getFullName());
-        if (request.getPhone() != null) user.setPhone(request.getPhone());
-        if (request.getGender() != null) user.setGender(request.getGender());
-        if (request.getBirthday() != null) user.setBirthday(request.getBirthday());
-        if (request.getAddress() != null) user.setAddress(request.getAddress());
+        if (request.getPhone() != null)
+            user.setPhone(request.getPhone());
+        if (request.getGender() != null)
+            user.setGender(request.getGender());
+        // Birthday cannot be updated for data integrity
+        if (request.getAddress() != null)
+            user.setAddress(request.getAddress());
 
         // Update doctor specific fields (if allowed)
-        if (request.getSpecialization() != null) doctor.setSpecialization(request.getSpecialization());
-        if (request.getConsultationDuration() != null) doctor.setConsultationDuration(request.getConsultationDuration());
-        if (request.getMaxPatientsPerDay() != null) doctor.setMaxPatientsPerDay(request.getMaxPatientsPerDay());
+        if (request.getSpecialization() != null)
+            doctor.setSpecialization(request.getSpecialization());
+        if (request.getConsultationDuration() != null)
+            doctor.setConsultationDuration(request.getConsultationDuration());
+        if (request.getMaxPatientsPerDay() != null)
+            doctor.setMaxPatientsPerDay(request.getMaxPatientsPerDay());
 
         userRepository.save(user);
 
@@ -188,7 +210,7 @@ public class ProfileService {
      */
     public ProfileResponse.CashierProfile getCashierProfile() throws AppException {
         User user = getCurrentUser();
-        
+
         if (user.getCashier() == null) {
             throw new AppException("Cashier profile not found");
         }
@@ -221,9 +243,10 @@ public class ProfileService {
      * Update cashier profile
      */
     @Transactional
-    public ProfileResponse.CashierProfile updateCashierProfile(UpdateProfileRequest.CashierProfileUpdate request) throws AppException {
+    public ProfileResponse.CashierProfile updateCashierProfile(UpdateProfileRequest.CashierProfileUpdate request)
+            throws AppException {
         User user = getCurrentUser();
-        
+
         if (user.getCashier() == null) {
             throw new AppException("Cashier profile not found");
         }
@@ -232,14 +255,19 @@ public class ProfileService {
 
         // Update common user fields
         user.setFullName(request.getFullName());
-        if (request.getPhone() != null) user.setPhone(request.getPhone());
-        if (request.getGender() != null) user.setGender(request.getGender());
-        if (request.getBirthday() != null) user.setBirthday(request.getBirthday());
-        if (request.getAddress() != null) user.setAddress(request.getAddress());
+        if (request.getPhone() != null)
+            user.setPhone(request.getPhone());
+        if (request.getGender() != null)
+            user.setGender(request.getGender());
+        // Birthday cannot be updated for data integrity
+        if (request.getAddress() != null)
+            user.setAddress(request.getAddress());
 
         // Update cashier specific fields (if allowed - usually managed by admin)
-        if (request.getShiftStartTime() != null) cashier.setShiftStartTime(request.getShiftStartTime());
-        if (request.getShiftEndTime() != null) cashier.setShiftEndTime(request.getShiftEndTime());
+        if (request.getShiftStartTime() != null)
+            cashier.setShiftStartTime(request.getShiftStartTime());
+        if (request.getShiftEndTime() != null)
+            cashier.setShiftEndTime(request.getShiftEndTime());
 
         userRepository.save(user);
 
@@ -269,15 +297,19 @@ public class ProfileService {
      * Update admin profile
      */
     @Transactional
-    public ProfileResponse.AdminProfile updateAdminProfile(UpdateProfileRequest.AdminProfileUpdate request) throws AppException {
+    public ProfileResponse.AdminProfile updateAdminProfile(UpdateProfileRequest.AdminProfileUpdate request)
+            throws AppException {
         User user = getCurrentUser();
 
         // Update common user fields only
         user.setFullName(request.getFullName());
-        if (request.getPhone() != null) user.setPhone(request.getPhone());
-        if (request.getGender() != null) user.setGender(request.getGender());
-        if (request.getBirthday() != null) user.setBirthday(request.getBirthday());
-        if (request.getAddress() != null) user.setAddress(request.getAddress());
+        if (request.getPhone() != null)
+            user.setPhone(request.getPhone());
+        if (request.getGender() != null)
+            user.setGender(request.getGender());
+        // Birthday cannot be updated for data integrity
+        if (request.getAddress() != null)
+            user.setAddress(request.getAddress());
 
         userRepository.save(user);
 
