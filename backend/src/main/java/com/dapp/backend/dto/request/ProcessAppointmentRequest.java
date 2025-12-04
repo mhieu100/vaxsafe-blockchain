@@ -1,6 +1,7 @@
 package com.dapp.backend.dto.request;
 
-import com.dapp.backend.enums.BookingEnum;
+import java.time.LocalTime;
+
 import lombok.AccessLevel;
 import lombok.Data;
 import lombok.experimental.FieldDefaults;
@@ -11,5 +12,5 @@ public class ProcessAppointmentRequest {
     Long appointmentId;
     Long doctorId; // This is actually doctorId from Doctor entity, not userId
     Long slotId; // ID of the selected DoctorAvailableSlot
-    java.time.LocalTime actualScheduledTime; // The actual scheduled time
+    LocalTime actualScheduledTime; // The actual scheduled time
 }

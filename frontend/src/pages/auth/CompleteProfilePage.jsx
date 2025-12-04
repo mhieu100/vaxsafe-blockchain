@@ -55,20 +55,18 @@ const CompleteProfilePage = () => {
       setIsSubmitting(true);
 
       const payload = {
-        patientProfile: {
-          phone: values.phone,
-          address: values.address,
-          birthday: values.birthday.format('YYYY-MM-DD'),
-          gender: values.gender,
-          identityNumber: values.identityNumber,
-          bloodType: values.bloodType,
-          heightCm: values.heightCm || null,
-          weightKg: values.weightKg || null,
-          occupation: values.occupation || null,
-          lifestyleNotes: values.lifestyleNotes || null,
-          insuranceNumber: values.insuranceNumber || null,
-          consentForAIAnalysis: values.consentForAIAnalysis || false,
-        },
+        phone: values.phone,
+        address: values.address,
+        birthday: values.birthday.format('YYYY-MM-DD'),
+        gender: values.gender,
+        identityNumber: values.identityNumber,
+        bloodType: values.bloodType,
+        heightCm: values.heightCm || null,
+        weightKg: values.weightKg || null,
+        occupation: values.occupation || null,
+        lifestyleNotes: values.lifestyleNotes || null,
+        insuranceNumber: values.insuranceNumber || null,
+        consentForAIAnalysis: values.consentForAIAnalysis || false,
       };
 
       const response = await callCompleteProfile(payload);

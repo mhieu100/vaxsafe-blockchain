@@ -95,15 +95,15 @@ public class AuthService {
     }
 
     public RegisterPatientResponse register(RegisterPatientRequest request) throws AppException {
-        if (userRepository.existsByEmail(request.getUser().getEmail())) {
+        if (userRepository.existsByEmail(request.getEmail())) {
             throw new AppException("Email already exists");
         }
 
         User user = User.builder()
-                .avatar("https://res-console.cloudinary.com/dcwzhi4tp/thumbnails/v1/image/upload/v1763975729/dmgxY3h1aWtkYmh5aXFqeGJnaG0=/drilldown")
-                .fullName(request.getUser().getFullName())
-                .email(request.getUser().getEmail())
-                .password(passwordEncoder.encode(request.getUser().getPassword()))
+                .avatar(request.getAvatar() != null ? request.getAvatar() : "https://res-console.cloudinary.com/dcwzhi4tp/thumbnails/v1/image/upload/v1763975729/dmgxY3h1aWtkYmh5aXFqeGJnaG0=/drilldown")
+                .fullName(request.getFullName())
+                .email(request.getEmail())
+                .password(passwordEncoder.encode(request.getPassword()))
                 .isDeleted(false)
                 .isActive(false) // Account is inactive until profile is completed
                 .build();
@@ -248,26 +248,26 @@ public class AuthService {
             throw new AppException("Profile already completed");
         }
 
-        if (patientRepository.existsByIdentityNumber(request.getPatientProfile().getIdentityNumber())) {
+        if (patientRepository.existsByIdentityNumber(request.getIdentityNumber())) {
             throw new AppException("Identity number already exists");
         }
 
         // Set common fields on user
-        user.setAddress(request.getPatientProfile().getAddress());
-        user.setPhone(request.getPatientProfile().getPhone());
-        user.setBirthday(request.getPatientProfile().getBirthday());
-        user.setGender(request.getPatientProfile().getGender());
+        user.setAddress(request.getAddress());
+        user.setPhone(request.getPhone());
+        user.setBirthday(request.getBirthday());
+        user.setGender(request.getGender());
 
         // Create patient profile with patient-specific fields
         Patient patient = Patient.builder()
-                .identityNumber(request.getPatientProfile().getIdentityNumber())
-                .bloodType(request.getPatientProfile().getBloodType())
-                .heightCm(request.getPatientProfile().getHeightCm())
-                .weightKg(request.getPatientProfile().getWeightKg())
-                .occupation(request.getPatientProfile().getOccupation())
-                .lifestyleNotes(request.getPatientProfile().getLifestyleNotes())
-                .insuranceNumber(request.getPatientProfile().getInsuranceNumber())
-                .consentForAIAnalysis(request.getPatientProfile().isConsentForAIAnalysis())
+                .identityNumber(request.getIdentityNumber())
+                .bloodType(request.getBloodType())
+                .heightCm(request.getHeightCm())
+                .weightKg(request.getWeightKg())
+                .occupation(request.getOccupation())
+                .lifestyleNotes(request.getLifestyleNotes())
+                .insuranceNumber(request.getInsuranceNumber())
+                .consentForAIAnalysis(request.isConsentForAIAnalysis())
                 .user(user)
                 .build();
 

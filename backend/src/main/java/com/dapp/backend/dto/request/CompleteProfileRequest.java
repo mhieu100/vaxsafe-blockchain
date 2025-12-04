@@ -22,47 +22,36 @@ import java.time.LocalDate;
 @AllArgsConstructor
 public class CompleteProfileRequest {
 
-    @Valid
-    @NotNull(message = "Patient profile is required")
-    private PatientProfile patientProfile;
+    @NotBlank(message = "Address is required")
+    private String address;
 
-    @Data
-    @Builder
-    @NoArgsConstructor
-    @AllArgsConstructor
-    public static class PatientProfile {
+    @NotBlank(message = "Phone number is required")
+    @Pattern(regexp = "^[0-9]{9,11}$", message = "Phone must be 9-11 digits")
+    private String phone;
 
-        @NotBlank(message = "Address is required")
-        private String address;
+    @ValidBirthday(required = true, maxAge = 150)
+    private LocalDate birthday;
 
-        @NotBlank(message = "Phone number is required")
-        @Pattern(regexp = "^[0-9]{9,11}$", message = "Phone must be 9-11 digits")
-        private String phone;
+    @NotNull(message = "Gender is required")
+    private Gender gender;
 
-        @ValidBirthday(required = true, maxAge = 150)
-        private LocalDate birthday;
+    @NotBlank(message = "Identity number / Personal ID code is required")
+    @Pattern(regexp = "^[0-9]{9,12}$", message = "Identity number must be 9-12 digits")
+    private String identityNumber;
 
-        @NotNull(message = "Gender is required")
-        private Gender gender;
+    @NotNull(message = "Blood type is required")
+    private BloodType bloodType;
 
-        @NotBlank(message = "Identity number / Personal ID code is required")
-        @Pattern(regexp = "^[0-9]{9,12}$", message = "Identity number must be 9-12 digits")
-        private String identityNumber;
+    @Positive(message = "Height must be positive")
+    private Double heightCm;
 
-        @NotNull(message = "Blood type is required")
-        private BloodType bloodType;
+    @Positive(message = "Weight must be positive")
+    private Double weightKg;
 
-        @Positive(message = "Height must be positive")
-        private Double heightCm;
+    private String occupation;
+    private String lifestyleNotes;
+    private String insuranceNumber;
 
-        @Positive(message = "Weight must be positive")
-        private Double weightKg;
-
-        private String occupation;
-        private String lifestyleNotes;
-        private String insuranceNumber;
-
-        @Builder.Default
-        private boolean consentForAIAnalysis = false;
-    }
+    @Builder.Default
+    private boolean consentForAIAnalysis = false;
 }

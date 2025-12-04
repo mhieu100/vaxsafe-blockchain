@@ -48,12 +48,10 @@ const Register = () => {
       setIsSubmitting(true);
 
       const payload = {
-        user: {
-          fullName: values.fullName,
-          email: values.email,
-          password: values.password,
-        },
-        patientProfile: {},
+        avatar: null,
+        fullName: values.fullName,
+        email: values.email,
+        password: values.password,
       };
 
       const response = await callRegister(payload);
