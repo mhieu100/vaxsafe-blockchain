@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { Outlet, useLocation } from 'react-router-dom';
+import ChatBot from '@/components/common/chatbot/ChatBot';
 import Loading from '@/components/common/feedback/Loading';
 import Footer from './footer.client';
 import Navbar from './header.client';
@@ -23,6 +24,7 @@ const LayoutClient = () => {
       <Navbar />
       <Outlet />
       {location.pathname !== '/success' && <Footer />}
+      <ChatBot />
     </>
   );
 };

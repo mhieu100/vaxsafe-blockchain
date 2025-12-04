@@ -24,7 +24,7 @@ services:
     restart: always
 
   db:
-    image: postgres:15-alpine
+    image: pgvector/pgvector:pg15
     container_name: vaxsafe-db
     environment:
       - POSTGRES_DB=dapp
