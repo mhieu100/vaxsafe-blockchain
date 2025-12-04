@@ -50,7 +50,6 @@ public class RagService {
         List<Vaccine> vaccines = vaccineRepository.findAll();
         List<String> documents = new ArrayList<>();
 
-        // 1. Add Vaccine Data
         for (Vaccine v : vaccines) {
             String content = String.format("""
                     THÔNG TIN VACCINE:
@@ -78,67 +77,10 @@ public class RagService {
             documents.add(content);
         }
 
-        // 2. Add System Knowledge (Booking, Contact, etc.)
-        documents.addAll(getSystemKnowledge());
-
         if (!documents.isEmpty()) {
             addDocuments(documents);
         }
         return documents.size();
-    }
-
-    private List<String> getSystemKnowledge() {
-        List<String> knowledge = new ArrayList<>();
-        try {
-            java.nio.file.Path knowledgeDir = java.nio.file.Paths.get("knowledge");
-            if (java.nio.file.Files.exists(knowledgeDir) && java.nio.file.Files.isDirectory(knowledgeDir)) {
-                try (java.util.stream.Stream<java.nio.file.Path> stream = java.nio.file.Files.list(knowledgeDir)) {
-                    stream.filter(file -> !java.nio.file.Files.isDirectory(file) && file.toString().endsWith(".txt"))
-                            .forEach(file -> {
-                                try {
-                                    String content = java.nio.file.Files.readString(file);
-                                    knowledge.add(content);
-                                } catch (Exception e) {
-                                    System.err
-                                            .println("Failed to read knowledge file: " + file + " - " + e.getMessage());
-                                }
-                            });
-                }
-            }
-        } catch (Exception e) {
-            System.err.println("Error accessing knowledge directory: " + e.getMessage());
-        }
-
-        // Fallback if no files found or error occurs
-        if (knowledge.isEmpty()) {
-            return List.of(
-                    """
-                            HƯỚNG DẪN ĐẶT LỊCH TIÊM CHỦNG / TƯ VẤN:
-                            Để đặt lịch hẹn tại VaxSafe, bạn hãy thực hiện các bước sau:
-                            1. Truy cập vào trang "Đặt lịch" trên thanh menu của website.
-                            2. Chọn Trung tâm tiêm chủng gần bạn nhất.
-                            3. Chọn loại vắc xin mong muốn (hoặc chọn "Tư vấn" nếu chưa rõ).
-                            4. Chọn ngày và giờ còn trống.
-                            5. Điền thông tin người được tiêm và xác nhận đặt lịch.
-
-                            Nếu bạn muốn đặt lịch ngay bây giờ, hãy truy cập đường dẫn: /client/booking
-                            """,
-                    """
-                            GIỚI THIỆU VỀ VAXSAFE:
-                            VaxSafe là hệ thống quản lý và tiêm chủng vắc xin an toàn, minh bạch sử dụng công nghệ Blockchain.
-                            Chúng tôi cung cấp các dịch vụ:
-                            - Tiêm chủng trọn gói cho trẻ em và người lớn.
-                            - Tư vấn dinh dưỡng và sức khỏe trước tiêm.
-                            - Lưu trữ hồ sơ tiêm chủng vĩnh viễn trên Blockchain.
-                            """,
-                    """
-                            LIÊN HỆ VÀ HỖ TRỢ:
-                            - Hotline: 1900 123 456
-                            - Email: support@vaxsafe.com
-                            - Thời gian làm việc: 7:30 - 17:00 (Tất cả các ngày trong tuần)
-                            """);
-        }
-        return knowledge;
     }
 
     public List<Document> similaritySearch(String query) {
