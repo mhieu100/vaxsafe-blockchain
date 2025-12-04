@@ -10,5 +10,6 @@ CREATE TABLE IF NOT EXISTS vector_store (
     embedding vector(768)
 );
 
--- Create HNSW index for fast similarity search
-CREATE INDEX ON vector_store USING HNSW (embedding vector_cosine_ops);
+-- Note: Index will be added later if dimension stays <=2000
+-- For dimensions >2000, sequential scan will be used
+
