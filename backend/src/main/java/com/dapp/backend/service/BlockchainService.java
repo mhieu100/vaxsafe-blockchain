@@ -65,7 +65,18 @@ public class BlockchainService {
             );
 
             if (response.getStatusCode() == HttpStatus.OK && response.getBody() != null) {
-                log.info("Identity created on blockchain: {}", identityHash);
+                var txHash = response.getBody().getData() != null ? 
+                    response.getBody().getData().getTransactionHash() : "N/A";
+                log.info("\n" +
+                        "╔═══════════════════════════════════════════════════════════════════╗\n" +
+                        "║           🔗 BLOCKCHAIN SERVICE - IDENTITY CREATED                ║\n" +
+                        "╠═══════════════════════════════════════════════════════════════════╣\n" +
+                        "║  🆔 Identity Hash: {}\n" +
+                        "║  📧 Email: {}\n" +
+                        "║  🏷️  Type: {}\n" +
+                        "║  📜 TxHash: {}\n" +
+                        "╚═══════════════════════════════════════════════════════════════════╝",
+                        identityHash, email, idType, txHash);
                 return response.getBody();
             } else {
                 log.error("Failed to create identity on blockchain: {}", response.getStatusCode());
@@ -107,7 +118,18 @@ public class BlockchainService {
             );
 
             if (response.getStatusCode() == HttpStatus.OK && response.getBody() != null) {
-                log.info("Document linked to identity on blockchain: {}", identityHash);
+                var txHash = response.getBody().getData() != null ? 
+                    response.getBody().getData().getTransactionHash() : "N/A";
+                log.info("\n" +
+                        "╔═══════════════════════════════════════════════════════════════════╗\n" +
+                        "║           📎 DOCUMENT LINKED TO BLOCKCHAIN                        ║\n" +
+                        "╠═══════════════════════════════════════════════════════════════════╣\n" +
+                        "║  🆔 Identity Hash: {}\n" +
+                        "║  📄 Document Type: {}\n" +
+                        "║  🗂️  IPFS Hash: {}\n" +
+                        "║  📜 TxHash: {}\n" +
+                        "╚═══════════════════════════════════════════════════════════════════╝",
+                        identityHash, documentType, ipfsHash, txHash);
                 return response.getBody();
             } else {
                 log.error("Failed to link document on blockchain: {}", response.getStatusCode());
@@ -180,8 +202,22 @@ public class BlockchainService {
             );
 
             if (response.getStatusCode() == HttpStatus.OK && response.getBody() != null) {
-                log.info("Vaccine record created on blockchain: recordId={}", 
-                        response.getBody().getData().getRecordId());
+                var data = response.getBody().getData();
+                log.info("\n" +
+                        "╔═══════════════════════════════════════════════════════════════════╗\n" +
+                        "║           💉 VACCINE RECORD ON BLOCKCHAIN                         ║\n" +
+                        "╠═══════════════════════════════════════════════════════════════════╣\n" +
+                        "║  📋 Record ID: {}\n" +
+                        "║  🆔 Identity: {}\n" +
+                        "║  💊 Vaccine: {} (Dose #{})\n" +
+                        "║  🏥 Center: {}\n" +
+                        "║  👨‍⚕️ Doctor: {}\n" +
+                        "║  📜 TxHash: {}\n" +
+                        "╚═══════════════════════════════════════════════════════════════════╝",
+                        data.getRecordId(), record.getPatientIdentityHash(), 
+                        record.getVaccine().getName(), record.getDoseNumber(),
+                        record.getCenter().getName(), record.getDoctor().getFullName(),
+                        data.getTransactionHash());
                 return response.getBody();
             } else {
                 log.error("Failed to create vaccine record on blockchain: {}", response.getStatusCode());

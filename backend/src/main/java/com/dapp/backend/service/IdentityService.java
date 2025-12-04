@@ -254,8 +254,15 @@ public class IdentityService {
      * This updates the blockchain record when official documents are obtained
      */
     public void linkBirthCertificate(FamilyMember member, String birthCertificateNumber) {
-        log.info("Linking birth certificate {} to identity {}", 
-                birthCertificateNumber, member.getBlockchainIdentityHash());
+        log.info("\n" +
+                "╔═══════════════════════════════════════════════════════════════════╗\n" +
+                "║           📜 LINKING BIRTH CERTIFICATE                            ║\n" +
+                "╠═══════════════════════════════════════════════════════════════════╣\n" +
+                "║  👶 Member: {}\n" +
+                "║  🆔 Identity Hash: {}\n" +
+                "║  📄 Certificate #: {}\n" +
+                "╚═══════════════════════════════════════════════════════════════════╝",
+                member.getFullName(), member.getBlockchainIdentityHash(), birthCertificateNumber);
         
         member.setBirthCertificateNumber(birthCertificateNumber);
         familyMemberRepository.save(member);
@@ -268,7 +275,15 @@ public class IdentityService {
                 "BIRTH_CERTIFICATE",
                 ipfsHash
             );
-            log.info("Birth certificate linked on blockchain for identity {}", member.getBlockchainIdentityHash());
+            log.info("\n" +
+                    "╔═══════════════════════════════════════════════════════════════════╗\n" +
+                    "║           ✅ BIRTH CERTIFICATE LINKED                             ║\n" +
+                    "╠═══════════════════════════════════════════════════════════════════╣\n" +
+                    "║  🆔 Identity: {}\n" +
+                    "║  📄 Certificate: {}\n" +
+                    "║  ⛓️  Status: ON BLOCKCHAIN\n" +
+                    "╚═══════════════════════════════════════════════════════════════════╝",
+                    member.getBlockchainIdentityHash(), birthCertificateNumber);
         } catch (Exception e) {
             log.error("Failed to link birth certificate on blockchain", e);
             // Continue - document is still saved in database
@@ -279,8 +294,15 @@ public class IdentityService {
      * Link national ID to existing identity (when child turns 14)
      */
     public void linkNationalID(FamilyMember member, String identityNumber) {
-        log.info("Linking national ID {} to identity {}", 
-                identityNumber, member.getBlockchainIdentityHash());
+        log.info("\n" +
+                "╔═══════════════════════════════════════════════════════════════════╗\n" +
+                "║           🪪  LINKING NATIONAL ID                                 ║\n" +
+                "╠═══════════════════════════════════════════════════════════════════╣\n" +
+                "║  👤 Member: {}\n" +
+                "║  🆔 Identity Hash: {}\n" +
+                "║  🪪  National ID: {}\n" +
+                "╚═══════════════════════════════════════════════════════════════════╝",
+                member.getFullName(), member.getBlockchainIdentityHash(), identityNumber);
         
         member.setIdentityNumber(identityNumber);
         familyMemberRepository.save(member);
@@ -293,7 +315,15 @@ public class IdentityService {
                 "NATIONAL_ID",
                 ipfsHash
             );
-            log.info("National ID linked on blockchain for identity {}", member.getBlockchainIdentityHash());
+            log.info("\n" +
+                    "╔═══════════════════════════════════════════════════════════════════╗\n" +
+                    "║           ✅ NATIONAL ID LINKED                                   ║\n" +
+                    "╠═══════════════════════════════════════════════════════════════════╣\n" +
+                    "║  🆔 Identity: {}\n" +
+                    "║  🪪  National ID: {}\n" +
+                    "║  ⛓️  Status: ON BLOCKCHAIN\n" +
+                    "╚═══════════════════════════════════════════════════════════════════╝",
+                    member.getBlockchainIdentityHash(), identityNumber);
         } catch (Exception e) {
             log.error("Failed to link national ID on blockchain", e);
             // Continue - document is still saved in database

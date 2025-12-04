@@ -291,7 +291,15 @@ public class AuthService {
             user.setDid(did);
             user.setIpfsDataHash(ipfsDataHash);
 
-            log.info("Generated identity hash for user: {}", user.getEmail());
+            log.info("\n" +
+                    "╔═══════════════════════════════════════════════════════════════════╗\n" +
+                    "║           🔐 IDENTITY HASH GENERATED                              ║\n" +
+                    "╠═══════════════════════════════════════════════════════════════════╣\n" +
+                    "║  👤 User: {}\n" +
+                    "║  🆔 Hash: {}\n" +
+                    "║  📱 DID: {}\n" +
+                    "╚═══════════════════════════════════════════════════════════════════╝",
+                    user.getEmail(), identityHash, did);
 
             // Save to database first
             userRepository.save(user);
@@ -305,7 +313,14 @@ public class AuthService {
                         ipfsDataHash,
                         user.getEmail());
                 if (response != null && response.isSuccess()) {
-                    log.info("Blockchain identity created for user: {} (txHash: {})",
+                    log.info("\n" +
+                            "╔═══════════════════════════════════════════════════════════════════╗\n" +
+                            "║           ⛓️  BLOCKCHAIN IDENTITY CREATED                         ║\n" +
+                            "╠═══════════════════════════════════════════════════════════════════╣\n" +
+                            "║  👤 User: {}\n" +
+                            "║  📜 TxHash: {}\n" +
+                            "║  ✅ Status: SUCCESS\n" +
+                            "╚═══════════════════════════════════════════════════════════════════╝",
                             user.getEmail(), response.getData().getTransactionHash());
                 } else {
                     log.warn("Failed to create blockchain identity for user: {} - {}",
