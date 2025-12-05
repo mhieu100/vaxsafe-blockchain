@@ -3,7 +3,7 @@ name: Blockchain Service CI/CD
 on:
   push:
     paths:
-      - "blockchain-service/**"
+      - "blockchain/**"
     branches: [ "main" ]
 
 jobs:
@@ -21,7 +21,7 @@ jobs:
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
       - name: Build Docker image
-        working-directory: ./blockchain-service
+        working-directory: ./blockchain
         run: |
           docker build -t ${{ secrets.DOCKERHUB_USERNAME }}/blockchain-service:latest .
 
@@ -43,7 +43,7 @@ jobs:
           ssh -o StrictHostKeyChecking=no ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }} "
             cd ~/dev/vaxsafe-blockchain &&
             git pull origin main &&
-            cd blockchain-service &&
+            cd blockchain &&
             docker compose pull &&
             docker compose up -d &&
             docker compose logs --tail=50
