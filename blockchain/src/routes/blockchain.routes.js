@@ -31,7 +31,7 @@ router.get("/status", async (_req, res) => {
 			data: {
 				connected: isConnected,
 				networkId: networkId.toString(),
-				blockNumber: blockNumber.toString() + " test",
+				blockNumber: blockNumber.toString(),
 			},
 		});
 	} catch (error) {
@@ -261,7 +261,7 @@ router.get("/intro", async (_req, res) => {
 					"Vaccination Record Storage",
 					"Identity Management",
 					"Transaction Monitoring",
-					"IPFS Integration",
+					"IPFS Integration CICD",
 				],
 			},
 		});
