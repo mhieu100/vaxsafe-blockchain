@@ -59,7 +59,8 @@ public class AppointmentService {
     private final NextDoseReminderService nextDoseReminderService;
     private final EmailService emailService;
 
-    public Pagination getAllAppointmentOfCenter(Specification<Appointment> specification, Pageable pageable) throws AppException {
+    public Pagination getAllAppointmentOfCenter(Specification<Appointment> specification, Pageable pageable)
+            throws AppException {
         User user = authService.getCurrentUserLogin();
         Center center = UserMapper.getCenter(user);
 
@@ -84,12 +85,15 @@ public class AppointmentService {
                 .map(apt -> {
                     AppointmentResponse response = AppointmentMapper.toResponse(apt);
                     // Add payment info
-                    paymentRepository.findByAppointmentId(apt.getId(), TypeTransactionEnum.APPOINTMENT).ifPresent(payment -> {
-                        response.setPaymentId(payment.getId());
-                        response.setPaymentStatus(payment.getStatus() != null ? payment.getStatus().name() : null);
-                        response.setPaymentMethod(payment.getMethod() != null ? payment.getMethod().name() : null);
-                        response.setPaymentAmount(payment.getAmount());
-                    });
+                    paymentRepository.findByAppointmentId(apt.getId(), TypeTransactionEnum.APPOINTMENT)
+                            .ifPresent(payment -> {
+                                response.setPaymentId(payment.getId());
+                                response.setPaymentStatus(
+                                        payment.getStatus() != null ? payment.getStatus().name() : null);
+                                response.setPaymentMethod(
+                                        payment.getMethod() != null ? payment.getMethod().name() : null);
+                                response.setPaymentAmount(payment.getAmount());
+                            });
                     return response;
                 })
                 .toList();
@@ -97,9 +101,11 @@ public class AppointmentService {
         return pagination;
     }
 
-    public Pagination getAllAppointmentsOfDoctor(Specification<Appointment> specification, Pageable pageable) throws AppException {
+    public Pagination getAllAppointmentsOfDoctor(Specification<Appointment> specification, Pageable pageable)
+            throws AppException {
         User user = authService.getCurrentUserLogin();
-        specification = Specification.where(specification).and(AppointmentSpecifications.findByDoctor(user.getFullName()));
+        specification = Specification.where(specification)
+                .and(AppointmentSpecifications.findByDoctor(user.getFullName()));
         Page<Appointment> page = appointmentRepository.findAll(specification, pageable);
         Pagination pagination = new Pagination();
         Pagination.Meta meta = new Pagination.Meta();
@@ -113,12 +119,15 @@ public class AppointmentService {
                 .map(apt -> {
                     AppointmentResponse response = AppointmentMapper.toResponse(apt);
                     // Add payment info
-                    paymentRepository.findByAppointmentId(apt.getId(), TypeTransactionEnum.APPOINTMENT).ifPresent(payment -> {
-                        response.setPaymentId(payment.getId());
-                        response.setPaymentStatus(payment.getStatus() != null ? payment.getStatus().name() : null);
-                        response.setPaymentMethod(payment.getMethod() != null ? payment.getMethod().name() : null);
-                        response.setPaymentAmount(payment.getAmount());
-                    });
+                    paymentRepository.findByAppointmentId(apt.getId(), TypeTransactionEnum.APPOINTMENT)
+                            .ifPresent(payment -> {
+                                response.setPaymentId(payment.getId());
+                                response.setPaymentStatus(
+                                        payment.getStatus() != null ? payment.getStatus().name() : null);
+                                response.setPaymentMethod(
+                                        payment.getMethod() != null ? payment.getMethod().name() : null);
+                                response.setPaymentAmount(payment.getAmount());
+                            });
                     return response;
                 })
                 .toList();
@@ -147,36 +156,44 @@ public class AppointmentService {
         bookingRepository.save(booking);
     }
 
-    public AppointmentResponse updateScheduledAppointment(HttpServletRequest request, ProcessAppointmentRequest processAppointmentRequest) throws Exception {
+    public AppointmentResponse updateScheduledAppointment(HttpServletRequest request,
+            ProcessAppointmentRequest processAppointmentRequest) throws Exception {
         User cashier = authService.getCurrentUserLogin();
         Appointment appointment = appointmentRepository.findById(processAppointmentRequest.getAppointmentId())
-            .orElseThrow(() -> new AppException("Appointment not found"));
-        
+                .orElseThrow(() -> new AppException("Appointment not found"));
+
         // Get doctor from doctorId (not userId!)
         Doctor doctorEntity = doctorRepository.findById(processAppointmentRequest.getDoctorId())
-            .orElseThrow(() -> new AppException("Doctor not found with id: " + processAppointmentRequest.getDoctorId()));
+                .orElseThrow(
+                        () -> new AppException("Doctor not found with id: " + processAppointmentRequest.getDoctorId()));
         User doctor = doctorEntity.getUser();
-        
+
         // Release old slot if appointment already has one
         if (appointment.getSlot() != null) {
             DoctorAvailableSlot oldSlot = appointment.getSlot();
-            oldSlot.setStatus(SlotStatus.AVAILABLE);
-            oldSlot.setAppointment(null);
-            slotRepository.save(oldSlot);
+            // Only release if it's a different slot
+            if (processAppointmentRequest.getSlotId() == null
+                    || !oldSlot.getSlotId().equals(processAppointmentRequest.getSlotId())) {
+                oldSlot.setStatus(SlotStatus.AVAILABLE);
+                oldSlot.setAppointment(null);
+                slotRepository.save(oldSlot);
+            }
         }
-        
+
         // Get and validate new slot if provided, or create virtual slot
         DoctorAvailableSlot slot = null;
         if (processAppointmentRequest.getSlotId() != null) {
             // Real slot - get from database
             slot = slotRepository.findById(processAppointmentRequest.getSlotId())
-                .orElseThrow(() -> new AppException("Slot not found with id: " + processAppointmentRequest.getSlotId()));
-            
-            // Validate slot is available
-            if (slot.getStatus() != SlotStatus.AVAILABLE) {
+                    .orElseThrow(
+                            () -> new AppException("Slot not found with id: " + processAppointmentRequest.getSlotId()));
+
+            // Validate slot is available (or already assigned to this appointment)
+            if (slot.getStatus() != SlotStatus.AVAILABLE
+                    && (slot.getAppointment() != null && !slot.getAppointment().getId().equals(appointment.getId()))) {
                 throw new AppException("Slot is not available");
             }
-            
+
             // Mark slot as booked
             slot.setStatus(SlotStatus.BOOKED);
             slot.setAppointment(appointment);
@@ -186,18 +203,18 @@ public class AppointmentService {
             LocalTime startTime = processAppointmentRequest.getActualScheduledTime();
             LocalTime endTime = startTime.plusMinutes(15);
             LocalDate slotDate = appointment.getScheduledDate();
-            
+
             // Check if slot already exists for this doctor/date/time
             slot = slotRepository.findByDoctorIdAndSlotDateAndStartTime(
-                processAppointmentRequest.getDoctorId(), 
-                slotDate, 
-                startTime
-            ).orElse(null);
-            
-            if (slot != null && slot.getStatus() != SlotStatus.AVAILABLE) {
+                    processAppointmentRequest.getDoctorId(),
+                    slotDate,
+                    startTime).orElse(null);
+
+            if (slot != null && slot.getStatus() != SlotStatus.AVAILABLE
+                    && (slot.getAppointment() != null && !slot.getAppointment().getId().equals(appointment.getId()))) {
                 throw new AppException("This time slot is already booked for this doctor");
             }
-            
+
             if (slot == null) {
                 // Create new slot
                 slot = new DoctorAvailableSlot();
@@ -206,19 +223,20 @@ public class AppointmentService {
                 slot.setStartTime(startTime);
                 slot.setEndTime(endTime);
             }
-            
+
             // Mark as booked
             slot.setStatus(SlotStatus.BOOKED);
             slot.setAppointment(appointment);
             slot = slotRepository.save(slot);
-            
-            log.info("Created virtual slot: doctorId={}, date={}, time={}-{}", 
-                doctorEntity.getUser().getId(), slotDate, startTime, endTime);
+
+            log.info("Created virtual slot: doctorId={}, date={}, time={}-{}",
+                    doctorEntity.getUser().getId(), slotDate, startTime, endTime);
         } else {
             throw new AppException("Either slotId or actualScheduledTime must be provided");
         }
 
-        // If appointment is in RESCHEDULE status (rescheduled), apply the desired date/time
+        // If appointment is in RESCHEDULE status (rescheduled), apply the desired
+        // date/time
         if (appointment.getStatus() == AppointmentStatus.RESCHEDULE) {
             if (appointment.getDesiredDate() != null) {
                 appointment.setScheduledDate(appointment.getDesiredDate());
@@ -226,9 +244,9 @@ public class AppointmentService {
             if (appointment.getDesiredTimeSlot() != null) {
                 appointment.setScheduledTimeSlot(appointment.getDesiredTimeSlot());
             }
-           
+
         }
-        
+
         // Set actual scheduled time if provided
         if (processAppointmentRequest.getActualScheduledTime() != null) {
             appointment.setActualScheduledTime(processAppointmentRequest.getActualScheduledTime());
@@ -253,59 +271,59 @@ public class AppointmentService {
         try {
             User patient = savedAppointment.getBooking().getPatient();
             if (patient != null && patient.getEmail() != null && !patient.getEmail().isEmpty()) {
-                String centerAddress = savedAppointment.getCenter().getAddress() != null 
-                    ? savedAppointment.getCenter().getAddress() 
-                    : "";
+                String centerAddress = savedAppointment.getCenter().getAddress() != null
+                        ? savedAppointment.getCenter().getAddress()
+                        : "";
                 String cashierName = cashier.getFullName() != null ? cashier.getFullName() : "Chưa xác định";
                 String cashierPhone = cashier.getPhone() != null ? cashier.getPhone() : "";
                 String doctorName = doctor.getFullName() != null ? "BS. " + doctor.getFullName() : "Chưa xác định";
                 String doctorPhone = doctor.getPhone() != null ? doctor.getPhone() : "";
-                
+
                 // Get time slot string from the saved slot
                 String timeSlotString = slot.getStartTime() + " - " + slot.getEndTime();
-                
+
                 emailService.sendAppointmentScheduled(
-                    patient.getEmail(),
-                    patient.getFullName(),
-                    savedAppointment.getBooking().getVaccine().getName(),
-                    savedAppointment.getScheduledDate(),
-                    timeSlotString,
-                    savedAppointment.getCenter().getName(),
-                    centerAddress,
-                    savedAppointment.getId(),
-                    savedAppointment.getDoseNumber(),
-                    cashierName,
-                    cashierPhone,
-                    doctorName,
-                    doctorPhone
-                );
+                        patient.getEmail(),
+                        patient.getFullName(),
+                        savedAppointment.getBooking().getVaccine().getName(),
+                        savedAppointment.getScheduledDate(),
+                        timeSlotString,
+                        savedAppointment.getCenter().getName(),
+                        centerAddress,
+                        savedAppointment.getId(),
+                        savedAppointment.getDoseNumber(),
+                        cashierName,
+                        cashierPhone,
+                        doctorName,
+                        doctorPhone);
                 log.info("Sent appointment scheduled email to: {}", patient.getEmail());
             }
         } catch (Exception e) {
             log.error("Failed to send appointment scheduled email for appointment ID: {}", savedAppointment.getId(), e);
             // Don't fail the appointment creation if email fails
         }
-      
+
         AppointmentResponse response = AppointmentMapper.toResponse(savedAppointment);
         // Add payment info
-        paymentRepository.findByAppointmentId(appointment.getId(), TypeTransactionEnum.APPOINTMENT).ifPresent(payment -> {
-            response.setPaymentId(payment.getId());
-            response.setPaymentStatus(payment.getStatus() != null ? payment.getStatus().name() : null);
-            response.setPaymentMethod(payment.getMethod() != null ? payment.getMethod().name() : null);
-            response.setPaymentAmount(payment.getAmount());
-        });
+        paymentRepository.findByAppointmentId(appointment.getId(), TypeTransactionEnum.APPOINTMENT)
+                .ifPresent(payment -> {
+                    response.setPaymentId(payment.getId());
+                    response.setPaymentStatus(payment.getStatus() != null ? payment.getStatus().name() : null);
+                    response.setPaymentMethod(payment.getMethod() != null ? payment.getMethod().name() : null);
+                    response.setPaymentAmount(payment.getAmount());
+                });
         return response;
     }
 
     public String complete(HttpServletRequest request, long id) throws AppException {
         Appointment appointment = appointmentRepository.findById(id)
                 .orElseThrow(() -> new AppException("Appointment not found " + id));
-        
+
         // Set vaccination date to today if not set
         if (appointment.getVaccinationDate() == null) {
             appointment.setVaccinationDate(LocalDate.now());
         }
-        
+
         appointment.setStatus(AppointmentStatus.COMPLETED);
         appointmentRepository.save(appointment);
         checkAndUpdateBookingStatus(appointment.getBooking());
@@ -340,15 +358,17 @@ public class AppointmentService {
         headers.setContentType(MediaType.APPLICATION_JSON);
         headers.set("Authorization", "Bearer " + token);
 
-//        HttpEntity<Void> entity = new HttpEntity<>(headers);
-//        restTemplate.exchange(blockchainUrl + "/bookings/appointments/" + id + "/completed", HttpMethod.PUT, entity, Void.class);
+        // HttpEntity<Void> entity = new HttpEntity<>(headers);
+        // restTemplate.exchange(blockchainUrl + "/bookings/appointments/" + id +
+        // "/completed", HttpMethod.PUT, entity, Void.class);
 
         return "Appointment update success";
     }
 
     public String cancel(HttpServletRequest request, long id) throws AppException {
-        Appointment appointment = appointmentRepository.findById(id).orElseThrow(() -> new AppException("Appointment not found " + id));
-        
+        Appointment appointment = appointmentRepository.findById(id)
+                .orElseThrow(() -> new AppException("Appointment not found " + id));
+
         // Release doctor slot if assigned
         if (appointment.getSlot() != null) {
             DoctorAvailableSlot slot = appointment.getSlot();
@@ -357,43 +377,44 @@ public class AppointmentService {
             slotRepository.save(slot);
             log.info("Released doctor slot ID: {} for cancelled appointment ID: {}", slot.getSlotId(), id);
         }
-        
+
         appointment.setStatus(AppointmentStatus.CANCELLED);
         appointmentRepository.save(appointment);
         checkAndUpdateBookingStatus(appointment.getBooking());
-        
+
         // Send cancellation email
         try {
             User patient = appointment.getBooking().getPatient();
             if (patient != null && patient.getEmail() != null && !patient.getEmail().isEmpty()) {
                 emailService.sendAppointmentCancellation(
-                    patient.getEmail(),
-                    patient.getFullName(),
-                    appointment.getBooking().getVaccine().getName(),
-                    appointment.getScheduledDate(),
-                    "Bạn đã yêu cầu hủy lịch hẹn"
-                );
+                        patient.getEmail(),
+                        patient.getFullName(),
+                        appointment.getBooking().getVaccine().getName(),
+                        appointment.getScheduledDate(),
+                        "Bạn đã yêu cầu hủy lịch hẹn");
                 log.info("Sent cancellation email to: {}", patient.getEmail());
             }
         } catch (Exception e) {
             log.error("Failed to send cancellation email for appointment ID: {}", id, e);
             // Don't fail the cancellation if email fails
         }
-        
+
         String token = tokenExtractor.extractToken(request);
 
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
         headers.set("Authorization", "Bearer " + token);
 
-//        HttpEntity<Void> entity = new HttpEntity<>(headers);
-//        restTemplate.exchange(blockchainUrl + "/bookings/appointments/" + id + "/cancelled", HttpMethod.PUT, entity, Void.class);
+        // HttpEntity<Void> entity = new HttpEntity<>(headers);
+        // restTemplate.exchange(blockchainUrl + "/bookings/appointments/" + id +
+        // "/cancelled", HttpMethod.PUT, entity, Void.class);
 
         return "Appointment update success";
     }
 
     @Transactional
-    public RescheduleAppointmentResponse rescheduleAppointment(RescheduleAppointmentRequest request) throws AppException {
+    public RescheduleAppointmentResponse rescheduleAppointment(RescheduleAppointmentRequest request)
+            throws AppException {
         // Get current user
         User currentUser = authService.getCurrentUserLogin();
 
@@ -408,7 +429,7 @@ public class AppointmentService {
         if (booking.getPatient() != null && booking.getPatient().getId().equals(currentUser.getId())) {
             isOwner = true;
         } else if (booking.getFamilyMember() != null &&
-                   booking.getFamilyMember().getUser().getId().equals(currentUser.getId())) {
+                booking.getFamilyMember().getUser().getId().equals(currentUser.getId())) {
             isOwner = true;
         }
 
@@ -448,7 +469,8 @@ public class AppointmentService {
                 .newDate(request.getDesiredDate())
                 .newTimeSlot(request.getDesiredTimeSlot())
                 .status(AppointmentStatus.RESCHEDULE)
-                .message("Reschedule request submitted successfully. Waiting for cashier approval and doctor reassignment.")
+                .message(
+                        "Reschedule request submitted successfully. Waiting for cashier approval and doctor reassignment.")
                 .build();
     }
 
@@ -476,7 +498,8 @@ public class AppointmentService {
                     "Yêu cầu đổi lịch chờ phê duyệt", 1));
         }
 
-        // 2. Scheduled appointments without doctor assigned (within next 24 hours - HIGH PRIORITY)
+        // 2. Scheduled appointments without doctor assigned (within next 24 hours -
+        // HIGH PRIORITY)
         // Get appointments from today to tomorrow (to cover the 24-hour window)
         // Include both SCHEDULED and PENDING status appointments
         List<Appointment> noDoctorAppointments = appointmentRepository
@@ -484,8 +507,7 @@ public class AppointmentService {
                         List.of(AppointmentStatus.SCHEDULED, AppointmentStatus.PENDING),
                         today,
                         today.plusDays(2), // Get today and tomorrow to ensure we capture all within 24h
-                        center
-                );
+                        center);
 
         for (Appointment apt : noDoctorAppointments) {
             // Skip time-based urgency check since we now use TimeSlotEnum
@@ -493,51 +515,55 @@ public class AppointmentService {
             urgentAppointments.add(buildUrgentDto(apt, "NO_DOCTOR",
                     "KHẨN CẤP: Chưa có bác sĩ", 1));
         }
-        
+
         // Skip the time-based filtering logic below
         /*
-        for (Appointment apt : noDoctorAppointments) {
-            LocalDateTime appointmentDateTime = LocalDateTime.of(
-                    apt.getScheduledDate(),
-                    LocalTime.MIDNIGHT
-            );
+         * for (Appointment apt : noDoctorAppointments) {
+         * LocalDateTime appointmentDateTime = LocalDateTime.of(
+         * apt.getScheduledDate(),
+         * LocalTime.MIDNIGHT
+         * );
+         * 
+         * }
+         */
 
-        }*/
-
-        // 3. Appointments coming soon - DISABLED: TimeSlotEnum doesn't support time comparison
+        // 3. Appointments coming soon - DISABLED: TimeSlotEnum doesn't support time
+        // comparison
         // TODO: Implement slot-based urgency logic if needed
         /*
-        LocalTime fourHoursLater = now.plusHours(4);
-        List<Appointment> comingSoonAppointments = appointmentRepository
-                .findAppointmentsComingSoon(
-                        AppointmentStatus.SCHEDULED,
-                        today,
-                        now,
-                        fourHoursLater,
-                        center
-                );
+         * LocalTime fourHoursLater = now.plusHours(4);
+         * List<Appointment> comingSoonAppointments = appointmentRepository
+         * .findAppointmentsComingSoon(
+         * AppointmentStatus.SCHEDULED,
+         * today,
+         * now,
+         * fourHoursLater,
+         * center
+         * );
+         * 
+         * for (Appointment apt : comingSoonAppointments) {
+         * urgentAppointments.add(buildUrgentDto(apt, "COMING_SOON", "Sắp đến giờ hẹn",
+         * 3));
+         * }
+         */
 
-        for (Appointment apt : comingSoonAppointments) {
-            urgentAppointments.add(buildUrgentDto(apt, "COMING_SOON", "Sắp đến giờ hẹn", 3));
-        }
-        */
-
-        // 4. Overdue appointments - DISABLED: TimeSlotEnum doesn't support time comparison
+        // 4. Overdue appointments - DISABLED: TimeSlotEnum doesn't support time
+        // comparison
         // TODO: Implement date-based overdue logic (check only dates, not times)
         /*
-        List<AppointmentStatus> overdueStatuses = java.util.Arrays.asList(
-                AppointmentStatus.SCHEDULED,
-                AppointmentStatus.PENDING,
-                AppointmentStatus.RESCHEDULE
-        );
-        List<Appointment> overdueAppointments = appointmentRepository
-                .findOverdueAppointments(overdueStatuses, today, now, center);
-
-        for (Appointment apt : overdueAppointments) {
-            urgentAppointments.add(buildUrgentDto(apt, "OVERDUE",
-                    "Quá hạn xử lý - cần kiểm tra ngay", 2));
-        }
-        */
+         * List<AppointmentStatus> overdueStatuses = java.util.Arrays.asList(
+         * AppointmentStatus.SCHEDULED,
+         * AppointmentStatus.PENDING,
+         * AppointmentStatus.RESCHEDULE
+         * );
+         * List<Appointment> overdueAppointments = appointmentRepository
+         * .findOverdueAppointments(overdueStatuses, today, now, center);
+         * 
+         * for (Appointment apt : overdueAppointments) {
+         * urgentAppointments.add(buildUrgentDto(apt, "OVERDUE",
+         * "Quá hạn xử lý - cần kiểm tra ngay", 2));
+         * }
+         */
 
         // Sort by priority level (1 = highest priority)
         urgentAppointments.sort(java.util.Comparator.comparingInt(
@@ -595,8 +621,7 @@ public class AppointmentService {
         List<Appointment> todayAppointments = appointmentRepository
                 .findByDoctorAndScheduledDateOrderByScheduledTimeSlotAsc(
                         currentUser,
-                        today
-                );
+                        today);
 
         // Convert to response DTOs
         return todayAppointments.stream()

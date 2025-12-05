@@ -237,7 +237,7 @@ const AppointmentScheduleTab = () => {
         <Button
           type="primary"
           className="mt-4 rounded-xl shadow-lg shadow-blue-500/20"
-          href="/booking"
+          href="/vaccine"
         >
           {t('client:appointments.bookNew')}
         </Button>

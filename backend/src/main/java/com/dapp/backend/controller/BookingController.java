@@ -18,7 +18,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import com.dapp.backend.annotation.ApiMessage;
+import com.dapp.backend.dto.response.CenterAvailabilityResponse;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @RestController
@@ -58,6 +60,14 @@ public class BookingController {
         public ResponseEntity<BookingResponse> createWalkInBooking(@Valid @RequestBody WalkInBookingRequest request)
                         throws Exception {
                 return ResponseEntity.ok(bookingService.createWalkInBooking(request));
+        }
+
+        @GetMapping("/availability")
+        @ApiMessage("Check slot availability for a center on a specific date")
+        public ResponseEntity<CenterAvailabilityResponse> checkAvailability(
+                        @RequestParam Long centerId,
+                        @RequestParam LocalDate date) throws Exception {
+                return ResponseEntity.ok(bookingService.checkAvailability(centerId, date));
         }
 
 }

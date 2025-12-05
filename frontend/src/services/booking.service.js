@@ -61,3 +61,15 @@ export async function getMyBookingHistory() {
 export async function rescheduleAppointment(payload) {
   return apiClient.put('/api/appointments/reschedule', payload);
 }
+
+/**
+ * Check slot availability for a center on a specific date
+ * @param {number} centerId - Center ID
+ * @param {string} date - Date in YYYY-MM-DD format
+ * @returns {Promise} Availability data
+ */
+export async function checkAvailability(centerId, date) {
+  return apiClient.get('/api/bookings/availability', {
+    params: { centerId, date },
+  });
+}

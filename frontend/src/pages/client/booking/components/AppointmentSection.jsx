@@ -4,18 +4,33 @@ import {
   InfoCircleOutlined,
   UserOutlined,
 } from '@ant-design/icons';
-import { Button, Col, DatePicker, Divider, Form, message, Radio, Row, Select, Tag } from 'antd';
+import {
+  Button,
+  Col,
+  DatePicker,
+  Divider,
+  Form,
+  message,
+  Radio,
+  Row,
+  Select,
+  Spin,
+  Tag,
+} from 'antd';
 import dayjs from 'dayjs';
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { DEFAULT_PAGE, DEFAULT_PAGE_SIZE } from '@/constants';
 import { useCenter } from '@/hooks/useCenter';
 import { useFamilyMember } from '@/hooks/useFamilyMember';
+import { checkAvailability } from '@/services/booking.service';
 
 const AppointmentSection = ({ bookingForm, vaccine, setCurrentStep, setBookingData }) => {
-  const [_appointmentDate, setAppointmentDate] = useState(null);
+  const [appointmentDate, setAppointmentDate] = useState(null);
   const [_appointmentTime, setAppointmentTime] = useState(null);
-  const [_appointmentCenterId, setAppointmentCenterId] = useState(null);
+  const [appointmentCenterId, setAppointmentCenterId] = useState(null);
   const [bookingFor, setBookingFor] = useState('self');
+  const [availableSlots, setAvailableSlots] = useState([]);
+  const [loadingSlots, setLoadingSlots] = useState(false);
 
   const filter = {
     current: DEFAULT_PAGE,
@@ -25,17 +40,43 @@ const AppointmentSection = ({ bookingForm, vaccine, setCurrentStep, setBookingDa
   const { data: centers } = useCenter(filter);
   const { data: families } = useFamilyMember(filter);
 
-  const timeSlots = useMemo(
+  // Default time slots (fallback)
+  const defaultTimeSlots = useMemo(
     () => [
       { value: '07:00', label: '07:00 - 09:00' },
       { value: '09:00', label: '09:00 - 11:00' },
       { value: '11:00', label: '11:00 - 13:00' },
       { value: '13:00', label: '13:00 - 15:00' },
       { value: '15:00', label: '15:00 - 17:00' },
-      { value: '17:00', label: '17:00 - 19:00' },
     ],
     []
   );
+
+  // Fetch availability when center and date are selected
+  useEffect(() => {
+    const fetchAvailability = async () => {
+      if (appointmentCenterId && appointmentDate) {
+        try {
+          setLoadingSlots(true);
+          const formattedDate = appointmentDate.format('YYYY-MM-DD');
+          const response = await checkAvailability(appointmentCenterId, formattedDate);
+
+          if (response?.slots) {
+            setAvailableSlots(response.slots);
+          }
+        } catch (error) {
+          console.error('Error fetching availability:', error);
+          message.error('Failed to check slot availability');
+        } finally {
+          setLoadingSlots(false);
+        }
+      } else {
+        setAvailableSlots([]);
+      }
+    };
+
+    fetchAvailability();
+  }, [appointmentCenterId, appointmentDate]);
 
   const disabledDate = (current) => {
     if (!current) return false;
@@ -62,6 +103,31 @@ const AppointmentSection = ({ bookingForm, vaccine, setCurrentStep, setBookingDa
       message.error('Please fill in all required fields');
     }
   };
+
+  // Generate options for Select component
+  const timeSlotOptions = useMemo(() => {
+    if (!appointmentCenterId || !appointmentDate) {
+      return defaultTimeSlots;
+    }
+
+    if (availableSlots.length > 0) {
+      return availableSlots.map((slot) => ({
+        value: slot.timeSlot.replace('SLOT_', '').replace('_', ':'), // Convert SLOT_07_00 to 07:00
+        label: (
+          <div className="flex justify-between items-center w-full">
+            <span>{slot.time}</span>
+            <span className={`text-xs ${slot.available > 0 ? 'text-green-600' : 'text-red-500'}`}>
+              {slot.available > 0 ? `${slot.available} spots left` : 'Full'}
+            </span>
+          </div>
+        ),
+        disabled: slot.available <= 0,
+        className: slot.available <= 0 ? 'bg-slate-50' : '',
+      }));
+    }
+
+    return defaultTimeSlots;
+  }, [availableSlots, appointmentCenterId, appointmentDate, defaultTimeSlots]);
 
   return (
     <div className="animate-fade-in">
@@ -180,7 +246,12 @@ const AppointmentSection = ({ bookingForm, vaccine, setCurrentStep, setBookingDa
                   showSearch
                   optionFilterProp="children"
                   className="w-full"
-                  onChange={(value) => setAppointmentCenterId(value)}
+                  onChange={(value) => {
+                    setAppointmentCenterId(value);
+                    // Reset time when center changes
+                    bookingForm.setFieldValue('appointmentTime', null);
+                    setAppointmentTime(null);
+                  }}
                   options={centers?.result?.map((center) => ({
                     value: center.centerId,
                     label: center.name,
@@ -200,7 +271,12 @@ const AppointmentSection = ({ bookingForm, vaccine, setCurrentStep, setBookingDa
                       size="large"
                       format="DD/MM/YYYY"
                       disabledDate={disabledDate}
-                      onChange={(date) => setAppointmentDate(date)}
+                      onChange={(date) => {
+                        setAppointmentDate(date);
+                        // Reset time when date changes
+                        bookingForm.setFieldValue('appointmentTime', null);
+                        setAppointmentTime(null);
+                      }}
                       placeholder="Select date"
                     />
                   </Form.Item>
@@ -213,9 +289,11 @@ const AppointmentSection = ({ bookingForm, vaccine, setCurrentStep, setBookingDa
                   >
                     <Select
                       size="large"
-                      placeholder="Select time"
-                      options={timeSlots}
+                      placeholder={loadingSlots ? 'Checking availability...' : 'Select time'}
+                      options={timeSlotOptions}
                       onChange={(value) => setAppointmentTime(value)}
+                      disabled={!appointmentCenterId || !appointmentDate || loadingSlots}
+                      notFoundContent={loadingSlots ? <Spin size="small" /> : null}
                     />
                   </Form.Item>
                 </Col>

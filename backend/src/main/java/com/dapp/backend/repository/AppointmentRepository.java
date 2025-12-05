@@ -54,4 +54,10 @@ public interface AppointmentRepository extends JpaRepository<Appointment, Long>,
 
         long countByCenterAndStatusAndScheduledDateBetween(Center center, AppointmentStatus status, LocalDate startDate,
                         LocalDate endDate);
+
+        @Query("SELECT a.scheduledTimeSlot, COUNT(a) FROM Appointment a " +
+                        "WHERE a.center.centerId = :centerId AND a.scheduledDate = :date " +
+                        "AND a.status != 'CANCELLED' " +
+                        "GROUP BY a.scheduledTimeSlot")
+        List<Object[]> countAppointmentsBySlot(@Param("centerId") Long centerId, @Param("date") LocalDate date);
 }

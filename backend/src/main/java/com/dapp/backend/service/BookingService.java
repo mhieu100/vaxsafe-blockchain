@@ -12,6 +12,7 @@ import com.dapp.backend.util.TokenExtractor;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 
+import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -39,6 +40,7 @@ public class BookingService {
     private final UserRepository userRepository;
     private final DoctorRepository doctorRepository;
     private final DoctorAvailableSlotRepository slotRepository;
+    private final AppointmentRepository appointmentRepository;
 
     public PaymentResponse createBooking(HttpServletRequest request, BookingRequest bookingRequest) throws Exception {
         User user = authService.getCurrentUserLogin();
@@ -50,6 +52,27 @@ public class BookingService {
         if (bookingRequest.getAppointmentCenter() != null) {
             center = centerRepository.findById(bookingRequest.getAppointmentCenter())
                     .orElseThrow(() -> new AppException("Center not found!"));
+
+            // Validate slot availability
+            if (bookingRequest.getAppointmentDate() != null && bookingRequest.getAppointmentTime() != null) {
+                TimeSlotEnum requestedSlot = TimeSlotEnum.fromTime(bookingRequest.getAppointmentTime());
+                int slotCapacity = center.getCapacity() > 0 ? center.getCapacity() / 6 : 50;
+
+                // Count existing bookings for this slot
+                List<Object[]> bookedCounts = appointmentRepository.countAppointmentsBySlot(center.getCenterId(),
+                        bookingRequest.getAppointmentDate());
+                int booked = 0;
+                for (Object[] row : bookedCounts) {
+                    if (row[0] == requestedSlot) {
+                        booked = ((Long) row[1]).intValue();
+                        break;
+                    }
+                }
+
+                if (booked >= slotCapacity) {
+                    throw new AppException("Selected time slot is full. Please choose another time.");
+                }
+            }
         }
 
         Booking booking = new Booking();
@@ -148,23 +171,22 @@ public class BookingService {
                 paymentRepository.save(payment);
                 booking.setStatus(BookingEnum.CONFIRMED);
                 bookingRepository.save(booking);
-                
+
                 // Send appointment confirmation email for CASH payment
                 try {
-                    if (user.getEmail() != null && !user.getEmail().isEmpty() 
-                        && bookingRequest.getAppointmentDate() != null && center != null) {
-                        String timeSlot = bookingRequest.getAppointmentTime() != null 
-                            ? bookingRequest.getAppointmentTime().toString() 
-                            : "Chưa xác định";
+                    if (user.getEmail() != null && !user.getEmail().isEmpty()
+                            && bookingRequest.getAppointmentDate() != null && center != null) {
+                        String timeSlot = bookingRequest.getAppointmentTime() != null
+                                ? bookingRequest.getAppointmentTime().toString()
+                                : "Chưa xác định";
                         emailService.sendAppointmentConfirmation(
-                            user.getEmail(),
-                            user.getFullName(),
-                            vaccine.getName(),
-                            bookingRequest.getAppointmentDate(),
-                            timeSlot,
-                            center.getName(),
-                            firstAppointment.getId()
-                        );
+                                user.getEmail(),
+                                user.getFullName(),
+                                vaccine.getName(),
+                                bookingRequest.getAppointmentDate(),
+                                timeSlot,
+                                center.getName(),
+                                firstAppointment.getId());
                     }
                 } catch (Exception e) {
                     // Log but don't fail booking if email fails
@@ -217,31 +239,30 @@ public class BookingService {
         // Validate patient
         User patient = userRepository.findById(request.getPatientId())
                 .orElseThrow(() -> new AppException("Patient not found!"));
-        
+
         // Validate vaccine
         Vaccine vaccine = vaccineRepository.findById(request.getVaccineId())
                 .orElseThrow(() -> new AppException("Vaccine not found!"));
-        
+
         // Validate center
         Center center = centerRepository.findById(request.getCenterId())
                 .orElseThrow(() -> new AppException("Center not found!"));
-        
+
         // Validate doctor user
         Doctor doctor = doctorRepository.findById(request.getDoctorId())
                 .orElseThrow(() -> new AppException("Doctor not found!"));
-        
-        
+
         if (doctor == null) {
             throw new AppException("User is not a doctor!");
         }
-        
+
         // Handle slot (create if virtual, use existing if real)
         DoctorAvailableSlot slot = null;
         if (request.getSlotId() != null) {
             // Real slot - get from database
             slot = slotRepository.findById(request.getSlotId())
                     .orElseThrow(() -> new AppException("Slot not found!"));
-            
+
             // Check if slot is available
             if (slot.getStatus() != SlotStatus.AVAILABLE) {
                 throw new AppException("Slot is not available!");
@@ -250,13 +271,12 @@ public class BookingService {
             // Virtual slot - check if already exists, if not create new
             LocalTime startTime = request.getActualScheduledTime();
             LocalTime endTime = startTime.plusMinutes(15);
-            
+
             slot = slotRepository.findByDoctorIdAndSlotDateAndStartTime(
                     request.getDoctorId(),
                     request.getAppointmentDate(),
-                    startTime
-            ).orElse(null);
-            
+                    startTime).orElse(null);
+
             if (slot == null) {
                 // Create new virtual slot
                 slot = new DoctorAvailableSlot();
@@ -272,7 +292,7 @@ public class BookingService {
                 slot = slotRepository.save(slot);
             }
         }
-        
+
         // Create booking
         Booking booking = new Booking();
         booking.setPatient(patient);
@@ -280,15 +300,15 @@ public class BookingService {
         booking.setTotalAmount((double) vaccine.getPrice());
         booking.setStatus(BookingEnum.CONFIRMED); // Walk-in is confirmed immediately
         booking.setTotalDoses(vaccine.getDosesRequired());
-        
+
         // Create appointments
         List<Appointment> appointments = new ArrayList<>();
-        
+
         for (int i = 1; i <= vaccine.getDosesRequired(); i++) {
             Appointment appointment = new Appointment();
             appointment.setBooking(booking);
             appointment.setDoseNumber(i);
-            
+
             if (i == 1) {
                 // First dose - assign immediately
                 appointment.setScheduledDate(request.getAppointmentDate());
@@ -299,7 +319,7 @@ public class BookingService {
                 appointment.setCashier(cashier); // Set cashier who created the walk-in booking
                 appointment.setSlot(slot);
                 appointment.setStatus(AppointmentStatus.SCHEDULED); // Skip PENDING
-                
+
                 // Mark slot as booked
                 slot.setStatus(SlotStatus.BOOKED);
                 slotRepository.save(slot);
@@ -310,13 +330,13 @@ public class BookingService {
                 appointment.setCenter(null);
                 appointment.setStatus(AppointmentStatus.PENDING);
             }
-            
+
             appointments.add(appointment);
         }
-        
+
         booking.setAppointments(appointments);
         Booking savedBooking = bookingRepository.save(booking);
-        
+
         // Create payment record (after booking is saved so appointment has ID)
         Appointment firstAppointment = savedBooking.getAppointments().get(0);
         Payment payment = new Payment();
@@ -331,29 +351,72 @@ public class BookingService {
         // Send confirmation email
         try {
             if (patient.getEmail() != null && !patient.getEmail().isEmpty()) {
-                // Use sendAppointmentScheduled for walk-in bookings (already has doctor assigned)
+                // Use sendAppointmentScheduled for walk-in bookings (already has doctor
+                // assigned)
                 emailService.sendAppointmentScheduled(
-                    patient.getEmail(),
-                    patient.getFullName(),
-                    vaccine.getName(),
-                    request.getAppointmentDate(),
-                    request.getAppointmentTime(),
-                    center.getName(),
-                    center.getAddress(),
-                    firstAppointment.getId(),
-                    1, // First dose
-                    cashier.getFullName(), // Cashier is the one creating walk-in booking
-                    cashier.getPhone() != null ? cashier.getPhone() : "N/A",
-                    doctor.getUser().getFullName(),
-                    doctor.getUser().getPhone() != null ? doctor.getUser().getPhone() : "N/A"
-                );
+                        patient.getEmail(),
+                        patient.getFullName(),
+                        vaccine.getName(),
+                        request.getAppointmentDate(),
+                        request.getAppointmentTime(),
+                        center.getName(),
+                        center.getAddress(),
+                        firstAppointment.getId(),
+                        1, // First dose
+                        cashier.getFullName(), // Cashier is the one creating walk-in booking
+                        cashier.getPhone() != null ? cashier.getPhone() : "N/A",
+                        doctor.getUser().getFullName(),
+                        doctor.getUser().getPhone() != null ? doctor.getUser().getPhone() : "N/A");
             }
         } catch (Exception e) {
             // Log but don't fail booking if email fails
             System.err.println("Failed to send confirmation email: " + e.getMessage());
         }
-        
+
         return BookingMapper.toResponse(savedBooking);
     }
 
+    public CenterAvailabilityResponse checkAvailability(Long centerId, LocalDate date) throws AppException {
+        Center center = centerRepository.findById(centerId)
+                .orElseThrow(() -> new AppException("Center not found"));
+
+        // Get capacity per slot (assuming center.capacity is total daily capacity,
+        // divide by 6 slots for now)
+        // Or better: assume capacity is per slot if not specified
+        int slotCapacity = center.getCapacity() > 0 ? center.getCapacity() / 6 : 50; // Default 50 if not set
+
+        // Get booked counts
+        List<Object[]> bookedCounts = appointmentRepository.countAppointmentsBySlot(centerId, date);
+
+        List<SlotAvailabilityDto> slots = new ArrayList<>();
+
+        for (TimeSlotEnum slotEnum : TimeSlotEnum.values()) {
+            int booked = 0;
+
+            // Find booked count for this slot
+            for (Object[] row : bookedCounts) {
+                if (row[0] == slotEnum) {
+                    booked = ((Long) row[1]).intValue();
+                    break;
+                }
+            }
+
+            int available = Math.max(0, slotCapacity - booked);
+
+            slots.add(SlotAvailabilityDto.builder()
+                    .timeSlot(slotEnum)
+                    .time(slotEnum.getDisplayName())
+                    .capacity(slotCapacity)
+                    .booked(booked)
+                    .available(available)
+                    .status(available > 0 ? "AVAILABLE" : "FULL")
+                    .build());
+        }
+
+        return CenterAvailabilityResponse.builder()
+                .date(date)
+                .centerId(centerId)
+                .slots(slots)
+                .build();
+    }
 }

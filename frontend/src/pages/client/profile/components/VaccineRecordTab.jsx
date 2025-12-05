@@ -55,13 +55,14 @@ const VaccineRecordTab = () => {
       title: t('client:vaccinePassport.vaccine'),
       dataIndex: 'vaccineName',
       key: 'vaccineName',
+      width: 200,
       render: (text, record) => (
         <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-full bg-blue-50 flex items-center justify-center">
+          <div className="w-10 h-10 rounded-full bg-blue-50 flex items-center justify-center flex-shrink-0">
             <MedicineBoxOutlined className="text-blue-600 text-lg" />
           </div>
           <div>
-            <div className="font-medium text-slate-800">{text}</div>
+            <div className="font-medium text-slate-800 line-clamp-2">{text}</div>
             <Text type="secondary" className="text-xs">
               {t('client:vaccinePassport.dose')} #{record.doseNumber}
             </Text>
@@ -73,6 +74,7 @@ const VaccineRecordTab = () => {
       title: t('client:vaccinePassport.date'),
       dataIndex: 'vaccinationDate',
       key: 'vaccinationDate',
+      width: 140,
       render: (date) => (
         <div className="flex items-center gap-2 text-slate-600">
           <CalendarOutlined className="text-emerald-500" />
@@ -84,6 +86,7 @@ const VaccineRecordTab = () => {
       title: t('client:vaccinePassport.site'),
       dataIndex: 'site',
       key: 'site',
+      width: 120,
       render: (site) => (
         <Tag color="blue" className="rounded-md border-0 bg-blue-50 text-blue-600">
           {site?.replace('_', ' ') || 'N/A'}
@@ -94,6 +97,7 @@ const VaccineRecordTab = () => {
       title: t('client:vaccinePassport.lotNumber'),
       dataIndex: 'lotNumber',
       key: 'lotNumber',
+      width: 130,
       render: (lot) => (
         <div className="flex items-center gap-2">
           <ExperimentOutlined className="text-purple-500" />
@@ -105,10 +109,13 @@ const VaccineRecordTab = () => {
       title: t('client:vaccinePassport.doctor'),
       dataIndex: 'doctorName',
       key: 'doctorName',
+      width: 180,
       render: (name) => (
         <div className="flex items-center gap-2 text-slate-600">
           <UserOutlined className="text-slate-400" />
-          <span>{name || 'N/A'}</span>
+          <span className="line-clamp-1" title={name}>
+            {name || 'N/A'}
+          </span>
         </div>
       ),
     },
@@ -116,11 +123,17 @@ const VaccineRecordTab = () => {
       title: t('client:vaccinePassport.center'),
       dataIndex: 'centerName',
       key: 'centerName',
-      render: (name) => <Text className="text-slate-500">{name || 'N/A'}</Text>,
+      width: 200,
+      render: (name) => (
+        <Text className="text-slate-500 line-clamp-2" title={name}>
+          {name || 'N/A'}
+        </Text>
+      ),
     },
     {
       title: t('client:vaccinePassport.status'),
       key: 'status',
+      width: 160,
       render: (_, record) => (
         <div className="flex items-center gap-2">
           <Tag icon={<CheckCircleFilled />} color="success" className="rounded-full px-3 border-0">
@@ -133,6 +146,8 @@ const VaccineRecordTab = () => {
     {
       title: t('client:vaccinePassport.actions'),
       key: 'actions',
+      width: 100,
+      fixed: 'right',
       render: (_, record) =>
         record.transactionHash && (
           <Button
@@ -254,6 +269,7 @@ const VaccineRecordTab = () => {
               showSizeChanger: true,
               showTotal: (total) => t('client:vaccinePassport.totalRecordsCount', { count: total }),
             }}
+            scroll={{ x: 1200 }}
             expandable={{
               expandedRowRender: (record) => (
                 <div className="p-4 bg-slate-50 rounded-xl border border-slate-100 m-2">
