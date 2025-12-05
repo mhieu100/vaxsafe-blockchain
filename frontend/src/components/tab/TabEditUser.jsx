@@ -1,5 +1,6 @@
 import { Button, Col, Form, Input, message, Row, Select, Typography } from 'antd';
 import { useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { updateProfile } from '@/services/profile.service';
 import { useAccountStore } from '@/stores/useAccountStore';
 
@@ -7,6 +8,7 @@ const { Text, Paragraph } = Typography;
 
 const TabEditUser = ({ editMode, setEditMode }) => {
   const [form] = Form.useForm();
+  const { t } = useTranslation(['client', 'common']);
   const { user, updateUserInfo } = useAccountStore();
   const [loading, setLoading] = useState(false);
 
@@ -54,11 +56,13 @@ const TabEditUser = ({ editMode, setEditMode }) => {
         updateUserInfo(values);
       }
 
-      message.success('Profile updated successfully!');
+      message.success(t('client:profile.updateSuccess'));
       setEditMode(false);
     } catch (error) {
       console.error('Update profile error:', error);
-      message.error(error?.response?.data?.message || error?.message || 'Failed to update profile');
+      message.error(
+        error?.response?.data?.message || error?.message || t('client:profile.updateFailed')
+      );
     } finally {
       setLoading(false);
     }
@@ -94,15 +98,19 @@ const TabEditUser = ({ editMode, setEditMode }) => {
           <Row gutter={24}>
             <Col xs={24} sm={12}>
               <Form.Item
-                label="Full Name"
+                label={t('client:profile.fullName')}
                 name="fullName"
-                rules={[{ required: true, message: 'Please enter full name' }]}
+                rules={[{ required: true, message: t('client:profile.enterFullName') }]}
               >
                 <Input className="rounded-lg" />
               </Form.Item>
             </Col>
             <Col xs={24} sm={12}>
-              <Form.Item label="Email" name="email" rules={[{ required: true, type: 'email' }]}>
+              <Form.Item
+                label={t('client:profile.email')}
+                name="email"
+                rules={[{ required: true, type: 'email' }]}
+              >
                 <Input disabled className="rounded-lg bg-slate-50 text-slate-500" />
               </Form.Item>
             </Col>
@@ -110,19 +118,19 @@ const TabEditUser = ({ editMode, setEditMode }) => {
 
           <Row gutter={24}>
             <Col xs={24} sm={12}>
-              <Form.Item label="Phone" name="phone">
+              <Form.Item label={t('client:profile.phone')} name="phone">
                 <Input className="rounded-lg" />
               </Form.Item>
             </Col>
             <Col xs={24} sm={12}>
               <Form.Item
-                label="Date of Birth"
+                label={t('client:profile.dateOfBirth')}
                 name="birthday"
                 tooltip="Cannot be changed - used for blockchain identity"
               >
                 <Input
                   disabled
-                  placeholder="YYYY-MM-DD"
+                  placeholder={t('client:booking.selectDate')}
                   className="rounded-lg bg-slate-50 text-slate-500"
                 />
               </Form.Item>
@@ -131,23 +139,23 @@ const TabEditUser = ({ editMode, setEditMode }) => {
 
           <Row gutter={24}>
             <Col xs={24} sm={12}>
-              <Form.Item label="Gender" name="gender">
-                <Select placeholder="Select gender" className="rounded-lg">
-                  <Select.Option value="MALE">Male</Select.Option>
-                  <Select.Option value="FEMALE">Female</Select.Option>
-                  <Select.Option value="OTHER">Other</Select.Option>
+              <Form.Item label={t('client:profile.gender')} name="gender">
+                <Select placeholder={t('client:profile.selectGender')} className="rounded-lg">
+                  <Select.Option value="MALE">{t('client:profile.male')}</Select.Option>
+                  <Select.Option value="FEMALE">{t('client:profile.female')}</Select.Option>
+                  <Select.Option value="OTHER">{t('client:profile.other')}</Select.Option>
                 </Select>
               </Form.Item>
             </Col>
             <Col xs={24} sm={12}>
               <Form.Item
-                label="Identity Number"
+                label={t('client:profile.identityNumber')}
                 name="identityNumber"
                 tooltip="Cannot be changed - used for blockchain identity"
               >
                 <Input
                   disabled
-                  placeholder="ID Card / Passport"
+                  placeholder={t('client:profile.identityNumber')}
                   className="rounded-lg bg-slate-50 text-slate-500"
                 />
               </Form.Item>
@@ -156,8 +164,8 @@ const TabEditUser = ({ editMode, setEditMode }) => {
 
           <Row gutter={24}>
             <Col xs={24} sm={8}>
-              <Form.Item label="Blood Type" name="bloodType">
-                <Select placeholder="Select type" className="rounded-lg">
+              <Form.Item label={t('client:profile.bloodType')} name="bloodType">
+                <Select placeholder={t('client:profile.selectBloodType')} className="rounded-lg">
                   <Select.Option value="A">A</Select.Option>
                   <Select.Option value="B">B</Select.Option>
                   <Select.Option value="AB">AB</Select.Option>
@@ -166,38 +174,41 @@ const TabEditUser = ({ editMode, setEditMode }) => {
               </Form.Item>
             </Col>
             <Col xs={24} sm={8}>
-              <Form.Item label="Height (cm)" name="heightCm">
+              <Form.Item label={`${t('client:profile.height')} (cm)`} name="heightCm">
                 <Input type="number" placeholder="170" className="rounded-lg" />
               </Form.Item>
             </Col>
             <Col xs={24} sm={8}>
-              <Form.Item label="Weight (kg)" name="weightKg">
+              <Form.Item label={`${t('client:profile.weight')} (kg)`} name="weightKg">
                 <Input type="number" placeholder="65" className="rounded-lg" />
               </Form.Item>
             </Col>
           </Row>
 
-          <Form.Item label="Address" name="address">
+          <Form.Item label={t('client:profile.address')} name="address">
             <Input.TextArea rows={2} className="rounded-lg" />
           </Form.Item>
 
           <Row gutter={24}>
             <Col xs={24} sm={12}>
-              <Form.Item label="Occupation" name="occupation">
-                <Input placeholder="Occupation" className="rounded-lg" />
+              <Form.Item label={t('client:profile.occupation')} name="occupation">
+                <Input placeholder={t('client:profile.enterOccupation')} className="rounded-lg" />
               </Form.Item>
             </Col>
             <Col xs={24} sm={12}>
-              <Form.Item label="Insurance Number" name="insuranceNumber">
-                <Input placeholder="Health Insurance Number" className="rounded-lg" />
+              <Form.Item label={t('client:profile.insuranceNumber')} name="insuranceNumber">
+                <Input
+                  placeholder={t('client:profile.enterInsuranceNumber')}
+                  className="rounded-lg"
+                />
               </Form.Item>
             </Col>
           </Row>
 
-          <Form.Item label="Lifestyle Notes" name="lifestyleNotes">
+          <Form.Item label={t('client:profile.lifestyleNotes')} name="lifestyleNotes">
             <Input.TextArea
               rows={3}
-              placeholder="Notes about lifestyle, hobbies, etc."
+              placeholder={t('client:profile.enterLifestyleNotes')}
               className="rounded-lg"
             />
           </Form.Item>
@@ -210,14 +221,14 @@ const TabEditUser = ({ editMode, setEditMode }) => {
               disabled={loading}
               className="bg-blue-600 hover:bg-blue-700 rounded-xl px-6 h-10 shadow-lg shadow-blue-500/30"
             >
-              Save Changes
+              {t('client:profile.saveChanges')}
             </Button>
             <Button
               onClick={() => setEditMode(false)}
               disabled={loading}
               className="rounded-xl px-6 h-10 hover:bg-slate-100"
             >
-              Cancel
+              {t('client:profile.cancel')}
             </Button>
           </div>
         </Form>
@@ -229,7 +240,7 @@ const TabEditUser = ({ editMode, setEditMode }) => {
                 type="secondary"
                 className="text-xs uppercase tracking-wider font-semibold text-slate-400"
               >
-                Full Name
+                {t('client:profile.fullName')}
               </Text>
               <div className="text-lg font-medium text-slate-800 mt-1">
                 {user?.fullName || '--'}
@@ -240,7 +251,7 @@ const TabEditUser = ({ editMode, setEditMode }) => {
                 type="secondary"
                 className="text-xs uppercase tracking-wider font-semibold text-slate-400"
               >
-                Email
+                {t('client:profile.email')}
               </Text>
               <div className="text-lg font-medium text-slate-800 mt-1">{user?.email || '--'}</div>
             </div>
@@ -249,7 +260,7 @@ const TabEditUser = ({ editMode, setEditMode }) => {
                 type="secondary"
                 className="text-xs uppercase tracking-wider font-semibold text-slate-400"
               >
-                Phone
+                {t('client:profile.phone')}
               </Text>
               <div className="text-lg font-medium text-slate-800 mt-1">{user?.phone || '--'}</div>
             </div>
@@ -258,7 +269,7 @@ const TabEditUser = ({ editMode, setEditMode }) => {
                 type="secondary"
                 className="text-xs uppercase tracking-wider font-semibold text-slate-400"
               >
-                Date of Birth
+                {t('client:profile.dateOfBirth')}
               </Text>
               <div className="text-lg font-medium text-slate-800 mt-1">
                 {user?.birthday || '--'}
@@ -269,15 +280,15 @@ const TabEditUser = ({ editMode, setEditMode }) => {
                 type="secondary"
                 className="text-xs uppercase tracking-wider font-semibold text-slate-400"
               >
-                Gender
+                {t('client:profile.gender')}
               </Text>
               <div className="text-lg font-medium text-slate-800 mt-1">
                 {user?.gender === 'MALE'
-                  ? 'Male'
+                  ? t('client:profile.male')
                   : user?.gender === 'FEMALE'
-                    ? 'Female'
+                    ? t('client:profile.female')
                     : user?.gender === 'OTHER'
-                      ? 'Other'
+                      ? t('client:profile.other')
                       : '--'}
               </div>
             </div>
@@ -286,7 +297,7 @@ const TabEditUser = ({ editMode, setEditMode }) => {
                 type="secondary"
                 className="text-xs uppercase tracking-wider font-semibold text-slate-400"
               >
-                Identity Number
+                {t('client:profile.identityNumber')}
               </Text>
               <div className="text-lg font-medium text-slate-800 mt-1">
                 {user?.identityNumber || '--'}
@@ -297,7 +308,7 @@ const TabEditUser = ({ editMode, setEditMode }) => {
                 type="secondary"
                 className="text-xs uppercase tracking-wider font-semibold text-slate-400"
               >
-                Blood Type
+                {t('client:profile.bloodType')}
               </Text>
               <div className="text-lg font-medium text-slate-800 mt-1">
                 {user?.bloodType || '--'}
@@ -308,7 +319,7 @@ const TabEditUser = ({ editMode, setEditMode }) => {
                 type="secondary"
                 className="text-xs uppercase tracking-wider font-semibold text-slate-400"
               >
-                Height
+                {t('client:profile.height')}
               </Text>
               <div className="text-lg font-medium text-slate-800 mt-1">
                 {user?.heightCm ? `${user.heightCm} cm` : '--'}
@@ -319,7 +330,7 @@ const TabEditUser = ({ editMode, setEditMode }) => {
                 type="secondary"
                 className="text-xs uppercase tracking-wider font-semibold text-slate-400"
               >
-                Weight
+                {t('client:profile.weight')}
               </Text>
               <div className="text-lg font-medium text-slate-800 mt-1">
                 {user?.weightKg ? `${user.weightKg} kg` : '--'}
@@ -330,7 +341,7 @@ const TabEditUser = ({ editMode, setEditMode }) => {
                 type="secondary"
                 className="text-xs uppercase tracking-wider font-semibold text-slate-400"
               >
-                Occupation
+                {t('client:profile.occupation')}
               </Text>
               <div className="text-lg font-medium text-slate-800 mt-1">
                 {user?.occupation || '--'}
@@ -341,7 +352,7 @@ const TabEditUser = ({ editMode, setEditMode }) => {
                 type="secondary"
                 className="text-xs uppercase tracking-wider font-semibold text-slate-400"
               >
-                Insurance Number
+                {t('client:profile.insuranceNumber')}
               </Text>
               <div className="text-lg font-medium text-slate-800 mt-1">
                 {user?.insuranceNumber || '--'}
@@ -354,7 +365,7 @@ const TabEditUser = ({ editMode, setEditMode }) => {
               type="secondary"
               className="text-xs uppercase tracking-wider font-semibold text-slate-400"
             >
-              Address
+              {t('client:profile.address')}
             </Text>
             <div className="text-lg font-medium text-slate-800 mt-1">{user?.address || '--'}</div>
           </div>
@@ -364,7 +375,7 @@ const TabEditUser = ({ editMode, setEditMode }) => {
               type="secondary"
               className="text-xs uppercase tracking-wider font-semibold text-slate-400"
             >
-              Lifestyle Notes
+              {t('client:profile.lifestyleNotes')}
             </Text>
             <Paragraph className="text-base whitespace-pre-line text-slate-800 mt-1">
               {user?.lifestyleNotes || '--'}
@@ -378,7 +389,7 @@ const TabEditUser = ({ editMode, setEditMode }) => {
               disabled={!user}
               className="bg-blue-600 hover:bg-blue-700 rounded-xl px-8 h-10 shadow-lg shadow-blue-500/30"
             >
-              Edit Profile
+              {t('client:profile.editProfile')}
             </Button>
           </div>
         </div>

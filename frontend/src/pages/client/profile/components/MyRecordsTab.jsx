@@ -1,23 +1,25 @@
 import { Tabs } from 'antd';
+import { useTranslation } from 'react-i18next';
 import VaccinationHistoryTab from './VaccinationHistoryTab';
 import VaccinePassportTab from './VaccinePassportTab';
 import VaccineRecordTab from './VaccineRecordTab';
 
 const MyRecordsTab = () => {
+  const { t } = useTranslation(['client']);
   const items = [
     {
       key: 'history',
-      label: 'Vaccination History',
+      label: t('client:myRecords.vaccinationHistory'),
       children: <VaccinationHistoryTab />,
     },
     {
       key: 'passport',
-      label: 'Digital Passport',
+      label: t('client:myRecords.digitalPassport'),
       children: <VaccinePassportTab />,
     },
     {
       key: 'records',
-      label: 'Medical Records',
+      label: t('client:myRecords.medicalRecords'),
       children: <VaccineRecordTab />,
     },
   ];

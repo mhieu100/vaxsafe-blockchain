@@ -8,12 +8,14 @@ import {
 } from '@ant-design/icons';
 import { Alert, Card, Descriptions, Empty, Skeleton, Table, Tag, Typography } from 'antd';
 import { useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import apiClient from '@/services/apiClient';
 import useAccountStore from '@/stores/useAccountStore';
 
 const { Title, Text } = Typography;
 
 const VaccineRecordTab = () => {
+  const { t } = useTranslation(['client']);
   const { user } = useAccountStore();
   const [records, setRecords] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -35,7 +37,7 @@ const VaccineRecordTab = () => {
         }
       } catch (err) {
         console.error('Error fetching vaccine records:', err);
-        setError('Failed to load vaccine records. Please try again later.');
+        setError(t('client:vaccinePassport.errorFetch'));
       } finally {
         setLoading(false);
       }
@@ -46,7 +48,7 @@ const VaccineRecordTab = () => {
 
   const columns = [
     {
-      title: 'Vaccine',
+      title: t('client:vaccinePassport.vaccine'),
       dataIndex: 'vaccineName',
       key: 'vaccineName',
       render: (text, record) => (
@@ -57,14 +59,14 @@ const VaccineRecordTab = () => {
           <div>
             <div className="font-medium text-slate-800">{text}</div>
             <Text type="secondary" className="text-xs">
-              Dose #{record.doseNumber}
+              {t('client:vaccinePassport.dose')} #{record.doseNumber}
             </Text>
           </div>
         </div>
       ),
     },
     {
-      title: 'Vaccination Date',
+      title: t('client:vaccinePassport.date'),
       dataIndex: 'vaccinationDate',
       key: 'vaccinationDate',
       render: (date) => (
@@ -75,7 +77,7 @@ const VaccineRecordTab = () => {
       ),
     },
     {
-      title: 'Site',
+      title: t('client:vaccinePassport.site'),
       dataIndex: 'site',
       key: 'site',
       render: (site) => (
@@ -85,7 +87,7 @@ const VaccineRecordTab = () => {
       ),
     },
     {
-      title: 'Lot Number',
+      title: t('client:vaccinePassport.lotNumber'),
       dataIndex: 'lotNumber',
       key: 'lotNumber',
       render: (lot) => (
@@ -96,7 +98,7 @@ const VaccineRecordTab = () => {
       ),
     },
     {
-      title: 'Doctor',
+      title: t('client:vaccinePassport.doctor'),
       dataIndex: 'doctorName',
       key: 'doctorName',
       render: (name) => (
@@ -107,17 +109,17 @@ const VaccineRecordTab = () => {
       ),
     },
     {
-      title: 'Center',
+      title: t('client:vaccinePassport.center'),
       dataIndex: 'centerName',
       key: 'centerName',
       render: (name) => <Text className="text-slate-500">{name || 'N/A'}</Text>,
     },
     {
-      title: 'Status',
+      title: t('client:vaccinePassport.status'),
       key: 'status',
       render: () => (
         <Tag icon={<CheckCircleFilled />} color="success" className="rounded-full px-3 border-0">
-          Completed
+          {t('client:vaccinePassport.completed')}
         </Tag>
       ),
     },
@@ -154,7 +156,7 @@ const VaccineRecordTab = () => {
           <div className="flex items-center justify-between p-2">
             <div>
               <Text className="text-slate-500 font-medium uppercase text-xs tracking-wider">
-                Total Records
+                {t('client:vaccinePassport.totalRecords')}
               </Text>
               <div className="text-3xl font-bold text-blue-600 mt-1">{records.length}</div>
             </div>
@@ -171,7 +173,7 @@ const VaccineRecordTab = () => {
           <div className="flex items-center justify-between p-2">
             <div>
               <Text className="text-slate-500 font-medium uppercase text-xs tracking-wider">
-                Vaccines Taken
+                {t('client:vaccinePassport.vaccinesTaken')}
               </Text>
               <div className="text-3xl font-bold text-emerald-600 mt-1">
                 {new Set(records.map((r) => r.vaccineName)).size}
@@ -190,7 +192,7 @@ const VaccineRecordTab = () => {
           <div className="flex items-center justify-between p-2">
             <div>
               <Text className="text-slate-500 font-medium uppercase text-xs tracking-wider">
-                Last Vaccination
+                {t('client:vaccinePassport.lastVaccination')}
               </Text>
               <div className="text-lg font-bold text-purple-600 mt-2">
                 {records.length > 0
@@ -210,9 +212,9 @@ const VaccineRecordTab = () => {
       <Card className="rounded-3xl shadow-sm border border-slate-100 overflow-hidden">
         <div className="mb-4 px-2">
           <Title level={4} className="!mb-1 text-slate-800">
-            Vaccination Records
+            {t('client:vaccinePassport.recordsTitle')}
           </Title>
-          <Text className="text-slate-500">Official medical records stored on blockchain</Text>
+          <Text className="text-slate-500">{t('client:vaccinePassport.recordsSubtitle')}</Text>
         </div>
 
         {records.length > 0 ? (
@@ -225,33 +227,38 @@ const VaccineRecordTab = () => {
             pagination={{
               pageSize: 10,
               showSizeChanger: true,
-              showTotal: (total) => `Total ${total} records`,
+              showTotal: (total) => t('client:vaccinePassport.totalRecordsCount', { count: total }),
             }}
             expandable={{
               expandedRowRender: (record) => (
                 <div className="p-4 bg-slate-50 rounded-xl border border-slate-100 m-2">
                   <Descriptions bordered size="small" column={2} className="bg-white rounded-lg">
-                    <Descriptions.Item label="Patient Identity Hash" span={2}>
+                    <Descriptions.Item
+                      label={t('client:vaccinePassport.patientIdentityHash')}
+                      span={2}
+                    >
                       <Text className="font-mono text-xs text-slate-500">
                         {record.patientIdentityHash}
                       </Text>
                     </Descriptions.Item>
-                    <Descriptions.Item label="Appointment ID">
+                    <Descriptions.Item label={t('client:vaccinePassport.appointmentId')}>
                       <span className="font-mono text-slate-700">{record.appointmentId}</span>
                     </Descriptions.Item>
-                    <Descriptions.Item label="Expiry Date">
+                    <Descriptions.Item label={t('client:vaccinePassport.expiryDate')}>
                       {record.expiryDate
                         ? new Date(record.expiryDate).toLocaleDateString('vi-VN')
                         : 'N/A'}
                     </Descriptions.Item>
-                    <Descriptions.Item label="IPFS Hash" span={2}>
+                    <Descriptions.Item label={t('client:vaccinePassport.ipfsHash')} span={2}>
                       <Text className="font-mono text-xs text-blue-600">
                         {record.ipfsHash || 'N/A'}
                       </Text>
                     </Descriptions.Item>
-                    <Descriptions.Item label="Notes" span={2}>
+                    <Descriptions.Item label={t('client:vaccinePassport.notes')} span={2}>
                       {record.notes || (
-                        <span className="text-slate-400 italic">No additional notes</span>
+                        <span className="text-slate-400 italic">
+                          {t('client:vaccinePassport.noNotes')}
+                        </span>
                       )}
                     </Descriptions.Item>
                   </Descriptions>
@@ -261,19 +268,22 @@ const VaccineRecordTab = () => {
             className="custom-table"
           />
         ) : (
-          <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} description="No vaccination records found" />
+          <Empty
+            image={Empty.PRESENTED_IMAGE_SIMPLE}
+            description={t('client:vaccinePassport.noRecords')}
+          />
         )}
       </Card>
 
       <Card className="bg-gradient-to-r from-blue-50 to-indigo-50 border-blue-100 mt-6 rounded-2xl">
         <Title level={5} className="text-blue-900">
-          📋 About Vaccine Records
+          📋 {t('client:vaccinePassport.aboutTitle')}
         </Title>
         <ul className="text-sm text-blue-800 mt-2 space-y-1 list-disc pl-4">
-          <li>All vaccination records are stored securely on blockchain</li>
-          <li>Each record is immutable and verifiable</li>
-          <li>Records include complete vaccination details and doctor information</li>
-          <li>You can access your records anytime for verification purposes</li>
+          <li>{t('client:vaccinePassport.aboutPoint1')}</li>
+          <li>{t('client:vaccinePassport.aboutPoint2')}</li>
+          <li>{t('client:vaccinePassport.aboutPoint3')}</li>
+          <li>{t('client:vaccinePassport.aboutPoint4')}</li>
         </ul>
       </Card>
     </div>

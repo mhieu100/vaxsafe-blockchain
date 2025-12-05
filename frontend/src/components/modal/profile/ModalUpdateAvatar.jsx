@@ -1,11 +1,13 @@
 import { CameraOutlined, DeleteOutlined, UserOutlined } from '@ant-design/icons';
 import { Avatar, Button, Modal, message, Upload } from 'antd';
 import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { callUploadSingleFile } from '@/services/file.service';
 import { callUpdateAvatar } from '@/services/profile.service';
 import { useAccountStore } from '@/stores/useAccountStore';
 
 const ModalUpdateAvatar = ({ open, setOpen }) => {
+  const { t } = useTranslation(['client']);
   const user = useAccountStore((state) => state.user);
   const updateUserInfo = useAccountStore((state) => state.updateUserInfo);
   const [uploading, setUploading] = useState(false);
@@ -41,10 +43,10 @@ const ModalUpdateAvatar = ({ open, setOpen }) => {
       // Step 3: Update avatar in store directly (no page reload)
       updateUserInfo({ avatar: avatarUrl });
 
-      message.success('Cập nhật ảnh đại diện thành công!');
+      message.success(t('client:profile.updateAvatarSuccess'));
       setOpen(false);
     } catch (error) {
-      message.error(error?.message || 'Không thể cập nhật ảnh đại diện');
+      message.error(error?.message || t('client:profile.updateAvatarFailed'));
     } finally {
       setUploading(false);
     }
@@ -65,10 +67,10 @@ const ModalUpdateAvatar = ({ open, setOpen }) => {
       // Update avatar in store directly (no page reload)
       updateUserInfo({ avatar: defaultAvatar });
 
-      message.success('Đã xóa ảnh đại diện!');
+      message.success(t('client:profile.removeAvatarSuccess'));
       setOpen(false);
     } catch (error) {
-      message.error(error?.message || 'Không thể xóa ảnh đại diện');
+      message.error(error?.message || t('client:profile.removeAvatarFailed'));
     } finally {
       setRemoving(false);
     }
@@ -78,12 +80,12 @@ const ModalUpdateAvatar = ({ open, setOpen }) => {
     beforeUpload: (file) => {
       const isImage = file.type.startsWith('image/');
       if (!isImage) {
-        message.error('Chỉ được tải lên file ảnh!');
+        message.error(t('client:profile.onlyImage'));
         return Upload.LIST_IGNORE;
       }
       const isLt5M = file.size / 1024 / 1024 < 5;
       if (!isLt5M) {
-        message.error('Kích thước ảnh phải nhỏ hơn 5MB!');
+        message.error(t('client:profile.imageSizeLimit'));
         return Upload.LIST_IGNORE;
       }
       handleUpload(file);
@@ -94,7 +96,7 @@ const ModalUpdateAvatar = ({ open, setOpen }) => {
 
   return (
     <Modal
-      title="Cập nhật ảnh đại diện"
+      title={t('client:profile.updateAvatarTitle')}
       open={open}
       onCancel={() => setOpen(false)}
       footer={null}
@@ -111,7 +113,7 @@ const ModalUpdateAvatar = ({ open, setOpen }) => {
               loading={uploading}
               disabled={uploading || removing}
             >
-              {uploading ? 'Đang tải lên...' : 'Tải ảnh mới'}
+              {uploading ? t('client:profile.uploading') : t('client:profile.uploadNewPhoto')}
             </Button>
           </Upload>
           <Button
@@ -121,7 +123,7 @@ const ModalUpdateAvatar = ({ open, setOpen }) => {
             loading={removing}
             disabled={uploading || removing || !user?.avatar}
           >
-            Xóa ảnh hiện tại
+            {t('client:profile.removeCurrentPhoto')}
           </Button>
         </div>
       </div>

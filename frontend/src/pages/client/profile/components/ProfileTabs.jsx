@@ -1,4 +1,5 @@
 import { Typography } from 'antd';
+import { useTranslation } from 'react-i18next';
 import AppointmentScheduleTab from './AppointmentScheduleTab';
 import DashboardTab from './DashboardTab';
 import FamilyManagerTab from './FamilyManagerTab';
@@ -8,25 +9,26 @@ import SettingsTab from './SettingsTab';
 const { Title } = Typography;
 
 const ProfileTabs = ({ activeTab, onTabChange, editMode, setEditMode }) => {
+  const { t } = useTranslation(['client']);
   const tabConfig = {
     1: {
-      title: 'Dashboard',
+      title: t('client:sidebar.dashboard'),
       content: <DashboardTab onTabChange={onTabChange} />,
     },
     2: {
-      title: 'My Records',
+      title: t('client:sidebar.myRecords'),
       content: <MyRecordsTab />,
     },
     3: {
-      title: 'Appointments',
+      title: t('client:sidebar.appointments'),
       content: <AppointmentScheduleTab />,
     },
     4: {
-      title: 'Family Members',
+      title: t('client:sidebar.familyMembers'),
       content: <FamilyManagerTab />,
     },
     5: {
-      title: 'Settings',
+      title: t('client:sidebar.settings'),
       content: <SettingsTab editMode={editMode} setEditMode={setEditMode} />,
     },
   };

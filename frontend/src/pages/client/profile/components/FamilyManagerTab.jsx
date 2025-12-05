@@ -29,6 +29,7 @@ import {
 } from 'antd';
 import dayjs from 'dayjs';
 import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { DEFAULT_PAGE, DEFAULT_PAGE_SIZE } from '@/constants/index';
 import { useFamilyMember } from '@/hooks/useFamilyMember';
 import { callCreateMember, callDeleteMember, callUpdateMember } from '@/services/family.service';
@@ -37,6 +38,7 @@ const { Title, Text } = Typography;
 const { Option } = Select;
 
 const FamilyManagerTab = () => {
+  const { t } = useTranslation(['client']);
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [editingMember, setEditingMember] = useState(null);
   const [form] = Form.useForm();
@@ -89,10 +91,10 @@ const FamilyManagerTab = () => {
   const handleDeleteMember = async (memberId) => {
     try {
       await callDeleteMember(memberId);
-      message.success('Family member removed successfully');
+      message.success(t('client:family.removeSuccess'));
       await refetch();
     } catch (_error) {
-      message.error('Failed to remove family member. Please try again.');
+      message.error(t('client:family.removeFailed'));
     }
   };
 
@@ -113,19 +115,17 @@ const FamilyManagerTab = () => {
           id: editingMember.id,
           ...apiData,
         });
-        message.success('Family member updated successfully');
+        message.success(t('client:family.updateSuccess'));
       } else {
         await callCreateMember(apiData);
-        message.success('Family member added successfully');
+        message.success(t('client:family.addSuccess'));
       }
 
       setIsModalVisible(false);
       form.resetFields();
       await refetch();
     } catch (_error) {
-      message.error(
-        editingMember ? 'Failed to update family member' : 'Failed to add family member'
-      );
+      message.error(editingMember ? t('client:family.updateFailed') : t('client:family.addFailed'));
     }
   };
 
@@ -145,13 +145,13 @@ const FamilyManagerTab = () => {
   const getMenuItems = (member) => [
     {
       key: 'edit',
-      label: 'Edit Details',
+      label: t('client:family.editDetails'),
       icon: <EditOutlined />,
       onClick: () => handleEditMember(member),
     },
     {
       key: 'delete',
-      label: 'Remove',
+      label: t('client:family.remove'),
       icon: <DeleteOutlined />,
       danger: true,
       onClick: () => handleDeleteMember(member.id),
@@ -160,7 +160,7 @@ const FamilyManagerTab = () => {
 
   const columns = [
     {
-      title: 'Member',
+      title: t('client:family.member'),
       dataIndex: 'fullName',
       key: 'fullName',
       render: (text, record) => (
@@ -182,7 +182,7 @@ const FamilyManagerTab = () => {
       ),
     },
     {
-      title: 'Contact Info',
+      title: t('client:family.contactInfo'),
       dataIndex: 'phone',
       key: 'contact',
       render: (phone, record) => (
@@ -194,14 +194,14 @@ const FamilyManagerTab = () => {
           <div className="flex items-center gap-2 text-slate-600">
             <HomeOutlined className="text-green-500" />
             <Text type="secondary" className="text-xs">
-              Blood Type: {record.bloodType}
+              {t('client:profile.bloodType')}: {record.bloodType}
             </Text>
           </div>
         </div>
       ),
     },
     {
-      title: 'Vaccination Status',
+      title: t('client:family.vaccinationStatus'),
       dataIndex: 'vaccinationStatus',
       key: 'vaccinationStatus',
       render: (status, record) => (
@@ -212,16 +212,18 @@ const FamilyManagerTab = () => {
           <br />
           <div className="flex items-center gap-2 text-slate-600">
             <MedicineBoxOutlined className="text-purple-500" />
-            <Text className="text-xs">{record.totalVaccines} vaccines</Text>
+            <Text className="text-xs">
+              {record.totalVaccines} {t('client:vaccinationHistory.vaccine').toLowerCase()}s
+            </Text>
           </div>
           <Text type="secondary" className="text-xs block">
-            Last: {record.lastVaccination}
+            {t('client:vaccinePassport.lastUpdated')}: {record.lastVaccination}
           </Text>
         </div>
       ),
     },
     {
-      title: 'Actions',
+      title: t('client:family.actions'),
       key: 'actions',
       render: (_, record) => (
         <Dropdown
@@ -260,8 +262,8 @@ const FamilyManagerTab = () => {
     return (
       <Alert
         type="error"
-        message="Error loading family members"
-        description="Failed to fetch family member data"
+        message={t('client:appointments.errorLoading')}
+        description={t('client:appointments.errorLoading')}
         showIcon
         className="rounded-xl"
       />
@@ -273,9 +275,9 @@ const FamilyManagerTab = () => {
       <div className="mb-6 flex justify-between items-center">
         <div>
           <Title level={3} className="!mb-1 text-slate-800">
-            Family Health Manager
+            {t('client:family.familyHealthManager')}
           </Title>
-          <Text className="text-slate-500 text-lg">Manage health profiles for your loved ones</Text>
+          <Text className="text-slate-500 text-lg">{t('client:family.manageProfiles')}</Text>
         </div>
         <Button
           type="primary"
@@ -284,7 +286,7 @@ const FamilyManagerTab = () => {
           size="large"
           className="bg-blue-600 hover:bg-blue-700 shadow-lg shadow-blue-500/30 rounded-xl px-6"
         >
-          Add Member
+          {t('client:family.addMember')}
         </Button>
       </div>
 
@@ -296,7 +298,7 @@ const FamilyManagerTab = () => {
           <div className="flex items-center justify-between p-2">
             <div>
               <Text className="text-slate-500 font-medium uppercase text-xs tracking-wider">
-                Total Members
+                {t('client:family.totalMembers')}
               </Text>
               <div className="text-3xl font-bold text-blue-600 mt-1">{familyMembers.length}</div>
             </div>
@@ -313,7 +315,7 @@ const FamilyManagerTab = () => {
           <div className="flex items-center justify-between p-2">
             <div>
               <Text className="text-slate-500 font-medium uppercase text-xs tracking-wider">
-                Up to Date
+                {t('client:family.upToDate')}
               </Text>
               <div className="text-3xl font-bold text-green-600 mt-1">
                 {familyMembers.filter((m) => m.vaccinationStatus === 'Up to Date').length}
@@ -332,7 +334,7 @@ const FamilyManagerTab = () => {
           <div className="flex items-center justify-between p-2">
             <div>
               <Text className="text-slate-500 font-medium uppercase text-xs tracking-wider">
-                Need Attention
+                {t('client:family.needAttention')}
               </Text>
               <div className="text-3xl font-bold text-red-600 mt-1">
                 {familyMembers.filter((m) => m.vaccinationStatus === 'Overdue').length}
@@ -356,44 +358,46 @@ const FamilyManagerTab = () => {
 
       <Card className="bg-gradient-to-r from-blue-50 to-indigo-50 border-blue-100 mt-6 rounded-2xl">
         <Title level={5} className="text-blue-900">
-          👨‍👩‍👧‍👦 Family Health Tips
+          👨‍👩‍👧‍👦 {t('client:family.familyHealthTips')}
         </Title>
         <ul className="text-sm text-blue-800 mt-2 space-y-1 list-disc pl-4">
-          <li>Keep all family vaccination records synchronized</li>
-          <li>Schedule family appointments together when possible</li>
-          <li>Maintain emergency contact information up to date</li>
-          <li>Share allergy information with healthcare providers</li>
-          <li>Regular family health checkups are recommended</li>
+          <li>{t('client:family.tip1')}</li>
+          <li>{t('client:family.tip2')}</li>
+          <li>{t('client:family.tip3')}</li>
+          <li>{t('client:family.tip4')}</li>
+          <li>{t('client:family.tip5')}</li>
         </ul>
       </Card>
 
       <Modal
-        title={editingMember ? 'Edit Family Member' : 'Add Family Member'}
+        title={
+          editingMember ? t('client:family.editFamilyMember') : t('client:family.addFamilyMember')
+        }
         open={isModalVisible}
         onOk={handleModalOk}
         onCancel={() => setIsModalVisible(false)}
         width={600}
-        okText={editingMember ? 'Update' : 'Add'}
+        okText={editingMember ? t('client:family.update') : t('client:family.add')}
         className="rounded-xl"
       >
         <Form form={form} layout="vertical" className="mt-4">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <Form.Item
               name="fullName"
-              label="Full Name"
-              rules={[{ required: true, message: 'Please enter name' }]}
+              label={t('client:family.fullName')}
+              rules={[{ required: true, message: t('client:family.enterFullName') }]}
             >
-              <Input placeholder="Enter full name" className="rounded-lg" />
+              <Input placeholder={t('client:family.enterFullName')} className="rounded-lg" />
             </Form.Item>
 
             <Form.Item
               name="identityNumber"
               label={
                 <span>
-                  Identity No. / Personal ID <span className="text-red-500">*</span>
+                  {t('client:family.identityNumber')} <span className="text-red-500">*</span>
                 </span>
               }
-              tooltip="For children under 14, please use the Personal ID Code found on the Birth Certificate."
+              tooltip={t('client:family.identityTooltip')}
               rules={[
                 { required: true, message: 'Please enter identity number' },
                 {
@@ -402,18 +406,15 @@ const FamilyManagerTab = () => {
                 },
               ]}
             >
-              <Input
-                placeholder="Enter Identity Number or Personal ID Code"
-                className="rounded-lg"
-              />
+              <Input placeholder={t('client:family.enterIdentity')} className="rounded-lg" />
             </Form.Item>
 
             <Form.Item
               name="relationship"
-              label="Relationship"
-              rules={[{ required: true, message: 'Please select relationship' }]}
+              label={t('client:family.relationship')}
+              rules={[{ required: true, message: t('client:family.selectRelationship') }]}
             >
-              <Select placeholder="Select relationship" className="rounded-lg">
+              <Select placeholder={t('client:family.selectRelationship')} className="rounded-lg">
                 <Option value="Vợ/Chồng">Vợ/Chồng</Option>
                 <Option value="Con trai">Con trai</Option>
                 <Option value="Con gái">Con gái</Option>
@@ -427,8 +428,8 @@ const FamilyManagerTab = () => {
 
             <Form.Item
               name="dateOfBirth"
-              label="Date of Birth"
-              rules={[{ required: true, message: 'Please select date of birth' }]}
+              label={t('client:family.dateOfBirth')}
+              rules={[{ required: true, message: t('client:family.selectDOB') }]}
             >
               <DatePicker
                 className="w-full rounded-lg"
@@ -438,25 +439,25 @@ const FamilyManagerTab = () => {
 
             <Form.Item
               name="gender"
-              label="Gender"
-              rules={[{ required: true, message: 'Please select gender' }]}
+              label={t('client:family.gender')}
+              rules={[{ required: true, message: t('client:family.selectGender') }]}
             >
-              <Select placeholder="Select gender" className="rounded-lg">
-                <Option value="MALE">Male</Option>
-                <Option value="FEMALE">Female</Option>
+              <Select placeholder={t('client:family.selectGender')} className="rounded-lg">
+                <Option value="MALE">{t('client:family.male')}</Option>
+                <Option value="FEMALE">{t('client:family.female')}</Option>
               </Select>
             </Form.Item>
 
-            <Form.Item name="phone" label="Phone Number">
-              <Input placeholder="Enter phone number" className="rounded-lg" />
+            <Form.Item name="phone" label={t('client:family.phone')}>
+              <Input placeholder={t('client:family.enterPhone')} className="rounded-lg" />
             </Form.Item>
 
             <Form.Item
               name="bloodType"
-              label="Blood Type"
-              rules={[{ required: true, message: 'Please select blood type' }]}
+              label={t('client:family.bloodType')}
+              rules={[{ required: true, message: t('client:family.selectBloodType') }]}
             >
-              <Select placeholder="Select blood type" className="rounded-lg">
+              <Select placeholder={t('client:family.selectBloodType')} className="rounded-lg">
                 <Option value="A">A</Option>
                 <Option value="B">B</Option>
                 <Option value="AB">AB</Option>

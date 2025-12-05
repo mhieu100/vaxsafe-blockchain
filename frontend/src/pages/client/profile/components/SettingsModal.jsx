@@ -1,6 +1,7 @@
 import { BellOutlined, LockOutlined, SafetyOutlined } from '@ant-design/icons';
 import { Button, Card, Modal, message, Select, Spin, Switch, Typography } from 'antd';
 import { useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import {
   getNotificationSettings,
   updateNotificationSettings,
@@ -9,6 +10,7 @@ import {
 const { Title, Text } = Typography;
 
 const SettingsModal = ({ open, setOpen, setSecurityModalVisible }) => {
+  const { t, i18n } = useTranslation(['client']);
   const [loading, setLoading] = useState(false);
   const [updating, setUpdating] = useState(false);
   const [settings, setSettings] = useState({
@@ -37,7 +39,7 @@ const SettingsModal = ({ open, setOpen, setSecurityModalVisible }) => {
       }
     } catch (error) {
       console.error('Failed to fetch notification settings:', error);
-      message.error('Không thể tải cài đặt thông báo');
+      message.error(t('client:settingsModal.loadSettingsFailed'));
     } finally {
       setLoading(false);
     }
@@ -50,10 +52,10 @@ const SettingsModal = ({ open, setOpen, setSecurityModalVisible }) => {
       setSettings(newSettings);
 
       await updateNotificationSettings(newSettings);
-      message.success('Đã cập nhật cài đặt');
+      message.success(t('client:settingsModal.updateSettingsSuccess'));
     } catch (error) {
       console.error('Failed to update settings:', error);
-      message.error('Không thể cập nhật cài đặt');
+      message.error(t('client:settingsModal.updateSettingsFailed'));
       // Revert on error
       setSettings(settings);
     } finally {
@@ -66,11 +68,16 @@ const SettingsModal = ({ open, setOpen, setSecurityModalVisible }) => {
     setSecurityModalVisible(true);
   };
 
+  const handleLanguageChange = (value) => {
+    i18n.changeLanguage(value);
+    localStorage.setItem('i18nextLng', value);
+  };
+
   return (
     <Modal
       title={
         <Title level={4} className="mb-0">
-          Account Settings
+          {t('client:settingsModal.title')}
         </Title>
       }
       open={open}
@@ -88,9 +95,9 @@ const SettingsModal = ({ open, setOpen, setSecurityModalVisible }) => {
                 <div className="flex items-center gap-3">
                   <BellOutlined className="text-blue-500 text-lg" />
                   <div>
-                    <Text strong>Email Notifications</Text>
+                    <Text strong>{t('client:settingsModal.emailNotifications')}</Text>
                     <Text type="secondary" className="block text-sm">
-                      Enable or disable all email notifications
+                      {t('client:settingsModal.emailNotificationsDesc')}
                     </Text>
                   </div>
                 </div>
@@ -108,9 +115,9 @@ const SettingsModal = ({ open, setOpen, setSecurityModalVisible }) => {
                 <div className="flex items-center gap-3">
                   <BellOutlined className="text-orange-500 text-lg" />
                   <div>
-                    <Text strong>Appointment Reminders</Text>
+                    <Text strong>{t('client:settingsModal.appointmentReminders')}</Text>
                     <Text type="secondary" className="block text-sm">
-                      Get notified before your scheduled appointments
+                      {t('client:settingsModal.appointmentRemindersDesc')}
                     </Text>
                   </div>
                 </div>
@@ -128,9 +135,9 @@ const SettingsModal = ({ open, setOpen, setSecurityModalVisible }) => {
                 <div className="flex items-center gap-3">
                   <BellOutlined className="text-green-500 text-lg" />
                   <div>
-                    <Text strong>Next Dose Reminders</Text>
+                    <Text strong>{t('client:settingsModal.nextDoseReminders')}</Text>
                     <Text type="secondary" className="block text-sm">
-                      Receive reminders for upcoming vaccine doses
+                      {t('client:settingsModal.nextDoseRemindersDesc')}
                     </Text>
                   </div>
                 </div>
@@ -148,14 +155,14 @@ const SettingsModal = ({ open, setOpen, setSecurityModalVisible }) => {
                 <div className="flex items-center gap-3">
                   <LockOutlined className="text-green-600 text-lg" />
                   <div>
-                    <Text strong>Two-Factor Authentication</Text>
+                    <Text strong>{t('client:settingsModal.twoFactorAuth')}</Text>
                     <Text type="secondary" className="block text-sm">
-                      Add an extra layer of security to your account
+                      {t('client:settingsModal.twoFactorAuthDesc')}
                     </Text>
                   </div>
                 </div>
                 <Button type="primary" onClick={handleSecurityConfig}>
-                  Configure
+                  {t('client:settingsModal.configure')}
                 </Button>
               </div>
             </Card>
@@ -166,16 +173,16 @@ const SettingsModal = ({ open, setOpen, setSecurityModalVisible }) => {
                 <div className="flex items-center gap-3">
                   <SafetyOutlined className="text-purple-500 text-lg" />
                   <div>
-                    <Text strong>Profile Visibility</Text>
+                    <Text strong>{t('client:settingsModal.profileVisibility')}</Text>
                     <Text type="secondary" className="block text-sm">
-                      Control who can see your profile information
+                      {t('client:settingsModal.profileVisibilityDesc')}
                     </Text>
                   </div>
                 </div>
                 <Select defaultValue="friends" style={{ width: 120 }}>
-                  <Select.Option value="public">Public</Select.Option>
-                  <Select.Option value="friends">Friends</Select.Option>
-                  <Select.Option value="private">Private</Select.Option>
+                  <Select.Option value="public">{t('client:settingsModal.public')}</Select.Option>
+                  <Select.Option value="friends">{t('client:settingsModal.friends')}</Select.Option>
+                  <Select.Option value="private">{t('client:settingsModal.private')}</Select.Option>
                 </Select>
               </div>
             </Card>
@@ -186,15 +193,19 @@ const SettingsModal = ({ open, setOpen, setSecurityModalVisible }) => {
                 <div className="flex items-center gap-3">
                   <SafetyOutlined className="text-indigo-500 text-lg" />
                   <div>
-                    <Text strong>Language Preference</Text>
+                    <Text strong>{t('client:settingsModal.languagePreference')}</Text>
                     <Text type="secondary" className="block text-sm">
-                      Choose your preferred language
+                      {t('client:settingsModal.languagePreferenceDesc')}
                     </Text>
                   </div>
                 </div>
-                <Select defaultValue="en" style={{ width: 120 }}>
-                  <Select.Option value="en">EN</Select.Option>
-                  <Select.Option value="vi">VI</Select.Option>
+                <Select
+                  defaultValue={i18n.language}
+                  style={{ width: 120 }}
+                  onChange={handleLanguageChange}
+                >
+                  <Select.Option value="en">English</Select.Option>
+                  <Select.Option value="vi">Tiếng Việt</Select.Option>
                 </Select>
               </div>
             </Card>
@@ -202,26 +213,26 @@ const SettingsModal = ({ open, setOpen, setSecurityModalVisible }) => {
             {/* Danger Zone */}
             <Card className="rounded-lg border border-red-200 bg-red-50">
               <Title level={5} className="text-red-600 mb-4">
-                Danger Zone
+                {t('client:settingsModal.dangerZone')}
               </Title>
               <div className="space-y-3">
                 <div className="flex items-center justify-between">
                   <div>
-                    <Text strong>Delete Account</Text>
+                    <Text strong>{t('client:settingsModal.deleteAccount')}</Text>
                     <Text type="secondary" className="block text-sm">
-                      Permanently delete your account and all data
+                      {t('client:settingsModal.deleteAccountDesc')}
                     </Text>
                   </div>
-                  <Button danger>Delete Account</Button>
+                  <Button danger>{t('client:settingsModal.deleteAccount')}</Button>
                 </div>
                 <div className="flex items-center justify-between">
                   <div>
-                    <Text strong>Sign Out All Devices</Text>
+                    <Text strong>{t('client:settingsModal.signOutAllDevices')}</Text>
                     <Text type="secondary" className="block text-sm">
-                      Sign out from all devices except this one
+                      {t('client:settingsModal.signOutAllDevicesDesc')}
                     </Text>
                   </div>
-                  <Button danger>Sign Out All</Button>
+                  <Button danger>{t('client:settingsModal.signOutAll')}</Button>
                 </div>
               </div>
             </Card>

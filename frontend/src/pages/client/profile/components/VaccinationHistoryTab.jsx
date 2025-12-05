@@ -8,12 +8,14 @@ import {
 import { Alert, Card, Skeleton, Table, Tag, Typography } from 'antd';
 import dayjs from 'dayjs';
 import { useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { getMyBookingHistory } from '@/services/booking.service';
 import { formatAppointmentTime } from '@/utils/appointment';
 
 const { Title, Text } = Typography;
 
 const VaccinationHistoryTab = () => {
+  const { t } = useTranslation(['client']);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [historyData, setHistoryData] = useState([]);
@@ -28,7 +30,7 @@ const VaccinationHistoryTab = () => {
         setHistoryData(response.data);
       }
     } catch (_err) {
-      setError('Failed to load vaccination history');
+      setError(t('client:vaccinationHistory.errorLoadHistory'));
     } finally {
       setLoading(false);
     }
@@ -74,15 +76,15 @@ const VaccinationHistoryTab = () => {
   const getStatusText = (status) => {
     switch (status?.toUpperCase()) {
       case 'COMPLETED':
-        return 'Completed';
+        return t('client:vaccinationHistory.completed');
       case 'PENDING':
-        return 'Pending';
+        return t('client:vaccinationHistory.pending');
       case 'CONFIRMED':
-        return 'Confirmed';
+        return 'Confirmed'; // Assuming this status might exist, or map to pending/completed
       case 'CANCELLED':
-        return 'Cancelled';
+        return t('client:appointments.cancelled');
       case 'PROGRESS':
-        return 'In Progress';
+        return t('client:vaccinationHistory.inProgress');
       default:
         return status;
     }
@@ -121,7 +123,7 @@ const VaccinationHistoryTab = () => {
   // Main booking columns
   const bookingColumns = [
     {
-      title: 'Booking ID',
+      title: t('client:vaccinationHistory.bookingId'),
       dataIndex: 'bookingId',
       key: 'bookingId',
       render: (id) => (
@@ -131,7 +133,7 @@ const VaccinationHistoryTab = () => {
       ),
     },
     {
-      title: 'Vaccine',
+      title: t('client:vaccinationHistory.vaccine'),
       dataIndex: 'vaccineName',
       key: 'vaccineName',
       render: (text, record) => (
@@ -139,12 +141,14 @@ const VaccinationHistoryTab = () => {
           <Text strong className="text-slate-800">
             {text}
           </Text>
-          <div className="text-xs text-slate-500">{record.totalDoses} doses</div>
+          <div className="text-xs text-slate-500">
+            {record.totalDoses} {t('client:vaccinationHistory.doses')}
+          </div>
         </div>
       ),
     },
     {
-      title: 'Patient',
+      title: t('client:vaccinationHistory.patient'),
       key: 'patient',
       render: (_, record) => (
         <div>
@@ -157,7 +161,7 @@ const VaccinationHistoryTab = () => {
                 color="purple"
                 className="!mt-1 rounded-md border-0 bg-purple-50 text-purple-600 text-xs"
               >
-                Family Member
+                {t('client:vaccinationHistory.familyMember')}
               </Tag>
             </div>
           )}
@@ -165,7 +169,7 @@ const VaccinationHistoryTab = () => {
       ),
     },
     {
-      title: 'Date',
+      title: t('client:vaccinationHistory.date'),
       dataIndex: 'createdAt',
       key: 'createdAt',
       render: (date) => (
@@ -175,13 +179,13 @@ const VaccinationHistoryTab = () => {
       defaultSortOrder: 'descend',
     },
     {
-      title: 'Total Amount',
+      title: t('client:vaccinationHistory.totalAmount'),
       dataIndex: 'totalAmount',
       key: 'totalAmount',
       render: (amount) => <span className="font-bold text-blue-600">{formatPrice(amount)}</span>,
     },
     {
-      title: 'Status',
+      title: t('client:vaccinationHistory.status'),
       key: 'status',
       render: (_, record) => (
         <Tag
@@ -198,18 +202,18 @@ const VaccinationHistoryTab = () => {
   // Appointment detail columns (for expanded row)
   const appointmentColumns = [
     {
-      title: 'Dose',
+      title: t('client:vaccinationHistory.dose'),
       dataIndex: 'doseNumber',
       key: 'doseNumber',
       width: 80,
       render: (num) => (
         <Tag color="blue" className="!m-0 rounded-md">
-          Dose {num}
+          {t('client:vaccinationHistory.dose')} {num}
         </Tag>
       ),
     },
     {
-      title: 'Scheduled Date',
+      title: t('client:vaccinationHistory.scheduledDate'),
       dataIndex: 'scheduledDate',
       key: 'scheduledDate',
       render: (date, record) => (
@@ -222,27 +226,33 @@ const VaccinationHistoryTab = () => {
       ),
     },
     {
-      title: 'Center',
+      title: t('client:vaccinationHistory.center'),
       dataIndex: 'centerName',
       key: 'centerName',
       render: (name) => <span className="text-slate-600">{name}</span>,
     },
     {
-      title: 'Doctor',
+      title: t('client:vaccinationHistory.doctor'),
       dataIndex: 'doctorName',
       key: 'doctorName',
       render: (text) => (
-        <Text type={!text ? 'secondary' : undefined}>{text || 'Not assigned'}</Text>
+        <Text type={!text ? 'secondary' : undefined}>
+          {text || t('client:vaccinationHistory.notAssigned')}
+        </Text>
       ),
     },
     {
-      title: 'Cashier',
+      title: t('client:vaccinationHistory.cashier'),
       dataIndex: 'cashierName',
       key: 'cashierName',
-      render: (text) => <Text type={!text ? 'secondary' : undefined}>{text || 'Unpaid'}</Text>,
+      render: (text) => (
+        <Text type={!text ? 'secondary' : undefined}>
+          {text || t('client:vaccinationHistory.unpaid')}
+        </Text>
+      ),
     },
     {
-      title: 'Status',
+      title: t('client:vaccinationHistory.status'),
       dataIndex: 'appointmentStatus',
       key: 'appointmentStatus',
       render: (status) => (
@@ -258,7 +268,7 @@ const VaccinationHistoryTab = () => {
       <div className="bg-slate-50 p-4 rounded-xl border border-slate-100">
         <div className="mb-3">
           <Text strong className="text-slate-700">
-            Appointment Details
+            {t('client:vaccinationHistory.appointmentDetails')}
           </Text>
         </div>
         <Table
@@ -284,10 +294,10 @@ const VaccinationHistoryTab = () => {
     <div className="animate-fade-in">
       <div className="mb-6">
         <Title level={3} className="!mb-1 text-slate-800">
-          Vaccination History
+          {t('client:vaccinationHistory.title')}
         </Title>
         <Text className="text-slate-500 text-lg">
-          Track all vaccination bookings for you and your family
+          {t('client:vaccinationHistory.trackBookings')}
         </Text>
       </div>
 
@@ -296,7 +306,7 @@ const VaccinationHistoryTab = () => {
           <div className="text-center">
             <div className="text-3xl font-bold text-blue-600 mb-1">{historyData.length}</div>
             <Text className="text-slate-500 font-medium uppercase text-xs tracking-wider">
-              Total Bookings
+              {t('client:vaccinationHistory.totalBookings')}
             </Text>
           </div>
         </Card>
@@ -304,7 +314,7 @@ const VaccinationHistoryTab = () => {
           <div className="text-center">
             <div className="text-3xl font-bold text-emerald-600 mb-1">{totalCompleted}</div>
             <Text className="text-slate-500 font-medium uppercase text-xs tracking-wider">
-              Completed
+              {t('client:vaccinationHistory.completed')}
             </Text>
           </div>
         </Card>
@@ -312,7 +322,7 @@ const VaccinationHistoryTab = () => {
           <div className="text-center">
             <div className="text-3xl font-bold text-orange-600 mb-1">{totalInProgress}</div>
             <Text className="text-slate-500 font-medium uppercase text-xs tracking-wider">
-              In Progress
+              {t('client:vaccinationHistory.inProgress')}
             </Text>
           </div>
         </Card>
@@ -330,7 +340,8 @@ const VaccinationHistoryTab = () => {
           pagination={{
             pageSize: 10,
             showSizeChanger: true,
-            showTotal: (total) => `Total ${total} bookings`,
+            showTotal: (total) =>
+              t('client:vaccinationHistory.totalBookingsCount', { count: total }),
           }}
           className="custom-table"
         />

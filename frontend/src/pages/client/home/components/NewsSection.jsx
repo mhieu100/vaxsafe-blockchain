@@ -2,10 +2,12 @@ import { ArrowRightOutlined, CalendarOutlined, EyeOutlined } from '@ant-design/i
 import { Button, Skeleton } from 'antd';
 import dayjs from 'dayjs';
 import { useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { callFetchFeaturedNews, callFetchPublishedNews } from '@/services/news.service';
 
 const NewsSection = () => {
+  const { t } = useTranslation(['client']);
   const navigate = useNavigate();
   const [news, setNews] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -64,17 +66,16 @@ const NewsSection = () => {
         <div className="flex flex-col md:flex-row justify-between items-end mb-12 gap-6">
           <div className="max-w-2xl">
             <span className="text-blue-600 font-semibold tracking-wider uppercase text-sm mb-2 block">
-              Latest Updates
+              {t('client:home.news.subtitle')}
             </span>
             <h2 className="text-4xl font-bold text-slate-900 mb-4">
-              News &{' '}
+              {t('client:home.news.titlePrefix')}{' '}
               <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-indigo-600">
-                Insights
+                {t('client:home.news.titleSuffix')}
               </span>
             </h2>
             <p className="text-lg text-slate-600 leading-relaxed">
-              Stay informed with the latest vaccination guidelines, health tips, and medical
-              announcements from our experts.
+              {t('client:home.news.description')}
             </p>
           </div>
           <Button
@@ -83,7 +84,7 @@ const NewsSection = () => {
             className="hidden md:flex items-center gap-2 border-slate-200 hover:border-blue-600 hover:text-blue-600 transition-all rounded-full px-6"
             onClick={() => navigate('/news')}
           >
-            View All Articles <ArrowRightOutlined />
+            {t('client:home.news.viewAll')} <ArrowRightOutlined />
           </Button>
         </div>
 
@@ -129,7 +130,7 @@ const NewsSection = () => {
                       </span>
                       <span className="w-1 h-1 rounded-full bg-slate-300"></span>
                       <span className="flex items-center gap-1">
-                        <EyeOutlined /> {item.viewCount || 0} views
+                        <EyeOutlined /> {item.viewCount || 0} {t('client:home.news.views')}
                       </span>
                     </div>
 
@@ -138,11 +139,11 @@ const NewsSection = () => {
                     </h3>
 
                     <p className="text-slate-600 text-xs line-clamp-3 mb-4 flex-grow leading-relaxed">
-                      {item.shortDescription || 'Click to read more about this article...'}
+                      {item.shortDescription || t('client:home.news.clickToRead')}
                     </p>
 
                     <div className="flex items-center text-blue-600 text-sm font-semibold group-hover:translate-x-2 transition-transform duration-300">
-                      Read Article <ArrowRightOutlined className="ml-1.5" />
+                      {t('client:home.news.readArticle')} <ArrowRightOutlined className="ml-1.5" />
                     </div>
                   </div>
                 </div>
@@ -157,7 +158,7 @@ const NewsSection = () => {
             className="w-full rounded-full h-12 font-semibold"
             onClick={() => navigate('/news')}
           >
-            View All Articles
+            {t('client:home.news.viewAll')}
           </Button>
         </div>
       </div>

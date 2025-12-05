@@ -7,7 +7,7 @@ import {
 import { useTranslation } from 'react-i18next';
 
 const ServiceSection = () => {
-  const { t } = useTranslation('common');
+  const { t } = useTranslation(['client']);
 
   const features = [
     {
@@ -15,8 +15,8 @@ const ServiceSection = () => {
         <SafetyCertificateOutlined className="text-3xl text-blue-600 group-hover:text-white transition-colors duration-300" />
       ),
       iconBg: 'bg-blue-100 group-hover:bg-blue-600',
-      title: t('service.features.immutableData.title'),
-      description: t('service.features.immutableData.description'),
+      title: t('client:home.service.features.immutableData.title'),
+      description: t('client:home.service.features.immutableData.description'),
       delay: '0ms',
     },
     {
@@ -24,8 +24,8 @@ const ServiceSection = () => {
         <CheckCircleOutlined className="text-3xl text-emerald-600 group-hover:text-white transition-colors duration-300" />
       ),
       iconBg: 'bg-emerald-100 group-hover:bg-emerald-600',
-      title: t('service.features.instantVerification.title'),
-      description: t('service.features.instantVerification.description'),
+      title: t('client:home.service.features.instantVerification.title'),
+      description: t('client:home.service.features.instantVerification.description'),
       delay: '100ms',
     },
     {
@@ -33,8 +33,8 @@ const ServiceSection = () => {
         <GlobalOutlined className="text-3xl text-purple-600 group-hover:text-white transition-colors duration-300" />
       ),
       iconBg: 'bg-purple-100 group-hover:bg-purple-600',
-      title: t('service.features.globalAccess.title'),
-      description: t('service.features.globalAccess.description'),
+      title: t('client:home.service.features.globalAccess.title'),
+      description: t('client:home.service.features.globalAccess.description'),
       delay: '200ms',
     },
   ];
@@ -50,16 +50,16 @@ const ServiceSection = () => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         <div className="text-center mb-16">
           <span className="text-blue-600 font-semibold tracking-wider uppercase text-sm mb-2 block">
-            Why Choose VaxSafe?
+            {t('client:home.service.subtitle')}
           </span>
           <h2 className="text-4xl font-bold text-slate-900 mb-4">
-            Blockchain Powered{' '}
+            {t('client:home.service.titlePrefix')}{' '}
             <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-purple-600">
-              Healthcare
+              {t('client:home.service.titleSuffix')}
             </span>
           </h2>
           <p className="text-lg text-slate-600 max-w-2xl mx-auto leading-relaxed">
-            {t('service.subtitle')}
+            {t('client:home.service.description')}
           </p>
         </div>
 
@@ -87,7 +87,7 @@ const ServiceSection = () => {
                 <p className="text-slate-600 leading-relaxed mb-6">{f.description}</p>
 
                 <div className="flex items-center text-blue-600 font-medium opacity-0 -translate-x-4 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-300">
-                  Learn more <ArrowRightOutlined className="ml-2" />
+                  {t('client:home.service.learnMore')} <ArrowRightOutlined className="ml-2" />
                 </div>
               </div>
             </div>

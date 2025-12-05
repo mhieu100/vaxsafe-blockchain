@@ -1,6 +1,7 @@
 import { Button, Col, DatePicker, Form, Input, message, Row, Select, Typography } from 'antd';
 import dayjs from 'dayjs';
 import { useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { updatePatientProfile } from '@/services/profile.service';
 import useAccountStore from '@/stores/useAccountStore';
 import { birthdayValidation } from '@/utils/birthdayValidation';
@@ -9,6 +10,7 @@ const { Text, Paragraph } = Typography;
 
 const TabEditUser = ({ editMode, setEditMode }) => {
   const [form] = Form.useForm();
+  const { t } = useTranslation(['client', 'common']);
   const { user, setUserLoginInfo } = useAccountStore();
   const [loading, setLoading] = useState(false);
 
@@ -62,7 +64,7 @@ const TabEditUser = ({ editMode, setEditMode }) => {
       // Update store with new user data from backend
       setUserLoginInfo(response.data);
 
-      message.success('Profile updated successfully!');
+      message.success(t('client:profile.updateSuccess'));
       setEditMode(false);
     } catch (error) {
       console.error('Update profile error:', error);
@@ -102,15 +104,19 @@ const TabEditUser = ({ editMode, setEditMode }) => {
           <Row gutter={16}>
             <Col xs={24} sm={12}>
               <Form.Item
-                label="Full Name"
+                label={t('client:profile.fullName')}
                 name="fullName"
-                rules={[{ required: true, message: 'Please enter your full name' }]}
+                rules={[{ required: true, message: t('client:profile.enterFullName') }]}
               >
                 <Input size="large" />
               </Form.Item>
             </Col>
             <Col xs={24} sm={12}>
-              <Form.Item label="Email" name="email" rules={[{ required: true, type: 'email' }]}>
+              <Form.Item
+                label={t('client:profile.email')}
+                name="email"
+                rules={[{ required: true, type: 'email' }]}
+              >
                 <Input disabled size="large" />
               </Form.Item>
             </Col>
@@ -118,13 +124,13 @@ const TabEditUser = ({ editMode, setEditMode }) => {
 
           <Row gutter={16}>
             <Col xs={24} sm={12}>
-              <Form.Item label="Phone" name="phone">
+              <Form.Item label={t('client:profile.phone')} name="phone">
                 <Input size="large" />
               </Form.Item>
             </Col>
             <Col xs={24} sm={12}>
               <Form.Item
-                label="Date of Birth"
+                label={t('client:profile.dateOfBirth')}
                 name="birthday"
                 rules={birthdayValidation.getFormRules(false)}
               >
@@ -132,7 +138,7 @@ const TabEditUser = ({ editMode, setEditMode }) => {
                   className="w-full"
                   size="large"
                   format="DD/MM/YYYY"
-                  placeholder="Select date"
+                  placeholder={t('client:booking.selectDate')}
                   disabledDate={birthdayValidation.disabledDate}
                 />
               </Form.Item>
@@ -141,16 +147,16 @@ const TabEditUser = ({ editMode, setEditMode }) => {
 
           <Row gutter={16}>
             <Col xs={24} sm={12}>
-              <Form.Item label="Gender" name="gender">
-                <Select placeholder="Select gender" size="large">
-                  <Select.Option value="MALE">Male</Select.Option>
-                  <Select.Option value="FEMALE">Female</Select.Option>
-                  <Select.Option value="OTHER">Other</Select.Option>
+              <Form.Item label={t('client:profile.gender')} name="gender">
+                <Select placeholder={t('client:profile.selectGender')} size="large">
+                  <Select.Option value="MALE">{t('client:profile.male')}</Select.Option>
+                  <Select.Option value="FEMALE">{t('client:profile.female')}</Select.Option>
+                  <Select.Option value="OTHER">{t('client:profile.other')}</Select.Option>
                 </Select>
               </Form.Item>
             </Col>
             <Col xs={24} sm={12}>
-              <Form.Item label="Identity Number" name="identityNumber">
+              <Form.Item label={t('client:profile.identityNumber')} name="identityNumber">
                 <Input placeholder="CCCD/CMND" size="large" />
               </Form.Item>
             </Col>
@@ -158,8 +164,8 @@ const TabEditUser = ({ editMode, setEditMode }) => {
 
           <Row gutter={16}>
             <Col xs={24} sm={8}>
-              <Form.Item label="Blood Type" name="bloodType">
-                <Select placeholder="Select blood type" size="large">
+              <Form.Item label={t('client:profile.bloodType')} name="bloodType">
+                <Select placeholder={t('client:profile.selectBloodType')} size="large">
                   <Select.Option value="A_POSITIVE">A+</Select.Option>
                   <Select.Option value="A_NEGATIVE">A-</Select.Option>
                   <Select.Option value="B_POSITIVE">B+</Select.Option>
@@ -172,36 +178,40 @@ const TabEditUser = ({ editMode, setEditMode }) => {
               </Form.Item>
             </Col>
             <Col xs={24} sm={8}>
-              <Form.Item label="Height (cm)" name="heightCm">
+              <Form.Item label={`${t('client:profile.height')} (cm)`} name="heightCm">
                 <Input type="number" placeholder="170" size="large" />
               </Form.Item>
             </Col>
             <Col xs={24} sm={8}>
-              <Form.Item label="Weight (kg)" name="weightKg">
+              <Form.Item label={`${t('client:profile.weight')} (kg)`} name="weightKg">
                 <Input type="number" placeholder="65" size="large" />
               </Form.Item>
             </Col>
           </Row>
 
-          <Form.Item label="Address" name="address">
+          <Form.Item label={t('client:profile.address')} name="address">
             <Input.TextArea rows={2} size="large" />
           </Form.Item>
 
           <Row gutter={16}>
             <Col xs={24} sm={12}>
-              <Form.Item label="Occupation" name="occupation">
-                <Input placeholder="Your occupation" size="large" />
+              <Form.Item label={t('client:profile.occupation')} name="occupation">
+                <Input placeholder={t('client:profile.enterOccupation')} size="large" />
               </Form.Item>
             </Col>
             <Col xs={24} sm={12}>
-              <Form.Item label="Insurance Number" name="insuranceNumber">
-                <Input placeholder="Health insurance number" size="large" />
+              <Form.Item label={t('client:profile.insuranceNumber')} name="insuranceNumber">
+                <Input placeholder={t('client:profile.enterInsuranceNumber')} size="large" />
               </Form.Item>
             </Col>
           </Row>
 
-          <Form.Item label="Lifestyle Notes" name="lifestyleNotes">
-            <Input.TextArea rows={3} placeholder="Notes about lifestyle, hobbies..." size="large" />
+          <Form.Item label={t('client:profile.lifestyleNotes')} name="lifestyleNotes">
+            <Input.TextArea
+              rows={3}
+              placeholder={t('client:profile.enterLifestyleNotes')}
+              size="large"
+            />
           </Form.Item>
 
           <div className="flex gap-2">
@@ -212,10 +222,10 @@ const TabEditUser = ({ editMode, setEditMode }) => {
               disabled={loading}
               size="large"
             >
-              Save Changes
+              {t('client:profile.saveChanges')}
             </Button>
             <Button onClick={() => setEditMode(false)} disabled={loading} size="large">
-              Cancel
+              {t('client:profile.cancel')}
             </Button>
           </div>
         </Form>
@@ -223,39 +233,39 @@ const TabEditUser = ({ editMode, setEditMode }) => {
         <div className="space-y-6">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div>
-              <Text type="secondary">Full Name</Text>
+              <Text type="secondary">{t('client:profile.fullName')}</Text>
               <div className="text-base font-medium">{user?.fullName || '--'}</div>
             </div>
             <div>
-              <Text type="secondary">Email</Text>
+              <Text type="secondary">{t('client:profile.email')}</Text>
               <div className="text-base font-medium">{user?.email || '--'}</div>
             </div>
             <div>
-              <Text type="secondary">Phone</Text>
+              <Text type="secondary">{t('client:profile.phone')}</Text>
               <div className="text-base font-medium">{user?.phone || '--'}</div>
             </div>
             <div>
-              <Text type="secondary">Date of Birth</Text>
+              <Text type="secondary">{t('client:profile.dateOfBirth')}</Text>
               <div className="text-base font-medium">{user?.birthday || '--'}</div>
             </div>
             <div>
-              <Text type="secondary">Gender</Text>
+              <Text type="secondary">{t('client:profile.gender')}</Text>
               <div className="text-base font-medium">
                 {user?.gender === 'MALE'
-                  ? 'Male'
+                  ? t('client:profile.male')
                   : user?.gender === 'FEMALE'
-                    ? 'Female'
+                    ? t('client:profile.female')
                     : user?.gender === 'OTHER'
-                      ? 'Other'
+                      ? t('client:profile.other')
                       : '--'}
               </div>
             </div>
             <div>
-              <Text type="secondary">Identity Number</Text>
+              <Text type="secondary">{t('client:profile.identityNumber')}</Text>
               <div className="text-base font-medium">{user?.identityNumber || '--'}</div>
             </div>
             <div>
-              <Text type="secondary">Blood Type</Text>
+              <Text type="secondary">{t('client:profile.bloodType')}</Text>
               <div className="text-base font-medium">
                 {user?.bloodType
                   ? user.bloodType.replace('_POSITIVE', '+').replace('_NEGATIVE', '-')
@@ -263,34 +273,34 @@ const TabEditUser = ({ editMode, setEditMode }) => {
               </div>
             </div>
             <div>
-              <Text type="secondary">Height</Text>
+              <Text type="secondary">{t('client:profile.height')}</Text>
               <div className="text-base font-medium">
                 {user?.heightCm ? `${user.heightCm} cm` : '--'}
               </div>
             </div>
             <div>
-              <Text type="secondary">Weight</Text>
+              <Text type="secondary">{t('client:profile.weight')}</Text>
               <div className="text-base font-medium">
                 {user?.weightKg ? `${user.weightKg} kg` : '--'}
               </div>
             </div>
             <div>
-              <Text type="secondary">Occupation</Text>
+              <Text type="secondary">{t('client:profile.occupation')}</Text>
               <div className="text-base font-medium">{user?.occupation || '--'}</div>
             </div>
             <div>
-              <Text type="secondary">Insurance Number</Text>
+              <Text type="secondary">{t('client:profile.insuranceNumber')}</Text>
               <div className="text-base font-medium">{user?.insuranceNumber || '--'}</div>
             </div>
           </div>
 
           <div>
-            <Text type="secondary">Address</Text>
+            <Text type="secondary">{t('client:profile.address')}</Text>
             <div className="text-base font-medium">{user?.address || '--'}</div>
           </div>
 
           <div>
-            <Text type="secondary">Lifestyle Notes</Text>
+            <Text type="secondary">{t('client:profile.lifestyleNotes')}</Text>
             <Paragraph className="text-base whitespace-pre-line">
               {user?.lifestyleNotes || '--'}
             </Paragraph>
@@ -298,7 +308,7 @@ const TabEditUser = ({ editMode, setEditMode }) => {
 
           <div>
             <Button type="primary" onClick={() => setEditMode(true)} disabled={!user} size="large">
-              Edit Profile
+              {t('client:profile.editProfile')}
             </Button>
           </div>
         </div>

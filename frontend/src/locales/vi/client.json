@@ -13,7 +13,32 @@
     "other": "Khác",
     "editProfile": "Chỉnh sửa hồ sơ",
     "changePassword": "Đổi mật khẩu",
-    "updateSuccess": "Cập nhật hồ sơ thành công"
+    "updateSuccess": "Cập nhật hồ sơ thành công",
+    "identityNumber": "CCCD/CMND",
+    "bloodType": "Nhóm máu",
+    "height": "Chiều cao",
+    "weight": "Cân nặng",
+    "occupation": "Nghề nghiệp",
+    "insuranceNumber": "Số BHYT",
+    "lifestyleNotes": "Ghi chú lối sống",
+    "saveChanges": "Lưu thay đổi",
+    "cancel": "Hủy",
+    "selectGender": "Chọn giới tính",
+    "selectBloodType": "Chọn nhóm máu",
+    "enterFullName": "Vui lòng nhập họ tên",
+    "enterOccupation": "Nghề nghiệp của bạn",
+    "enterInsuranceNumber": "Số bảo hiểm y tế",
+    "enterLifestyleNotes": "Ghi chú về lối sống, sở thích...",
+    "updateAvatarTitle": "Cập nhật ảnh đại diện",
+    "updateAvatarSuccess": "Cập nhật ảnh đại diện thành công!",
+    "updateAvatarFailed": "Không thể cập nhật ảnh đại diện",
+    "removeAvatarSuccess": "Đã xóa ảnh đại diện!",
+    "removeAvatarFailed": "Không thể xóa ảnh đại diện",
+    "onlyImage": "Chỉ được tải lên file ảnh!",
+    "imageSizeLimit": "Kích thước ảnh phải nhỏ hơn 5MB!",
+    "uploading": "Đang tải lên...",
+    "uploadNewPhoto": "Tải ảnh mới",
+    "removeCurrentPhoto": "Xóa ảnh hiện tại"
   },
   "booking": {
     "title": "Đặt lịch hẹn",
@@ -43,14 +68,124 @@
     "paymentSuccess": "Thanh toán thành công!",
     "paymentFailed": "Thanh toán thất bại. Vui lòng thử lại."
   },
+
+  "sidebar": {
+    "dashboard": "Tổng quan",
+    "myRecords": "Hồ sơ của tôi",
+    "appointments": "Lịch hẹn",
+    "familyMembers": "Thành viên gia đình",
+    "settings": "Cài đặt",
+    "menu": "Danh mục"
+  },
+  "cardInfo": {
+    "patient": "BỆNH NHÂN",
+    "identityVerified": "Đã xác minh danh tính",
+    "scanId": "Quét mã"
+  },
+  "dashboard": {
+    "totalVaccines": "Tổng số vắc-xin",
+    "coverage": "Độ bao phủ",
+    "goodStatus": "Trạng thái tốt",
+    "nextAppointment": "Lịch hẹn tiếp theo",
+    "recentActivity": "Hoạt động gần đây",
+    "viewAll": "Xem tất cả",
+    "plusThisYear": "+2 trong năm nay",
+    "nextDate": "Tiếp theo: 15/10"
+  },
+  "settings": {
+    "profileInfo": "Thông tin hồ sơ",
+    "security": "Bảo mật",
+    "accountSecurity": "Bảo mật tài khoản",
+    "password": "Mật khẩu",
+    "changePasswordDesc": "Đổi mật khẩu tài khoản của bạn"
+  },
+  "myRecords": {
+    "vaccinationHistory": "Lịch sử tiêm chủng",
+    "digitalPassport": "Hộ chiếu vắc-xin",
+    "medicalRecords": "Hồ sơ y tế"
+  },
+  "vaccinationHistory": {
+    "title": "Lịch sử tiêm chủng",
+    "trackBookings": "Theo dõi tất cả lịch đặt tiêm chủng cho bạn và gia đình",
+    "totalBookings": "Tổng số lịch đặt",
+    "completed": "Hoàn thành",
+    "inProgress": "Đang xử lý",
+    "bookingId": "Mã đặt lịch",
+    "vaccine": "Vắc-xin",
+    "doses": "liều",
+    "patient": "Bệnh nhân",
+    "familyMember": "Thành viên gia đình",
+    "date": "Ngày",
+    "totalAmount": "Tổng tiền",
+    "status": "Trạng thái",
+    "dose": "Mũi",
+    "scheduledDate": "Ngày hẹn",
+    "center": "Trung tâm",
+    "doctor": "Bác sĩ",
+    "notAssigned": "Chưa phân công",
+    "cashier": "Thu ngân",
+    "unpaid": "Chưa thanh toán",
+    "appointmentDetails": "Chi tiết lịch hẹn",
+    "totalBookingsCount": "Tổng cộng {{count}} lịch đặt",
+    "errorLoadHistory": "Không thể tải lịch sử tiêm chủng"
+  },
   "vaccinePassport": {
     "title": "Hộ chiếu Vắc-xin",
     "digitalPassport": "Hộ chiếu Vắc-xin Kỹ thuật số",
-    "viewOnBlockchain": "Xem trên Blockchain",
+    "securedByBlockchain": "Được bảo mật bởi công nghệ Blockchain",
+    "verified": "Đã xác minh",
+    "network": "Mạng lưới",
+    "protocol": "Giao thức",
+    "activeVerified": "Hoạt động & Đã xác minh",
+    "passportInfo": "Thông tin hộ chiếu",
     "download": "Tải xuống",
     "share": "Chia sẻ",
+    "fullName": "Họ và tên",
+    "passportId": "Mã hộ chiếu",
+    "issuedDate": "Ngày cấp",
+    "validUntil": "Có hiệu lực đến",
+    "blockchainVerification": "Xác minh Blockchain",
+    "networkType": "Loại mạng",
+    "permissionedBlockchain": "Blockchain được cấp phép",
+    "consensus": "Cơ chế đồng thuận",
+    "proofOfAuthority": "Bằng chứng ủy quyền (PoA)",
+    "totalRecords": "Tổng số hồ sơ",
+    "lastUpdated": "Cập nhật lần cuối",
+    "verifiedRecords": "Hồ sơ đã xác minh trên Blockchain",
+    "provider": "Nhà cung cấp",
+    "batch": "Lô",
+    "block": "Khối",
+    "transactionHash": "Mã giao dịch",
+    "digitalVerification": "Xác minh kỹ thuật số",
+    "scanToVerify": "Quét để xác minh hồ sơ tiêm chủng trên blockchain",
+    "hideQR": "Ẩn QR",
+    "showFullQR": "Hiện QR đầy đủ",
+    "blockchainStats": "Thống kê Blockchain",
+    "chainConfirmations": "Xác nhận chuỗi",
+    "trustScore": "Điểm tin cậy",
+    "exploreOnBlockchain": "Khám phá trên Blockchain",
+    "viewHistoryExplorer": "Xem toàn bộ lịch sử tiêm chủng và chi tiết giao dịch trên SafeVax Blockchain Explorer",
+    "openExplorer": "Mở Explorer",
     "verificationCode": "Mã xác minh",
-    "noRecords": "Không tìm thấy hồ sơ tiêm chủng"
+    "noRecords": "Không tìm thấy hồ sơ tiêm chủng",
+    "vaccinesTaken": "Vắc-xin đã tiêm",
+    "lastVaccination": "Lần tiêm cuối",
+    "recordsTitle": "Hồ sơ tiêm chủng",
+    "recordsSubtitle": "Hồ sơ y tế chính thức được lưu trữ trên blockchain",
+    "lotNumber": "Số lô",
+    "patientIdentityHash": "Mã định danh bệnh nhân",
+    "appointmentId": "Mã lịch hẹn",
+    "expiryDate": "Ngày hết hạn",
+    "ipfsHash": "IPFS Hash",
+    "notes": "Ghi chú",
+    "noNotes": "Không có ghi chú thêm",
+    "aboutTitle": "Về hồ sơ tiêm chủng",
+    "aboutPoint1": "Tất cả hồ sơ tiêm chủng được lưu trữ an toàn trên blockchain",
+    "aboutPoint2": "Mỗi hồ sơ là bất biến và có thể xác minh",
+    "aboutPoint3": "Hồ sơ bao gồm đầy đủ chi tiết tiêm chủng và thông tin bác sĩ",
+    "aboutPoint4": "Bạn có thể truy cập hồ sơ của mình bất cứ lúc nào để xác minh",
+    "errorFetch": "Không thể tải hồ sơ tiêm chủng. Vui lòng thử lại sau.",
+    "totalRecordsCount": "Tổng cộng {{count}} hồ sơ"
   },
   "family": {
     "title": "Quản lý Gia đình",
@@ -68,7 +203,26 @@
     "confirmDelete": "Bạn có chắc chắn muốn xóa thành viên này?",
     "deleteSuccess": "Xóa thành viên thành công",
     "addSuccess": "Thêm thành viên thành công",
-    "updateSuccess": "Cập nhật thành viên thành công"
+    "updateSuccess": "Cập nhật thành viên thành công",
+    "familyHealthManager": "Quản lý Sức khỏe Gia đình",
+    "manageProfiles": "Quản lý hồ sơ sức khỏe cho người thân của bạn",
+    "totalMembers": "Tổng số thành viên",
+    "upToDate": "Đã cập nhật",
+    "needAttention": "Cần chú ý",
+    "familyHealthTips": "Lời khuyên sức khỏe gia đình",
+    "tip1": "Giữ tất cả hồ sơ tiêm chủng gia đình được đồng bộ",
+    "tip2": "Đặt lịch hẹn gia đình cùng nhau khi có thể",
+    "tip3": "Cập nhật thông tin liên hệ khẩn cấp",
+    "tip4": "Chia sẻ thông tin dị ứng với nhà cung cấp dịch vụ y tế",
+    "tip5": "Khám sức khỏe định kỳ cho gia đình được khuyến nghị",
+    "editDetails": "Chỉnh sửa chi tiết",
+    "remove": "Xóa",
+    "removeSuccess": "Xóa thành viên gia đình thành công",
+    "removeFailed": "Không thể xóa thành viên gia đình. Vui lòng thử lại.",
+    "updateFailed": "Không thể cập nhật thành viên gia đình",
+    "addFailed": "Không thể thêm thành viên gia đình",
+    "identityTooltip": "Đối với trẻ em dưới 14 tuổi, vui lòng sử dụng Mã định danh cá nhân trên Giấy khai sinh.",
+    "enterIdentity": "Nhập số CCCD hoặc Mã định danh cá nhân"
   },
   "appointments": {
     "title": "Lịch hẹn của tôi",
@@ -80,7 +234,23 @@
     "reschedule": "Đổi lịch",
     "viewDetails": "Xem chi tiết",
     "confirmCancel": "Bạn có chắc chắn muốn hủy lịch hẹn này?",
-    "cancelSuccess": "Hủy lịch hẹn thành công"
+    "cancelSuccess": "Hủy lịch hẹn thành công",
+    "manageSchedules": "Quản lý lịch tiêm chủng sắp tới của bạn",
+    "mySchedule": "Lịch của tôi",
+    "familySchedule": "Lịch gia đình",
+    "preVaccinationInstructions": "Hướng dẫn trước khi tiêm",
+    "instruction1": "Vui lòng đến trước giờ hẹn 15 phút.",
+    "instruction2": "Mang theo CCCD/CMND và thẻ bảo hiểm y tế.",
+    "instruction3": "Mặc quần áo thoải mái để dễ dàng tiêm.",
+    "instruction4": "Thông báo cho nhân viên y tế về bất kỳ dị ứng hoặc thuốc đang dùng.",
+    "instruction5": "Ăn uống đầy đủ trước khi tiêm.",
+    "yesCancel": "Có, Hủy",
+    "goBack": "Quay lại",
+    "cancelFailed": "Hủy lịch hẹn thất bại",
+    "noUpcoming": "Không có lịch hẹn sắp tới",
+    "bookNew": "Đặt lịch hẹn mới",
+    "rescheduleRequestSent": "Đã gửi yêu cầu đổi lịch. Đang chờ xác nhận.",
+    "errorLoading": "Lỗi tải dữ liệu"
   },
   "blockchain": {
     "title": "Xác minh Blockchain",
@@ -92,5 +262,121 @@
     "pending": "Đang xử lý",
     "failed": "Thất bại",
     "viewOnExplorer": "Xem trên Explorer"
+  },
+  "healthReminders": {
+    "title": "Nhắc nhở & Cảnh báo Sức khỏe",
+    "fluVaccineDue": "Đến hạn tiêm vắc-xin Cúm",
+    "fluVaccineDueDesc": "Mũi tiêm cúm hàng năm của bạn đến hạn trong 2 tuần tới",
+    "healthCheckupReminder": "Nhắc nhở khám sức khỏe",
+    "healthCheckupDesc": "Khuyến nghị khám sức khỏe định kỳ hàng năm",
+    "vaccinationRecordComplete": "Hồ sơ tiêm chủng hoàn tất",
+    "vaccinationRecordCompleteDesc": "Tất cả các mũi tiêm bắt buộc đã được cập nhật",
+    "healthTips": "Lời khuyên sức khỏe",
+    "healthTip1": "Uống đủ nước và duy trì chế độ ăn uống cân bằng",
+    "healthTip2": "Tập thể dục thường xuyên giúp tăng cường hệ miễn dịch",
+    "healthTip3": "Ngủ đủ giấc (7-9 giờ mỗi ngày)",
+    "healthTip4": "Cập nhật hồ sơ tiêm chủng thường xuyên"
+  },
+  "settingsModal": {
+    "title": "Cài đặt tài khoản",
+    "emailNotifications": "Thông báo qua Email",
+    "emailNotificationsDesc": "Bật hoặc tắt tất cả thông báo qua email",
+    "appointmentReminders": "Nhắc nhở lịch hẹn",
+    "appointmentRemindersDesc": "Nhận thông báo trước lịch hẹn đã đặt",
+    "nextDoseReminders": "Nhắc nhở mũi tiêm tiếp theo",
+    "nextDoseRemindersDesc": "Nhận nhắc nhở cho các mũi tiêm vắc-xin sắp tới",
+    "twoFactorAuth": "Xác thực hai yếu tố",
+    "twoFactorAuthDesc": "Thêm một lớp bảo mật cho tài khoản của bạn",
+    "configure": "Cấu hình",
+    "profileVisibility": "Hiển thị hồ sơ",
+    "profileVisibilityDesc": "Kiểm soát ai có thể xem thông tin hồ sơ của bạn",
+    "public": "Công khai",
+    "friends": "Bạn bè",
+    "private": "Riêng tư",
+    "languagePreference": "Tùy chọn ngôn ngữ",
+    "languagePreferenceDesc": "Chọn ngôn ngữ ưu tiên của bạn",
+    "dangerZone": "Vùng nguy hiểm",
+    "deleteAccount": "Xóa tài khoản",
+    "deleteAccountDesc": "Xóa vĩnh viễn tài khoản và tất cả dữ liệu của bạn",
+    "signOutAllDevices": "Đăng xuất khỏi tất cả thiết bị",
+    "signOutAllDevicesDesc": "Đăng xuất khỏi tất cả các thiết bị ngoại trừ thiết bị này",
+    "signOutAll": "Đăng xuất tất cả",
+    "updateSettingsSuccess": "Đã cập nhật cài đặt",
+    "updateSettingsFailed": "Không thể cập nhật cài đặt",
+    "loadSettingsFailed": "Không thể tải cài đặt thông báo"
+  },
+  "home": {
+    "hero": {
+      "badge": "Y tế Bảo mật bằng Blockchain",
+      "titlePrefix": "Tương lai của",
+      "titleSuffix": "Y tế Kỹ thuật số",
+      "description": "Hồ sơ vắc-xin an toàn, minh bạch và bất biến được hỗ trợ bởi công nghệ blockchain. Dữ liệu sức khỏe của bạn, do bạn sở hữu.",
+      "viewVaccines": "Xem Vắc-xin",
+      "learnMore": "Tìm hiểu thêm",
+      "security": "Bảo mật cấp ngân hàng",
+      "verifiedRecords": "Hồ sơ đã xác minh",
+      "passportCard": {
+        "title": "Hộ chiếu Vắc-xin",
+        "subtitle": "HỒ SƠ TIÊM CHỦNG",
+        "nameLabel": "Tên",
+        "vaccineType": "Loại Vắc-xin",
+        "doseStatus": "Trạng thái liều",
+        "fullyVaccinated": "Đã tiêm đầy đủ",
+        "blockchainHash": "Mã băm Blockchain",
+        "verified": "Đã xác minh"
+      }
+    },
+    "steps": {
+      "subtitle": "Cách thức hoạt động",
+      "title": "Các bước đơn giản để miễn dịch",
+      "description": "Chúng tôi đã hợp lý hóa quy trình tiêm chủng để giúp bạn và gia đình dễ dàng và an toàn nhất có thể.",
+      "step1": {
+        "title": "1. Tìm Vắc-xin",
+        "desc": "Tìm kiếm vắc-xin có sẵn và chọn trung tâm tốt nhất gần bạn."
+      },
+      "step2": {
+        "title": "2. Đặt lịch hẹn",
+        "desc": "Chọn ngày và khung giờ thuận tiện cho cuộc hẹn của bạn."
+      },
+      "step3": {
+        "title": "3. Tiêm chủng",
+        "desc": "Đến trung tâm, tiêm phòng an toàn từ các chuyên gia được chứng nhận."
+      },
+      "step4": {
+        "title": "4. Hộ chiếu số",
+        "desc": "Nhận chứng chỉ đã xác minh blockchain của bạn ngay lập tức."
+      }
+    },
+    "service": {
+      "subtitle": "Tại sao chọn VaxSafe?",
+      "titlePrefix": "Y tế được hỗ trợ bởi",
+      "titleSuffix": "Blockchain",
+      "description": "Trải nghiệm thế hệ quản lý y tế tiếp theo với nền tảng an toàn, minh bạch và hiệu quả của chúng tôi.",
+      "learnMore": "Tìm hiểu thêm",
+      "features": {
+        "immutableData": {
+          "title": "Dữ liệu bất biến",
+          "description": "Hồ sơ y tế của bạn được lưu trữ trên blockchain, đảm bảo chúng không bao giờ bị giả mạo hoặc mất mát."
+        },
+        "instantVerification": {
+          "title": "Xác minh tức thì",
+          "description": "Xác minh tình trạng tiêm chủng ngay lập tức ở bất cứ đâu trên thế giới với hệ thống mã QR của chúng tôi."
+        },
+        "globalAccess": {
+          "title": "Truy cập toàn cầu",
+          "description": "Truy cập hồ sơ sức khỏe của bạn một cách an toàn từ mọi thiết bị, mọi lúc, mọi nơi."
+        }
+      }
+    },
+    "news": {
+      "subtitle": "Cập nhật mới nhất",
+      "titlePrefix": "Tin tức &",
+      "titleSuffix": "Thông tin chi tiết",
+      "description": "Cập nhật các hướng dẫn tiêm chủng mới nhất, lời khuyên sức khỏe và thông báo y tế từ các chuyên gia của chúng tôi.",
+      "viewAll": "Xem tất cả bài viết",
+      "readArticle": "Đọc bài viết",
+      "views": "lượt xem",
+      "clickToRead": "Nhấn để đọc thêm về bài viết này..."
+    }
   }
 }

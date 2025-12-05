@@ -7,11 +7,13 @@ import {
 import { Avatar, Button, Card, Skeleton, Tag, Typography } from 'antd';
 import dayjs from 'dayjs';
 import { useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useAccountStore } from '@/stores/useAccountStore';
 
 const { Title, Text } = Typography;
 
 const CardInfoUser = ({ setOpen }) => {
+  const { t } = useTranslation(['client']);
   const user = useAccountStore((state) => state.user);
   const isAuthenticated = useAccountStore((state) => state.isAuthenticated);
 
@@ -59,7 +61,7 @@ const CardInfoUser = ({ setOpen }) => {
                 color="blue"
                 className="rounded-full px-3 border-0 bg-blue-50 text-blue-600 font-bold"
               >
-                PATIENT
+                {t('client:cardInfo.patient')}
               </Tag>
             )}
           </div>
@@ -80,7 +82,7 @@ const CardInfoUser = ({ setOpen }) => {
               color="success"
               className="px-3 py-1 rounded-lg text-sm"
             >
-              Identity Verified
+              {t('client:cardInfo.identityVerified')}
             </Tag>
           </div>
         </div>
@@ -88,7 +90,9 @@ const CardInfoUser = ({ setOpen }) => {
         {/* QR Code Section (Decorative) */}
         <div className="hidden md:flex flex-col items-center justify-center p-4 bg-slate-50 rounded-2xl border border-slate-100">
           <QrcodeOutlined className="text-4xl text-slate-800 mb-2" />
-          <span className="text-xs font-bold text-slate-400 uppercase tracking-wider">Scan ID</span>
+          <span className="text-xs font-bold text-slate-400 uppercase tracking-wider">
+            {t('client:cardInfo.scanId')}
+          </span>
         </div>
       </div>
     </Card>

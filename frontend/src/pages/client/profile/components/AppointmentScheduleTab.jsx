@@ -21,6 +21,7 @@ import {
 } from 'antd';
 import dayjs from 'dayjs';
 import { useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { RescheduleAppointmentModal } from '@/components/modal/appointment';
 import { callCancelAppointment } from '@/services/appointment.service';
 import { getMyBookings } from '@/services/booking.service';
@@ -29,6 +30,7 @@ import { formatAppointmentTime } from '@/utils/appointment';
 const { Title, Text } = Typography;
 
 const AppointmentScheduleTab = () => {
+  const { t } = useTranslation(['client']);
   const [bookings, setBookings] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -43,7 +45,7 @@ const AppointmentScheduleTab = () => {
         setBookings(response.data);
       }
     } catch (err) {
-      setError(err?.message || 'Không thể tải danh sách lịch hẹn');
+      setError(err?.message || t('client:appointments.errorLoading'));
     } finally {
       setLoading(false);
     }
@@ -79,17 +81,17 @@ const AppointmentScheduleTab = () => {
       case 'CONFIRMED':
         return 'Confirmed';
       case 'COMPLETED':
-        return 'Completed';
+        return t('client:vaccinationHistory.completed');
       case 'SCHEDULED':
         return 'Scheduled';
       case 'PENDING':
-        return 'Pending';
+        return t('client:vaccinationHistory.pending');
       case 'RESCHEDULE':
         return 'Rescheduling';
       case 'PROGRESS':
-        return 'In Progress';
+        return t('client:vaccinationHistory.inProgress');
       case 'CANCELLED':
-        return 'Cancelled';
+        return t('client:appointments.cancelled');
       default:
         return status;
     }
@@ -106,38 +108,41 @@ const AppointmentScheduleTab = () => {
 
   const handleCancelAppointment = (appointment) => {
     Modal.confirm({
-      title: 'Cancel Appointment',
+      title: t('client:appointments.cancelAppointment'),
       content: (
         <div>
-          <p>Are you sure you want to cancel this appointment?</p>
+          <p>{t('client:appointments.confirmCancel')}</p>
           <div className="mt-3 p-3 bg-slate-50 rounded-xl border border-slate-100 text-sm">
             <p className="mb-1">
-              <span className="font-semibold">Vaccine:</span> {appointment.vaccineName}
+              <span className="font-semibold">{t('client:vaccinationHistory.vaccine')}:</span>{' '}
+              {appointment.vaccineName}
             </p>
             <p className="mb-1">
-              <span className="font-semibold">Dose:</span> {appointment.doseNumber}
+              <span className="font-semibold">{t('client:vaccinationHistory.dose')}:</span>{' '}
+              {appointment.doseNumber}
             </p>
             <p className="mb-1">
-              <span className="font-semibold">Date:</span>{' '}
+              <span className="font-semibold">{t('client:vaccinationHistory.date')}:</span>{' '}
               {dayjs(appointment.scheduledDate).format('DD/MM/YYYY')}
             </p>
             <p className="mb-0">
-              <span className="font-semibold">Center:</span> {appointment.centerName}
+              <span className="font-semibold">{t('client:vaccinationHistory.center')}:</span>{' '}
+              {appointment.centerName}
             </p>
           </div>
         </div>
       ),
-      okText: 'Yes, Cancel',
-      cancelText: 'Go Back',
+      okText: t('client:appointments.yesCancel'),
+      cancelText: t('client:appointments.goBack'),
       okButtonProps: { danger: true, shape: 'round' },
       cancelButtonProps: { shape: 'round' },
       onOk: async () => {
         try {
           await callCancelAppointment(appointment.appointmentId);
-          message.success('Appointment cancelled successfully');
+          message.success(t('client:appointments.cancelSuccess'));
           fetchBookings();
         } catch (error) {
-          message.error(error?.message || 'Failed to cancel appointment');
+          message.error(error?.message || t('client:appointments.cancelFailed'));
         }
       },
     });
@@ -212,7 +217,7 @@ const AppointmentScheduleTab = () => {
     return (
       <Alert
         type="error"
-        title="Error loading data"
+        title={t('client:appointments.errorLoading')}
         description={error}
         showIcon
         className="rounded-xl"
@@ -225,14 +230,16 @@ const AppointmentScheduleTab = () => {
       <div className="py-12 text-center">
         <Empty
           image={Empty.PRESENTED_IMAGE_SIMPLE}
-          description={<span className="text-slate-500">No upcoming appointments</span>}
+          description={
+            <span className="text-slate-500">{t('client:appointments.noUpcoming')}</span>
+          }
         />
         <Button
           type="primary"
           className="mt-4 rounded-xl shadow-lg shadow-blue-500/20"
           href="/booking"
         >
-          Book New Appointment
+          {t('client:appointments.bookNew')}
         </Button>
       </div>
     );
@@ -257,8 +264,9 @@ const AppointmentScheduleTab = () => {
                 {firstApt.vaccineName}
               </Title>
               <Text className="text-slate-500 text-sm">
-                Patient: <span className="font-medium text-slate-700">{firstApt.patientName}</span>{' '}
-                • {firstApt.totalDoses} Doses
+                {t('client:vaccinationHistory.patient')}:{' '}
+                <span className="font-medium text-slate-700">{firstApt.patientName}</span> •{' '}
+                {firstApt.totalDoses} {t('client:vaccinationHistory.doses')}
               </Text>
             </div>
           </div>
@@ -285,7 +293,7 @@ const AppointmentScheduleTab = () => {
                   <div className="flex-1">
                     <div className="flex items-center gap-3 mb-2">
                       <Text strong className="text-slate-700 text-lg">
-                        Dose {apt.doseNumber}
+                        {t('client:vaccinationHistory.dose')} {apt.doseNumber}
                       </Text>
                       <Tag
                         color={getStatusColor(apt.appointmentStatus)}
@@ -309,7 +317,10 @@ const AppointmentScheduleTab = () => {
                       </div>
                       {apt.doctorName && (
                         <div className="flex items-center gap-2 text-slate-600 md:col-span-2">
-                          <span className="font-medium">Doctor:</span> {apt.doctorName}
+                          <span className="font-medium">
+                            {t('client:vaccinationHistory.doctor')}:
+                          </span>{' '}
+                          {apt.doctorName}
                         </div>
                       )}
                     </div>
@@ -318,7 +329,7 @@ const AppointmentScheduleTab = () => {
                       <div className="mt-3 p-3 bg-amber-50 rounded-xl border border-amber-100 flex items-start gap-2">
                         <SyncOutlined spin className="text-amber-500 mt-1" />
                         <Text className="text-amber-700 text-xs">
-                          Reschedule request sent. Waiting for confirmation.
+                          {t('client:appointments.rescheduleRequestSent')}
                         </Text>
                       </div>
                     )}
@@ -336,7 +347,7 @@ const AppointmentScheduleTab = () => {
                           icon={<SyncOutlined />}
                           onClick={() => handleReschedule(apt)}
                         >
-                          Reschedule
+                          {t('client:appointments.reschedule')}
                         </Button>
                         <Button
                           danger
@@ -346,7 +357,7 @@ const AppointmentScheduleTab = () => {
                           icon={<CloseCircleOutlined />}
                           onClick={() => handleCancelAppointment(apt)}
                         >
-                          Cancel
+                          {t('client:profile.cancel')}
                         </Button>
                       </div>
                     )}
@@ -363,15 +374,17 @@ const AppointmentScheduleTab = () => {
     <div className="animate-fade-in">
       <div className="mb-6">
         <Title level={3} className="!mb-1 text-slate-800">
-          Appointments
+          {t('client:sidebar.appointments')}
         </Title>
-        <Text className="text-slate-500 text-lg">Manage your upcoming vaccination schedules</Text>
+        <Text className="text-slate-500 text-lg">{t('client:appointments.manageSchedules')}</Text>
       </div>
 
       {selfBookings.length > 0 && (
         <div className="mb-8">
           <div className="mb-4 flex items-center gap-3">
-            <h4 className="text-lg font-bold text-slate-700 m-0">My Schedule</h4>
+            <h4 className="text-lg font-bold text-slate-700 m-0">
+              {t('client:appointments.mySchedule')}
+            </h4>
             <Tag color="blue" className="rounded-full px-2">
               {selfBookings.length}
             </Tag>
@@ -383,7 +396,9 @@ const AppointmentScheduleTab = () => {
       {familyBookings.length > 0 && (
         <div className="mb-8">
           <div className="mb-4 flex items-center gap-3">
-            <h4 className="text-lg font-bold text-slate-700 m-0">Family Schedule</h4>
+            <h4 className="text-lg font-bold text-slate-700 m-0">
+              {t('client:appointments.familySchedule')}
+            </h4>
             <Tag color="purple" className="rounded-full px-2">
               {familyBookings.length}
             </Tag>
@@ -399,14 +414,14 @@ const AppointmentScheduleTab = () => {
           </div>
           <div>
             <Title level={5} className="!mb-2 text-blue-900">
-              Pre-vaccination Instructions
+              {t('client:appointments.preVaccinationInstructions')}
             </Title>
             <ul className="text-sm text-blue-800 space-y-2 m-0 pl-4 list-disc">
-              <li>Please arrive 15 minutes before your appointment time.</li>
-              <li>Bring your ID card and health insurance card.</li>
-              <li>Wear comfortable clothing for easy injection access.</li>
-              <li>Inform medical staff of any allergies or medications.</li>
-              <li>Eat properly before your vaccination.</li>
+              <li>{t('client:appointments.instruction1')}</li>
+              <li>{t('client:appointments.instruction2')}</li>
+              <li>{t('client:appointments.instruction3')}</li>
+              <li>{t('client:appointments.instruction4')}</li>
+              <li>{t('client:appointments.instruction5')}</li>
             </ul>
           </div>
         </div>

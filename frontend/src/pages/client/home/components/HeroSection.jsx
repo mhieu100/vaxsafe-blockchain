@@ -11,7 +11,7 @@ import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
 
 const HeroSection = () => {
-  const { t } = useTranslation('common');
+  const { t } = useTranslation(['client']);
   const cardRef = useRef(null);
   const [rotate, setRotate] = useState({ x: 0, y: 0 });
 
@@ -53,17 +53,16 @@ const HeroSection = () => {
                 <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-blue-400 opacity-75"></span>
                 <span className="relative inline-flex rounded-full h-3 w-3 bg-blue-500"></span>
               </span>
-              Blockchain Secured Healthcare
+              {t('client:home.hero.badge')}
             </div>
 
             <h1 className="text-5xl lg:text-7xl font-bold leading-tight tracking-tight">
-              <span className="block text-white">The Future of</span>
-              <span className="text-gradient-premium">Digital Health</span>
+              <span className="block text-white">{t('client:home.hero.titlePrefix')}</span>
+              <span className="text-gradient-premium">{t('client:home.hero.titleSuffix')}</span>
             </h1>
 
             <p className="text-xl text-slate-300 max-w-lg leading-relaxed">
-              Secure, transparent, and immutable vaccine records powered by blockchain technology.
-              Your health data, owned by you.
+              {t('client:home.hero.description')}
             </p>
 
             <div className="flex flex-wrap gap-4 pt-4">
@@ -73,7 +72,7 @@ const HeroSection = () => {
                   size="large"
                   className="h-14 px-8 rounded-full text-lg font-semibold bg-gradient-to-r from-blue-600 to-indigo-600 border-none hover:scale-105 transition-transform shadow-lg shadow-blue-500/25 flex items-center gap-2"
                 >
-                  {t('hero.viewVaccines')} <ArrowRightOutlined />
+                  {t('client:home.hero.viewVaccines')} <ArrowRightOutlined />
                 </Button>
               </Link>
               <Link to="/about">
@@ -81,7 +80,7 @@ const HeroSection = () => {
                   size="large"
                   className="h-14 px-8 rounded-full text-lg font-semibold glass-panel text-white border-white/20 hover:bg-white/10 hover:text-white hover:border-white/40 transition-all"
                 >
-                  {t('hero.learnMore')}
+                  {t('client:home.hero.learnMore')}
                 </Button>
               </Link>
             </div>
@@ -89,11 +88,11 @@ const HeroSection = () => {
             <div className="pt-8 flex items-center gap-8 text-slate-400 text-sm font-medium">
               <div className="flex items-center gap-2">
                 <SafetyOutlined className="text-emerald-400 text-lg" />
-                <span>Bank-grade Security</span>
+                <span>{t('client:home.hero.security')}</span>
               </div>
               <div className="flex items-center gap-2">
                 <CheckCircleOutlined className="text-blue-400 text-lg" />
-                <span>Verified Records</span>
+                <span>{t('client:home.hero.verifiedRecords')}</span>
               </div>
             </div>
           </div>
@@ -114,8 +113,12 @@ const HeroSection = () => {
                 {/* Card Header */}
                 <div className="flex justify-between items-start mb-8 card-3d-content">
                   <div>
-                    <h3 className="text-2xl font-bold text-white mb-1">Vaccine Passport</h3>
-                    <p className="text-blue-200 text-sm tracking-wider">IMMUNIZATION RECORD</p>
+                    <h3 className="text-2xl font-bold text-white mb-1">
+                      {t('client:home.hero.passportCard.title')}
+                    </h3>
+                    <p className="text-blue-200 text-sm tracking-wider">
+                      {t('client:home.hero.passportCard.subtitle')}
+                    </p>
                   </div>
                   <QrcodeOutlined className="text-4xl text-white opacity-80" />
                 </div>
@@ -129,29 +132,39 @@ const HeroSection = () => {
                       </div>
                     </div>
                     <div>
-                      <p className="text-slate-400 text-xs uppercase tracking-wide">Name</p>
+                      <p className="text-slate-400 text-xs uppercase tracking-wide">
+                        {t('client:home.hero.passportCard.nameLabel')}
+                      </p>
                       <p className="text-white font-medium text-lg">Nguyen Van A</p>
                     </div>
                   </div>
 
                   <div className="grid grid-cols-2 gap-4">
                     <div className="bg-white/5 p-3 rounded-xl border border-white/5">
-                      <p className="text-slate-400 text-xs mb-1">Vaccine Type</p>
+                      <p className="text-slate-400 text-xs mb-1">
+                        {t('client:home.hero.passportCard.vaccineType')}
+                      </p>
                       <p className="text-emerald-400 font-semibold">COVID-19 mRNA</p>
                     </div>
                     <div className="bg-white/5 p-3 rounded-xl border border-white/5">
-                      <p className="text-slate-400 text-xs mb-1">Dose Status</p>
-                      <p className="text-blue-400 font-semibold">Fully Vaccinated</p>
+                      <p className="text-slate-400 text-xs mb-1">
+                        {t('client:home.hero.passportCard.doseStatus')}
+                      </p>
+                      <p className="text-blue-400 font-semibold">
+                        {t('client:home.hero.passportCard.fullyVaccinated')}
+                      </p>
                     </div>
                   </div>
 
                   <div className="bg-slate-900/50 rounded-xl p-4 border border-white/5 flex items-center justify-between">
                     <div>
-                      <p className="text-slate-500 text-[10px] uppercase mb-1">Blockchain Hash</p>
+                      <p className="text-slate-500 text--[10px] uppercase mb-1">
+                        {t('client:home.hero.passportCard.blockchainHash')}
+                      </p>
                       <p className="text-slate-300 font-mono text-xs truncate w-32">0x71C...9A23</p>
                     </div>
                     <div className="flex items-center gap-1 text-emerald-500 text-xs font-medium bg-emerald-500/10 px-2 py-1 rounded">
-                      <CheckCircleOutlined /> Verified
+                      <CheckCircleOutlined /> {t('client:home.hero.passportCard.verified')}
                     </div>
                   </div>
                 </div>

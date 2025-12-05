@@ -13,7 +13,32 @@
     "other": "Other",
     "editProfile": "Edit Profile",
     "changePassword": "Change Password",
-    "updateSuccess": "Profile updated successfully"
+    "updateSuccess": "Profile updated successfully",
+    "identityNumber": "Identity Number",
+    "bloodType": "Blood Type",
+    "height": "Height",
+    "weight": "Weight",
+    "occupation": "Occupation",
+    "insuranceNumber": "Insurance Number",
+    "lifestyleNotes": "Lifestyle Notes",
+    "saveChanges": "Save Changes",
+    "cancel": "Cancel",
+    "selectGender": "Select Gender",
+    "selectBloodType": "Select Blood Type",
+    "enterFullName": "Please enter your full name",
+    "enterOccupation": "Your occupation",
+    "enterInsuranceNumber": "Health insurance number",
+    "enterLifestyleNotes": "Notes about lifestyle, hobbies...",
+    "updateAvatarTitle": "Update Avatar",
+    "updateAvatarSuccess": "Avatar updated successfully!",
+    "updateAvatarFailed": "Failed to update avatar",
+    "removeAvatarSuccess": "Avatar removed successfully!",
+    "removeAvatarFailed": "Failed to remove avatar",
+    "onlyImage": "You can only upload image files!",
+    "imageSizeLimit": "Image must be smaller than 5MB!",
+    "uploading": "Uploading...",
+    "uploadNewPhoto": "Upload New Photo",
+    "removeCurrentPhoto": "Remove Current Photo"
   },
   "booking": {
     "title": "Book Appointment",
@@ -43,14 +68,124 @@
     "paymentSuccess": "Payment successful!",
     "paymentFailed": "Payment failed. Please try again."
   },
+
+  "sidebar": {
+    "dashboard": "Dashboard",
+    "myRecords": "My Records",
+    "appointments": "Appointments",
+    "familyMembers": "Family Members",
+    "settings": "Settings",
+    "menu": "Menu"
+  },
+  "cardInfo": {
+    "patient": "PATIENT",
+    "identityVerified": "Identity Verified",
+    "scanId": "Scan ID"
+  },
+  "dashboard": {
+    "totalVaccines": "Total Vaccines",
+    "coverage": "Coverage",
+    "goodStatus": "Good Status",
+    "nextAppointment": "Next Appointment",
+    "recentActivity": "Recent Activity",
+    "viewAll": "View All",
+    "plusThisYear": "+2 this year",
+    "nextDate": "Next: Oct 15"
+  },
+  "settings": {
+    "profileInfo": "Profile Information",
+    "security": "Security",
+    "accountSecurity": "Account Security",
+    "password": "Password",
+    "changePasswordDesc": "Change your account password"
+  },
+  "myRecords": {
+    "vaccinationHistory": "Vaccination History",
+    "digitalPassport": "Digital Passport",
+    "medicalRecords": "Medical Records"
+  },
+  "vaccinationHistory": {
+    "title": "Vaccination History",
+    "trackBookings": "Track all vaccination bookings for you and your family",
+    "totalBookings": "Total Bookings",
+    "completed": "Completed",
+    "inProgress": "In Progress",
+    "bookingId": "Booking ID",
+    "vaccine": "Vaccine",
+    "doses": "doses",
+    "patient": "Patient",
+    "familyMember": "Family Member",
+    "date": "Date",
+    "totalAmount": "Total Amount",
+    "status": "Status",
+    "dose": "Dose",
+    "scheduledDate": "Scheduled Date",
+    "center": "Center",
+    "doctor": "Doctor",
+    "notAssigned": "Not assigned",
+    "cashier": "Cashier",
+    "unpaid": "Unpaid",
+    "appointmentDetails": "Appointment Details",
+    "totalBookingsCount": "Total {{count}} bookings",
+    "errorLoadHistory": "Failed to load vaccination history"
+  },
   "vaccinePassport": {
     "title": "Vaccine Passport",
     "digitalPassport": "Digital Vaccine Passport",
-    "viewOnBlockchain": "View on Blockchain",
+    "securedByBlockchain": "Secured by Blockchain Technology",
+    "verified": "Verified",
+    "network": "Network",
+    "protocol": "Protocol",
+    "activeVerified": "Active & Verified",
+    "passportInfo": "Passport Information",
     "download": "Download",
     "share": "Share",
+    "fullName": "Full Name",
+    "passportId": "Passport ID",
+    "issuedDate": "Issued Date",
+    "validUntil": "Valid Until",
+    "blockchainVerification": "Blockchain Verification",
+    "networkType": "Network Type",
+    "permissionedBlockchain": "Permissioned Blockchain",
+    "consensus": "Consensus",
+    "proofOfAuthority": "Proof of Authority",
+    "totalRecords": "Total Records",
+    "lastUpdated": "Last Updated",
+    "verifiedRecords": "Blockchain-Verified Records",
+    "provider": "Provider",
+    "batch": "Batch",
+    "block": "Block",
+    "transactionHash": "Transaction Hash",
+    "digitalVerification": "Digital Verification",
+    "scanToVerify": "Scan to verify vaccination records on blockchain",
+    "hideQR": "Hide QR",
+    "showFullQR": "Show Full QR",
+    "blockchainStats": "Blockchain Stats",
+    "chainConfirmations": "Chain Confirmations",
+    "trustScore": "Trust Score",
+    "exploreOnBlockchain": "Explore on Blockchain",
+    "viewHistoryExplorer": "View your complete vaccination history and transaction details on the SafeVax Blockchain Explorer",
+    "openExplorer": "Open Explorer",
     "verificationCode": "Verification Code",
-    "noRecords": "No vaccination records found"
+    "noRecords": "No vaccination records found",
+    "vaccinesTaken": "Vaccines Taken",
+    "lastVaccination": "Last Vaccination",
+    "recordsTitle": "Vaccination Records",
+    "recordsSubtitle": "Official medical records stored on blockchain",
+    "lotNumber": "Lot Number",
+    "patientIdentityHash": "Patient Identity Hash",
+    "appointmentId": "Appointment ID",
+    "expiryDate": "Expiry Date",
+    "ipfsHash": "IPFS Hash",
+    "notes": "Notes",
+    "noNotes": "No additional notes",
+    "aboutTitle": "About Vaccine Records",
+    "aboutPoint1": "All vaccination records are stored securely on blockchain",
+    "aboutPoint2": "Each record is immutable and verifiable",
+    "aboutPoint3": "Records include complete vaccination details and doctor information",
+    "aboutPoint4": "You can access your records anytime for verification purposes",
+    "errorFetch": "Failed to load vaccine records. Please try again later.",
+    "totalRecordsCount": "Total {{count}} records"
   },
   "family": {
     "title": "Family Management",
@@ -68,7 +203,26 @@
     "confirmDelete": "Are you sure you want to delete this member?",
     "deleteSuccess": "Member deleted successfully",
     "addSuccess": "Member added successfully",
-    "updateSuccess": "Member updated successfully"
+    "updateSuccess": "Member updated successfully",
+    "familyHealthManager": "Family Health Manager",
+    "manageProfiles": "Manage health profiles for your loved ones",
+    "totalMembers": "Total Members",
+    "upToDate": "Up to Date",
+    "needAttention": "Need Attention",
+    "familyHealthTips": "Family Health Tips",
+    "tip1": "Keep all family vaccination records synchronized",
+    "tip2": "Schedule family appointments together when possible",
+    "tip3": "Maintain emergency contact information up to date",
+    "tip4": "Share allergy information with healthcare providers",
+    "tip5": "Regular family health checkups are recommended",
+    "editDetails": "Edit Details",
+    "remove": "Remove",
+    "removeSuccess": "Family member removed successfully",
+    "removeFailed": "Failed to remove family member. Please try again.",
+    "updateFailed": "Failed to update family member",
+    "addFailed": "Failed to add family member",
+    "identityTooltip": "For children under 14, please use the Personal ID Code found on the Birth Certificate.",
+    "enterIdentity": "Enter Identity Number or Personal ID Code"
   },
   "appointments": {
     "title": "My Appointments",
@@ -80,7 +234,23 @@
     "reschedule": "Reschedule",
     "viewDetails": "View Details",
     "confirmCancel": "Are you sure you want to cancel this appointment?",
-    "cancelSuccess": "Appointment cancelled successfully"
+    "cancelSuccess": "Appointment cancelled successfully",
+    "manageSchedules": "Manage your upcoming vaccination schedules",
+    "mySchedule": "My Schedule",
+    "familySchedule": "Family Schedule",
+    "preVaccinationInstructions": "Pre-vaccination Instructions",
+    "instruction1": "Please arrive 15 minutes before your appointment time.",
+    "instruction2": "Bring your ID card and health insurance card.",
+    "instruction3": "Wear comfortable clothing for easy injection access.",
+    "instruction4": "Inform medical staff of any allergies or medications.",
+    "instruction5": "Eat properly before your vaccination.",
+    "yesCancel": "Yes, Cancel",
+    "goBack": "Go Back",
+    "cancelFailed": "Failed to cancel appointment",
+    "noUpcoming": "No upcoming appointments",
+    "bookNew": "Book New Appointment",
+    "rescheduleRequestSent": "Reschedule request sent. Waiting for confirmation.",
+    "errorLoading": "Error loading data"
   },
   "blockchain": {
     "title": "Blockchain Verification",
@@ -92,5 +262,121 @@
     "pending": "Pending",
     "failed": "Failed",
     "viewOnExplorer": "View on Explorer"
+  },
+  "healthReminders": {
+    "title": "Health Reminders & Alerts",
+    "fluVaccineDue": "Influenza Vaccine Due",
+    "fluVaccineDueDesc": "Your annual flu shot is due in 2 weeks",
+    "healthCheckupReminder": "Health Checkup Reminder",
+    "healthCheckupDesc": "Annual health screening recommended",
+    "vaccinationRecordComplete": "Vaccination Record Complete",
+    "vaccinationRecordCompleteDesc": "All required vaccinations are up to date",
+    "healthTips": "Health Tips",
+    "healthTip1": "Stay hydrated and maintain a balanced diet",
+    "healthTip2": "Regular exercise boosts immune system",
+    "healthTip3": "Get adequate sleep (7-9 hours daily)",
+    "healthTip4": "Keep vaccination records up to date"
+  },
+  "settingsModal": {
+    "title": "Account Settings",
+    "emailNotifications": "Email Notifications",
+    "emailNotificationsDesc": "Enable or disable all email notifications",
+    "appointmentReminders": "Appointment Reminders",
+    "appointmentRemindersDesc": "Get notified before your scheduled appointments",
+    "nextDoseReminders": "Next Dose Reminders",
+    "nextDoseRemindersDesc": "Receive reminders for upcoming vaccine doses",
+    "twoFactorAuth": "Two-Factor Authentication",
+    "twoFactorAuthDesc": "Add an extra layer of security to your account",
+    "configure": "Configure",
+    "profileVisibility": "Profile Visibility",
+    "profileVisibilityDesc": "Control who can see your profile information",
+    "public": "Public",
+    "friends": "Friends",
+    "private": "Private",
+    "languagePreference": "Language Preference",
+    "languagePreferenceDesc": "Choose your preferred language",
+    "dangerZone": "Danger Zone",
+    "deleteAccount": "Delete Account",
+    "deleteAccountDesc": "Permanently delete your account and all data",
+    "signOutAllDevices": "Sign Out All Devices",
+    "signOutAllDevicesDesc": "Sign out from all devices except this one",
+    "signOutAll": "Sign Out All",
+    "updateSettingsSuccess": "Settings updated successfully",
+    "updateSettingsFailed": "Failed to update settings",
+    "loadSettingsFailed": "Failed to load notification settings"
+  },
+  "home": {
+    "hero": {
+      "badge": "Blockchain Secured Healthcare",
+      "titlePrefix": "The Future of",
+      "titleSuffix": "Digital Health",
+      "description": "Secure, transparent, and immutable vaccine records powered by blockchain technology. Your health data, owned by you.",
+      "viewVaccines": "View Vaccines",
+      "learnMore": "Learn More",
+      "security": "Bank-grade Security",
+      "verifiedRecords": "Verified Records",
+      "passportCard": {
+        "title": "Vaccine Passport",
+        "subtitle": "IMMUNIZATION RECORD",
+        "nameLabel": "Name",
+        "vaccineType": "Vaccine Type",
+        "doseStatus": "Dose Status",
+        "fullyVaccinated": "Fully Vaccinated",
+        "blockchainHash": "Blockchain Hash",
+        "verified": "Verified"
+      }
+    },
+    "steps": {
+      "subtitle": "How It Works",
+      "title": "Simple Steps to Immunity",
+      "description": "We've streamlined the vaccination process to make it as easy and secure as possible for you and your family.",
+      "step1": {
+        "title": "1. Find Vaccine",
+        "desc": "Search for available vaccines and choose the best center near you."
+      },
+      "step2": {
+        "title": "2. Book Schedule",
+        "desc": "Select a convenient date and time slot for your appointment."
+      },
+      "step3": {
+        "title": "3. Get Vaccinated",
+        "desc": "Visit the center, get your shot safely from certified professionals."
+      },
+      "step4": {
+        "title": "4. Digital Passport",
+        "desc": "Receive your blockchain-verified certificate instantly."
+      }
+    },
+    "service": {
+      "subtitle": "Why Choose VaxSafe?",
+      "titlePrefix": "Blockchain Powered",
+      "titleSuffix": "Healthcare",
+      "description": "Experience the next generation of healthcare management with our secure, transparent, and efficient platform.",
+      "learnMore": "Learn more",
+      "features": {
+        "immutableData": {
+          "title": "Immutable Data",
+          "description": "Your medical records are stored on blockchain, ensuring they can never be tampered with or lost."
+        },
+        "instantVerification": {
+          "title": "Instant Verification",
+          "description": "Verify vaccination status instantly anywhere in the world with our QR code system."
+        },
+        "globalAccess": {
+          "title": "Global Access",
+          "description": "Access your health records securely from any device, anywhere, anytime."
+        }
+      }
+    },
+    "news": {
+      "subtitle": "Latest Updates",
+      "titlePrefix": "News &",
+      "titleSuffix": "Insights",
+      "description": "Stay informed with the latest vaccination guidelines, health tips, and medical announcements from our experts.",
+      "viewAll": "View All Articles",
+      "readArticle": "Read Article",
+      "views": "views",
+      "clickToRead": "Click to read more about this article..."
+    }
   }
 }

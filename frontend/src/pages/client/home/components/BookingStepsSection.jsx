@@ -7,28 +7,28 @@ import {
 import { useTranslation } from 'react-i18next';
 
 const BookingStepsSection = () => {
-  const { t } = useTranslation('common');
+  const { t } = useTranslation(['client']);
 
   const steps = [
     {
       icon: <SearchOutlined className="text-3xl text-blue-600" />,
-      title: '1. Find Vaccine',
-      description: 'Search for available vaccines and choose the best center near you.',
+      title: t('client:home.steps.step1.title'),
+      description: t('client:home.steps.step1.desc'),
     },
     {
       icon: <CalendarOutlined className="text-3xl text-purple-600" />,
-      title: '2. Book Schedule',
-      description: 'Select a convenient date and time slot for your appointment.',
+      title: t('client:home.steps.step2.title'),
+      description: t('client:home.steps.step2.desc'),
     },
     {
       icon: <UserOutlined className="text-3xl text-emerald-600" />,
-      title: '3. Get Vaccinated',
-      description: 'Visit the center, get your shot safely from certified professionals.',
+      title: t('client:home.steps.step3.title'),
+      description: t('client:home.steps.step3.desc'),
     },
     {
       icon: <FileProtectOutlined className="text-3xl text-orange-600" />,
-      title: '4. Digital Passport',
-      description: 'Receive your blockchain-verified certificate instantly.',
+      title: t('client:home.steps.step4.title'),
+      description: t('client:home.steps.step4.desc'),
     },
   ];
 
@@ -37,12 +37,11 @@ const BookingStepsSection = () => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-16">
           <span className="text-blue-600 font-semibold tracking-wider uppercase text-sm mb-2 block">
-            How It Works
+            {t('client:home.steps.subtitle')}
           </span>
-          <h2 className="text-4xl font-bold text-slate-900 mb-4">Simple Steps to Immunity</h2>
+          <h2 className="text-4xl font-bold text-slate-900 mb-4">{t('client:home.steps.title')}</h2>
           <p className="text-lg text-slate-600 max-w-2xl mx-auto">
-            We've streamlined the vaccination process to make it as easy and secure as possible for
-            you and your family.
+            {t('client:home.steps.description')}
           </p>
         </div>
 
