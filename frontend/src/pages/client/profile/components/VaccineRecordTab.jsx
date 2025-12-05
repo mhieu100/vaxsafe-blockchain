@@ -6,11 +6,13 @@ import {
   SafetyCertificateOutlined,
   UserOutlined,
 } from '@ant-design/icons';
-import { Alert, Card, Descriptions, Empty, Skeleton, Table, Tag, Typography } from 'antd';
+import { Alert, Button, Card, Descriptions, Empty, Skeleton, Table, Tag, Typography } from 'antd';
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import apiClient from '@/services/apiClient';
 import useAccountStore from '@/stores/useAccountStore';
+import BlockchainBadge from '@/components/common/BlockchainBadge';
+import BlockchainVerificationModal from '@/components/common/BlockchainVerificationModal';
 
 const { Title, Text } = Typography;
 
@@ -20,6 +22,8 @@ const VaccineRecordTab = () => {
   const [records, setRecords] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
+  const [selectedRecord, setSelectedRecord] = useState(null);
+  const [verificationModalOpen, setVerificationModalOpen] = useState(false);
 
   useEffect(() => {
     const fetchVaccineRecords = async () => {
@@ -117,10 +121,34 @@ const VaccineRecordTab = () => {
     {
       title: t('client:vaccinePassport.status'),
       key: 'status',
-      render: () => (
-        <Tag icon={<CheckCircleFilled />} color="success" className="rounded-full px-3 border-0">
-          {t('client:vaccinePassport.completed')}
-        </Tag>
+      render: (_, record) => (
+        <div className="flex items-center gap-2">
+          <Tag icon={<CheckCircleFilled />} color="success" className="rounded-full px-3 border-0">
+            {t('client:vaccinePassport.completed')}
+          </Tag>
+          {record.transactionHash && (
+            <BlockchainBadge verified={true} compact={true} />
+          )}
+        </div>
+      ),
+    },
+    {
+      title: t('client:vaccinePassport.actions'),
+      key: 'actions',
+      render: (_, record) => (
+        record.transactionHash && (
+          <Button
+            type="link"
+            size="small"
+            icon={<SafetyCertificateOutlined />}
+            onClick={() => {
+              setSelectedRecord(record);
+              setVerificationModalOpen(true);
+            }}
+          >
+            {t('client:vaccinePassport.verify')}
+          </Button>
+        )
       ),
     },
   ];
@@ -249,10 +277,49 @@ const VaccineRecordTab = () => {
                         ? new Date(record.expiryDate).toLocaleDateString('vi-VN')
                         : 'N/A'}
                     </Descriptions.Item>
+                    
+                    {/* Blockchain Information */}
+                    {record.transactionHash && (
+                      <>
+                        <Descriptions.Item label={t('client:vaccinePassport.blockchainRecord')} span={2}>
+                          <div className="flex items-center gap-2">
+                            <BlockchainBadge verified={true} />
+                            <Button
+                              type="link"
+                              size="small"
+                              onClick={() => {
+                                setSelectedRecord(record);
+                                setVerificationModalOpen(true);
+                              }}
+                            >
+                              {t('client:vaccinePassport.viewDetails')}
+                            </Button>
+                          </div>
+                        </Descriptions.Item>
+                        <Descriptions.Item label={t('client:vaccinePassport.transactionHash')} span={2}>
+                          <Text className="font-mono text-xs text-emerald-600 break-all">
+                            {record.transactionHash}
+                          </Text>
+                        </Descriptions.Item>
+                      </>
+                    )}
+                    
                     <Descriptions.Item label={t('client:vaccinePassport.ipfsHash')} span={2}>
-                      <Text className="font-mono text-xs text-blue-600">
-                        {record.ipfsHash || 'N/A'}
-                      </Text>
+                      <div className="flex items-center gap-2">
+                        <Text className="font-mono text-xs text-blue-600">
+                          {record.ipfsHash || 'N/A'}
+                        </Text>
+                        {record.ipfsHash && (
+                          <Button
+                            type="link"
+                            size="small"
+                            href={`https://ipfs.io/ipfs/${record.ipfsHash}`}
+                            target="_blank"
+                          >
+                            {t('client:vaccinePassport.viewOnIpfs')}
+                          </Button>
+                        )}
+                      </div>
                     </Descriptions.Item>
                     <Descriptions.Item label={t('client:vaccinePassport.notes')} span={2}>
                       {record.notes || (
@@ -286,6 +353,13 @@ const VaccineRecordTab = () => {
           <li>{t('client:vaccinePassport.aboutPoint4')}</li>
         </ul>
       </Card>
+      
+      {/* Blockchain Verification Modal */}
+      <BlockchainVerificationModal
+        open={verificationModalOpen}
+        onClose={() => setVerificationModalOpen(false)}
+        record={selectedRecord}
+      />
     </div>
   );
 };

@@ -29,7 +29,6 @@ import OAuth2Callback from '@/pages/auth/OAuth2Callback';
 import ResetPasswordPage from '@/pages/auth/ResetPasswordPage';
 import RegisterPage from '@/pages/auth/register';
 import AboutPage from '@/pages/client/about';
-import BlockchainPage from '@/pages/client/BlockchainPage';
 import BookingPage from '@/pages/client/booking';
 import CancelPage from '@/pages/client/CancelPage';
 import CheckoutPage from '@/pages/client/CheckoutPage';
@@ -91,14 +90,6 @@ const router = createBrowserRouter([
         element: (
           <ProtectedUserRoute>
             <CheckoutPage />
-          </ProtectedUserRoute>
-        ),
-      },
-      {
-        path: 'blockchain',
-        element: (
-          <ProtectedUserRoute>
-            <BlockchainPage />
           </ProtectedUserRoute>
         ),
       },
