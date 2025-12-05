@@ -15,6 +15,8 @@ services:
       - GANACHE_URL=${GANACHE_URL}
       - JWT_SECRET=${JWT_SECRET}
       - JWT_SECRET_IS_BASE64=${JWT_SECRET_IS_BASE64}
+    volumes:
+      - ./build:/app/build
     restart: always
     deploy:
       resources:
