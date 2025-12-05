@@ -8,5 +8,5 @@ import { usePaginatedQuery } from './usePaginatedQuery';
  */
 export const useVaccine = (filter) => {
   const query = buildQuery(filter);
-  return usePaginatedQuery('vaccines', '/vaccines', query);
+  return usePaginatedQuery('vaccines', '/api/vaccines', query);
 };

@@ -20,7 +20,7 @@ const apiClient = axios.create({
 const handleRefreshToken = async () => {
   return await mutex.runExclusive(async () => {
     try {
-      const response = await apiClient.get('/auth/refresh');
+      const response = await apiClient.get('/api/auth/refresh');
       if (response?.data?.accessToken) {
         return response.data.accessToken;
       }
@@ -68,8 +68,8 @@ apiClient.interceptors.response.use(
     if (
       error.response &&
       error.response.status === 401 &&
-      originalRequest.url !== '/auth/login' &&
-      originalRequest.url !== '/auth/login/password' &&
+      originalRequest.url !== '/api/auth/login' &&
+      originalRequest.url !== '/api/auth/login/password' &&
       !originalRequest.headers[NO_RETRY_HEADER]
     ) {
       originalRequest.headers[NO_RETRY_HEADER] = 'true';

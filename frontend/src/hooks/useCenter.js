@@ -8,5 +8,5 @@ import { usePaginatedQuery } from './usePaginatedQuery';
  */
 export const useCenter = (filter) => {
   const query = buildQuery(filter);
-  return usePaginatedQuery('centers', '/centers', query);
+  return usePaginatedQuery('centers', '/api/centers', query);
 };

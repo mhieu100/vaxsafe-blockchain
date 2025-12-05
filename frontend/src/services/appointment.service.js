@@ -9,22 +9,22 @@ import apiClient from '../services/apiClient';
 // - callCreateBooking -> use booking.service.js
 
 export const callGetAppointment = (hash) => {
-  return apiClient.get(`/appointments/${hash}`);
+  return apiClient.get(`/api/appointments/${hash}`);
 };
 
 export const callGetOrder = () => {
-  return apiClient.get('/orders');
+  return apiClient.get('/api/orders');
 };
 
 export const updatePaymentPaypal = (bookingId, paymentId) => {
-  return apiClient.post('/payments/paypal', {
+  return apiClient.post('/api/payments/paypal', {
     bookingId,
     paymentId,
   });
 };
 
 export const updatePaymentMetaMask = (paymentId, bookingId) => {
-  return apiClient.post('/payments/meta-mask', {
+  return apiClient.post('/api/payments/meta-mask', {
     paymentId,
     bookingId,
   });
@@ -38,7 +38,7 @@ export const callAddAppointmentMetaMark = (
   price,
   doseSchedules
 ) => {
-  return apiClient.post('/appointments/meta-mark', {
+  return apiClient.post('/api/appointments/meta-mark', {
     vaccineId,
     centerId,
     time,
@@ -49,11 +49,11 @@ export const callAddAppointmentMetaMark = (
 };
 
 export const callAllBookings = () => {
-  return apiClient.get('/bookings');
+  return apiClient.get('/api/bookings');
 };
 
 export const callUpdateAppointment = (appointmentId, doctorId, slotId, actualScheduledTime) => {
-  return apiClient.put('/appointments', {
+  return apiClient.put('/api/appointments', {
     appointmentId,
     doctorId,
     slotId,
@@ -62,15 +62,15 @@ export const callUpdateAppointment = (appointmentId, doctorId, slotId, actualSch
 };
 
 export const callCancelAppointment = (appointmentId) => {
-  return apiClient.put(`/appointments/${appointmentId}/cancel`);
+  return apiClient.put(`/api/appointments/${appointmentId}/cancel`);
 };
 
 export const callCompleteAppointment = (appointmentId) => {
-  return apiClient.put(`/appointments/${appointmentId}/complete`);
+  return apiClient.put(`/api/appointments/${appointmentId}/complete`);
 };
 
 export const callFetchAppointment = () => {
-  return apiClient.get('/appointments');
+  return apiClient.get('/api/appointments');
 };
 
 export const callFetchAppointmentOfCenter = (queryOrFilter) => {
@@ -79,20 +79,20 @@ export const callFetchAppointmentOfCenter = (queryOrFilter) => {
     typeof queryOrFilter === 'string' &&
     (queryOrFilter.includes('=') || queryOrFilter.includes('&'))
   ) {
-    return apiClient.get(`/appointments/center?${queryOrFilter}`);
+    return apiClient.get(`/api/appointments/center?${queryOrFilter}`);
   }
   // Otherwise, treat as filter value and use params
-  return apiClient.get('/appointments/center', {
+  return apiClient.get('/api/appointments/center', {
     params: queryOrFilter ? { filter: queryOrFilter } : {},
   });
 };
 
 export const callMySchedule = () => {
-  return apiClient.get('/appointments/my-schedules');
+  return apiClient.get('/api/appointments/my-schedules');
 };
 
 export const callVerifyAppointment = (appointmentHash, paymentHash) => {
-  return apiClient.post('/appointments/verify', {
+  return apiClient.post('/api/appointments/verify', {
     appointmentHash,
     paymentHash,
   });
@@ -103,27 +103,27 @@ export const callVerifyAppointment = (appointmentHash, paymentHash) => {
 // };
 
 export const callListAppointment = (params) => {
-  return apiClient.get('/appointments', { params });
+  return apiClient.get('/api/appointments', { params });
 };
 
 export const callConfirmAppointment = (id) => {
-  return apiClient.patch(`/appointments/${id}/confirm`);
+  return apiClient.patch(`/api/appointments/${id}/confirm`);
 };
 
 export const callBookAppointment = (id) => {
-  return apiClient.post(`/appointments/${id}/book`);
+  return apiClient.post(`/api/appointments/${id}/book`);
 };
 
 export const callFinishAppointment = (id) => {
-  return apiClient.post(`/appointments/${id}/finish`);
+  return apiClient.post(`/api/appointments/${id}/finish`);
 };
 
 export const callRefundAppointment = (appointmentId) => {
-  return apiClient.get(`/appointments/${appointmentId}/refund`);
+  return apiClient.get(`/api/appointments/${appointmentId}/refund`);
 };
 
 export const callVerifyId = (id) => {
-  return apiClient.get(`/appointments/${id}/verify`);
+  return apiClient.get(`/api/appointments/${id}/verify`);
 };
 
 /**
@@ -135,7 +135,7 @@ export const callVerifyId = (id) => {
  * - Overdue appointments
  */
 export const callGetUrgentAppointments = () => {
-  return apiClient.get('/appointments/urgent');
+  return apiClient.get('/api/appointments/urgent');
 };
 
 /**
@@ -143,5 +143,5 @@ export const callGetUrgentAppointments = () => {
  * Returns all appointments scheduled for today for the logged-in doctor
  */
 export const callGetTodayAppointments = () => {
-  return apiClient.get('/appointments/today');
+  return apiClient.get('/api/appointments/today');
 };

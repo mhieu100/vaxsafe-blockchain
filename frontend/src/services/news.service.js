@@ -77,7 +77,7 @@ export const callFetchNewsByCategory = (category) => {
  * @param {string} data.coverImage - Cover image URL
  */
 export const callCreateNews = (data) => {
-  return apiClient.post('/news', data);
+  return apiClient.post('/api/news', data);
 };
 
 /**
@@ -110,5 +110,5 @@ export const callPublishNews = (id) => {
  * @param {number} id - News ID
  */
 export const callUnpublishNews = (id) => {
-  return apiClient.patch(`/news/${id}/unpublish`);
+  return apiClient.patch(`/api/news/${id}/unpublish`);
 };
