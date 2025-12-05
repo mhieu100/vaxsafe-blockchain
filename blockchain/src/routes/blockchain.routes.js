@@ -31,8 +31,7 @@ router.get("/status", async (_req, res) => {
 			data: {
 				connected: isConnected,
 				networkId: networkId.toString(),
-				blockNumber: blockNumber.toString(),
-				test: "vaxsafe-blockchain",
+				blockNumber: blockNumber.toString() + " test",
 			},
 		});
 	} catch (error) {
