@@ -38,27 +38,6 @@ const NewsSection = () => {
     fetchNews();
   }, []);
 
-  const getCategoryColor = (category) => {
-    switch (category) {
-      case 'VACCINE_INFO':
-        return 'bg-blue-100 text-blue-700';
-      case 'CHILDREN_HEALTH':
-        return 'bg-emerald-100 text-emerald-700';
-      case 'DISEASE_PREVENTION':
-        return 'bg-orange-100 text-orange-700';
-      case 'HEALTH_GENERAL':
-        return 'bg-purple-100 text-purple-700';
-      case 'ANNOUNCEMENT':
-        return 'bg-red-100 text-red-700';
-      default:
-        return 'bg-gray-100 text-gray-700';
-    }
-  };
-
-  const formatCategory = (category) => {
-    return category ? category.replace(/_/g, ' ') : 'News';
-  };
-
   return (
     <section className="py-24 bg-white relative">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -98,37 +77,37 @@ const NewsSection = () => {
                 </div>
               ))
             : news.map((item, _index) => (
-                <div
+                <button
+                  type="button"
                   key={item.id}
-                  className="group flex flex-col bg-white rounded-3xl border border-slate-100 overflow-hidden hover:shadow-2xl hover:shadow-blue-900/5 transition-all duration-500 hover:-translate-y-2 cursor-pointer"
+                  className="group flex flex-col bg-white rounded-3xl border border-slate-100 overflow-hidden hover:shadow-2xl hover:shadow-blue-900/5 transition-all duration-500 hover:-translate-y-2 cursor-pointer text-left w-full"
                   onClick={() => navigate(`/news/${item.slug}`)}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter' || e.key === ' ') {
+                      navigate(`/news/${item.slug}`);
+                    }
+                  }}
                 >
                   {/* Image Container */}
                   <div className="relative h-48 overflow-hidden">
                     <img
-                      alt={item.title}
                       src={item.thumbnailImage || 'https://placehold.co/600x400?text=News'}
-                      className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+                      alt={item.title}
+                      className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
                     />
-                    <div className="absolute inset-0 bg-gradient-to-t from-slate-900/60 to-transparent opacity-60 group-hover:opacity-40 transition-opacity duration-300" />
-
-                    {/* Floating Category Badge */}
-                    <div className="absolute top-3 left-3">
-                      <span
-                        className={`px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wide backdrop-blur-md bg-white/90 ${getCategoryColor(item.category).replace('bg-', 'text-').replace('text-', 'text-')}`}
-                      >
-                        {formatCategory(item.category)}
+                    <div className="absolute top-4 left-4">
+                      <span className="inline-flex items-center rounded-full bg-blue-50 px-2 py-1 text-xs font-medium text-blue-700 ring-1 ring-inset ring-blue-700/10">
+                        {item.category ? item.category.replace(/_/g, ' ') : 'News'}
                       </span>
                     </div>
                   </div>
 
                   {/* Content */}
-                  <div className="p-5 flex flex-col flex-grow">
-                    <div className="flex items-center gap-3 text-[10px] text-slate-500 mb-3 font-medium uppercase tracking-wider">
+                  <div className="flex flex-col flex-grow p-6">
+                    <div className="flex items-center gap-x-4 text-xs text-slate-500 mb-3">
                       <span className="flex items-center gap-1">
                         <CalendarOutlined /> {dayjs(item.publishedAt).format('MMM D, YYYY')}
                       </span>
-                      <span className="w-1 h-1 rounded-full bg-slate-300"></span>
                       <span className="flex items-center gap-1">
                         <EyeOutlined /> {item.viewCount || 0} {t('client:home.news.views')}
                       </span>
@@ -146,7 +125,7 @@ const NewsSection = () => {
                       {t('client:home.news.readArticle')} <ArrowRightOutlined className="ml-1.5" />
                     </div>
                   </div>
-                </div>
+                </button>
               ))}
         </div>
 

@@ -33,15 +33,15 @@
       },
       "correctness": {
         "noUnusedVariables": {
-          "level": "warn",
+          "level": "error",
           "options": {
             "ignoreRestSiblings": true
           }
         },
-        "noUnusedImports": "warn",
-        "noInvalidUseBeforeDeclaration": "warn",
+        "noUnusedImports": "error",
+        "noInvalidUseBeforeDeclaration": "error",
         "useExhaustiveDependencies": "off",
-        "useJsxKeyInIterable": "warn"
+        "useJsxKeyInIterable": "error"
       },
       "style": {
         "useImportType": "off",

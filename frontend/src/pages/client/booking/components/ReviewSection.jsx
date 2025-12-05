@@ -7,15 +7,13 @@ import {
   SafetyCertificateFilled,
   UserOutlined,
 } from '@ant-design/icons';
-import { Button, Checkbox, Divider, Tag, Typography } from 'antd';
+import { Button, Checkbox, Divider, Tag } from 'antd';
 import dayjs from 'dayjs';
 import { useState } from 'react';
 import { DEFAULT_PAGE, DEFAULT_PAGE_SIZE } from '@/constants';
 import { useCenter } from '@/hooks/useCenter';
 import { useFamilyMember } from '@/hooks/useFamilyMember';
 import { formatPrice } from '@/utils/formatPrice';
-
-const { Title, Text } = Typography;
 
 const ReviewSection = ({ bookingData, vaccine, setCurrentStep, handleBookingSubmit, loading }) => {
   const [acceptTerms, setAcceptTerms] = useState(false);
@@ -153,7 +151,7 @@ const ReviewSection = ({ bookingData, vaccine, setCurrentStep, handleBookingSubm
               <Checkbox checked={acceptTerms} onChange={(e) => setAcceptTerms(e.target.checked)}>
                 <span className="text-slate-600">
                   I agree to the{' '}
-                  <a href="#" className="text-blue-600 font-medium hover:underline">
+                  <a href="/terms" className="text-blue-600 font-medium hover:underline">
                     Terms of Service
                   </a>
                 </span>
@@ -161,7 +159,7 @@ const ReviewSection = ({ bookingData, vaccine, setCurrentStep, handleBookingSubm
               <Checkbox checked={acceptPolicy} onChange={(e) => setAcceptPolicy(e.target.checked)}>
                 <span className="text-slate-600">
                   I agree to the{' '}
-                  <a href="#" className="text-blue-600 font-medium hover:underline">
+                  <a href="/privacy" className="text-blue-600 font-medium hover:underline">
                     Privacy Policy
                   </a>
                 </span>

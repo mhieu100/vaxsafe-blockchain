@@ -13,11 +13,15 @@ import com.dapp.backend.model.User;
 
 public interface UserRepository extends JpaRepository<User, Long>, JpaSpecificationExecutor<User> {
     Optional<User> findByEmail(String email);
+
     boolean existsByEmail(String email);
-    User findByRefreshTokenAndEmail(String refreshToken,String email);
-    
+
+    User findByRefreshTokenAndEmail(String refreshToken, String email);
+
     @Modifying
     @Transactional
     @Query("UPDATE User u SET u.refreshToken = :refreshToken WHERE u.email = :email")
     void updateRefreshTokenByEmail(@Param("email") String email, @Param("refreshToken") String refreshToken);
+
+    long countByRole_Name(String roleName);
 }

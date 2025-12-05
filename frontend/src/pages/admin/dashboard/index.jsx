@@ -1,5 +1,12 @@
-import { CheckCircleOutlined, LinkOutlined } from '@ant-design/icons';
-import { Card, Col, Progress, Row, Select, Statistic } from 'antd';
+import {
+  CheckCircleOutlined,
+  ClockCircleOutlined,
+  CloseCircleOutlined,
+  MedicineBoxOutlined,
+  TeamOutlined,
+  UserOutlined,
+} from '@ant-design/icons';
+import { Card, Col, Row, Spin, Statistic, Typography } from 'antd';
 import {
   ArcElement,
   CategoryScale,
@@ -12,8 +19,10 @@ import {
   Title,
   Tooltip,
 } from 'chart.js';
+import { useEffect, useState } from 'react';
 import { Doughnut, Line } from 'react-chartjs-2';
 import CountUp from 'react-countup';
+import dashboardService from '@/services/dashboard.service';
 
 ChartJS.register(
   CategoryScale,
@@ -27,16 +36,51 @@ ChartJS.register(
   Filler
 );
 
+const { Text } = Typography;
+
 const DashboardPage = () => {
+  const [loading, setLoading] = useState(true);
+  const [stats, setStats] = useState(null);
+
+  useEffect(() => {
+    const fetchStats = async () => {
+      try {
+        const data = await dashboardService.getStats();
+        setStats(data);
+      } catch (error) {
+        console.error('Failed to fetch dashboard stats:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchStats();
+  }, []);
+
   const formatter = (value) => <CountUp end={Number(value)} separator="," />;
 
-  // Data for vaccination rate chart
+  if (loading) {
+    return (
+      <div className="flex justify-center items-center h-screen">
+        <Spin size="large" />
+      </div>
+    );
+  }
+
+  if (!stats) {
+    return <div>Failed to load data</div>;
+  }
+
+  // Prepare chart data
+  const dailyLabels = stats.dailyAppointments?.map((d) => d.date) || [];
+  const dailyData = stats.dailyAppointments?.map((d) => d.count) || [];
+
   const vaccinationRateData = {
-    labels: Array.from({ length: 30 }, (_, i) => `Ngày ${i + 1}`),
+    labels: dailyLabels,
     datasets: [
       {
-        label: 'Tiêm chủng hàng ngày',
-        data: Array.from({ length: 30 }, () => Math.floor(Math.random() * 50000) + 20000),
+        label: 'Lượt tiêm hàng ngày',
+        data: dailyData,
         backgroundColor: 'rgba(59, 130, 246, 0.05)',
         borderColor: 'rgba(59, 130, 246, 1)',
         borderWidth: 2,
@@ -46,189 +90,125 @@ const DashboardPage = () => {
     ],
   };
 
-  // Data for vaccine distribution chart
+  const vaccineLabels = Object.keys(stats.vaccineDistribution || {});
+  const vaccineCounts = Object.values(stats.vaccineDistribution || {});
+
   const vaccineDistributionData = {
-    labels: ['Moderna', 'Pfizer', 'AstraZeneca', 'Johnson & Johnson', 'Khác'],
+    labels: vaccineLabels,
     datasets: [
       {
-        data: [35, 40, 15, 7, 3],
+        data: vaccineCounts,
         backgroundColor: [
           'rgba(59, 130, 246, 0.8)',
           'rgba(16, 185, 129, 0.8)',
           'rgba(245, 158, 11, 0.8)',
           'rgba(139, 92, 246, 0.8)',
-          'rgba(156, 163, 175, 0.8)',
+          'rgba(239, 68, 68, 0.8)',
+          'rgba(107, 114, 128, 0.8)',
         ],
         borderWidth: 0,
       },
     ],
   };
 
-  // Table columns for regional data
-  const _columns = [
-    {
-      title: 'Khu vực',
-      dataIndex: 'region',
-      key: 'region',
-      render: (text, record) => (
-        <div style={{ display: 'flex', alignItems: 'center' }}>
-          <div
-            style={{
-              width: 40,
-              height: 40,
-              borderRadius: '50%',
-              backgroundColor: record.iconBg,
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              marginRight: 12,
-            }}
-          >
-            {record.icon}
-          </div>
-          <div>
-            <div style={{ fontWeight: 500 }}>{text}</div>
-            <div style={{ fontSize: 12, color: '#666' }}>{record.districts} quận/huyện</div>
-          </div>
-        </div>
-      ),
-    },
-    {
-      title: 'Dân số',
-      dataIndex: 'population',
-      key: 'population',
-    },
-    {
-      title: 'Mũi 1',
-      dataIndex: 'firstDose',
-      key: 'firstDose',
-    },
-    {
-      title: 'Mũi 2',
-      dataIndex: 'secondDose',
-      key: 'secondDose',
-    },
-    {
-      title: '% Bao phủ',
-      dataIndex: 'coverage',
-      key: 'coverage',
-      render: (coverage) => <Progress percent={coverage} size="small" />,
-    },
-  ];
-
-  // Table data
-  const _data = [
-    {
-      key: '1',
-      region: 'Khu vực Bắc',
-      districts: 5,
-      population: '1,245,678',
-      firstDose: '872,145',
-      secondDose: '756,321',
-      coverage: 72,
-      iconBg: '#EBF5FF',
-      icon: <CheckCircleOutlined style={{ color: '#3B82F6' }} />,
-    },
-    {
-      key: '2',
-      region: 'Khu vực Nam',
-      districts: 7,
-      population: '2,345,678',
-      firstDose: '1,876,543',
-      secondDose: '1,543,210',
-      coverage: 85,
-      iconBg: '#E8FFF3',
-      icon: <CheckCircleOutlined style={{ color: '#10B981' }} />,
-    },
-    // Add more regions as needed
-  ];
-
   return (
     <div className="p-6">
       <div className="mb-6">
-        <h1 className="text-2xl font-bold text-gray-900">Bảng điều khiển tiêm chủng quốc gia</h1>
+        <h1 className="text-2xl font-bold text-gray-900">Tổng quan hệ thống</h1>
         <p className="mt-1 text-sm text-gray-500">
-          Dữ liệu tiêm chủng thời gian thực trên tất cả các khu vực
+          Thống kê thời gian thực về hoạt động tiêm chủng và người dùng
         </p>
       </div>
 
+      {/* Summary Cards */}
       <Row gutter={[16, 16]} className="mb-6">
         <Col xs={24} sm={12} lg={6}>
-          <Card>
+          <Card bordered={false} className="shadow-sm">
             <Statistic
-              title="Tổng người tiêm"
-              value={4832109}
+              title="Tổng bệnh nhân"
+              value={stats.totalPatients}
               formatter={formatter}
-              prefix={<CheckCircleOutlined style={{ color: '#10B981' }} />}
-              suffix={
-                <div className="text-sm text-green-600">
-                  +12.3% <span className="text-gray-500">so với tuần trước</span>
-                </div>
-              }
+              prefix={<UserOutlined style={{ color: '#3B82F6' }} />}
             />
           </Card>
         </Col>
         <Col xs={24} sm={12} lg={6}>
-          <Card>
+          <Card bordered={false} className="shadow-sm">
             <Statistic
-              title="Tiêm đủ liều"
-              value={3781456}
+              title="Tổng bác sĩ"
+              value={stats.totalDoctors}
               formatter={formatter}
-              prefix={<CheckCircleOutlined style={{ color: '#3B82F6' }} />}
-              suffix={
-                <div className="text-sm text-green-600">
-                  +8.5% <span className="text-gray-500">so với tuần trước</span>
-                </div>
-              }
+              prefix={<TeamOutlined style={{ color: '#10B981' }} />}
             />
           </Card>
         </Col>
         <Col xs={24} sm={12} lg={6}>
-          <Card>
+          <Card bordered={false} className="shadow-sm">
             <Statistic
-              title="Liều có sẵn"
-              value={1245321}
+              title="Tổng trung tâm"
+              value={stats.totalCenters}
               formatter={formatter}
-              prefix={<CheckCircleOutlined style={{ color: '#F59E0B' }} />}
-              suffix={
-                <div className="text-sm text-red-600">
-                  -2.1% <span className="text-gray-500">so với tuần trước</span>
-                </div>
-              }
+              prefix={<MedicineBoxOutlined style={{ color: '#F59E0B' }} />}
             />
           </Card>
         </Col>
         <Col xs={24} sm={12} lg={6}>
-          <Card>
+          <Card bordered={false} className="shadow-sm">
             <Statistic
-              title="Xác thực blockchain"
-              value={4521987}
+              title="Loại Vaccine"
+              value={stats.totalVaccines}
               formatter={formatter}
-              prefix={<LinkOutlined style={{ color: '#8B5CF6' }} />}
-              suffix={
-                <div className="text-sm text-green-600">
-                  +15.7% <span className="text-gray-500">so với tuần trước</span>
-                </div>
-              }
+              prefix={<MedicineBoxOutlined style={{ color: '#8B5CF6' }} />}
             />
           </Card>
         </Col>
       </Row>
 
+      {/* Appointment Status Cards */}
       <Row gutter={[16, 16]} className="mb-6">
-        <Col xs={24} lg={12}>
-          <Card
-            title="Tỷ lệ tiêm chủng hàng ngày"
-            extra={
-              <Select defaultValue="30" style={{ width: 120 }}>
-                <Select.Option value="7">7 ngày qua</Select.Option>
-                <Select.Option value="14">14 ngày qua</Select.Option>
-                <Select.Option value="30">30 ngày qua</Select.Option>
-                <Select.Option value="90">90 ngày qua</Select.Option>
-              </Select>
-            }
-          >
-            <div style={{ height: 300 }}>
+        <Col xs={24} sm={8}>
+          <Card bordered={false} className="shadow-sm bg-yellow-50">
+            <Statistic
+              title="Lịch hẹn chờ xử lý"
+              value={stats.pendingAppointments}
+              formatter={formatter}
+              prefix={<ClockCircleOutlined style={{ color: '#F59E0B' }} />}
+              valueStyle={{ color: '#F59E0B' }}
+            />
+            <Text type="secondary" className="text-xs">
+              Cần phân công bác sĩ
+            </Text>
+          </Card>
+        </Col>
+        <Col xs={24} sm={8}>
+          <Card bordered={false} className="shadow-sm bg-green-50">
+            <Statistic
+              title="Lịch hẹn đã hoàn thành"
+              value={stats.completedAppointments}
+              formatter={formatter}
+              prefix={<CheckCircleOutlined style={{ color: '#10B981' }} />}
+              valueStyle={{ color: '#10B981' }}
+            />
+          </Card>
+        </Col>
+        <Col xs={24} sm={8}>
+          <Card bordered={false} className="shadow-sm bg-red-50">
+            <Statistic
+              title="Lịch hẹn đã hủy"
+              value={stats.cancelledAppointments}
+              formatter={formatter}
+              prefix={<CloseCircleOutlined style={{ color: '#EF4444' }} />}
+              valueStyle={{ color: '#EF4444' }}
+            />
+          </Card>
+        </Col>
+      </Row>
+
+      {/* Charts */}
+      <Row gutter={[16, 16]}>
+        <Col xs={24} lg={16}>
+          <Card title="Xu hướng đặt lịch (30 ngày qua)" bordered={false} className="shadow-sm">
+            <div style={{ height: 350 }}>
               <Line
                 data={vaccinationRateData}
                 options={{
@@ -242,6 +222,9 @@ const DashboardPage = () => {
                   scales: {
                     y: {
                       beginAtZero: true,
+                      ticks: {
+                        stepSize: 1,
+                      },
                     },
                   },
                 }}
@@ -249,33 +232,22 @@ const DashboardPage = () => {
             </div>
           </Card>
         </Col>
-        <Col xs={24} lg={12}>
-          <Card
-            title="Phân bố loại vaccine"
-            extra={
-              <Select defaultValue="all" style={{ width: 120 }}>
-                <Select.Option value="all">Tất cả</Select.Option>
-                <Select.Option value="month">Theo tháng</Select.Option>
-                <Select.Option value="quarter">Theo quý</Select.Option>
-              </Select>
-            }
-          >
-            <div style={{ height: 300, display: 'flex', justifyContent: 'center' }}>
-              <div style={{ width: '70%' }}>
-                <Doughnut
-                  data={vaccineDistributionData}
-                  options={{
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: {
-                      legend: {
-                        position: 'right',
-                      },
+        <Col xs={24} lg={8}>
+          <Card title="Phân bố Vaccine (Theo quốc gia)" bordered={false} className="shadow-sm">
+            <div style={{ height: 350, display: 'flex', justifyContent: 'center' }}>
+              <Doughnut
+                data={vaccineDistributionData}
+                options={{
+                  responsive: true,
+                  maintainAspectRatio: false,
+                  plugins: {
+                    legend: {
+                      position: 'bottom',
                     },
-                    cutout: '65%',
-                  }}
-                />
-              </div>
+                  },
+                  cutout: '60%',
+                }}
+              />
             </div>
           </Card>
         </Col>

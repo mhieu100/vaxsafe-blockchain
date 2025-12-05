@@ -131,8 +131,7 @@ const ModuleApi = (props) => {
       >
         <span>{item.module}</span>
         <div
-          role="button"
-          tabIndex={0}
+          role="none"
           onClick={(e) => e.stopPropagation()}
           onKeyDown={(e) => e.key === 'Enter' && e.stopPropagation()}
           style={{ marginRight: 10 }}

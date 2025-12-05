@@ -98,6 +98,7 @@ const HeroSection = () => {
           </div>
 
           {/* Right Column: 3D Interactive Card */}
+          {/* biome-ignore lint/a11y/noStaticElementInteractions: Interactive 3D effect */}
           <div
             className="hidden lg:block card-3d-container"
             onMouseMove={handleMouseMove}

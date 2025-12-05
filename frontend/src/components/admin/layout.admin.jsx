@@ -166,7 +166,7 @@ const LayoutAdmin = () => {
           left: 0,
           top: 0,
           bottom: 0,
-          zIndex: 1001,
+          zIndex: 998,
           boxShadow: '4px 0 24px 0 rgba(0,0,0,0.02)',
         }}
       >
@@ -244,7 +244,7 @@ const LayoutAdmin = () => {
             background: colorBgContainer,
             position: 'sticky',
             top: 0,
-            zIndex: 1000,
+            zIndex: 997,
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'space-between',

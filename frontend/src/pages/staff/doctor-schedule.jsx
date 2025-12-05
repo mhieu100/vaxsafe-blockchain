@@ -133,10 +133,9 @@ const DoctorSchedule = () => {
     const isAvailable = slot.status === 'available';
 
     return (
-      <div
+      <button
+        type="button"
         key={slot.slotId || index}
-        role="button"
-        tabIndex={0}
         onClick={() => handleSlotClick(doctor, slot)}
         onKeyDown={(e) => e.key === 'Enter' && handleSlotClick(doctor, slot)}
         style={{
@@ -148,6 +147,8 @@ const DoctorSchedule = () => {
           background: isAvailable ? '#f6ffed' : '#fff2f0',
           borderColor: isAvailable ? '#b7eb8f' : '#ffccc7',
           transition: 'all 0.2s',
+          width: '100%',
+          textAlign: 'left',
         }}
         onMouseEnter={(e) => {
           if (isAvailable) {
@@ -183,7 +184,7 @@ const DoctorSchedule = () => {
             </Text>
           </div>
         )}
-      </div>
+      </button>
     );
   };
 

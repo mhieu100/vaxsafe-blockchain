@@ -36,17 +36,20 @@ const Footer = () => {
               Empowering global health through secure, transparent blockchain technology.
             </p>
             <div className="flex gap-4">
-              {[TwitterOutlined, FacebookOutlined, LinkedinOutlined, InstagramOutlined].map(
-                (Icon, index) => (
-                  <a
-                    key={index}
-                    href="#"
-                    className="h-10 w-10 rounded-full bg-slate-800 flex items-center justify-center text-slate-400 hover:bg-blue-600 hover:text-white transition-all duration-300 hover:-translate-y-1"
-                  >
-                    <Icon />
-                  </a>
-                )
-              )}
+              {[
+                { Icon: TwitterOutlined, key: 'twitter' },
+                { Icon: FacebookOutlined, key: 'facebook' },
+                { Icon: LinkedinOutlined, key: 'linkedin' },
+                { Icon: InstagramOutlined, key: 'instagram' },
+              ].map(({ Icon, key }) => (
+                <a
+                  key={key}
+                  href="/"
+                  className="h-10 w-10 rounded-full bg-slate-800 flex items-center justify-center text-slate-400 hover:bg-blue-600 hover:text-white transition-all duration-300 hover:-translate-y-1"
+                >
+                  <Icon />
+                </a>
+              ))}
             </div>
           </div>
 

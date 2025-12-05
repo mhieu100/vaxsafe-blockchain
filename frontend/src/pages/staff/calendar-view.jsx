@@ -254,10 +254,9 @@ const CalendarView = () => {
                   }}
                 >
                   {dayAppointments.map((apt) => (
-                    <div
+                    <button
+                      type="button"
                       key={apt.appointmentId}
-                      role="button"
-                      tabIndex={0}
                       onClick={() => handleAppointmentClick(apt)}
                       onKeyDown={(e) => e.key === 'Enter' && handleAppointmentClick(apt)}
                       style={{
@@ -270,6 +269,9 @@ const CalendarView = () => {
                         cursor: 'pointer',
                         borderLeft: '3px solid rgba(0,0,0,0.2)',
                         transition: 'all 0.2s',
+                        width: '100%',
+                        textAlign: 'left',
+                        border: 'none',
                       }}
                       onMouseEnter={(e) => {
                         e.currentTarget.style.transform = 'translateX(2px)';
@@ -285,7 +287,7 @@ const CalendarView = () => {
                       {apt.user?.firstName} {apt.user?.lastName}
                       <br />
                       <small>{apt.vaccine?.name}</small>
-                    </div>
+                    </button>
                   ))}
                 </div>
               );
@@ -306,10 +308,9 @@ const CalendarView = () => {
           </div>
         ) : (
           appointments.map((apt) => (
-            <div
+            <button
+              type="button"
               key={apt.appointmentId}
-              role="button"
-              tabIndex={0}
               onClick={() => handleAppointmentClick(apt)}
               onKeyDown={(e) => e.key === 'Enter' && handleAppointmentClick(apt)}
               style={{
@@ -319,6 +320,8 @@ const CalendarView = () => {
                 background: 'white',
                 cursor: 'pointer',
                 transition: 'background 0.2s',
+                width: '100%',
+                textAlign: 'left',
               }}
               onMouseEnter={(e) => {
                 e.currentTarget.style.background = '#f9f9f9';
@@ -353,7 +356,7 @@ const CalendarView = () => {
                   </Space>
                 </Col>
               </Row>
-            </div>
+            </button>
           ))
         )}
       </div>
@@ -423,10 +426,9 @@ const CalendarView = () => {
             const dayAppointments = appointmentsByDate[dateStr] || [];
 
             return (
-              <div
+              <button
+                type="button"
                 key={dateStr}
-                role="button"
-                tabIndex={0}
                 style={{
                   background: isCurrentMonth ? 'white' : '#f9f9f9',
                   minHeight: '120px',
@@ -434,6 +436,8 @@ const CalendarView = () => {
                   position: 'relative',
                   border: isToday ? '2px solid #1890ff' : 'none',
                   cursor: 'pointer',
+                  width: '100%',
+                  textAlign: 'left',
                 }}
                 onClick={() => {
                   setSelectedDate(day);
@@ -483,7 +487,7 @@ const CalendarView = () => {
                     <strong>{dayAppointments.length} lịch</strong>
                   </Text>
                 )}
-              </div>
+              </button>
             );
           })
         )}

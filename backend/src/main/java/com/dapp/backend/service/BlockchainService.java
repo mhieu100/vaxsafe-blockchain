@@ -174,7 +174,9 @@ public class BlockchainService {
                     .doseNumber(record.getDoseNumber())
                     .vaccinationDate(record.getVaccinationDate().toString())
                     .lotNumber(record.getLotNumber() != null ? record.getLotNumber() : "")
-                    .expiryDate(record.getExpiryDate() != null ? record.getExpiryDate().toString() : "")
+                    .expiryDate(record.getExpiryDate() != null
+                            ? record.getExpiryDate().toString()
+                            : "")
                     .site(record.getSite() != null ? record.getSite().name() : "LEFT_ARM")
                     .doctorId(record.getDoctor().getId().toString())
                     .doctorName(record.getDoctor().getFullName())

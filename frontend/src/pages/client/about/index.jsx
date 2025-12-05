@@ -5,14 +5,10 @@ import {
   TeamOutlined,
   ThunderboltOutlined,
 } from '@ant-design/icons';
-import { Button, Timeline, Typography } from 'antd';
-import { useTranslation } from 'react-i18next';
-import { useNavigate } from 'react-router-dom';
-
-const { Title, Paragraph, Text } = Typography;
+import { Button, Timeline } from 'antd';
+import { Link, useNavigate } from 'react-router-dom';
 
 const AboutPage = () => {
-  const { t } = useTranslation();
   const navigate = useNavigate();
 
   const stats = [
@@ -58,10 +54,10 @@ const AboutPage = () => {
             <div className="mb-8 flex justify-center">
               <div className="relative rounded-full px-3 py-1 text-sm leading-6 text-slate-400 ring-1 ring-white/10 hover:ring-white/20">
                 Revolutionizing Healthcare{' '}
-                <a href="#" className="font-semibold text-blue-400">
+                <Link to="/register" className="font-semibold text-blue-400">
                   <span className="absolute inset-0" aria-hidden="true" />
                   Read more <span aria-hidden="true">&rarr;</span>
-                </a>
+                </Link>
               </div>
             </div>
             <h1 className="text-4xl font-bold tracking-tight text-white sm:text-6xl bg-clip-text text-transparent bg-gradient-to-r from-blue-200 to-indigo-200">
@@ -76,7 +72,7 @@ const AboutPage = () => {
               <Button
                 type="primary"
                 size="large"
-                className="h-12 px-8 rounded-xl bg-blue-600 hover:bg-blue-500 border-none shadow-lg shadow-blue-500/30 text-base font-semibold"
+                className="h-12 px-8 rounded-xl bg-blue-600 hover:bg-blue-50 border-none shadow-lg shadow-blue-500/30 text-base font-semibold"
                 onClick={() => navigate('/register')}
               >
                 Get Started
@@ -97,9 +93,9 @@ const AboutPage = () => {
       {/* Stats Section */}
       <div className="relative -mt-12 mx-auto max-w-7xl px-6 lg:px-8 z-10">
         <div className="grid grid-cols-1 gap-y-16 gap-x-8 sm:grid-cols-2 lg:grid-cols-4 bg-white rounded-2xl shadow-xl p-8 border border-slate-100">
-          {stats.map((stat, index) => (
+          {stats.map((stat) => (
             <div
-              key={index}
+              key={stat.label}
               className="flex flex-col gap-y-2 border-l border-slate-100 pl-6 first:border-l-0"
             >
               <dt className="text-sm leading-6 text-slate-500 font-medium">{stat.label}</dt>

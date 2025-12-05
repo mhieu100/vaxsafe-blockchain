@@ -2,14 +2,13 @@ import { CalendarOutlined, EyeOutlined, SearchOutlined } from '@ant-design/icons
 import { Button, Card, Col, Input, Pagination, Row, Select, Skeleton, Tag, Typography } from 'antd';
 import dayjs from 'dayjs';
 import { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import { callFetchNews, callGetNewsCategories } from '@/services/news.service';
 
 const { Title, Paragraph, Text } = Typography;
 const { Search } = Input;
 
 const ClientNewsPage = () => {
-  const navigate = useNavigate();
   const [news, setNews] = useState([]);
   const [loading, setLoading] = useState(true);
   const [categories, setCategories] = useState([]);
@@ -180,9 +179,9 @@ const ClientNewsPage = () => {
                         hoverable
                         className="h-full flex flex-col rounded-xl overflow-hidden border-0 shadow-sm transition-all duration-300 hover:shadow-xl hover:-translate-y-1"
                         cover={
-                          <div
-                            className="h-52 overflow-hidden relative group cursor-pointer"
-                            onClick={() => navigate(`/news/${item.slug}`)}
+                          <Link
+                            to={`/news/${item.slug}`}
+                            className="h-52 overflow-hidden relative group cursor-pointer block"
                           >
                             <img
                               alt={item.title}
@@ -197,7 +196,7 @@ const ClientNewsPage = () => {
                                 {formatCategory(item.category)}
                               </Tag>
                             </div>
-                          </div>
+                          </Link>
                         }
                       >
                         <div className="flex flex-col h-full">
@@ -211,12 +210,12 @@ const ClientNewsPage = () => {
                           </div>
 
                           <Title level={4} className="mb-3 line-clamp-2 min-h-[3.5rem]">
-                            <a
-                              onClick={() => navigate(`/news/${item.slug}`)}
+                            <Link
+                              to={`/news/${item.slug}`}
                               className="text-gray-800 hover:text-blue-600 transition-colors"
                             >
                               {item.title}
-                            </a>
+                            </Link>
                           </Title>
 
                           <Paragraph className="text-gray-600 line-clamp-3 mb-4 flex-grow">

@@ -11,7 +11,7 @@ import { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { callFetchNewsBySlug, callFetchPublishedNews } from '@/services/news.service';
 
-const { Title, Paragraph, Text } = Typography;
+const { Title, Text } = Typography;
 
 const ClientNewsDetailPage = () => {
   const { slug } = useParams();
@@ -173,8 +173,12 @@ const ClientNewsDetailPage = () => {
             <div className="container mx-auto px-4 py-4">
               <Breadcrumb
                 items={[
-                  { title: <a onClick={() => navigate('/')}>Home</a> },
-                  { title: <a onClick={() => navigate('/news')}>News</a> },
+                  {
+                    title: <Link to="/">Home</Link>,
+                  },
+                  {
+                    title: <Link to="/news">News</Link>,
+                  },
                   { title: news.title },
                 ]}
               />
@@ -279,10 +283,10 @@ const ClientNewsDetailPage = () => {
 
                     <div className="flex flex-col gap-4">
                       {trendingNews.map((item) => (
-                        <div
+                        <Link
                           key={item.id}
-                          className="flex gap-4 group cursor-pointer hover:bg-gray-50 p-2 rounded-lg transition-colors"
-                          onClick={() => navigate(`/news/${item.slug}`)}
+                          to={`/news/${item.slug}`}
+                          className="flex gap-4 group cursor-pointer hover:bg-gray-50 p-2 rounded-lg transition-colors block"
                         >
                           <div className="w-24 h-20 flex-shrink-0 rounded-lg overflow-hidden bg-gray-200">
                             <img
@@ -299,7 +303,7 @@ const ClientNewsDetailPage = () => {
                               {dayjs(item.publishedAt).format('MMM D, YYYY')}
                             </Text>
                           </div>
-                        </div>
+                        </Link>
                       ))}
                     </div>
                   </div>

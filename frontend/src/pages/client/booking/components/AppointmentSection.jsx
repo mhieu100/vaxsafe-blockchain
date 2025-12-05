@@ -4,26 +4,12 @@ import {
   InfoCircleOutlined,
   UserOutlined,
 } from '@ant-design/icons';
-import {
-  Button,
-  Col,
-  DatePicker,
-  Divider,
-  Form,
-  message,
-  Radio,
-  Row,
-  Select,
-  Tag,
-  Typography,
-} from 'antd';
+import { Button, Col, DatePicker, Divider, Form, message, Radio, Row, Select, Tag } from 'antd';
 import dayjs from 'dayjs';
 import { useMemo, useState } from 'react';
 import { DEFAULT_PAGE, DEFAULT_PAGE_SIZE } from '@/constants';
 import { useCenter } from '@/hooks/useCenter';
 import { useFamilyMember } from '@/hooks/useFamilyMember';
-
-const { Text, Title } = Typography;
 
 const AppointmentSection = ({ bookingForm, vaccine, setCurrentStep, setBookingData }) => {
   const [_appointmentDate, setAppointmentDate] = useState(null);

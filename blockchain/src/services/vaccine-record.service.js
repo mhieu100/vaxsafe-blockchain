@@ -133,7 +133,7 @@ class VaccineRecordService {
 				)
 				.send({
 					from: this.accounts[0],
-					gas: 500000,
+					gas: 3000000,
 				});
 
 			// Get record ID from events

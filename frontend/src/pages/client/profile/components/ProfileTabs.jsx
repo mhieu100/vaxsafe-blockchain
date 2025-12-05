@@ -1,12 +1,9 @@
-import { Typography } from 'antd';
 import { useTranslation } from 'react-i18next';
 import AppointmentScheduleTab from './AppointmentScheduleTab';
 import DashboardTab from './DashboardTab';
 import FamilyManagerTab from './FamilyManagerTab';
 import MyRecordsTab from './MyRecordsTab';
 import SettingsTab from './SettingsTab';
-
-const { Title } = Typography;
 
 const ProfileTabs = ({ activeTab, onTabChange, editMode, setEditMode }) => {
   const { t } = useTranslation(['client']);

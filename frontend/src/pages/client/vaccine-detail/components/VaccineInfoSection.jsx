@@ -63,11 +63,10 @@ const VaccineInfoSection = ({ vaccine }) => {
 
           <div className="grid grid-cols-4 gap-2">
             {vaccineImages.map((img, index) => (
-              <div
+              <button
+                type="button"
                 key={img}
-                role="button"
-                tabIndex={0}
-                className={`cursor-pointer rounded-lg overflow-hidden border-2 ${
+                className={`cursor-pointer rounded-lg overflow-hidden border-2 p-0 w-full ${
                   selectedImage === index ? 'border-blue-500' : 'border-gray-200'
                 }`}
                 onClick={() => setSelectedImage(index)}
@@ -78,7 +77,7 @@ const VaccineInfoSection = ({ vaccine }) => {
                   alt={`${vaccine.name} ${index + 1}`}
                   className="w-full h-20 object-cover"
                 />
-              </div>
+              </button>
             ))}
           </div>
         </div>

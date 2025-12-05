@@ -3,13 +3,20 @@ package com.dapp.backend.controller;
 import ca.uhn.fhir.context.FhirContext;
 import com.dapp.backend.dto.mapper.fhir.FhirPatientMapper;
 import com.dapp.backend.model.User;
+import com.dapp.backend.model.VaccineRecord;
 import com.dapp.backend.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+
+import java.util.List;
+
+import org.hl7.fhir.r4.model.Bundle;
+import org.hl7.fhir.r4.model.Immunization;
 import org.hl7.fhir.r4.model.Patient;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
@@ -44,16 +51,16 @@ public class FhirController {
 
     @GetMapping(value = "/Immunization", produces = "application/json")
     public ResponseEntity<String> getImmunizations(
-            @org.springframework.web.bind.annotation.RequestParam(name = "patient") Long patientId) {
-        java.util.List<com.dapp.backend.model.VaccineRecord> records = vaccineRecordRepository
+            @RequestParam(name = "patient") Long patientId) {
+        List<VaccineRecord> records = vaccineRecordRepository
                 .findByUserIdOrderByVaccinationDateDesc(patientId);
 
         // Create a Bundle to hold multiple Immunization resources
-        org.hl7.fhir.r4.model.Bundle bundle = new org.hl7.fhir.r4.model.Bundle();
-        bundle.setType(org.hl7.fhir.r4.model.Bundle.BundleType.SEARCHSET);
+        Bundle bundle = new Bundle();
+        bundle.setType(Bundle.BundleType.SEARCHSET);
 
-        for (com.dapp.backend.model.VaccineRecord record : records) {
-            org.hl7.fhir.r4.model.Immunization immunization = fhirImmunizationMapper.toFhirImmunization(record);
+        for (VaccineRecord record : records) {
+            Immunization immunization = fhirImmunizationMapper.toFhirImmunization(record);
             bundle.addEntry().setResource(immunization);
         }
 

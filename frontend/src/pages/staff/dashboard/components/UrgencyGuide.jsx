@@ -44,7 +44,7 @@ const UrgencyGuide = () => {
             }}
             hoverable
           >
-            <Space orientation="vertical" size="middle" style={{ width: '100%' }}>
+            <Space direction="vertical" size="middle" style={{ width: '100%' }}>
               <Space>
                 <Tag color="red" style={{ fontSize: 16, padding: '4px 12px' }}>
                   Priority 1
@@ -93,7 +93,7 @@ const UrgencyGuide = () => {
             }}
             hoverable
           >
-            <Space orientation="vertical" size="middle" style={{ width: '100%' }}>
+            <Space direction="vertical" size="middle" style={{ width: '100%' }}>
               <Space>
                 <Tag color="red" style={{ fontSize: 16, padding: '4px 12px' }}>
                   Priority 1
@@ -150,7 +150,7 @@ const UrgencyGuide = () => {
             }}
             hoverable
           >
-            <Space orientation="vertical" size="middle" style={{ width: '100%' }}>
+            <Space direction="vertical" size="middle" style={{ width: '100%' }}>
               <Space>
                 <Tag color="orange" style={{ fontSize: 16, padding: '4px 12px' }}>
                   Priority 2
@@ -199,7 +199,7 @@ const UrgencyGuide = () => {
             }}
             hoverable
           >
-            <Space orientation="vertical" size="middle" style={{ width: '100%' }}>
+            <Space direction="vertical" size="middle" style={{ width: '100%' }}>
               <Space>
                 <Tag color="gold" style={{ fontSize: 16, padding: '4px 12px' }}>
                   Priority 3
@@ -249,7 +249,7 @@ const UrgencyGuide = () => {
           {
             label: <Text strong>Bước 1</Text>,
             children: (
-              <Space orientation="vertical">
+              <Space direction="vertical">
                 <Text strong style={{ color: '#1890ff' }}>
                   Kiểm tra danh sách
                 </Text>
@@ -261,7 +261,7 @@ const UrgencyGuide = () => {
           {
             label: <Text strong>Bước 2</Text>,
             children: (
-              <Space orientation="vertical">
+              <Space direction="vertical">
                 <Text strong style={{ color: '#52c41a' }}>
                   Xử lý Priority 1 trước
                 </Text>
@@ -275,7 +275,7 @@ const UrgencyGuide = () => {
           {
             label: <Text strong>Bước 3</Text>,
             children: (
-              <Space orientation="vertical">
+              <Space direction="vertical">
                 <Text strong style={{ color: '#faad14' }}>
                   Phân công bác sĩ
                 </Text>
@@ -287,7 +287,7 @@ const UrgencyGuide = () => {
           {
             label: <Text strong>Bước 4</Text>,
             children: (
-              <Space orientation="vertical">
+              <Space direction="vertical">
                 <Text strong style={{ color: '#722ed1' }}>
                   Cập nhật trạng thái
                 </Text>
@@ -303,11 +303,11 @@ const UrgencyGuide = () => {
 
       <Title level={4}>⚠️ Lưu Ý Quan Trọng</Title>
 
-      <Space orientation="vertical" size="middle" style={{ width: '100%' }}>
+      <Space direction="vertical" size="middle" style={{ width: '100%' }}>
         <Alert
           message="Trạng thái lịch hẹn"
           description={
-            <Space orientation="vertical" size="small" style={{ marginTop: 8 }}>
+            <Space direction="vertical" size="small" style={{ marginTop: 8 }}>
               <div>
                 <Tag color="orange">PENDING</Tag>
                 <Text>Chờ xếp lịch - cần phân công ngày giờ và bác sĩ</Text>

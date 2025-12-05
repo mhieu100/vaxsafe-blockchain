@@ -144,13 +144,16 @@ const ContactPage = () => {
                       <List
                         dataSource={filteredCenters}
                         renderItem={(item) => (
-                          <div
+                          <button
+                            type="button"
+                            tabIndex={0}
                             className={`p-4 mb-3 rounded-lg border cursor-pointer transition-all ${
                               selectedCenter?.centerId === item.centerId
                                 ? 'border-blue-500 bg-blue-50 shadow-sm'
                                 : 'border-gray-100 hover:border-blue-200 hover:bg-gray-50'
                             }`}
                             onClick={() => setSelectedCenter(item)}
+                            onKeyDown={(e) => e.key === 'Enter' && setSelectedCenter(item)}
                           >
                             <Text strong className="text-blue-700 block text-lg mb-1">
                               {item.name}
@@ -180,7 +183,7 @@ const ContactPage = () => {
                                 Tìm trên bản đồ
                               </Button>
                             </div>
-                          </div>
+                          </button>
                         )}
                       />
                     ) : (

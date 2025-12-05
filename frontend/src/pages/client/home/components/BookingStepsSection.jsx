@@ -11,21 +11,25 @@ const BookingStepsSection = () => {
 
   const steps = [
     {
+      id: 1,
       icon: <SearchOutlined className="text-3xl text-blue-600" />,
       title: t('client:home.steps.step1.title'),
       description: t('client:home.steps.step1.desc'),
     },
     {
+      id: 2,
       icon: <CalendarOutlined className="text-3xl text-purple-600" />,
       title: t('client:home.steps.step2.title'),
       description: t('client:home.steps.step2.desc'),
     },
     {
+      id: 3,
       icon: <UserOutlined className="text-3xl text-emerald-600" />,
       title: t('client:home.steps.step3.title'),
       description: t('client:home.steps.step3.desc'),
     },
     {
+      id: 4,
       icon: <FileProtectOutlined className="text-3xl text-orange-600" />,
       title: t('client:home.steps.step4.title'),
       description: t('client:home.steps.step4.desc'),
@@ -49,8 +53,8 @@ const BookingStepsSection = () => {
           {/* Connecting Line (Desktop only) */}
           <div className="hidden md:block absolute top-12 left-[12%] right-[12%] h-0.5 bg-gradient-to-r from-blue-100 via-purple-100 to-orange-100 -z-10"></div>
 
-          {steps.map((step, index) => (
-            <div key={index} className="flex flex-col items-center text-center group">
+          {steps.map((step) => (
+            <div key={step.id} className="flex flex-col items-center text-center group">
               <div className="w-24 h-24 rounded-full bg-white border-4 border-slate-50 shadow-xl flex items-center justify-center mb-6 group-hover:scale-110 group-hover:border-blue-100 transition-all duration-300 relative z-10">
                 {step.icon}
               </div>
