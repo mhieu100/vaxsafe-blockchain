@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/api/v1")
+@RequestMapping("/api/health")
 public class HealthController {
 
   /**
@@ -21,7 +21,6 @@ public class HealthController {
         HealthResponse.builder()
             .message("Hello from VaxSafe Backend! update ci cd 1234")
             .status("OK")
-            .build()
-    );
+            .build());
   }
 }

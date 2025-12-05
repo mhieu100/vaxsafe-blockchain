@@ -22,7 +22,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/appointments")
+@RequestMapping("/api/appointments")
 @RequiredArgsConstructor
 public class AppointmentController {
 
@@ -30,25 +30,30 @@ public class AppointmentController {
 
     @GetMapping("/center")
     @ApiMessage("Get all appointments of center")
-    public ResponseEntity<Pagination> getAllAppointmentOfCenter(@Filter Specification<Appointment> specification, Pageable pageable) throws AppException {
+    public ResponseEntity<Pagination> getAllAppointmentOfCenter(@Filter Specification<Appointment> specification,
+            Pageable pageable) throws AppException {
         return ResponseEntity.ok(appointmentService.getAllAppointmentOfCenter(specification, pageable));
     }
 
     @PutMapping
     @ApiMessage("Update a appointment of cashier")
-    public ResponseEntity<AppointmentResponse> updateAppointmentOfCashier(HttpServletRequest request, @RequestBody ProcessAppointmentRequest processAppointmentRequest) throws Exception {
-        return ResponseEntity.ok().body(appointmentService.updateScheduledAppointment(request,processAppointmentRequest));
+    public ResponseEntity<AppointmentResponse> updateAppointmentOfCashier(HttpServletRequest request,
+            @RequestBody ProcessAppointmentRequest processAppointmentRequest) throws Exception {
+        return ResponseEntity.ok()
+                .body(appointmentService.updateScheduledAppointment(request, processAppointmentRequest));
     }
 
     @GetMapping("/my-schedules")
     @ApiMessage("Get all appointments of doctor")
-    public ResponseEntity<Pagination> getAllAppointmentsOfDoctor(@Filter Specification<Appointment> specification, Pageable pageable) throws Exception {
+    public ResponseEntity<Pagination> getAllAppointmentsOfDoctor(@Filter Specification<Appointment> specification,
+            Pageable pageable) throws Exception {
         return ResponseEntity.ok().body(appointmentService.getAllAppointmentsOfDoctor(specification, pageable));
     }
 
     @PutMapping("/{id}/complete")
     @ApiMessage("Complete a appointment")
-    public ResponseEntity<String> completeAppointment(HttpServletRequest request, @PathVariable long id) throws Exception {
+    public ResponseEntity<String> completeAppointment(HttpServletRequest request, @PathVariable long id)
+            throws Exception {
         return ResponseEntity.ok().body(appointmentService.complete(request, id));
     }
 
@@ -62,7 +67,8 @@ public class AppointmentController {
 
     @PutMapping("/{id}/cancel")
     @ApiMessage("Cancel a appointment")
-    public ResponseEntity<String> cancelAppointment(HttpServletRequest request, @PathVariable long id) throws Exception {
+    public ResponseEntity<String> cancelAppointment(HttpServletRequest request, @PathVariable long id)
+            throws Exception {
         return ResponseEntity.ok().body(appointmentService.cancel(request, id));
     }
 

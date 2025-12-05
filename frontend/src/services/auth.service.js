@@ -7,7 +7,7 @@ import apiClient from './apiClient';
  * @returns {Promise} Login response with user account data
  */
 export async function callLogin(username, password) {
-  return await apiClient.post('/auth/login/password', {
+  return await apiClient.post('/api/auth/login/password', {
     username,
     password,
   });
@@ -18,7 +18,7 @@ export async function callLogin(username, password) {
  * @returns {Promise} Logout response
  */
 export const callLogout = () => {
-  return apiClient.post('/auth/logout');
+  return apiClient.post('/api/auth/logout');
 };
 
 /**
@@ -33,7 +33,7 @@ export const callLogout = () => {
  * @returns {Promise} Registration response with account data
  */
 export async function callRegister(payload) {
-  return await apiClient.post('/auth/register', payload);
+  return await apiClient.post('/api/auth/register', payload);
 }
 
 /**
@@ -44,44 +44,7 @@ export async function callRegister(payload) {
  * @returns {Promise} Password change response
  */
 export async function callChangePassword(payload) {
-  return await apiClient.post('/auth/update-password', payload);
-}
-
-/**
- * Update user avatar
- * @param {string} avatarUrl - The full URL of the uploaded avatar
- * @returns {Promise} Updated user account information
- */
-export async function updateAvatar(avatarUrl) {
-  return await apiClient.post('/auth/avatar', {
-    avatarUrl,
-  });
-}
-
-// Alias for consistency
-export const callUpdateAvatar = updateAvatar;
-
-/**
- * Update user account and patient profile
- * @param {object} payload - User and patient profile data to update
- * @param {object} payload.user - User details
- * @param {string} payload.user.fullName - Full name
- * @param {object} payload.patientProfile - Patient profile details
- * @param {string} [payload.patientProfile.address] - Address
- * @param {string} [payload.patientProfile.phone] - Phone number
- * @param {string} [payload.patientProfile.birthday] - Birthday in YYYY-MM-DD format
- * @param {string} [payload.patientProfile.gender] - Gender (MALE, FEMALE, OTHER)
- * @param {string} [payload.patientProfile.identityNumber] - Identity number
- * @param {string} [payload.patientProfile.bloodType] - Blood type (A, B, AB, O)
- * @param {number} [payload.patientProfile.heightCm] - Height in cm
- * @param {number} [payload.patientProfile.weightKg] - Weight in kg
- * @param {string} [payload.patientProfile.occupation] - Occupation
- * @param {string} [payload.patientProfile.lifestyleNotes] - Lifestyle notes
- * @param {string} [payload.patientProfile.insuranceNumber] - Insurance number
- * @returns {Promise} Updated user information
- */
-export async function updateAccount(payload) {
-  return await apiClient.post('/auth/update-account', payload);
+  return await apiClient.post('/api/auth/update-password', payload);
 }
 
 /**
@@ -103,7 +66,7 @@ export async function updateAccount(payload) {
  * @returns {Promise} Updated user information
  */
 export async function callCompleteGoogleProfile(payload) {
-  return await apiClient.post('/auth/complete-profile', payload);
+  return await apiClient.post('/api/auth/complete-profile', payload);
 }
 
 /**
@@ -125,7 +88,7 @@ export async function callCompleteGoogleProfile(payload) {
  * @returns {Promise} Updated user information
  */
 export async function callCompleteProfile(payload) {
-  return await apiClient.post('/auth/complete-profile', payload);
+  return await apiClient.post('/api/auth/complete-profile', payload);
 }
 
 /**
@@ -133,13 +96,5 @@ export async function callCompleteProfile(payload) {
  * @returns {Promise} Current user account data
  */
 export async function callFetchAccount() {
-  return await apiClient.get('/auth/account');
-}
-
-/**
- * Get my appointments
- * @returns {Promise} List of user's appointments
- */
-export async function callMyAppointments() {
-  return await apiClient.get('/auth/my-appointments');
+  return await apiClient.get('/api/auth/account');
 }

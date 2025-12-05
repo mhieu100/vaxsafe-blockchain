@@ -1,6 +1,6 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { toast } from 'react-toastify';
-import profileService from '@/services/profileService';
+import profileService from '@/services/profile.service';
 
 /**
  * Custom hook to fetch and manage user profile
@@ -10,8 +10,8 @@ import profileService from '@/services/profileService';
 export const useProfile = (role) => {
   return useQuery({
     queryKey: ['profile', role],
-    queryFn: () => profileService.getProfile(role),
-    enabled: !!role,
+    queryFn: () => Promise.resolve(null), // GET methods removed as per requirement
+    enabled: false,
     staleTime: 5 * 60 * 1000, // 5 minutes
   });
 };
@@ -48,7 +48,8 @@ export const useUpdateProfile = (role) => {
 export const usePatientProfile = () => {
   return useQuery({
     queryKey: ['profile', 'patient'],
-    queryFn: profileService.getPatientProfile,
+    queryFn: () => Promise.resolve(null), // GET methods removed
+    enabled: false,
     staleTime: 5 * 60 * 1000,
   });
 };
@@ -75,7 +76,8 @@ export const useUpdatePatientProfile = () => {
 export const useDoctorProfile = () => {
   return useQuery({
     queryKey: ['profile', 'doctor'],
-    queryFn: profileService.getDoctorProfile,
+    queryFn: () => Promise.resolve(null), // GET methods removed
+    enabled: false,
     staleTime: 5 * 60 * 1000,
   });
 };
@@ -102,7 +104,8 @@ export const useUpdateDoctorProfile = () => {
 export const useCashierProfile = () => {
   return useQuery({
     queryKey: ['profile', 'cashier'],
-    queryFn: profileService.getCashierProfile,
+    queryFn: () => Promise.resolve(null), // GET methods removed
+    enabled: false,
     staleTime: 5 * 60 * 1000,
   });
 };
@@ -129,7 +132,8 @@ export const useUpdateCashierProfile = () => {
 export const useAdminProfile = () => {
   return useQuery({
     queryKey: ['profile', 'admin'],
-    queryFn: profileService.getAdminProfile,
+    queryFn: () => Promise.resolve(null), // GET methods removed
+    enabled: false,
     staleTime: 5 * 60 * 1000,
   });
 };

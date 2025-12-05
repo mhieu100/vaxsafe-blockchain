@@ -16,14 +16,15 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/orders")
+@RequestMapping("/api/orders")
 @RequiredArgsConstructor
 public class OrderController {
     private final OrderService orderService;
-    
+
     @PostMapping
     @ApiMessage("Create a new order")
-    public ResponseEntity<PaymentResponse> create(@RequestBody OrderRequest request, HttpServletRequest httpRequest) throws AppException, PayPalRESTException {
+    public ResponseEntity<PaymentResponse> create(@RequestBody OrderRequest request, HttpServletRequest httpRequest)
+            throws AppException, PayPalRESTException {
         return ResponseEntity.ok(orderService.createOrder(request, httpRequest.getHeader("User-Agent")));
     }
 

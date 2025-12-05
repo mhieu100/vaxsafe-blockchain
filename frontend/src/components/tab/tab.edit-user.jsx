@@ -1,7 +1,7 @@
 import { Button, Col, DatePicker, Form, Input, message, Row, Select, Typography } from 'antd';
 import dayjs from 'dayjs';
 import { useEffect, useState } from 'react';
-import profileService from '@/services/profileService';
+import { updatePatientProfile } from '@/services/profile.service';
 import useAccountStore from '@/stores/useAccountStore';
 import { birthdayValidation } from '@/utils/birthdayValidation';
 
@@ -42,10 +42,8 @@ const TabEditUser = ({ editMode, setEditMode }) => {
       const payload = {
         fullName: values.fullName,
         phone: values.phone,
-        birthday: values.birthday ? values.birthday.format('YYYY-MM-DD') : null,
         gender: values.gender,
         address: values.address,
-        identityNumber: values.identityNumber,
         bloodType: values.bloodType,
         heightCm: values.heightCm ? parseFloat(values.heightCm) : null,
         weightKg: values.weightKg ? parseFloat(values.weightKg) : null,
@@ -55,7 +53,7 @@ const TabEditUser = ({ editMode, setEditMode }) => {
         consentForAIAnalysis: user.consentForAIAnalysis || false,
       };
 
-      const response = await profileService.updatePatientProfile(payload);
+      const response = await updatePatientProfile(payload);
 
       if (!response?.data) {
         throw new Error('Update failed');

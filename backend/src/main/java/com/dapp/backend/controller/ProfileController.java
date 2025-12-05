@@ -17,19 +17,8 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/api/profile")
 @RequiredArgsConstructor
 public class ProfileController {
-    
-    private final ProfileService profileService;
 
-    /**
-     * Get profile for PATIENT role
-     * Returns: User info + Patient specific fields
-     */
-    @GetMapping("/patient")
-    @PreAuthorize("hasRole('PATIENT')")
-    @ApiMessage("Get patient profile successfully")
-    public ResponseEntity<ProfileResponse.PatientProfile> getPatientProfile() throws AppException {
-        return ResponseEntity.ok(profileService.getPatientProfile());
-    }
+    private final ProfileService profileService;
 
     /**
      * Update profile for PATIENT role
@@ -41,17 +30,6 @@ public class ProfileController {
             @Valid @RequestBody UpdateProfileRequest.PatientProfileUpdate request) throws AppException {
         log.info("📝 Received update patient profile request: {}", request);
         return ResponseEntity.ok(profileService.updatePatientProfile(request));
-    }
-
-    /**
-     * Get profile for DOCTOR role
-     * Returns: User info + Doctor specific fields
-     */
-    @GetMapping("/doctor")
-    @PreAuthorize("hasRole('DOCTOR')")
-    @ApiMessage("Get doctor profile successfully")
-    public ResponseEntity<ProfileResponse.DoctorProfile> getDoctorProfile() throws AppException {
-        return ResponseEntity.ok(profileService.getDoctorProfile());
     }
 
     /**
@@ -67,17 +45,6 @@ public class ProfileController {
     }
 
     /**
-     * Get profile for CASHIER role
-     * Returns: User info + Cashier specific fields
-     */
-    @GetMapping("/cashier")
-    @PreAuthorize("hasRole('CASHIER')")
-    @ApiMessage("Get cashier profile successfully")
-    public ResponseEntity<ProfileResponse.CashierProfile> getCashierProfile() throws AppException {
-        return ResponseEntity.ok(profileService.getCashierProfile());
-    }
-
-    /**
      * Update profile for CASHIER role
      */
     @PutMapping("/cashier")
@@ -90,17 +57,6 @@ public class ProfileController {
     }
 
     /**
-     * Get profile for ADMIN role
-     * Returns: User info only (admin has no specific profile)
-     */
-    @GetMapping("/admin")
-    @PreAuthorize("hasRole('ADMIN')")
-    @ApiMessage("Get admin profile successfully")
-    public ResponseEntity<ProfileResponse.AdminProfile> getAdminProfile() throws AppException {
-        return ResponseEntity.ok(profileService.getAdminProfile());
-    }
-
-    /**
      * Update profile for ADMIN role
      */
     @PutMapping("/admin")
@@ -110,5 +66,12 @@ public class ProfileController {
             @Valid @RequestBody UpdateProfileRequest.AdminProfileUpdate request) throws AppException {
         log.info("📝 Received update admin profile request: {}", request);
         return ResponseEntity.ok(profileService.updateAdminProfile(request));
+    }
+
+    @PutMapping("/avatar")
+    @ApiMessage("Update avatar successfully")
+    public ResponseEntity<String> updateAvatar(@RequestBody com.dapp.backend.dto.request.AvatarRequest request)
+            throws AppException {
+        return ResponseEntity.ok(profileService.updateAvatar(request.getAvatarUrl()));
     }
 }

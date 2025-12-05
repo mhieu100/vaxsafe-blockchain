@@ -1,6 +1,6 @@
 import { Button, Col, Form, Input, message, Row, Select, Typography } from 'antd';
 import { useEffect, useState } from 'react';
-import profileService from '@/services/profileService';
+import { updateProfile } from '@/services/profile.service';
 import { useAccountStore } from '@/stores/useAccountStore';
 
 const { Text, Paragraph } = Typography;
@@ -47,7 +47,7 @@ const TabEditUser = ({ editMode, setEditMode }) => {
       // Note: birthday and identityNumber are disabled in form but might be in values if not handled correctly
       // The backend ignores them anyway, but good to be clean
 
-      await profileService.updateProfile(role, values);
+      await updateProfile(role, values);
 
       // Update local store
       if (updateUserInfo) {

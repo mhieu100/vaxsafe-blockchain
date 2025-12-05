@@ -2,15 +2,11 @@ package com.dapp.backend.dto.request;
 
 import com.dapp.backend.enums.BloodType;
 import com.dapp.backend.enums.Gender;
-import com.dapp.backend.validation.ValidBirthday;
 import jakarta.validation.constraints.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-
-import java.time.LocalDate;
-import com.fasterxml.jackson.annotation.JsonFormat;
 
 public class UpdateProfileRequest {
 
@@ -30,16 +26,9 @@ public class UpdateProfileRequest {
 
         private Gender gender;
 
-        @ValidBirthday(required = false, maxAge = 150)
-        @JsonFormat(pattern = "yyyy-MM-dd")
-        private LocalDate birthday;
-
         private String address;
 
         // Patient specific fields
-        @Pattern(regexp = "^[0-9]{9,12}$", message = "Identity number must be 9-12 digits")
-        private String identityNumber;
-
         private BloodType bloodType;
 
         @Positive(message = "Height must be positive")
@@ -71,10 +60,6 @@ public class UpdateProfileRequest {
 
         private Gender gender;
 
-        @ValidBirthday(required = false, maxAge = 150)
-        @JsonFormat(pattern = "yyyy-MM-dd")
-        private LocalDate birthday;
-
         private String address;
 
         // Doctor specific fields (usually not editable by doctor themselves)
@@ -100,10 +85,6 @@ public class UpdateProfileRequest {
 
         private Gender gender;
 
-        @ValidBirthday(required = false, maxAge = 150)
-        @JsonFormat(pattern = "yyyy-MM-dd")
-        private LocalDate birthday;
-
         private String address;
 
         // Cashier specific fields (shift times - usually not editable by cashier)
@@ -127,10 +108,6 @@ public class UpdateProfileRequest {
         private String phone;
 
         private Gender gender;
-
-        @ValidBirthday(required = false, maxAge = 150)
-        @JsonFormat(pattern = "yyyy-MM-dd")
-        private LocalDate birthday;
 
         private String address;
     }

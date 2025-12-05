@@ -11,7 +11,7 @@ import apiClient from './apiClient';
  */
 export const getDoctorsWithScheduleAPI = (date = null) => {
   const params = date ? { date } : {};
-  return apiClient.get('/api/v1/doctors/my-center/with-schedule', { params });
+  return apiClient.get('/api/doctors/my-center/with-schedule', { params });
 };
 
 /**
@@ -20,7 +20,7 @@ export const getDoctorsWithScheduleAPI = (date = null) => {
  * @returns {Promise} List of available doctors
  */
 export const callGetAvailableDoctorsByCenter = (centerId) => {
-  return apiClient.get(`/api/v1/doctors/center/${centerId}/available`);
+  return apiClient.get(`/api/doctors/center/${centerId}/available`);
 };
 
 // Alias for consistency
@@ -32,7 +32,7 @@ export const getAvailableDoctorsByCenterAPI = callGetAvailableDoctorsByCenter;
  * @returns {Promise} Doctor's weekly schedule
  */
 export const callGetDoctorSchedules = (doctorId) => {
-  return apiClient.get(`/api/v1/doctors/${doctorId}/schedules`);
+  return apiClient.get(`/api/doctors/${doctorId}/schedules`);
 };
 
 // Alias for consistency
@@ -45,7 +45,7 @@ export const getDoctorSchedulesAPI = callGetDoctorSchedules;
  * @returns {Promise} Available time slots
  */
 export const callGetDoctorAvailableSlots = (doctorId, date) => {
-  return apiClient.get(`/api/v1/doctors/${doctorId}/slots/available`, {
+  return apiClient.get(`/api/doctors/${doctorId}/slots/available`, {
     params: { date },
   });
 };
@@ -60,7 +60,7 @@ export const getAvailableSlotsAPI = callGetDoctorAvailableSlots;
  * @returns {Promise} Available time slots for all doctors in center
  */
 export const callGetAvailableSlotsByCenter = (centerId, date) => {
-  return apiClient.get(`/api/v1/doctors/center/${centerId}/slots/available`, {
+  return apiClient.get(`/api/doctors/center/${centerId}/slots/available`, {
     params: { date },
   });
 };
@@ -76,7 +76,7 @@ export const getAvailableSlotsByCenterAPI = callGetAvailableSlotsByCenter;
  * @returns {Promise} Available time slots for all doctors in center within time slot
  */
 export const callGetAvailableSlotsByCenterAndTimeSlot = (centerId, date, timeSlot) => {
-  return apiClient.get(`/api/v1/doctors/center/${centerId}/slots/available-by-timeslot`, {
+  return apiClient.get(`/api/doctors/center/${centerId}/slots/available-by-timeslot`, {
     params: { date, timeSlot },
   });
 };
@@ -92,7 +92,7 @@ export const getAvailableSlotsByCenterAndTimeSlotAPI = callGetAvailableSlotsByCe
  * @returns {Promise} Doctor's slots in date range
  */
 export const callGetDoctorSlotsInRange = (doctorId, startDate, endDate) => {
-  return apiClient.get(`/api/v1/doctors/${doctorId}/slots`, {
+  return apiClient.get(`/api/doctors/${doctorId}/slots`, {
     params: { startDate, endDate },
   });
 };
@@ -108,7 +108,7 @@ export const getDoctorSlotsInRangeAPI = callGetDoctorSlotsInRange;
  * @returns {Promise} Generated slots
  */
 export const callGenerateDoctorSlots = (doctorId, startDate, endDate) => {
-  return apiClient.post(`/api/v1/doctors/${doctorId}/slots/generate`, {
+  return apiClient.post(`/api/doctors/${doctorId}/slots/generate`, {
     startDate,
     endDate,
   });

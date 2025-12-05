@@ -8,5 +8,5 @@ import apiClient from './apiClient';
  * @returns {Promise} Payment response with order details
  */
 export async function callCreateOrder(payload) {
-  return apiClient.post('/orders', payload);
+  return apiClient.post('/api/orders', payload);
 }

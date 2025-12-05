@@ -26,7 +26,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
 @RestController
-@RequestMapping("/centers")
+@RequestMapping("/api/centers")
 @RequiredArgsConstructor
 public class CenterController {
 

@@ -5,7 +5,7 @@ import apiClient from './apiClient';
  * @returns {Promise} Array of country names
  */
 export async function getCountries() {
-  return apiClient.get('/vaccines/countries');
+  return apiClient.get('/api/vaccines/countries');
 }
 
 /**
@@ -14,7 +14,7 @@ export async function getCountries() {
  * @returns {Promise} Vaccine details
  */
 export async function getBySlug(slug) {
-  return apiClient.get(`/vaccines/${slug}`);
+  return apiClient.get(`/api/vaccines/${slug}`);
 }
 
 /**
@@ -23,7 +23,7 @@ export async function getBySlug(slug) {
  * @returns {Promise} Created vaccine data
  */
 export async function callCreateVaccine(data) {
-  return apiClient.post('/vaccines', data);
+  return apiClient.post('/api/vaccines', data);
 }
 
 /**
@@ -33,7 +33,7 @@ export async function callCreateVaccine(data) {
  * @returns {Promise} Updated vaccine data
  */
 export async function callUpdateVaccine(vaccineId, data) {
-  return apiClient.put(`/vaccines/${vaccineId}`, data);
+  return apiClient.put(`/api/vaccines/${vaccineId}`, data);
 }
 
 /**
@@ -42,7 +42,7 @@ export async function callUpdateVaccine(vaccineId, data) {
  * @returns {Promise} List of vaccines
  */
 export async function callFetchVaccine(query) {
-  return apiClient.get(`/vaccines?${query}`);
+  return apiClient.get(`/api/vaccines?${query}`);
 }
 
 /**
@@ -51,7 +51,7 @@ export async function callFetchVaccine(query) {
  * @returns {Promise} Deletion confirmation
  */
 export async function callDeleteVaccine(id) {
-  return apiClient.delete(`/vaccines/${id}`);
+  return apiClient.delete(`/api/vaccines/${id}`);
 }
 
 // Named exports for backward compatibility

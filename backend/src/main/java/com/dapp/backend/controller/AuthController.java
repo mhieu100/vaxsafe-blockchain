@@ -1,13 +1,11 @@
 package com.dapp.backend.controller;
 
 import com.dapp.backend.dto.request.*;
-import com.dapp.backend.dto.response.BookingResponse;
 import com.dapp.backend.dto.response.LoginResponse;
 import com.dapp.backend.dto.response.RefreshResponse;
 import com.dapp.backend.dto.response.RegisterPatientResponse;
 import com.dapp.backend.exception.AppException;
 import com.dapp.backend.security.JwtUtil;
-import com.dapp.backend.service.BookingService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
@@ -23,15 +21,12 @@ import com.dapp.backend.service.AuthService;
 
 import org.springframework.web.bind.annotation.GetMapping;
 
-import java.util.List;
-
 @RestController
-@RequestMapping("/auth")
+@RequestMapping("/api/auth")
 @RequiredArgsConstructor
 public class AuthController {
 
     private final AuthService authService;
-    private final BookingService bookingService;
     private final JwtUtil jwtUtil;
 
     @Value("${jwt.refresh-token-validity-in-seconds}")
@@ -120,29 +115,10 @@ public class AuthController {
                 .body(RefreshResponse.builder().accessToken(login.getAccessToken()).build());
     }
 
-    @PostMapping("/update-account")
-    @ApiMessage("Update account")
-    public ResponseEntity<LoginResponse.UserLogin> update(@Valid @RequestBody UpdateAccountRequest request)
-            throws AppException {
-        return ResponseEntity.ok(authService.updateAccount(request));
-    }
-
     @GetMapping("/account")
-    @ApiMessage("Get profile")
-    public ResponseEntity<LoginResponse.UserLogin> getProfile() throws AppException {
+    @ApiMessage("Get current user account")
+    public ResponseEntity<LoginResponse.UserLogin> getAccount() throws AppException {
         return ResponseEntity.ok(authService.getAccount());
-    }
-
-    @GetMapping("/booking")
-    @ApiMessage("Get booking of user")
-    public ResponseEntity<List<BookingResponse>> getBooking() throws AppException {
-        return ResponseEntity.ok(bookingService.getBooking());
-    }
-
-    @GetMapping("/history-booking")
-    @ApiMessage("Get history booking of user")
-    public ResponseEntity<List<BookingResponse>> getHistoryBooking() throws AppException {
-        return ResponseEntity.ok(bookingService.getHistoryBooking());
     }
 
     @PostMapping("/logout")
@@ -158,13 +134,6 @@ public class AuthController {
                 .maxAge(0)
                 .build();
         return ResponseEntity.ok().header(HttpHeaders.SET_COOKIE, cookie.toString()).build();
-    }
-
-    @PostMapping("/avatar")
-    @ApiMessage("update avatar")
-    public ResponseEntity<LoginResponse.UserLogin> updateAvatar(@RequestBody AvatarRequest request)
-            throws AppException {
-        return ResponseEntity.ok(this.authService.updateAvatar(request));
     }
 
     @PostMapping("/complete-profile")

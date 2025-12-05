@@ -63,22 +63,25 @@ public class SecurityConfiguration {
 
     @Bean
     public JwtAuthenticationConverter jwtAuthenticationConverter() {
-        JwtGrantedAuthoritiesConverter grantedAuthoritiesConverter = new
-                JwtGrantedAuthoritiesConverter();
+        JwtGrantedAuthoritiesConverter grantedAuthoritiesConverter = new JwtGrantedAuthoritiesConverter();
         grantedAuthoritiesConverter.setAuthorityPrefix("");
         grantedAuthoritiesConverter.setAuthoritiesClaimName("role");
-        JwtAuthenticationConverter jwtAuthenticationConverter = new
-                JwtAuthenticationConverter();
+        JwtAuthenticationConverter jwtAuthenticationConverter = new JwtAuthenticationConverter();
 
         jwtAuthenticationConverter.setJwtGrantedAuthoritiesConverter(grantedAuthoritiesConverter);
         return jwtAuthenticationConverter;
     }
 
     @Bean
-    public SecurityFilterChain filterChain(HttpSecurity http, CustomAuthenticationEntryPoint customAuthenticationEntryPoint, OAuth2LoginSuccessHandler oAuth2LoginSuccessHandler) throws Exception {
+    public SecurityFilterChain filterChain(HttpSecurity http,
+            CustomAuthenticationEntryPoint customAuthenticationEntryPoint,
+            OAuth2LoginSuccessHandler oAuth2LoginSuccessHandler) throws Exception {
 
         String[] whiteList = {
-                "/", "/auth/login/password", "/auth/refresh", "/auth/register", "/auth/complete-profile", "/auth/complete-google-profile", "/storage/**","/email/**", "/payments/vnpay/return", "/payments/paypal/success", "/payments/paypal/cancel", "/api/v1/hello",
+                "/", "/api/auth/login/password", "/api/auth/refresh", "/api/auth/register",
+                "/api/auth/complete-profile", "/api/auth/complete-google-profile", "/storage/**", "/email/**",
+                "/api/payments/vnpay/return", "/api/payments/paypal/success", "/api/payments/paypal/cancel",
+                "/api/health/hello",
                 "/oauth2/**", "/login/oauth2/**", "/api/test/**", "/api/reminders/**"
         };
         http
@@ -87,18 +90,17 @@ public class SecurityConfiguration {
                 .authorizeHttpRequests(
                         authz -> authz
                                 .requestMatchers(whiteList).permitAll()
-                                .requestMatchers(HttpMethod.GET, "/vaccines/**").permitAll()
-                                .requestMatchers(HttpMethod.GET, "/news/**").permitAll()
-                                .requestMatchers(HttpMethod.POST, "/vaccines/**").authenticated()
-                                .requestMatchers(HttpMethod.PUT, "/vaccines/**").authenticated()
-                                .requestMatchers(HttpMethod.DELETE, "/vaccines/**").authenticated()
+                                .requestMatchers(HttpMethod.GET, "/api/vaccines/**").permitAll()
+                                .requestMatchers(HttpMethod.GET, "/api/news/**").permitAll()
+                                .requestMatchers(HttpMethod.POST, "/api/vaccines/**").authenticated()
+                                .requestMatchers(HttpMethod.PUT, "/api/vaccines/**").authenticated()
+                                .requestMatchers(HttpMethod.DELETE, "/api/vaccines/**").authenticated()
                                 .anyRequest().authenticated())
                 .oauth2Login(oauth2 -> oauth2
                         .successHandler(oAuth2LoginSuccessHandler)
-                        .permitAll()
-                )
+                        .permitAll())
                 .oauth2ResourceServer((oauth2) -> oauth2.jwt(jwt -> jwt
-                                .jwtAuthenticationConverter(jwtAuthenticationConverter()))
+                        .jwtAuthenticationConverter(jwtAuthenticationConverter()))
                         .authenticationEntryPoint(customAuthenticationEntryPoint))
                 .formLogin(AbstractHttpConfigurer::disable)
                 .exceptionHandling(exception -> exception

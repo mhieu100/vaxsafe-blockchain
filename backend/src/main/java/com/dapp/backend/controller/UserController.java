@@ -1,4 +1,5 @@
 package com.dapp.backend.controller;
+
 import com.dapp.backend.dto.request.UserRequest;
 import com.dapp.backend.dto.response.UserResponse;
 import org.springframework.data.domain.Pageable;
@@ -23,7 +24,7 @@ import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 
 @RestController
-@RequestMapping("/users")
+@RequestMapping("/api/users")
 @AllArgsConstructor
 public class UserController {
 

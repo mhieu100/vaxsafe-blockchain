@@ -20,14 +20,12 @@ import jakarta.validation.Valid;
 
 import java.util.List;
 
-
 @RestController
-@RequestMapping("/vaccines")
+@RequestMapping("/api/vaccines")
 @RequiredArgsConstructor
 public class VaccineController {
 
     private final VaccineService vaccineService;
-
 
     @GetMapping
     @ApiMessage("Get all vaccines")
@@ -50,13 +48,15 @@ public class VaccineController {
 
     @PostMapping
     @ApiMessage("Create a new vaccine")
-    public ResponseEntity<VaccineResponse> createVaccine(@Valid @RequestBody VaccineRequest request) throws AppException {
+    public ResponseEntity<VaccineResponse> createVaccine(@Valid @RequestBody VaccineRequest request)
+            throws AppException {
         return ResponseEntity.status(HttpStatus.CREATED).body(vaccineService.createVaccine(request));
     }
 
     @PutMapping("/{id}")
     @ApiMessage("Update a vaccine")
-    public ResponseEntity<VaccineResponse> updateVaccine(@PathVariable Long id, @Valid @RequestBody VaccineRequest request) throws AppException {
+    public ResponseEntity<VaccineResponse> updateVaccine(@PathVariable Long id,
+            @Valid @RequestBody VaccineRequest request) throws AppException {
         return ResponseEntity.ok().body(vaccineService.updateVaccine(id, request));
     }
 

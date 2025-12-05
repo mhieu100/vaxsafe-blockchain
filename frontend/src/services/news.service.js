@@ -11,21 +11,21 @@ import apiClient from '../services/apiClient';
  * @param {string} query - Query string (e.g., "page=0&size=10&sort=publishedAt,desc")
  */
 export const callFetchNews = (query) => {
-  return apiClient.get(`/news?${query}`);
+  return apiClient.get(`/api/news?${query}`);
 };
 
 /**
  * Get published news only
  */
 export const callFetchPublishedNews = () => {
-  return apiClient.get('/news/published');
+  return apiClient.get('/api/news/published');
 };
 
 /**
  * Get featured news
  */
 export const callFetchFeaturedNews = () => {
-  return apiClient.get('/news/featured');
+  return apiClient.get('/api/news/featured');
 };
 
 /**
@@ -33,7 +33,7 @@ export const callFetchFeaturedNews = () => {
  * @param {string} slug - News slug
  */
 export const callFetchNewsBySlug = (slug) => {
-  return apiClient.get(`/news/slug/${slug}`);
+  return apiClient.get(`/api/news/slug/${slug}`);
 };
 
 /**
@@ -41,14 +41,14 @@ export const callFetchNewsBySlug = (slug) => {
  * @param {number} id - News ID
  */
 export const callFetchNewsById = (id) => {
-  return apiClient.get(`/news/${id}`);
+  return apiClient.get(`/api/news/${id}`);
 };
 
 /**
  * Get all news categories
  */
 export const callGetNewsCategories = () => {
-  return apiClient.get('/news/categories');
+  return apiClient.get('/api/news/categories');
 };
 
 /**
@@ -56,7 +56,7 @@ export const callGetNewsCategories = () => {
  * @param {string} category - Category name (e.g., "VACCINE_INFO", "CHILDREN_HEALTH")
  */
 export const callFetchNewsByCategory = (category) => {
-  return apiClient.get(`/news/category/${category}`);
+  return apiClient.get(`/api/news/category/${category}`);
 };
 
 // ===== ADMIN ENDPOINTS (Require Authentication) =====
@@ -86,7 +86,7 @@ export const callCreateNews = (data) => {
  * @param {Object} data - News data to update
  */
 export const callUpdateNews = (id, data) => {
-  return apiClient.put(`/news/${id}`, data);
+  return apiClient.put(`/api/news/${id}`, data);
 };
 
 /**
@@ -94,7 +94,7 @@ export const callUpdateNews = (id, data) => {
  * @param {number} id - News ID
  */
 export const callDeleteNews = (id) => {
-  return apiClient.delete(`/news/${id}`);
+  return apiClient.delete(`/api/news/${id}`);
 };
 
 /**
@@ -102,7 +102,7 @@ export const callDeleteNews = (id) => {
  * @param {number} id - News ID
  */
 export const callPublishNews = (id) => {
-  return apiClient.patch(`/news/${id}/publish`);
+  return apiClient.patch(`/api/news/${id}/publish`);
 };
 
 /**

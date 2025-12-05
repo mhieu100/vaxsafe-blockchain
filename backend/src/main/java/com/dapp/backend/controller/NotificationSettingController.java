@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.*;
  * API for user email notification preferences
  */
 @RestController
-@RequestMapping({"/api/notification-settings", "/notification-settings"})
+@RequestMapping("/api/notification-settings")
 @RequiredArgsConstructor
 @Slf4j
 public class NotificationSettingController {
@@ -26,7 +26,8 @@ public class NotificationSettingController {
     /**
      * Get current user's notification settings
      * GET /api/notification-settings
-     * @throws AppException 
+     * 
+     * @throws AppException
      */
     @GetMapping
     @ApiMessage("Get notification settings")
@@ -39,7 +40,8 @@ public class NotificationSettingController {
     /**
      * Update notification settings
      * PUT /api/notification-settings
-     * @throws AppException 
+     * 
+     * @throws AppException
      */
     @PutMapping
     @ApiMessage("Update notification settings")

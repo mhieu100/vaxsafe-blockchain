@@ -1,8 +1,8 @@
 import { CameraOutlined, DeleteOutlined, UserOutlined } from '@ant-design/icons';
 import { Avatar, Button, Modal, message, Upload } from 'antd';
 import { useState } from 'react';
-import { callUpdateAvatar } from '@/services/auth.service';
 import { callUploadSingleFile } from '@/services/file.service';
+import { callUpdateAvatar } from '@/services/profile.service';
 import { useAccountStore } from '@/stores/useAccountStore';
 
 const ModalUpdateAvatar = ({ open, setOpen }) => {
@@ -25,7 +25,16 @@ const ModalUpdateAvatar = ({ open, setOpen }) => {
 
       // Step 2: Update avatar via /auth/avatar
       const updateRes = await callUpdateAvatar(avatarUrl);
-      if (!updateRes?.data) {
+
+      console.log(updateRes);
+
+      // The backend returns the avatar URL string directly in the response body
+      // Axios wraps this in a 'data' property
+      // So updateRes should be the avatar URL string if using the service correctly
+      // But let's check what the service returns.
+      // profile.service.js returns response.data.
+
+      if (!updateRes) {
         throw new Error('Update avatar failed');
       }
 
@@ -49,8 +58,8 @@ const ModalUpdateAvatar = ({ open, setOpen }) => {
 
       // Update avatar to default image
       const updateRes = await callUpdateAvatar(defaultAvatar);
-      if (!updateRes?.data) {
-        throw new Error('Remove avatar failed');
+      if (!updateRes) {
+        throw new Error('Xóa ảnh đại diện thất bại');
       }
 
       // Update avatar in store directly (no page reload)
@@ -85,7 +94,7 @@ const ModalUpdateAvatar = ({ open, setOpen }) => {
 
   return (
     <Modal
-      title="Update Profile Picture"
+      title="Cập nhật ảnh đại diện"
       open={open}
       onCancel={() => setOpen(false)}
       footer={null}
@@ -102,7 +111,7 @@ const ModalUpdateAvatar = ({ open, setOpen }) => {
               loading={uploading}
               disabled={uploading || removing}
             >
-              {uploading ? 'Đang tải lên...' : 'Upload New Photo'}
+              {uploading ? 'Đang tải lên...' : 'Tải ảnh mới'}
             </Button>
           </Upload>
           <Button
@@ -112,7 +121,7 @@ const ModalUpdateAvatar = ({ open, setOpen }) => {
             loading={removing}
             disabled={uploading || removing || !user?.avatar}
           >
-            Remove Current Photo
+            Xóa ảnh hiện tại
           </Button>
         </div>
       </div>

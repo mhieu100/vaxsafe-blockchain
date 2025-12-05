@@ -23,8 +23,9 @@ const PatientProfileForm = () => {
 
   const onSubmit = async (data) => {
     console.log('Submitting profile update:', data);
+    const { birthday, identityNumber, ...payload } = data;
     try {
-      await updateProfile.mutateAsync(data);
+      await updateProfile.mutateAsync(payload);
       setIsEditing(false);
     } catch (err) {
       console.error('Failed to update profile:', err);

@@ -81,16 +81,9 @@ public class ProfileService {
 
         Patient patient = user.getPatientProfile();
 
-        // Validate: Birthday and Identity Number cannot be changed (used for blockchain identity)
-        if (request.getBirthday() != null) {
-            log.warn("Attempt to update birthday for user: {} - rejected", user.getEmail());
-            throw new AppException("Birthday cannot be changed as it's used for blockchain identity");
-        }
-        if (request.getIdentityNumber() != null && 
-            !request.getIdentityNumber().equals(patient.getIdentityNumber())) {
-            log.warn("Attempt to update identity number for user: {} - rejected", user.getEmail());
-            throw new AppException("Identity number cannot be changed as it's used for blockchain identity");
-        }
+        // Validate: Birthday and Identity Number cannot be changed (used for blockchain
+        // identity)
+        // Logic removed as fields are removed from DTO to prevent update attempts
 
         // Update common user fields
         if (request.getFullName() != null && !request.getFullName().isBlank()) {
@@ -314,5 +307,16 @@ public class ProfileService {
         userRepository.save(user);
 
         return getAdminProfile();
+    }
+
+    /**
+     * Update avatar
+     */
+    @Transactional
+    public String updateAvatar(String avatarUrl) throws AppException {
+        User user = getCurrentUser();
+        user.setAvatar(avatarUrl);
+        userRepository.save(user);
+        return user.getAvatar();
     }
 }

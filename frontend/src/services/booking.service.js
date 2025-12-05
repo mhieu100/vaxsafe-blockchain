@@ -11,7 +11,7 @@ import apiClient from './apiClient';
  * @returns {Promise} Payment response with booking details
  */
 export async function callCreateBooking(payload) {
-  return apiClient.post('/bookings', payload);
+  return apiClient.post('/api/bookings', payload);
 }
 
 /**
@@ -30,7 +30,7 @@ export async function callCreateBooking(payload) {
  * @returns {Promise} Booking response
  */
 export async function callCreateWalkInBooking(payload) {
-  return apiClient.post('/bookings/walk-in', payload);
+  return apiClient.post('/api/bookings/walk-in', payload);
 }
 
 /**
@@ -38,7 +38,7 @@ export async function callCreateWalkInBooking(payload) {
  * @returns {Promise} List of user bookings with appointments
  */
 export async function getMyBookings() {
-  return apiClient.get('/auth/booking');
+  return apiClient.get('/api/bookings/my-bookings');
 }
 
 /**
@@ -46,7 +46,7 @@ export async function getMyBookings() {
  * @returns {Promise} List of historical bookings with appointments
  */
 export async function getMyBookingHistory() {
-  return apiClient.get('/auth/history-booking');
+  return apiClient.get('/api/bookings/history');
 }
 
 /**
@@ -59,5 +59,5 @@ export async function getMyBookingHistory() {
  * @returns {Promise} Updated appointment information
  */
 export async function rescheduleAppointment(payload) {
-  return apiClient.put('/appointments/reschedule', payload);
+  return apiClient.put('/api/appointments/reschedule', payload);
 }

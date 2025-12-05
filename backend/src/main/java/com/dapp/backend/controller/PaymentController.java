@@ -16,30 +16,32 @@ import java.io.IOException;
 import java.util.Map;
 
 @RestController
-@RequestMapping("/payments")
+@RequestMapping("/api/payments")
 @RequiredArgsConstructor
 public class PaymentController {
 
     @Value("${vnpay.hash-secret}")
     private String hashSecret;
-    
+
     @Value("${frontend.success-url}")
     private String frontendSuccessUrl;
-    
+
     @Value("${frontend.cancel-url}")
     private String frontendCancelUrl;
-    
+
     private final PaymentService paymentService;
 
     @GetMapping("/paypal/success")
     @ApiMessage("Handle PayPal payment success callback")
-    public void successPaypal(HttpServletResponse response, @RequestParam String referenceId, @RequestParam String type, @RequestParam String payment, @RequestParam(required = false) String platform) throws AppException, IOException {
+    public void successPaypal(HttpServletResponse response, @RequestParam String referenceId, @RequestParam String type,
+            @RequestParam String payment, @RequestParam(required = false) String platform)
+            throws AppException, IOException {
         PaymentRequest paymentRequest = new PaymentRequest();
         paymentRequest.setPaymentId(Long.parseLong(payment));
         paymentRequest.setReferenceId(referenceId);
         paymentRequest.setType(TypeTransactionEnum.valueOf(type));
         paymentService.successPayment(paymentRequest);
-        
+
         if ("mobile".equals(platform)) {
             response.sendRedirect("myapp://payment/success?referenceId=" + referenceId + "&payment=" + payment);
         } else {
@@ -49,13 +51,15 @@ public class PaymentController {
 
     @GetMapping("/paypal/cancel")
     @ApiMessage("Handle PayPal payment cancel callback")
-    public void cancelPaypal(HttpServletResponse response, @RequestParam String referenceId, @RequestParam String type, @RequestParam String payment, @RequestParam(required = false) String platform) throws AppException, IOException {
+    public void cancelPaypal(HttpServletResponse response, @RequestParam String referenceId, @RequestParam String type,
+            @RequestParam String payment, @RequestParam(required = false) String platform)
+            throws AppException, IOException {
         PaymentRequest paymentRequest = new PaymentRequest();
         paymentRequest.setPaymentId(Long.parseLong(payment));
         paymentRequest.setReferenceId(referenceId);
         paymentRequest.setType(TypeTransactionEnum.valueOf(type));
         paymentService.cancelPayment(paymentRequest);
-        
+
         if ("mobile".equals(platform)) {
             response.sendRedirect("myapp://payment/cancel?referenceId=" + referenceId + "&payment=" + payment);
         } else {
@@ -65,7 +69,8 @@ public class PaymentController {
 
     @GetMapping("/vnpay/return")
     @ApiMessage("Handle VNPay payment return callback")
-    public void handleVnpayReturn(HttpServletRequest request, HttpServletResponse response) throws IOException, AppException {
+    public void handleVnpayReturn(HttpServletRequest request, HttpServletResponse response)
+            throws IOException, AppException {
         String redirectUrl;
         Map<String, String> vnpParams = VnpayUtils.extractParams(request);
 
@@ -79,9 +84,10 @@ public class PaymentController {
         paymentRequest.setReferenceId(referenceId);
         paymentRequest.setType(TypeTransactionEnum.valueOf(type));
 
-//        String secureHash = vnpParams.remove("vnp_SecureHash");
-//        boolean isValid = VnpayUtils.verifySignature(vnpParams, secureHash, hashSecret);
-//        if (isValid && "00".equals(vnpParams.get("vnp_ResponseCode"))) {
+        // String secureHash = vnpParams.remove("vnp_SecureHash");
+        // boolean isValid = VnpayUtils.verifySignature(vnpParams, secureHash,
+        // hashSecret);
+        // if (isValid && "00".equals(vnpParams.get("vnp_ResponseCode"))) {
 
         if ("00".equals(vnpParams.get("vnp_ResponseCode"))) {
             paymentService.successPayment(paymentRequest);
