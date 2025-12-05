@@ -244,4 +244,34 @@ router.post("/monitor/stop", async (_req, res) => {
 	}
 });
 
+/**
+ * @route   GET /api/blockchain/intro
+ * @desc    Get introduction information about the blockchain service
+ * @access  Public
+ */
+router.get("/intro", async (_req, res) => {
+	try {
+		res.json({
+			success: true,
+			data: {
+				name: "VaxSafe Blockchain Service",
+				version: "1.0.0",
+				description: "Blockchain service for VaxSafe application, handling vaccination records and identity management.",
+				features: [
+					"Vaccination Record Storage",
+					"Identity Management",
+					"Transaction Monitoring",
+					"IPFS Integration",
+				],
+			},
+		});
+	} catch (error) {
+		res.status(500).json({
+			success: false,
+			message: "Error retrieving introduction",
+			error: error.message,
+		});
+	}
+});
+
 module.exports = router;

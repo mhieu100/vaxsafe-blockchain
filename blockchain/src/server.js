@@ -16,6 +16,7 @@ const identityRoutes = require("./routes/identity.routes");
 const vaccineRecordRoutes = require("./routes/vaccine-record.routes");
 const transactionRoutes = require("./routes/transaction.routes");
 const ipfsRoutes = require("./routes/ipfsRoutes");
+const blockchainRoutes = require("./routes/blockchain.routes");
 
 const app = express();
 const server = http.createServer(app);
@@ -168,6 +169,7 @@ app.use("/api/identity", identityRoutes);
 app.use("/api/vaccine-records", vaccineRecordRoutes);
 app.use("/api/transactions", transactionRoutes);
 app.use("/api/ipfs", ipfsRoutes);
+app.use("/api/blockchain", blockchainRoutes);
 
 // Socket.IO connection handling
 io.on("connection", (socket) => {
