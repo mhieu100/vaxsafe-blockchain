@@ -1,16 +1,11 @@
 import {
-  CalendarOutlined,
   ClockCircleOutlined,
   EnvironmentOutlined,
   InfoCircleOutlined,
-  MedicineBoxOutlined,
-  TeamOutlined,
   UserOutlined,
 } from '@ant-design/icons';
 import {
-  Alert,
   Button,
-  Card,
   Col,
   DatePicker,
   Divider,
@@ -22,7 +17,6 @@ import {
   Tag,
   Typography,
 } from 'antd';
-import locale from 'antd/es/date-picker/locale/vi_VN';
 import dayjs from 'dayjs';
 import { useMemo, useState } from 'react';
 import { DEFAULT_PAGE, DEFAULT_PAGE_SIZE } from '@/constants';

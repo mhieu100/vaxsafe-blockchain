@@ -1,11 +1,10 @@
 import {
-  ClearOutlined,
   DollarOutlined,
   FilterOutlined,
   GlobalOutlined,
   SortAscendingOutlined,
 } from '@ant-design/icons';
-import { Button, Divider, Select, Slider, Tag } from 'antd';
+import { Button, Select, Slider } from 'antd';
 // eslint-disable-next-line import/no-extraneous-dependencies
 import debounce from 'lodash/debounce';
 import { useEffect, useMemo, useState } from 'react';

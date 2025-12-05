@@ -64,7 +64,7 @@ const ServiceSection = () => {
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-          {features.map((f, index) => (
+          {features.map((f, _index) => (
             <div
               key={f.title}
               className="group bg-white p-8 rounded-3xl shadow-sm border border-slate-100 transition-all duration-300 hover:shadow-2xl hover:-translate-y-2 hover:border-blue-100 relative overflow-hidden"

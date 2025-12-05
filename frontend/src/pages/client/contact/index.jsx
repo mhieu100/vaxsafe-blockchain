@@ -44,7 +44,7 @@ const { Option } = Select;
 const MapUpdater = ({ center }) => {
   const map = useMap();
   useEffect(() => {
-    if (center && center.latitude && center.longitude) {
+    if (center?.latitude && center.longitude) {
       map.setView([center.latitude, center.longitude], 15);
     }
   }, [center, map]);

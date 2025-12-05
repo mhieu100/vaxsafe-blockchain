@@ -6,7 +6,7 @@ import {
   ShoppingCartOutlined,
   StarFilled,
 } from '@ant-design/icons';
-import { Badge, Button, Card, Image, message, Rate, Tag, Tooltip } from 'antd';
+import { Button, Image, message, Tooltip } from 'antd';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import useCartStore from '@/stores/useCartStore';

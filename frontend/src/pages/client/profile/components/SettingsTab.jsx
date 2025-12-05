@@ -1,5 +1,5 @@
 import { LockOutlined, UserOutlined } from '@ant-design/icons';
-import { Button, Card, Tabs } from 'antd';
+import { Button, Tabs } from 'antd';
 import { useState } from 'react';
 import { ModalUpdatePassword } from '@/components/modal/profile';
 import TabEditUser from '@/components/tab/TabEditUser';

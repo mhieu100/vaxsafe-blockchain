@@ -1,25 +1,10 @@
 import {
   ArrowRightOutlined,
   CalendarOutlined,
-  EyeOutlined,
   ShareAltOutlined,
-  TagOutlined,
   UserOutlined,
 } from '@ant-design/icons';
-import {
-  Avatar,
-  Breadcrumb,
-  Button,
-  Card,
-  Col,
-  Divider,
-  message,
-  Row,
-  Skeleton,
-  Space,
-  Tag,
-  Typography,
-} from 'antd';
+import { Breadcrumb, Button, Col, message, Row, Skeleton, Tag, Typography } from 'antd';
 import dayjs from 'dayjs';
 import DOMPurify from 'dompurify';
 import { useEffect, useState } from 'react';
@@ -254,15 +239,14 @@ const ClientNewsDetailPage = () => {
                   {/* Tags & Share */}
                   <div className="mt-10 pt-6 border-t border-gray-100 flex flex-wrap justify-between items-center gap-4">
                     <div className="flex gap-2">
-                      {news.tags &&
-                        news.tags.split(',').map((tag) => (
-                          <Tag
-                            key={tag}
-                            className="bg-gray-100 text-gray-600 border-0 rounded-md px-3 py-1 text-sm"
-                          >
-                            #{tag.trim()}
-                          </Tag>
-                        ))}
+                      {news.tags?.split(',').map((tag) => (
+                        <Tag
+                          key={tag}
+                          className="bg-gray-100 text-gray-600 border-0 rounded-md px-3 py-1 text-sm"
+                        >
+                          #{tag.trim()}
+                        </Tag>
+                      ))}
                     </div>
                     <Button icon={<ShareAltOutlined />} onClick={handleShare}>
                       Share Article
