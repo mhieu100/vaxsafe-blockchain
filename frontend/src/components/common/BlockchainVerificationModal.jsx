@@ -7,7 +7,7 @@ import {
   LinkOutlined,
   SafetyCertificateOutlined,
 } from '@ant-design/icons';
-import { Button, Descriptions, message, Modal, Steps, Tabs, Tag, Timeline, Typography } from 'antd';
+import { Button, Descriptions, Modal, message, Steps, Tabs, Tag, Timeline, Typography } from 'antd';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
@@ -122,9 +122,7 @@ const BlockchainVerificationModal = ({ open, onClose, record }) => {
                     type="text"
                     size="small"
                     icon={<CopyOutlined />}
-                    onClick={() =>
-                      copyToClipboard(record.transactionHash, 'Transaction hash')
-                    }
+                    onClick={() => copyToClipboard(record.transactionHash, 'Transaction hash')}
                   />
                 )}
               </div>
@@ -280,9 +278,7 @@ const BlockchainVerificationModal = ({ open, onClose, record }) => {
             <div className="space-y-2">
               <div className="bg-slate-50 p-3 rounded-lg">
                 <Text className="text-xs text-slate-500 block mb-1">Blockchain Record:</Text>
-                <code className="text-xs">
-                  GET /api/vaccine-records/{record.id || '{id}'}
-                </code>
+                <code className="text-xs">GET /api/vaccine-records/{record.id || '{id}'}</code>
               </div>
               <div className="bg-slate-50 p-3 rounded-lg">
                 <Text className="text-xs text-slate-500 block mb-1">FHIR Immunization:</Text>
