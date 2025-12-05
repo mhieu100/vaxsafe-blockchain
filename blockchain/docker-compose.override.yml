@@ -1,0 +1,6 @@
+# Override for development with hot reload
+services:
+  app:
+    volumes:
+      - ./build:/app/build
+      - ./src:/app/src  # Mount source code for live updates
