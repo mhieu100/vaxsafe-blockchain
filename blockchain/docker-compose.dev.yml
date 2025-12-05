@@ -16,9 +16,9 @@ services:
       - JWT_SECRET=${JWT_SECRET}
       - JWT_SECRET_IS_BASE64=${JWT_SECRET_IS_BASE64}
     volumes:
-      # Default: Only mount build artifacts
-      # For development with hot reload: use docker-compose.dev.yml
+      # Development: Mount source code for hot reload
       - ./build:/app/build
+      - ./src:/app/src
     restart: always
     deploy:
       resources:

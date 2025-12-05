@@ -98,33 +98,13 @@ public class VaccineRecordService {
         log.info("Created vaccine record {} for appointment {}", saved.getId(), appointment.getId());
 
         // =================================================================================
-        // FHIR + IPFS INTEGRATION (The "Killer Feature")
+        // BLOCKCHAIN + FHIR + IPFS INTEGRATION (The "Killer Feature")
+        // Step 1: Create blockchain record first (without IPFS hash)
+        // Step 2: Upload FHIR to IPFS after blockchain success
+        // Step 3: Update both DB and blockchain with IPFS hash
         // =================================================================================
-        try {
-            // 1. Convert to FHIR Standard
-            org.hl7.fhir.r4.model.Immunization fhirImmunization = fhirImmunizationMapper.toFhirImmunization(saved);
-
-            // 2. Serialize to JSON
-            String fhirJson = fhirContext.newJsonParser().setPrettyPrint(true).encodeResourceToString(fhirImmunization);
-
-            // 3. Upload to IPFS (Real)
-            String ipfsHash = blockchainService.uploadToIpfs(fhirJson);
-
-            if (ipfsHash != null) {
-                // 4. Update Record with IPFS Hash
-                saved.setIpfsHash(ipfsHash);
-                saved = vaccineRecordRepository.save(saved);
-                log.info("FHIR Immunization JSON generated and uploaded to IPFS. Hash: {}", ipfsHash);
-            } else {
-                log.warn("Failed to upload FHIR JSON to IPFS (Hash is null)");
-            }
-
-        } catch (Exception e) {
-            log.error("Failed to generate FHIR JSON or upload to IPFS", e);
-            // Continue without IPFS hash if failed
-        }
-
-        // Push to blockchain asynchronously
+        
+        // Step 1: Push to blockchain first (without IPFS hash)
         try {
             if (blockchainService.isBlockchainServiceAvailable()) {
                 var blockchainResponse = blockchainService.createVaccineRecord(saved);
@@ -133,16 +113,54 @@ public class VaccineRecordService {
                     saved.setTransactionHash(blockchainResponse.getData().getTransactionHash());
                     saved.setBlockNumber(blockchainResponse.getData().getBlockNumber());
                     vaccineRecordRepository.save(saved);
-                    log.info("Vaccine record synced to blockchain: recordId={}, txHash={}",
+                    log.info("✅ Vaccine record synced to blockchain: recordId={}, txHash={}",
                             blockchainResponse.getData().getRecordId(),
                             blockchainResponse.getData().getTransactionHash());
+                    
+                    // Step 2: Now upload to IPFS (only after blockchain success)
+                    try {
+                        // 1. Convert to FHIR Standard
+                        org.hl7.fhir.r4.model.Immunization fhirImmunization = fhirImmunizationMapper.toFhirImmunization(saved);
+
+                        // 2. Serialize to JSON
+                        String fhirJson = fhirContext.newJsonParser().setPrettyPrint(true).encodeResourceToString(fhirImmunization);
+
+                        // 3. Upload to IPFS
+                        String ipfsHash = blockchainService.uploadToIpfs(fhirJson);
+
+                        if (ipfsHash != null) {
+                            // Step 3: Update both DB and blockchain with IPFS hash
+                            saved.setIpfsHash(ipfsHash);
+                            saved = vaccineRecordRepository.save(saved);
+                            log.info("✅ FHIR Immunization JSON uploaded to IPFS. Hash: {}", ipfsHash);
+                            
+                            // Update blockchain record with IPFS hash
+                            try {
+                                blockchainService.updateVaccineRecordIpfs(
+                                    blockchainResponse.getData().getRecordId(), 
+                                    ipfsHash
+                                );
+                                log.info("✅ Blockchain record updated with IPFS hash");
+                            } catch (Exception e) {
+                                log.warn("⚠️ Failed to update blockchain with IPFS hash (DB still updated): {}", e.getMessage());
+                            }
+                        } else {
+                            log.warn("⚠️ Failed to upload FHIR JSON to IPFS (Hash is null)");
+                        }
+
+                    } catch (Exception e) {
+                        log.error("⚠️ Failed to generate FHIR JSON or upload to IPFS", e);
+                        // Continue - blockchain record already created successfully
+                    }
+                } else {
+                    log.warn("⚠️ Blockchain record creation failed, skipping IPFS upload");
                 }
             } else {
-                log.warn("Blockchain service not available, record saved to database only");
+                log.warn("⚠️ Blockchain service not available, record saved to database only");
             }
         } catch (Exception e) {
-            log.error("Failed to sync vaccine record to blockchain", e);
-            // Continue - record is still saved in database
+            log.error("❌ Failed to sync vaccine record to blockchain", e);
+            // Record is still saved in database but not on blockchain
         }
 
         return saved;

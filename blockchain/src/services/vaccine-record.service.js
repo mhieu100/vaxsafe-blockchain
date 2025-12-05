@@ -104,14 +104,37 @@ class VaccineRecordService {
 			};
 			const siteNum = siteMap[site] !== undefined ? siteMap[site] : 0;
 
-			// Convert dates to timestamps (handle empty strings)
-			const vaccinationTimestamp = Math.floor(
-				new Date(vaccinationDate).getTime() / 1000,
-			);
-			const expiryTimestamp =
-				expiryDate && expiryDate !== ""
-					? Math.floor(new Date(expiryDate).getTime() / 1000)
-					: 0; // Use 0 for empty/null expiry date
+			// Convert dates to timestamps (handle both timestamp numbers and date strings)
+			let vaccinationTimestamp;
+			if (typeof vaccinationDate === 'number' || !isNaN(Number(vaccinationDate))) {
+				// Already a timestamp (in seconds or milliseconds)
+				const timestamp = Number(vaccinationDate);
+				// If timestamp is in milliseconds (13 digits), convert to seconds
+				vaccinationTimestamp = timestamp > 10000000000 ? Math.floor(timestamp / 1000) : timestamp;
+			} else {
+				// Parse as date string
+				const vaccinationDateObj = new Date(vaccinationDate);
+				if (isNaN(vaccinationDateObj.getTime())) {
+					throw new Error(`Invalid vaccination date: ${vaccinationDate}`);
+				}
+				vaccinationTimestamp = Math.floor(vaccinationDateObj.getTime() / 1000);
+			}
+			
+			let expiryTimestamp = 0;
+			if (expiryDate && expiryDate !== "" && expiryDate !== "0") {
+				if (typeof expiryDate === 'number' || !isNaN(Number(expiryDate))) {
+					// Already a timestamp
+					const timestamp = Number(expiryDate);
+					expiryTimestamp = timestamp > 10000000000 ? Math.floor(timestamp / 1000) : timestamp;
+				} else {
+					// Parse as date string
+					const expiryDateObj = new Date(expiryDate);
+					if (isNaN(expiryDateObj.getTime())) {
+						throw new Error(`Invalid expiry date: ${expiryDate}`);
+					}
+					expiryTimestamp = Math.floor(expiryDateObj.getTime() / 1000);
+				}
+			}
 
 			const result = await this.contract.methods
 				.createRecord(

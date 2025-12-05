@@ -6,6 +6,12 @@ const vaccineRecordService = require("../services/vaccine-record.service");
 async function createRecord(req, res) {
 	try {
 		const recordData = req.body;
+		
+		// Log incoming request data for debugging
+		console.log("\n📥 ========== INCOMING REQUEST ==========");
+		console.log("Timestamp:", new Date().toISOString());
+		console.log("Request Body:", JSON.stringify(recordData, null, 2));
+		console.log("=========================================\n");
 
 		// Validate required fields (lotNumber and expiryDate are optional, can be empty string)
 		const requiredFields = [
@@ -24,6 +30,7 @@ async function createRecord(req, res) {
 
 		const missingFields = requiredFields.filter((field) => !recordData[field]);
 		if (missingFields.length > 0) {
+			console.log("❌ Missing required fields:", missingFields);
 			return res.status(400).json({
 				success: false,
 				message: `Missing required fields: ${missingFields.join(", ")}`,
@@ -33,8 +40,12 @@ async function createRecord(req, res) {
 		// Set default values for optional fields
 		recordData.lotNumber = recordData.lotNumber || "";
 		recordData.expiryDate = recordData.expiryDate || "";
+		
+		console.log("✅ Validation passed, creating vaccine record...");
 
 		const result = await vaccineRecordService.createRecord(recordData);
+		
+		console.log("✅ Vaccine record created successfully:", result.recordId);
 
 		res.json({
 			success: true,
@@ -42,6 +53,7 @@ async function createRecord(req, res) {
 			data: result,
 		});
 	} catch (error) {
+		console.log("❌ Error creating vaccine record:", error.message);
 		res.status(500).json({
 			success: false,
 			message: "Failed to create vaccine record",

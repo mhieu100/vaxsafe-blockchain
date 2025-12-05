@@ -272,6 +272,41 @@ public class BlockchainService {
     }
 
     /**
+     * Update vaccine record IPFS hash on blockchain
+     */
+    public boolean updateVaccineRecordIpfs(String recordId, String ipfsHash) {
+        try {
+            String url = blockchainServiceUrl + "/vaccine-records/" + recordId + "/ipfs";
+
+            HttpHeaders headers = new HttpHeaders();
+            headers.setContentType(MediaType.APPLICATION_JSON);
+            
+            // Create request body with ipfsHash
+            java.util.Map<String, String> requestBody = new java.util.HashMap<>();
+            requestBody.put("ipfsHash", ipfsHash);
+            
+            HttpEntity<java.util.Map<String, String>> entity = new HttpEntity<>(requestBody, headers);
+
+            ResponseEntity<String> response = restTemplate.exchange(
+                    url,
+                    HttpMethod.PUT,
+                    entity,
+                    String.class);
+
+            if (response.getStatusCode() == HttpStatus.OK) {
+                log.info("✅ Updated blockchain record {} with IPFS hash: {}", recordId, ipfsHash);
+                return true;
+            } else {
+                log.error("Failed to update vaccine record IPFS hash: {}", response.getStatusCode());
+                return false;
+            }
+        } catch (Exception e) {
+            log.error("Error updating vaccine record IPFS hash on blockchain", e);
+            return false;
+        }
+    }
+
+    /**
      * Check blockchain service status
      */
     public boolean isBlockchainServiceAvailable() {
