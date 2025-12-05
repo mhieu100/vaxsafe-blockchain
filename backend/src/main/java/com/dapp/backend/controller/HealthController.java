@@ -19,21 +19,7 @@ public class HealthController {
   public ResponseEntity<HealthResponse> hello() {
     return ResponseEntity.ok(
         HealthResponse.builder()
-            .message("Hello from VaxSafe Backend! update ci cd 12")
-            .status("OK")
-            .build()
-    );
-  }
-
-  /**
-   * Secure hello endpoint - requires authentication
-   */
-  @GetMapping("/hello-secure")
-  @ApiMessage("Secure health check endpoint")
-  public ResponseEntity<HealthResponse> helloSecure() {
-    return ResponseEntity.ok(
-        HealthResponse.builder()
-            .message("Hello from VaxSafe Backend (Secure)!")
+            .message("Hello from VaxSafe Backend! update ci cd 123")
             .status("OK")
             .build()
     );
