@@ -1,0 +1,24 @@
+services:
+  app:
+    build: .
+    image: mhieu100/blockchain-service:latest
+    container_name: blockchain-service
+    ports:
+      - "4000:4000"
+    env_file:
+      - .env
+    environment:
+      - PORT=${PORT}
+      - NODE_ENV=${NODE_ENV}
+      - GANACHE_HOST=${GANACHE_HOST}
+      - GANACHE_PORT=${GANACHE_PORT}
+      - GANACHE_URL=${GANACHE_URL}
+      - JWT_SECRET=${JWT_SECRET}
+      - JWT_SECRET_IS_BASE64=${JWT_SECRET_IS_BASE64}
+    restart: always
+    deploy:
+      resources:
+        limits:
+          memory: 300M
+        reservations:
+          memory: 100M

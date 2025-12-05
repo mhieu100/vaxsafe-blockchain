@@ -1,0 +1,39 @@
+{
+	"name": "blockchain-service",
+	"version": "1.0.0",
+	"description": "Backend service to interact with blockchain smart contracts",
+	"main": "src/server.js",
+	"scripts": {
+		"start": "node src/server.js",
+		"dev": "nodemon src/server.js",
+		"check": "biome check .",
+		"check:fix": "biome check --write .",
+		"lint": "biome lint .",
+		"format": "biome format .",
+		"prepare": "husky"
+	},
+	"keywords": [
+		"blockchain",
+		"ethereum",
+		"truffle",
+		"ganache",
+		"express"
+	],
+	"author": "",
+	"license": "MIT",
+	"dependencies": {
+		"@pinata/sdk": "^2.1.0",
+		"body-parser": "^1.20.2",
+		"cors": "^2.8.5",
+		"dotenv": "^16.3.1",
+		"express": "^4.18.2",
+		"socket.io": "^4.8.1",
+		"web3": "^4.3.0"
+	},
+	"devDependencies": {
+		"@biomejs/biome": "^2.3.8",
+		"husky": "^9.1.7",
+		"nodemon": "^3.0.1",
+		"truffle": "^5.11.5"
+	}
+}

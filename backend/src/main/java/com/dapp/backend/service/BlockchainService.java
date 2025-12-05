@@ -10,7 +10,6 @@ import org.springframework.http.*;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
-
 @Service
 @RequiredArgsConstructor
 @Slf4j
@@ -32,7 +31,8 @@ public class BlockchainService {
      * 
      * Future considerations:
      * - Option 1: Keep simplified (backend as universal guardian) - easier
-     * - Option 2: Create wallets for each parent, pass real guardian address - complex
+     * - Option 2: Create wallets for each parent, pass real guardian address -
+     * complex
      * - Option 3: Multi-sig guardian with backend + parent - most secure
      */
     public BlockchainIdentityResponse createIdentity(
@@ -40,11 +40,10 @@ public class BlockchainService {
             String did,
             IdentityType idType,
             String ipfsDataHash,
-            String email
-    ) {
+            String email) {
         try {
             String url = blockchainServiceUrl + "/identity/create";
-            
+
             BlockchainIdentityRequest request = BlockchainIdentityRequest.builder()
                     .identityHash(identityHash)
                     .did(did)
@@ -61,12 +60,11 @@ public class BlockchainService {
                     url,
                     HttpMethod.POST,
                     entity,
-                    BlockchainIdentityResponse.class
-            );
+                    BlockchainIdentityResponse.class);
 
             if (response.getStatusCode() == HttpStatus.OK && response.getBody() != null) {
-                var txHash = response.getBody().getData() != null ? 
-                    response.getBody().getData().getTransactionHash() : "N/A";
+                var txHash = response.getBody().getData() != null ? response.getBody().getData().getTransactionHash()
+                        : "N/A";
                 log.info("\n" +
                         "╔═══════════════════════════════════════════════════════════════════╗\n" +
                         "║           🔗 BLOCKCHAIN SERVICE - IDENTITY CREATED                ║\n" +
@@ -95,11 +93,10 @@ public class BlockchainService {
     public BlockchainDocumentResponse linkDocument(
             String identityHash,
             String documentType,
-            String ipfsHash
-    ) {
+            String ipfsHash) {
         try {
             String url = blockchainServiceUrl + "/identity/link-document";
-            
+
             BlockchainDocumentRequest request = BlockchainDocumentRequest.builder()
                     .identityHash(identityHash)
                     .documentType(documentType)
@@ -114,12 +111,11 @@ public class BlockchainService {
                     url,
                     HttpMethod.POST,
                     entity,
-                    BlockchainDocumentResponse.class
-            );
+                    BlockchainDocumentResponse.class);
 
             if (response.getStatusCode() == HttpStatus.OK && response.getBody() != null) {
-                var txHash = response.getBody().getData() != null ? 
-                    response.getBody().getData().getTransactionHash() : "N/A";
+                var txHash = response.getBody().getData() != null ? response.getBody().getData().getTransactionHash()
+                        : "N/A";
                 log.info("\n" +
                         "╔═══════════════════════════════════════════════════════════════════╗\n" +
                         "║           📎 DOCUMENT LINKED TO BLOCKCHAIN                        ║\n" +
@@ -147,11 +143,10 @@ public class BlockchainService {
     public BlockchainIdentityDetails getIdentity(String identityHash) {
         try {
             String url = blockchainServiceUrl + "/identity/" + identityHash;
-            
+
             ResponseEntity<BlockchainIdentityDetails> response = restTemplate.getForEntity(
                     url,
-                    BlockchainIdentityDetails.class
-            );
+                    BlockchainIdentityDetails.class);
 
             if (response.getStatusCode() == HttpStatus.OK) {
                 return response.getBody();
@@ -171,7 +166,7 @@ public class BlockchainService {
     public BlockchainVaccineRecordResponse createVaccineRecord(VaccineRecord record) {
         try {
             String url = blockchainServiceUrl + "/vaccine-records/create";
-            
+
             BlockchainVaccineRecordRequest request = BlockchainVaccineRecordRequest.builder()
                     .identityHash(record.getPatientIdentityHash())
                     .vaccineId(String.valueOf(record.getVaccine().getId()))
@@ -198,8 +193,7 @@ public class BlockchainService {
                     url,
                     HttpMethod.POST,
                     entity,
-                    BlockchainVaccineRecordResponse.class
-            );
+                    BlockchainVaccineRecordResponse.class);
 
             if (response.getStatusCode() == HttpStatus.OK && response.getBody() != null) {
                 var data = response.getBody().getData();
@@ -214,7 +208,7 @@ public class BlockchainService {
                         "║  👨‍⚕️ Doctor: {}\n" +
                         "║  📜 TxHash: {}\n" +
                         "╚═══════════════════════════════════════════════════════════════════╝",
-                        data.getRecordId(), record.getPatientIdentityHash(), 
+                        data.getRecordId(), record.getPatientIdentityHash(),
                         record.getVaccine().getName(), record.getDoseNumber(),
                         record.getCenter().getName(), record.getDoctor().getFullName(),
                         data.getTransactionHash());
@@ -235,11 +229,10 @@ public class BlockchainService {
     public BlockchainVaccineRecordDetails getVaccineRecord(Long recordId) {
         try {
             String url = blockchainServiceUrl + "/vaccine-records/" + recordId;
-            
+
             ResponseEntity<BlockchainVaccineRecordDetails> response = restTemplate.getForEntity(
                     url,
-                    BlockchainVaccineRecordDetails.class
-            );
+                    BlockchainVaccineRecordDetails.class);
 
             if (response.getStatusCode() == HttpStatus.OK) {
                 return response.getBody();
@@ -259,11 +252,10 @@ public class BlockchainService {
     public BlockchainVaccineRecordList getVaccineRecordsByIdentity(String identityHash) {
         try {
             String url = blockchainServiceUrl + "/vaccine-records/identity/" + identityHash;
-            
+
             ResponseEntity<BlockchainVaccineRecordList> response = restTemplate.getForEntity(
                     url,
-                    BlockchainVaccineRecordList.class
-            );
+                    BlockchainVaccineRecordList.class);
 
             if (response.getStatusCode() == HttpStatus.OK) {
                 return response.getBody();
@@ -288,6 +280,43 @@ public class BlockchainService {
         } catch (Exception e) {
             log.warn("Blockchain service not available: {}", e.getMessage());
             return false;
+        }
+    }
+
+    /**
+     * Upload JSON to IPFS via Blockchain Service
+     */
+    public String uploadToIpfs(String jsonContent) {
+        try {
+            String url = blockchainServiceUrl + "/ipfs/upload";
+
+            HttpHeaders headers = new HttpHeaders();
+            headers.setContentType(MediaType.APPLICATION_JSON);
+            HttpEntity<String> entity = new HttpEntity<>(jsonContent, headers);
+
+            ResponseEntity<String> response = restTemplate.exchange(
+                    url,
+                    HttpMethod.POST,
+                    entity,
+                    String.class);
+
+            if (response.getStatusCode() == HttpStatus.OK && response.getBody() != null) {
+                // Parse response to get IPFS hash
+                // Response format: { success: true, data: { ipfsHash: "...", url: "..." } }
+                com.fasterxml.jackson.databind.JsonNode root = new com.fasterxml.jackson.databind.ObjectMapper()
+                        .readTree(response.getBody());
+                if (root.has("success") && root.get("success").asBoolean()) {
+                    String ipfsHash = root.get("data").get("ipfsHash").asText();
+                    log.info("Uploaded to IPFS: {}", ipfsHash);
+                    return ipfsHash;
+                }
+            }
+
+            log.error("Failed to upload to IPFS: {}", response.getBody());
+            return null;
+        } catch (Exception e) {
+            log.error("Error uploading to IPFS", e);
+            return null;
         }
     }
 }

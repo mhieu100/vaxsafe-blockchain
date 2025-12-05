@@ -1,0 +1,606 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Blockchain Monitor - Realtime</title>
+    <script src="https://cdn.socket.io/4.5.4/socket.io.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 20px;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .header {
+            text-align: center;
+            color: white;
+            margin-bottom: 30px;
+        }
+
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+        }
+
+        .connection-status {
+            display: inline-block;
+            padding: 8px 20px;
+            border-radius: 20px;
+            font-weight: bold;
+            margin-top: 10px;
+        }
+
+        .connection-status.connected {
+            background: #10b981;
+            color: white;
+        }
+
+        .connection-status.disconnected {
+            background: #ef4444;
+            color: white;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .stat-card {
+            background: white;
+            padding: 25px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            transition: transform 0.3s;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .stat-card h3 {
+            color: #6b7280;
+            font-size: 0.9em;
+            margin-bottom: 10px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .stat-card .value {
+            font-size: 2.5em;
+            font-weight: bold;
+            color: #667eea;
+        }
+
+        .stat-card .subtitle {
+            color: #9ca3af;
+            font-size: 0.9em;
+            margin-top: 5px;
+        }
+
+        .events-section {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            margin-bottom: 20px;
+        }
+
+        .events-section h2 {
+            color: #667eea;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #e5e7eb;
+        }
+
+        .tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .tab {
+            padding: 10px 20px;
+            border: none;
+            background: #e5e7eb;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+
+        .tab.active {
+            background: #667eea;
+            color: white;
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .event-list {
+            max-height: 400px;
+            overflow-y: auto;
+        }
+
+        .event-item {
+            background: #f9fafb;
+            padding: 15px;
+            margin-bottom: 10px;
+            border-radius: 8px;
+            border-left: 4px solid #667eea;
+            animation: slideIn 0.3s;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateX(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        .event-item.new {
+            background: #fef3c7;
+            border-left-color: #f59e0b;
+        }
+
+        .event-item .event-type {
+            font-weight: bold;
+            color: #667eea;
+            margin-bottom: 5px;
+        }
+
+        .event-item .event-time {
+            color: #9ca3af;
+            font-size: 0.85em;
+        }
+
+        .event-item .event-data {
+            margin-top: 10px;
+            padding: 10px;
+            background: white;
+            border-radius: 5px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.85em;
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-size: 0.8em;
+            font-weight: 600;
+            margin-left: 8px;
+        }
+
+        .badge.success {
+            background: #d1fae5;
+            color: #065f46;
+        }
+
+        .badge.warning {
+            background: #fed7aa;
+            color: #92400e;
+        }
+
+        .no-events {
+            text-align: center;
+            color: #9ca3af;
+            padding: 40px;
+            font-style: italic;
+        }
+
+        .controls {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .btn-primary {
+            background: #667eea;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #5568d3;
+        }
+
+        .btn-secondary {
+            background: #e5e7eb;
+            color: #374151;
+        }
+
+        .btn-secondary:hover {
+            background: #d1d5db;
+        }
+
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 10px;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #667eea;
+            border-radius: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>⛓️ Blockchain Monitor</h1>
+            <p>Real-time monitoring of Ganache blockchain</p>
+            <div class="connection-status disconnected" id="connectionStatus">
+                ⚫ Disconnected
+            </div>
+        </div>
+
+        <div class="stats-grid">
+            <div class="stat-card">
+                <h3>📦 Total Blocks</h3>
+                <div class="value" id="totalBlocks">0</div>
+                <div class="subtitle">Last block: #<span id="lastBlock">-</span></div>
+            </div>
+
+            <div class="stat-card">
+                <h3>💳 Total Transactions</h3>
+                <div class="value" id="totalTransactions">0</div>
+                <div class="subtitle">On-chain transactions</div>
+            </div>
+
+            <div class="stat-card">
+                <h3>👤 Total Identities</h3>
+                <div class="value" id="totalIdentities">0</div>
+                <div class="subtitle">VaxSafe identities created</div>
+            </div>
+
+            <div class="stat-card">
+                <h3>💉 Vaccine Records</h3>
+                <div class="value" id="totalVaccineRecords">0</div>
+                <div class="subtitle">Records on blockchain</div>
+            </div>
+
+            <div class="stat-card">
+                <h3>👥 Connected Clients</h3>
+                <div class="value" id="connectedClients">0</div>
+                <div class="subtitle">Active WebSocket connections</div>
+            </div>
+        </div>
+
+        <div class="controls">
+            <button class="btn btn-secondary" onclick="clearEvents()">🗑️ Clear All</button>
+            <button class="btn btn-secondary" onclick="refreshStats()">🔄 Refresh Stats</button>
+        </div>
+
+        <div class="events-section">
+            <h2>📡 Live Events</h2>
+            
+            <div class="tabs">
+                <button class="tab active" onclick="switchTab('blocks')">New Blocks</button>
+                <button class="tab" onclick="switchTab('transactions')">Transactions</button>
+                <button class="tab" onclick="switchTab('events')">Contract Events</button>
+            </div>
+
+            <div id="blocks" class="tab-content active">
+                <div class="event-list" id="blocksList">
+                    <div class="no-events">Waiting for new blocks...</div>
+                </div>
+            </div>
+
+            <div id="transactions" class="tab-content">
+                <div class="event-list" id="transactionsList">
+                    <div class="no-events">Waiting for transactions...</div>
+                </div>
+            </div>
+
+            <div id="events" class="tab-content">
+                <div class="event-list" id="eventsList">
+                    <div class="no-events">Waiting for contract events...</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const socket = io(window.location.origin);
+
+        const blocksList = [];
+        const transactionsList = [];
+        const eventsList = [];
+
+        // Connection status
+        socket.on('connect', () => {
+            console.log('✅ Connected to server');
+            updateConnectionStatus(true);
+            socket.emit('getStats'); // Request initial stats
+        });
+
+        socket.on('disconnect', () => {
+            console.log('❌ Disconnected from server');
+            updateConnectionStatus(false);
+        });
+
+        // Blockchain stats
+        socket.on('blockchainStats', (stats) => {
+            console.log('📊 Stats received:', stats);
+            updateStats(stats);
+        });
+
+        // New block
+        socket.on('newBlock', (block) => {
+            console.log('📦 New block:', block);
+            // Prevent duplicates - check if block already exists
+            const exists = blocksList.some(b => b.number === block.number && b.hash === block.hash);
+            if (!exists) {
+                blocksList.unshift(block);
+                if (blocksList.length > 20) blocksList.pop();
+                updateBlocksList();
+            }
+        });
+
+        // Contract transaction
+        socket.on('contractTransaction', (tx) => {
+            console.log('💳 Contract transaction:', tx);
+            transactionsList.unshift(tx);
+            if (transactionsList.length > 20) transactionsList.pop();
+            updateTransactionsList();
+        });
+
+        // Contract event
+        socket.on('contractEvent', (event) => {
+            console.log('🎯 Contract event:', event);
+            eventsList.unshift(event);
+            if (eventsList.length > 20) eventsList.pop();
+            updateEventsList();
+        });
+
+        function updateConnectionStatus(connected) {
+            const statusEl = document.getElementById('connectionStatus');
+            if (connected) {
+                statusEl.className = 'connection-status connected';
+                statusEl.innerHTML = '🟢 Connected';
+            } else {
+                statusEl.className = 'connection-status disconnected';
+                statusEl.innerHTML = '⚫ Disconnected';
+            }
+        }
+
+        function updateStats(stats) {
+            document.getElementById('totalBlocks').textContent = stats.totalBlocks || 0;
+            document.getElementById('lastBlock').textContent = stats.lastBlockNumber || '-';
+            document.getElementById('totalTransactions').textContent = stats.totalTransactions || 0;
+            document.getElementById('totalIdentities').textContent = stats.totalIdentities || 0;
+            document.getElementById('totalVaccineRecords').textContent = stats.totalVaccineRecords || 0;
+            document.getElementById('connectedClients').textContent = stats.connectedClients || 0;
+        }
+
+        function updateBlocksList() {
+            const container = document.getElementById('blocksList');
+            if (blocksList.length === 0) {
+                container.innerHTML = '<div class="no-events">Waiting for new blocks...</div>';
+                return;
+            }
+
+            container.innerHTML = blocksList.map(block => {
+                // Handle timestamp - might be Date object or string
+                const timestamp = block.timestamp instanceof Date ? block.timestamp : new Date(block.timestamp);
+                return `
+                <div class="event-item">
+                    <div class="event-type">
+                        📦 Block #${block.number}
+                        <span class="badge success">${block.transactionCount} txs</span>
+                    </div>
+                    <div class="event-time">${timestamp.toLocaleString()}</div>
+                    <div class="event-data">
+                        Hash: ${block.hash}<br>
+                        Gas Used: ${block.gasUsed.toLocaleString()}
+                    </div>
+                </div>
+                `;
+            }).join('');
+        }
+
+        function updateTransactionsList() {
+            const container = document.getElementById('transactionsList');
+            if (transactionsList.length === 0) {
+                container.innerHTML = '<div class="no-events">Waiting for transactions...</div>';
+                return;
+            }
+
+            container.innerHTML = transactionsList.map(tx => {
+                const contractBadge = tx.contractType ? 
+                    `<span class="badge success">${tx.contractType}</span>` : '';
+                
+                let eventsHtml = '';
+                if (tx.events && tx.events.length > 0) {
+                    eventsHtml = '<br><strong>Events:</strong><br>' + 
+                        tx.events.map(evt => {
+                            const icon = getEventIcon(evt.event);
+                            return `${icon} <strong>${evt.event}</strong>: ${formatEventSummary(evt)}`;
+                        }).join('<br>');
+                }
+
+                // Handle timestamp - might be Date object or string
+                const timestamp = tx.timestamp instanceof Date ? tx.timestamp : new Date(tx.timestamp);
+                
+                return `
+                    <div class="event-item">
+                        <div class="event-type">
+                            💳 Transaction ${contractBadge}
+                            <span class="badge ${tx.status ? 'success' : 'warning'}">
+                                ${tx.status ? 'Success' : 'Failed'}
+                            </span>
+                        </div>
+                        <div class="event-time">${timestamp.toLocaleString()}</div>
+                        <div class="event-data">
+                            <strong>Hash:</strong> ${tx.hash}<br>
+                            <strong>From:</strong> ${tx.from}<br>
+                            <strong>To:</strong> ${tx.to}<br>
+                            <strong>Block:</strong> #${tx.blockNumber}<br>
+                            <strong>Gas Used:</strong> ${tx.gasUsed.toLocaleString()}
+                            ${eventsHtml}
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function formatEventSummary(evt) {
+            if (evt.event === 'IdentityCreated') {
+                return `${evt.idType} - ${evt.identityHash.substring(0, 16)}...`;
+            } else if (evt.event === 'RecordCreated') {
+                return `${evt.vaccineName} Dose #${evt.doseNumber} - Record #${evt.recordId}`;
+            } else if (evt.event === 'DocumentLinked') {
+                return `${evt.documentType}`;
+            }
+            return '';
+        }
+
+        function updateEventsList() {
+            const container = document.getElementById('eventsList');
+            if (eventsList.length === 0) {
+                container.innerHTML = '<div class="no-events">Waiting for contract events...</div>';
+                return;
+            }
+
+            container.innerHTML = eventsList.map(event => {
+                const icon = getEventIcon(event.type);
+                const badge = event.contract ? `<span class="badge success">${event.contract}</span>` : '';
+                const details = formatEventDetails(event);
+                
+                return `
+                    <div class="event-item">
+                        <div class="event-type">
+                            ${icon} ${event.type} ${badge}
+                        </div>
+                        <div class="event-time">
+                            Block #${event.blockNumber} | 
+                            <a href="#" onclick="showTxDetails('${event.transactionHash}'); return false;" 
+                               style="color: #667eea; text-decoration: none;">
+                                ${event.transactionHash.substring(0, 10)}...
+                            </a>
+                        </div>
+                        <div class="event-data">
+                            ${details}
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function getEventIcon(eventType) {
+            const icons = {
+                'IdentityCreated': '👤',
+                'DocumentLinked': '📎',
+                'RecordCreated': '💉',
+                'RecordIPFSUpdated': '🔄',
+            };
+            return icons[eventType] || '🎯';
+        }
+
+        function formatEventDetails(event) {
+            const data = event.data;
+            
+            if (event.type === 'IdentityCreated') {
+                return `
+                    <strong>Identity Hash:</strong> ${data.identityHash}<br>
+                    <strong>DID:</strong> ${data.did}<br>
+                    <strong>Guardian:</strong> ${data.guardian}<br>
+                    <strong>Type:</strong> ${data.idType}<br>
+                    ${data.ipfsDataHash ? `<strong>IPFS:</strong> ${data.ipfsDataHash}<br>` : ''}
+                `;
+            } else if (event.type === 'DocumentLinked') {
+                return `
+                    <strong>Identity Hash:</strong> ${data.identityHash}<br>
+                    <strong>Document Type:</strong> ${data.documentType}<br>
+                    <strong>IPFS Hash:</strong> ${data.ipfsHash}<br>
+                `;
+            } else if (event.type === 'RecordCreated') {
+                return `
+                    <strong>Record ID:</strong> ${data.recordId}<br>
+                    <strong>Identity Hash:</strong> ${data.identityHash}<br>
+                    <strong>Vaccine:</strong> ${data.vaccineName} (Dose #${data.doseNumber})<br>
+                    <strong>Site:</strong> ${data.site}<br>
+                    <strong>Doctor:</strong> ${data.doctorName}<br>
+                    <strong>Center:</strong> ${data.centerName}<br>
+                `;
+            } else if (event.type === 'RecordIPFSUpdated') {
+                return `
+                    <strong>Record ID:</strong> ${data.recordId}<br>
+                    <strong>New IPFS Hash:</strong> ${data.ipfsHash}<br>
+                `;
+            }
+            
+            return JSON.stringify(data, null, 2);
+        }
+
+        function showTxDetails(txHash) {
+            alert('Transaction: ' + txHash + '\n\nClick OK to view in a new tab');
+            // Could open Etherscan-like explorer here
+        }
+
+        function switchTab(tabName) {
+            // Update tab buttons
+            document.querySelectorAll('.tab').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            event.target.classList.add('active');
+
+            // Update tab content
+            document.querySelectorAll('.tab-content').forEach(content => {
+                content.classList.remove('active');
+            });
+            document.getElementById(tabName).classList.add('active');
+        }
+
+        function clearEvents() {
+            blocksList.length = 0;
+            transactionsList.length = 0;
+            eventsList.length = 0;
+            updateBlocksList();
+            updateTransactionsList();
+            updateEventsList();
+        }
+
+        function refreshStats() {
+            socket.emit('getStats');
+        }
+    </script>
+</body>
+</html>

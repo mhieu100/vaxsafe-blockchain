@@ -25,6 +25,10 @@ public class VaccineRecordService {
     private final VaccineRecordRepository vaccineRecordRepository;
     private final FamilyMemberRepository familyMemberRepository;
     private final BlockchainService blockchainService;
+    private final com.dapp.backend.dto.mapper.fhir.FhirImmunizationMapper fhirImmunizationMapper;
+
+    // HAPI FHIR Context (Thread-safe, expensive to create)
+    private static final ca.uhn.fhir.context.FhirContext fhirContext = ca.uhn.fhir.context.FhirContext.forR4();
 
     /**
      * Create vaccine record from completed appointment
@@ -92,6 +96,33 @@ public class VaccineRecordService {
         VaccineRecord saved = vaccineRecordRepository.save(record);
 
         log.info("Created vaccine record {} for appointment {}", saved.getId(), appointment.getId());
+
+        // =================================================================================
+        // FHIR + IPFS INTEGRATION (The "Killer Feature")
+        // =================================================================================
+        try {
+            // 1. Convert to FHIR Standard
+            org.hl7.fhir.r4.model.Immunization fhirImmunization = fhirImmunizationMapper.toFhirImmunization(saved);
+
+            // 2. Serialize to JSON
+            String fhirJson = fhirContext.newJsonParser().setPrettyPrint(true).encodeResourceToString(fhirImmunization);
+
+            // 3. Upload to IPFS (Real)
+            String ipfsHash = blockchainService.uploadToIpfs(fhirJson);
+
+            if (ipfsHash != null) {
+                // 4. Update Record with IPFS Hash
+                saved.setIpfsHash(ipfsHash);
+                saved = vaccineRecordRepository.save(saved);
+                log.info("FHIR Immunization JSON generated and uploaded to IPFS. Hash: {}", ipfsHash);
+            } else {
+                log.warn("Failed to upload FHIR JSON to IPFS (Hash is null)");
+            }
+
+        } catch (Exception e) {
+            log.error("Failed to generate FHIR JSON or upload to IPFS", e);
+            // Continue without IPFS hash if failed
+        }
 
         // Push to blockchain asynchronously
         try {
@@ -237,33 +268,35 @@ public class VaccineRecordService {
     }
 
     /**
-     * Get all vaccine records for a patient (includes both user records and family member records)
+     * Get all vaccine records for a patient (includes both user records and family
+     * member records)
+     * 
      * @param userId The ID of the user (patient or guardian)
      * @return List of vaccine records
      */
     public List<VaccineRecordResponse> getAllVaccineRecordsByPatient(Long userId) throws AppException {
         log.info("Fetching vaccine records for user ID: {}", userId);
-        
+
         List<VaccineRecord> records = new ArrayList<>();
-        
+
         // Get records for the user themselves (adult patient)
         List<VaccineRecord> userRecords = vaccineRecordRepository.findByUserIdOrderByVaccinationDateDesc(userId);
         records.addAll(userRecords);
         log.info("Found {} records for user ID: {}", userRecords.size(), userId);
-        
+
         // Get records for family members (children) of this user
         List<FamilyMember> familyMembers = familyMemberRepository.findByUserId(userId);
         log.info("Found {} family members for user ID: {}", familyMembers.size(), userId);
-        
+
         for (FamilyMember member : familyMembers) {
             List<VaccineRecord> memberRecords = vaccineRecordRepository
                     .findByFamilyMemberIdOrderByVaccinationDateDesc(member.getId());
             records.addAll(memberRecords);
             log.info("Found {} records for family member ID: {}", memberRecords.size(), member.getId());
         }
-        
+
         log.info("Total vaccine records found: {}", records.size());
-        
+
         return records.stream()
                 .map(this::mapToResponse)
                 .collect(Collectors.toList());

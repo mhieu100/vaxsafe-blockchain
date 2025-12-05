@@ -123,6 +123,11 @@
             <groupId>org.springframework.ai</groupId>
             <artifactId>spring-ai-qdrant-store-spring-boot-starter</artifactId>
         </dependency>
+    <dependency>
+			<groupId>ca.uhn.hapi.fhir</groupId>
+			<artifactId>hapi-fhir-structures-r4</artifactId>
+			<version>6.10.0</version>
+		</dependency>
 	</dependencies>
 
 	<build>
