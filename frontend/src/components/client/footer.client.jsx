@@ -1,13 +1,12 @@
 import {
   FacebookOutlined,
-  GithubOutlined,
   InstagramOutlined,
   LinkedinOutlined,
   SafetyCertificateOutlined,
   SendOutlined,
   TwitterOutlined,
 } from '@ant-design/icons';
-import { Button, Input, Space } from 'antd';
+import { Button, Input } from 'antd';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
 

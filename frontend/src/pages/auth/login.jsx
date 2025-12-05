@@ -6,7 +6,7 @@ import {
   SafetyCertificateFilled,
   UserOutlined,
 } from '@ant-design/icons';
-import { Button, Card, Dropdown, Form, Input, message, Typography } from 'antd';
+import { Button, Dropdown, Form, Input, message, Typography } from 'antd';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link, useNavigate } from 'react-router-dom';

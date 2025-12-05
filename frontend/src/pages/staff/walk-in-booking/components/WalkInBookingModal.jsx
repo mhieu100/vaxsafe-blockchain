@@ -1,10 +1,4 @@
-import {
-  CalendarOutlined,
-  ClockCircleOutlined,
-  EnvironmentOutlined,
-  ReloadOutlined,
-  UserOutlined,
-} from '@ant-design/icons';
+import { CalendarOutlined, ClockCircleOutlined, UserOutlined } from '@ant-design/icons';
 import {
   Card,
   Col,
@@ -41,7 +35,7 @@ const WalkInBookingModal = ({ open, setOpen, patient, onSuccess }) => {
   const [loading, setLoading] = useState(false);
   const [vaccines, setVaccines] = useState([]);
   const [centers, setCenters] = useState([]);
-  const [selectedVaccine, setSelectedVaccine] = useState(null);
+  const [_selectedVaccine, setSelectedVaccine] = useState(null);
 
   // Doctor slot selection
   const [loadingSlots, setLoadingSlots] = useState(false);
@@ -69,7 +63,7 @@ const WalkInBookingModal = ({ open, setOpen, patient, onSuccess }) => {
       if (res?.data?.result) {
         setVaccines(res.data.result);
       }
-    } catch (error) {
+    } catch (_error) {
       notification.error({
         message: 'Lỗi',
         description: 'Không thể tải danh sách vắc xin',
@@ -83,7 +77,7 @@ const WalkInBookingModal = ({ open, setOpen, patient, onSuccess }) => {
       if (res?.data?.result) {
         setCenters(res.data.result);
       }
-    } catch (error) {
+    } catch (_error) {
       notification.error({
         message: 'Lỗi',
         description: 'Không thể tải danh sách trung tâm',

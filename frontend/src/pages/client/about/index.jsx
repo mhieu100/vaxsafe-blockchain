@@ -5,7 +5,7 @@ import {
   TeamOutlined,
   ThunderboltOutlined,
 } from '@ant-design/icons';
-import { Button, Card, Col, Row, Statistic, Timeline, Typography } from 'antd';
+import { Button, Timeline, Typography } from 'antd';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 

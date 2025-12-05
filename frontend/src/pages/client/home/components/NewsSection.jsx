@@ -1,5 +1,5 @@
-import { ArrowRightOutlined, CalendarOutlined, EyeOutlined, ReadOutlined } from '@ant-design/icons';
-import { Button, Skeleton, Tag } from 'antd';
+import { ArrowRightOutlined, CalendarOutlined, EyeOutlined } from '@ant-design/icons';
+import { Button, Skeleton } from 'antd';
 import dayjs from 'dayjs';
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
@@ -96,7 +96,7 @@ const NewsSection = () => {
                   <Skeleton active paragraph={{ rows: 3 }} />
                 </div>
               ))
-            : news.map((item, index) => (
+            : news.map((item, _index) => (
                 <div
                   key={item.id}
                   className="group flex flex-col bg-white rounded-3xl border border-slate-100 overflow-hidden hover:shadow-2xl hover:shadow-blue-900/5 transition-all duration-500 hover:-translate-y-2 cursor-pointer"

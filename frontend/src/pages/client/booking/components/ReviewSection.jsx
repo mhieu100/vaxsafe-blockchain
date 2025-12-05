@@ -1,7 +1,6 @@
 import {
   BarcodeOutlined,
   CalendarOutlined,
-  CheckCircleFilled,
   ClockCircleOutlined,
   EnvironmentOutlined,
   MedicineBoxOutlined,
@@ -42,7 +41,7 @@ const ReviewSection = ({ bookingData, vaccine, setCurrentStep, handleBookingSubm
     return families?.result?.find((member) => member.id === memberId);
   };
 
-  const handleReviewPrev = () => {
+  const _handleReviewPrev = () => {
     setCurrentStep(1);
   };
 

@@ -4,7 +4,7 @@ import {
   SafetyCertificateFilled,
   UserOutlined,
 } from '@ant-design/icons';
-import { Avatar, Button, Card, Skeleton, Tag, Tooltip, Typography } from 'antd';
+import { Avatar, Button, Card, Skeleton, Tag, Typography } from 'antd';
 import dayjs from 'dayjs';
 import { useMemo } from 'react';
 import { useAccountStore } from '@/stores/useAccountStore';
@@ -15,7 +15,7 @@ const CardInfoUser = ({ setOpen }) => {
   const user = useAccountStore((state) => state.user);
   const isAuthenticated = useAccountStore((state) => state.isAuthenticated);
 
-  const memberSince = useMemo(() => {
+  const _memberSince = useMemo(() => {
     if (!user?.createdAt) return '--'; // Assuming createdAt exists, or fallback
     try {
       return dayjs(user.createdAt).format('MMM YYYY');

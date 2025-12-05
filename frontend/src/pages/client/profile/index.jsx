@@ -1,4 +1,4 @@
-import { Card, Col, Row } from 'antd';
+import { Col, Row } from 'antd';
 import { useState } from 'react';
 import { ModalUpdateAvatar } from '@/components/modal/profile';
 import CardInfoUser from './components/CardInfoUser';

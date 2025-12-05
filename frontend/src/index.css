@@ -13,7 +13,7 @@ body {
 .ant-notification,
 .ant-modal,
 .ant-message-notice-content {
-  font-family: "Plus Jakarta Sans", sans-serif !important;
+  font-family: "Plus Jakarta Sans", sans-serif;
 }
 
 /* Custom Scrollbar Global */
