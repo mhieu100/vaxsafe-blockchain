@@ -38,7 +38,10 @@ public class AuthService {
     private final NotificationLogService notificationLogService;
 
     @org.springframework.beans.factory.annotation.Value("${google.mobile.client-id}")
-    private String googleClientId;
+    private String googleMobileClientId;
+
+    @org.springframework.beans.factory.annotation.Value("${google.client-id}")
+    private String googleWebClientId;
 
     private LoginResponse.UserLogin toUserLogin(User user) {
         Patient patient = user.getPatientProfile();
@@ -338,16 +341,17 @@ public class AuthService {
 
     public LoginResponse loginGoogleMobile(GoogleMobileLoginRequest request) throws AppException {
         try {
-            // 1. Verify ID Token
+            // 1. Verify ID Token with both mobile and web client IDs
             com.google.api.client.googleapis.auth.oauth2.GoogleIdTokenVerifier verifier = new com.google.api.client.googleapis.auth.oauth2.GoogleIdTokenVerifier.Builder(
                     new com.google.api.client.http.javanet.NetHttpTransport(),
                     new com.google.api.client.json.gson.GsonFactory())
-                    .setAudience(java.util.Collections.singletonList(googleClientId))
+                    .setAudience(java.util.Arrays.asList(googleMobileClientId, googleWebClientId))
                     .build();
 
             com.google.api.client.googleapis.auth.oauth2.GoogleIdToken idToken = verifier.verify(request.getIdToken());
 
             if (idToken == null) {
+                log.error("Google ID Token verification failed. Token may be invalid or expired.");
                 throw new AppException("Invalid Google ID Token");
             }
 
