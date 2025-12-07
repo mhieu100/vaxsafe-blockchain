@@ -79,7 +79,8 @@ public class SecurityConfiguration {
 
         String[] whiteList = {
                 "/", "/api/auth/login/password", "/api/auth/refresh", "/api/auth/register",
-                "/api/auth/complete-profile", "/api/auth/complete-google-profile", "/storage/**", "/email/**",
+                "/api/auth/complete-profile", "/api/auth/complete-google-profile", "/api/auth/login/google-mobile",
+                "/storage/**", "/email/**",
                 "/api/payments/vnpay/return", "/api/payments/paypal/success", "/api/payments/paypal/cancel",
                 "/api/health/hello",
                 "/oauth2/**", "/login/oauth2/**", "/api/test/**", "/api/reminders/**"
