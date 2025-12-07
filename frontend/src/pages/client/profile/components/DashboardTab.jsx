@@ -7,6 +7,7 @@ import {
 } from '@ant-design/icons';
 import { Button, Card, Col, Progress, Row, Statistic, Tag, Typography } from 'antd';
 import { useTranslation } from 'react-i18next';
+import HealthMetricsChart from './charts/HealthMetricsChart';
 
 const { Title, Text } = Typography;
 
@@ -97,6 +98,9 @@ const DashboardTab = ({ onTabChange }) => {
           </Button>
         </div>
       </Card>
+
+      {/* Health Metrics Chart */}
+      <HealthMetricsChart />
 
       {/* Recent Activity */}
       <Card

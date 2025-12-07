@@ -2,18 +2,8 @@ package com.dapp.backend.controller;
 
 import com.dapp.backend.enums.AppointmentStatus;
 import com.dapp.backend.enums.BookingEnum;
-import com.dapp.backend.model.Appointment;
-import com.dapp.backend.model.Booking;
-import com.dapp.backend.model.Center;
-import com.dapp.backend.model.DoctorAvailableSlot;
-import com.dapp.backend.model.User;
-import com.dapp.backend.model.Vaccine;
-import com.dapp.backend.repository.AppointmentRepository;
-import com.dapp.backend.repository.BookingRepository;
-import com.dapp.backend.repository.CenterRepository;
-import com.dapp.backend.repository.DoctorAvailableSlotRepository;
-import com.dapp.backend.repository.UserRepository;
-import com.dapp.backend.repository.VaccineRepository;
+import com.dapp.backend.model.*;
+import com.dapp.backend.repository.*;
 import com.dapp.backend.service.EmailService;
 import com.dapp.backend.service.NextDoseReminderService;
 import com.dapp.backend.service.VaccinationReminderService;
@@ -23,7 +13,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -88,7 +77,6 @@ public class TestReminderController {
                     .totalDoses(vaccine.getDosesRequired())
                     .totalAmount((double) vaccine.getPrice())
                     .status(BookingEnum.CONFIRMED)
-                    .createdAt(LocalDateTime.now())
                     .build();
             
             Booking savedBooking = bookingRepository.save(booking);

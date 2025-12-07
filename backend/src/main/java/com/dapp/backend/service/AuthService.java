@@ -8,6 +8,7 @@ import com.dapp.backend.exception.AppException;
 import com.dapp.backend.model.Center;
 import com.dapp.backend.model.Patient;
 import com.dapp.backend.model.Role;
+import com.dapp.backend.model.User;
 import com.dapp.backend.repository.PatientRepository;
 import com.dapp.backend.repository.RoleRepository;
 import com.dapp.backend.repository.UserRepository;
@@ -21,8 +22,6 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.stereotype.Service;
-
-import com.dapp.backend.model.User;
 
 @Service
 @RequiredArgsConstructor

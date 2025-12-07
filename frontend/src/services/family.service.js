@@ -39,3 +39,12 @@ export async function callUpdateMember(data) {
 export async function callDeleteMember(id) {
   return await apiClient.delete(`/api/family-members/${id}`);
 }
+
+/**
+ * Get family members by user ID (for staff usage)
+ * @param {number} userId - User ID
+ * @returns {Promise} List of family members
+ */
+export async function callGetFamilyMembersByUserId(userId) {
+  return await apiClient.get(`/api/family-members/user/${userId}`);
+}

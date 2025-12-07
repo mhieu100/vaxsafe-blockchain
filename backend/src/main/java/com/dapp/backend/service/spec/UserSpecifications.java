@@ -1,6 +1,5 @@
 package com.dapp.backend.service.spec;
 
-import com.dapp.backend.model.Appointment;
 import com.dapp.backend.model.User;
 import org.springframework.data.jpa.domain.Specification;
 

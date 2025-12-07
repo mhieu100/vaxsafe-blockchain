@@ -2,6 +2,7 @@ package com.dapp.backend.repository;
 
 import com.dapp.backend.enums.ReminderChannel;
 import com.dapp.backend.enums.ReminderStatus;
+import com.dapp.backend.enums.ReminderType;
 import com.dapp.backend.model.VaccinationReminder;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -44,7 +45,7 @@ public interface VaccinationReminderRepository extends JpaRepository<Vaccination
 
     // Find next dose reminders by date and status
     List<VaccinationReminder> findByReminderTypeAndScheduledDateAndStatus(
-            com.dapp.backend.enums.ReminderType reminderType, 
+            ReminderType reminderType, 
             LocalDate scheduledDate, 
             ReminderStatus status);
 

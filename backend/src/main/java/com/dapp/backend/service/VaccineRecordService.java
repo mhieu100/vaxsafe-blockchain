@@ -1,5 +1,6 @@
 package com.dapp.backend.service;
 
+import com.dapp.backend.dto.mapper.fhir.FhirImmunizationMapper;
 import com.dapp.backend.dto.response.VaccineRecordResponse;
 import com.dapp.backend.enums.VaccinationSite;
 import com.dapp.backend.exception.AppException;
@@ -25,7 +26,7 @@ public class VaccineRecordService {
     private final VaccineRecordRepository vaccineRecordRepository;
     private final FamilyMemberRepository familyMemberRepository;
     private final BlockchainService blockchainService;
-    private final com.dapp.backend.dto.mapper.fhir.FhirImmunizationMapper fhirImmunizationMapper;
+    private final FhirImmunizationMapper fhirImmunizationMapper;
 
     // HAPI FHIR Context (Thread-safe, expensive to create)
     private static final ca.uhn.fhir.context.FhirContext fhirContext = ca.uhn.fhir.context.FhirContext.forR4();

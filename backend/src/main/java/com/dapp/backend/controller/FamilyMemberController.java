@@ -14,7 +14,6 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-
 @RestController
 @RequestMapping("/api/family-members")
 @RequiredArgsConstructor
@@ -24,13 +23,15 @@ public class FamilyMemberController {
 
     @PostMapping
     @ApiMessage("Add a new family member")
-    public ResponseEntity<FamilyMemberResponse> addFamilyMember(@RequestBody FamilyMemberRequest request) throws AppException {
+    public ResponseEntity<FamilyMemberResponse> addFamilyMember(@RequestBody FamilyMemberRequest request)
+            throws AppException {
         return ResponseEntity.ok(familyMemberService.addFamilyMember(request));
     }
 
     @PutMapping
     @ApiMessage("Update a family member")
-    public ResponseEntity<FamilyMemberResponse> updateFamilyMember(@RequestBody FamilyMemberRequest request) throws AppException {
+    public ResponseEntity<FamilyMemberResponse> updateFamilyMember(@RequestBody FamilyMemberRequest request)
+            throws AppException {
         return ResponseEntity.ok(familyMemberService.updateFamilyMember(request));
     }
 
@@ -43,7 +44,8 @@ public class FamilyMemberController {
 
     @GetMapping
     @ApiMessage("Get all family members")
-    public ResponseEntity<Pagination> getAllFamilyMembers(@Filter Specification<FamilyMember> specification, Pageable pageable) throws AppException {
+    public ResponseEntity<Pagination> getAllFamilyMembers(@Filter Specification<FamilyMember> specification,
+            Pageable pageable) throws AppException {
         return ResponseEntity.ok(familyMemberService.getAllFamilyMembers(specification, pageable));
     }
 
@@ -53,5 +55,11 @@ public class FamilyMemberController {
         return familyMemberService.getFamilyMemberById(id)
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
+    }
+
+    @GetMapping("/user/{userId}")
+    @ApiMessage("Get family members by user id")
+    public ResponseEntity<java.util.List<FamilyMemberResponse>> getFamilyMembersByUserId(@PathVariable Long userId) {
+        return ResponseEntity.ok(familyMemberService.getFamilyMembersByUserId(userId));
     }
 }

@@ -1,15 +1,7 @@
 package com.dapp.backend.dto.mapper.fhir;
 
 import com.dapp.backend.model.VaccineRecord;
-import org.hl7.fhir.r4.model.Annotation;
-import org.hl7.fhir.r4.model.CodeableConcept;
-import org.hl7.fhir.r4.model.Coding;
-import org.hl7.fhir.r4.model.DateTimeType;
-import org.hl7.fhir.r4.model.Extension;
-import org.hl7.fhir.r4.model.Immunization;
-import org.hl7.fhir.r4.model.PositiveIntType;
-import org.hl7.fhir.r4.model.Reference;
-import org.hl7.fhir.r4.model.StringType;
+import org.hl7.fhir.r4.model.*;
 import org.springframework.stereotype.Component;
 
 import java.time.ZoneId;

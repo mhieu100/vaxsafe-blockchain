@@ -1,9 +1,8 @@
 package com.dapp.backend.repository;
 
+import com.dapp.backend.model.Role;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
-
-import com.dapp.backend.model.Role;
 
 import java.util.Optional;
 

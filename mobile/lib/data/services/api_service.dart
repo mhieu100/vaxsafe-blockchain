@@ -3,7 +3,6 @@ import 'dart:io';
 import 'package:http/http.dart' as http;
 import '../models/user_model.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
-import '../../core/constants/app_constants.dart';
 
 class ApiService {
   // Use 10.0.2.2 for Android emulator to access localhost

@@ -1,16 +1,11 @@
 package com.dapp.backend.security;
 
-import com.dapp.backend.dto.response.LoginResponse;
-import com.dapp.backend.exception.AppException;
-import com.dapp.backend.model.User;
-import com.dapp.backend.repository.UserRepository;
 import com.nimbusds.jose.util.Base64;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
-//import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.oauth2.jose.jws.MacAlgorithm;
 import org.springframework.security.oauth2.jwt.*;

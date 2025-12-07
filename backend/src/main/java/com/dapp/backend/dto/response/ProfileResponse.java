@@ -2,13 +2,13 @@ package com.dapp.backend.dto.response;
 
 import com.dapp.backend.enums.BloodType;
 import com.dapp.backend.enums.Gender;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
-import com.fasterxml.jackson.annotation.JsonFormat;
 
 public class ProfileResponse {
 

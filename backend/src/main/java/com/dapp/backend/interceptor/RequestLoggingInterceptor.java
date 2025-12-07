@@ -10,8 +10,6 @@ import org.springframework.web.servlet.ModelAndView;
 
 import java.time.Duration;
 import java.time.Instant;
-import java.util.Collections;
-import java.util.stream.Collectors;
 
 @Component
 public class RequestLoggingInterceptor implements HandlerInterceptor {

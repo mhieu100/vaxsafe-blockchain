@@ -1,25 +1,23 @@
 package com.dapp.backend.service;
 
-import java.util.List;
-import java.util.stream.Collectors;
-
 import com.dapp.backend.dto.mapper.UserMapper;
 import com.dapp.backend.dto.request.UserRequest;
 import com.dapp.backend.dto.response.DoctorResponse;
+import com.dapp.backend.dto.response.Pagination;
 import com.dapp.backend.dto.response.UserResponse;
+import com.dapp.backend.exception.AppException;
 import com.dapp.backend.model.Center;
+import com.dapp.backend.model.User;
+import com.dapp.backend.repository.UserRepository;
 import com.dapp.backend.service.spec.UserSpecifications;
+import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
-import com.dapp.backend.exception.AppException;
-import com.dapp.backend.model.User;
-import com.dapp.backend.dto.response.Pagination;
-import com.dapp.backend.repository.UserRepository;
-
-import lombok.RequiredArgsConstructor;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor

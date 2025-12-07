@@ -4,8 +4,8 @@ import com.dapp.backend.annotation.ApiMessage;
 import com.dapp.backend.dto.mapper.UserMapper;
 import com.dapp.backend.dto.response.DoctorAvailableSlotResponse;
 import com.dapp.backend.dto.response.DoctorResponse;
-import com.dapp.backend.dto.response.DoctorScheduleResponse;
 import com.dapp.backend.dto.response.DoctorWithScheduleResponse;
+import com.dapp.backend.enums.TimeSlotEnum;
 import com.dapp.backend.exception.AppException;
 import com.dapp.backend.model.Center;
 import com.dapp.backend.model.User;
@@ -79,16 +79,6 @@ public class DoctorScheduleController {
     }
 
     /**
-     * Get doctor's weekly schedule template
-     * GET /api/v1/doctors/{doctorId}/schedules
-     */
-    @GetMapping("/{doctorId}/schedules")
-    @ApiMessage("Get doctor's weekly schedule template")
-    public ResponseEntity<List<DoctorScheduleResponse>> getDoctorSchedules(@PathVariable Long doctorId) {
-        return ResponseEntity.ok(doctorScheduleService.getDoctorSchedules(doctorId));
-    }
-
-    /**
      * Get available slots for a doctor on a specific date
      * GET /api/v1/doctors/{doctorId}/slots/available?date=2025-11-20
      */
@@ -122,7 +112,7 @@ public class DoctorScheduleController {
     public ResponseEntity<List<DoctorAvailableSlotResponse>> getAvailableSlotsByCenterAndTimeSlot(
             @PathVariable Long centerId,
             @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date,
-            @RequestParam com.dapp.backend.enums.TimeSlotEnum timeSlot) {
+            @RequestParam TimeSlotEnum timeSlot) {
         return ResponseEntity.ok(
                 doctorScheduleService.getAvailableSlotsByCenterAndTimeSlot(centerId, date, timeSlot));
     }

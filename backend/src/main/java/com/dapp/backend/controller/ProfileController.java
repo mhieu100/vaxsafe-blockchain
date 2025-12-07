@@ -1,6 +1,7 @@
 package com.dapp.backend.controller;
 
 import com.dapp.backend.annotation.ApiMessage;
+import com.dapp.backend.dto.request.AvatarRequest;
 import com.dapp.backend.dto.request.UpdateProfileRequest;
 import com.dapp.backend.dto.response.ProfileResponse;
 import com.dapp.backend.exception.AppException;
@@ -10,7 +11,10 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 @Slf4j
 @RestController
@@ -70,7 +74,7 @@ public class ProfileController {
 
     @PutMapping("/avatar")
     @ApiMessage("Update avatar successfully")
-    public ResponseEntity<String> updateAvatar(@RequestBody com.dapp.backend.dto.request.AvatarRequest request)
+    public ResponseEntity<String> updateAvatar(@RequestBody AvatarRequest request)
             throws AppException {
         return ResponseEntity.ok(profileService.updateAvatar(request.getAvatarUrl()));
     }

@@ -1,18 +1,18 @@
 package com.dapp.backend.service;
 
+import com.dapp.backend.dto.response.CashierDashboardStatsResponse;
 import com.dapp.backend.dto.response.DashboardStatsResponse;
+import com.dapp.backend.dto.response.DoctorDashboardStatsResponse;
 import com.dapp.backend.enums.AppointmentStatus;
+import com.dapp.backend.model.Appointment;
+import com.dapp.backend.model.Center;
+import com.dapp.backend.model.User;
 import com.dapp.backend.model.Vaccine;
-import com.dapp.backend.repository.AppointmentRepository;
-import com.dapp.backend.repository.CenterRepository;
-import com.dapp.backend.repository.PatientRepository;
-import com.dapp.backend.repository.UserRepository;
-import com.dapp.backend.repository.VaccineRepository;
+import com.dapp.backend.repository.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
-
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -74,8 +74,8 @@ public class DashboardService {
                                 .build();
         }
 
-        public com.dapp.backend.dto.response.DoctorDashboardStatsResponse getDoctorStats(Long userId) {
-                com.dapp.backend.model.User doctorUser = userRepository.findById(userId)
+        public DoctorDashboardStatsResponse getDoctorStats(Long userId) {
+                User doctorUser = userRepository.findById(userId)
                                 .orElseThrow(() -> new RuntimeException("Doctor not found"));
 
                 LocalDate today = LocalDate.now();
@@ -100,19 +100,19 @@ public class DashboardService {
                 // Mock rating for now
                 double rating = 4.8;
 
-                com.dapp.backend.model.Appointment nextApt = appointmentRepository
+                Appointment nextApt = appointmentRepository
                                 .findFirstByDoctorAndStatusAndScheduledDateGreaterThanEqualOrderByScheduledDateAscScheduledTimeSlotAsc(
                                                 doctorUser, AppointmentStatus.SCHEDULED, today);
 
-                com.dapp.backend.dto.response.DoctorDashboardStatsResponse.NextAppointmentInfo nextAptInfo = null;
+                DoctorDashboardStatsResponse.NextAppointmentInfo nextAptInfo = null;
                 if (nextApt != null && nextApt.getBooking() != null) {
-                        nextAptInfo = new com.dapp.backend.dto.response.DoctorDashboardStatsResponse.NextAppointmentInfo(
+                        nextAptInfo = new DoctorDashboardStatsResponse.NextAppointmentInfo(
                                         nextApt.getScheduledTimeSlot().toString(),
                                         nextApt.getBooking().getPatient().getFullName(),
                                         nextApt.getBooking().getVaccine().getName());
                 }
 
-                return com.dapp.backend.dto.response.DoctorDashboardStatsResponse.builder()
+                return DoctorDashboardStatsResponse.builder()
                                 .todayAppointments(todayAppointments)
                                 .weekAppointments(weekAppointments)
                                 .weekCompleted(weekCompleted)
@@ -124,17 +124,17 @@ public class DashboardService {
                                 .build();
         }
 
-        public com.dapp.backend.dto.response.CashierDashboardStatsResponse getCashierStats(Long userId) {
-                com.dapp.backend.model.User cashierUser = userRepository.findById(userId)
+        public CashierDashboardStatsResponse getCashierStats(Long userId) {
+                User cashierUser = userRepository.findById(userId)
                                 .orElseThrow(() -> new RuntimeException("Cashier not found"));
 
-                com.dapp.backend.model.Center center = null;
+                Center center = null;
                 if (cashierUser.getCashier() != null) {
                         center = cashierUser.getCashier().getCenter();
                 }
 
                 if (center == null) {
-                        return com.dapp.backend.dto.response.CashierDashboardStatsResponse.builder().build();
+                        return CashierDashboardStatsResponse.builder().build();
                 }
 
                 LocalDate today = LocalDate.now();
@@ -150,7 +150,7 @@ public class DashboardService {
                 long weekCancelled = appointmentRepository.countByCenterAndStatusAndScheduledDateBetween(center,
                                 AppointmentStatus.CANCELLED, startOfWeek, endOfWeek);
 
-                return com.dapp.backend.dto.response.CashierDashboardStatsResponse.builder()
+                return CashierDashboardStatsResponse.builder()
                                 .urgentAppointments(urgentAppointments)
                                 .todayAppointments(todayAppointments)
                                 .weekCompleted(weekCompleted)

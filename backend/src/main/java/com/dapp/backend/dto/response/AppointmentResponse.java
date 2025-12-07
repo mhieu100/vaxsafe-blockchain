@@ -10,6 +10,7 @@ import java.time.LocalDateTime;
 @Data
 public class AppointmentResponse {
     Long id;
+    Long patientId;
     Integer doseNumber;
     LocalDate scheduledDate;
     TimeSlotEnum scheduledTimeSlot;

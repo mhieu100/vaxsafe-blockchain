@@ -4,10 +4,7 @@ import com.dapp.backend.enums.BookingEnum;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
-import org.hibernate.annotations.CreationTimestamp;
 
-import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -17,7 +14,7 @@ import java.util.List;
 @AllArgsConstructor
 @Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class Booking {
+public class Booking extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -40,9 +37,6 @@ public class Booking {
     Double totalAmount;
     @Enumerated(EnumType.STRING)
     BookingEnum status;
-
-    @CreationTimestamp
-    LocalDateTime createdAt;
 
     @OneToMany(mappedBy = "booking", orphanRemoval = true, cascade = CascadeType.ALL)
     List<Appointment> appointments;

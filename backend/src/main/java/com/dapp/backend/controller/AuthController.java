@@ -1,11 +1,13 @@
 package com.dapp.backend.controller;
 
+import com.dapp.backend.annotation.ApiMessage;
 import com.dapp.backend.dto.request.*;
 import com.dapp.backend.dto.response.LoginResponse;
 import com.dapp.backend.dto.response.RefreshResponse;
 import com.dapp.backend.dto.response.RegisterPatientResponse;
 import com.dapp.backend.exception.AppException;
 import com.dapp.backend.security.JwtUtil;
+import com.dapp.backend.service.AuthService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
@@ -15,11 +17,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.web.bind.annotation.*;
-
-import com.dapp.backend.annotation.ApiMessage;
-import com.dapp.backend.service.AuthService;
-
-import org.springframework.web.bind.annotation.GetMapping;
 
 @RestController
 @RequestMapping("/api/auth")

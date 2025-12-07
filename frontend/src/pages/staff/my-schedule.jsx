@@ -1,7 +1,7 @@
 import { CheckOutlined, CloseOutlined } from '@ant-design/icons';
 import { Badge, Button, message, notification, Space, Tag } from 'antd';
 import queryString from 'query-string';
-import { useRef } from 'react';
+import { useRef, useState } from 'react';
 import { sfLike } from 'spring-filter-query-builder';
 import DataTable from '@/components/data-table';
 import {
@@ -9,9 +9,10 @@ import {
   getAppointmentStatusColor,
   getAppointmentStatusDisplay,
 } from '@/constants/enums';
-import { callCancelAppointment, callCompleteAppointment } from '../../services/appointment.service';
+import { callCancelAppointment } from '../../services/appointment.service';
 import { useAppointmentStore } from '../../stores/useAppointmentStore';
 import { formatAppointmentTime } from '../../utils/appointment';
+import CompletionModal from './dashboard/components/CompletionModal';
 
 const MySchedulePage = () => {
   const tableRef = useRef();
@@ -21,23 +22,21 @@ const MySchedulePage = () => {
   const appointments = useAppointmentStore((state) => state.result);
   const fetchAppointmentOfDoctor = useAppointmentStore((state) => state.fetchAppointmentOfDoctor);
 
+  const [completionModalOpen, setCompletionModalOpen] = useState(false);
+  const [selectedAppointment, setSelectedAppointment] = useState(null);
+
   const reloadTable = () => {
     tableRef?.current?.reload();
   };
 
-  const handleComplete = async (id) => {
-    if (id) {
-      const res = await callCompleteAppointment(id);
-      if (res) {
-        message.success('Hoàn thành lịch hẹn thành công');
-        reloadTable();
-      } else {
-        notification.error({
-          message: res.error,
-          description: res.message,
-        });
-      }
-    }
+  const handleComplete = (record) => {
+    setSelectedAppointment({
+      id: record.id,
+      patient: record.patientName,
+      patientId: record.patientId,
+      vaccine: record.vaccineName,
+    });
+    setCompletionModalOpen(true);
   };
 
   const handleCancel = async (id) => {
@@ -113,7 +112,7 @@ const MySchedulePage = () => {
       render: (_value, entity) =>
         entity.status === AppointmentStatus.SCHEDULED ? (
           <Space>
-            <Button type="primary" onClick={() => handleComplete(entity.id)}>
+            <Button type="primary" onClick={() => handleComplete(entity)}>
               <CheckOutlined />
               Xác nhận
             </Button>
@@ -166,33 +165,43 @@ const MySchedulePage = () => {
   };
 
   return (
-    <DataTable
-      actionRef={tableRef}
-      headerTitle="Danh sách lịch hẹn hôm nay"
-      rowKey="id"
-      loading={isFetching}
-      columns={columns}
-      dataSource={appointments}
-      request={async (params, sort, filter) => {
-        const query = buildQuery(params, sort, filter);
-        fetchAppointmentOfDoctor(query);
-      }}
-      scroll={{ x: true }}
-      pagination={{
-        current: meta.page,
-        pageSize: meta.pageSize,
-        showSizeChanger: true,
-        total: meta.total,
-        showTotal: (total, range) => {
-          return (
-            <div>
-              {range[0]}-{range[1]} trên tổng số {total} dòng
-            </div>
-          );
-        },
-      }}
-      rowSelection={false}
-    />
+    <>
+      <DataTable
+        actionRef={tableRef}
+        headerTitle="Danh sách lịch hẹn hôm nay"
+        rowKey="id"
+        loading={isFetching}
+        columns={columns}
+        dataSource={appointments}
+        request={async (params, sort, filter) => {
+          const query = buildQuery(params, sort, filter);
+          fetchAppointmentOfDoctor(query);
+        }}
+        scroll={{ x: true }}
+        pagination={{
+          current: meta.page,
+          pageSize: meta.pageSize,
+          showSizeChanger: true,
+          total: meta.total,
+          showTotal: (total, range) => {
+            return (
+              <div>
+                {range[0]}-{range[1]} trên tổng số {total} dòng
+              </div>
+            );
+          },
+        }}
+        rowSelection={false}
+      />
+      <CompletionModal
+        open={completionModalOpen}
+        onCancel={() => setCompletionModalOpen(false)}
+        appointment={selectedAppointment}
+        onSuccess={() => {
+          reloadTable();
+        }}
+      />
+    </>
   );
 };
 

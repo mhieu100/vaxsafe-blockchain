@@ -11,17 +11,17 @@ import com.dapp.backend.repository.*;
 import com.dapp.backend.util.TokenExtractor;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
+import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
-
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.jpa.domain.Specification;
-import org.springframework.http.*;
-import org.springframework.stereotype.Service;
 
 import static com.dapp.backend.service.PaypalService.EXCHANGE_RATE_TO_USD;
 
@@ -295,6 +295,15 @@ public class BookingService {
 
         // Create booking
         Booking booking = new Booking();
+        if (request.getFamilyMemberId() != null) {
+            FamilyMember familyMember = familyMemberRepository.findById(request.getFamilyMemberId())
+                    .orElseThrow(() -> new AppException("Family member not found!"));
+            // Validate relationship
+            if (!familyMember.getUser().getId().equals(patient.getId())) {
+                throw new AppException("Family member does not belong to this patient");
+            }
+            booking.setFamilyMember(familyMember);
+        }
         booking.setPatient(patient);
         booking.setVaccine(vaccine);
         booking.setTotalAmount((double) vaccine.getPrice());

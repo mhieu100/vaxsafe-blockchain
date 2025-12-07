@@ -24,6 +24,7 @@ import { TimeSlotTime } from '@/constants/enums';
 import { callCreateWalkInBooking } from '@/services/booking.service';
 import { callFetchCenter } from '@/services/center.service';
 import { getAvailableSlotsByCenterAndTimeSlotAPI } from '@/services/doctor.service';
+import { callGetFamilyMembersByUserId } from '@/services/family.service';
 import { callFetchVaccine } from '@/services/vaccine.service';
 
 const { Text } = Typography;
@@ -43,10 +44,17 @@ const WalkInBookingModal = ({ open, setOpen, patient, onSuccess }) => {
   const [selectedSlot, setSelectedSlot] = useState(null);
   const [availableSlots, setAvailableSlots] = useState([]);
 
+  // Family Member Logic
+  const [appointmentFor, setAppointmentFor] = useState('self');
+  const [familyMembers, setFamilyMembers] = useState([]);
+
   useEffect(() => {
     if (open) {
       fetchVaccines();
       fetchCenters();
+      if (patient?.id) {
+        fetchFamilyMembers(patient.id);
+      }
     } else {
       // Reset when modal closes
       form.resetFields();
@@ -54,8 +62,21 @@ const WalkInBookingModal = ({ open, setOpen, patient, onSuccess }) => {
       setSelectedSlotId(null);
       setSelectedSlot(null);
       setAvailableSlots([]);
+      setAppointmentFor('self');
+      setFamilyMembers([]);
     }
-  }, [open]);
+  }, [open, patient]);
+
+  const fetchFamilyMembers = async (patientId) => {
+    try {
+      const res = await callGetFamilyMembersByUserId(patientId);
+      if (res?.data) {
+        setFamilyMembers(res.data);
+      }
+    } catch (error) {
+      console.error('Failed to fetch family members', error);
+    }
+  };
 
   const fetchVaccines = async () => {
     try {
@@ -161,6 +182,7 @@ const WalkInBookingModal = ({ open, setOpen, patient, onSuccess }) => {
       // Create walk-in booking payload
       const bookingPayload = {
         patientId: patient.id,
+        familyMemberId: appointmentFor === 'family' ? values.familyMemberId : null,
         centerId: values.appointmentCenter,
         vaccineId: values.vaccineId,
         doctorId: selectedSlot.doctorId,
@@ -335,8 +357,47 @@ const WalkInBookingModal = ({ open, setOpen, patient, onSuccess }) => {
         </Card>
       )}
 
-      <Form form={form} layout="vertical" onValuesChange={handleFormValuesChange}>
+      <Form
+        form={form}
+        layout="vertical"
+        onValuesChange={handleFormValuesChange}
+        initialValues={{ appointmentFor: 'self' }}
+      >
         <Row gutter={16}>
+          {/* Booking For Selection */}
+          <Col xs={24}>
+            <Form.Item name="appointmentFor" label="Đặt lịch cho">
+              <Radio.Group
+                onChange={(e) => {
+                  setAppointmentFor(e.target.value);
+                  form.setFieldsValue({ familyMemberId: null });
+                }}
+              >
+                <Radio value="self">Bản thân ({patient?.fullName})</Radio>
+                <Radio value="family">Người thân</Radio>
+              </Radio.Group>
+            </Form.Item>
+          </Col>
+
+          {/* Family Member Select */}
+          {appointmentFor === 'family' && (
+            <Col xs={24}>
+              <Form.Item
+                name="familyMemberId"
+                label="Chọn người thân"
+                rules={[{ required: true, message: 'Vui lòng chọn người thân' }]}
+              >
+                <Select placeholder="Chọn thành viên gia đình">
+                  {familyMembers.map((member) => (
+                    <Option key={member.id} value={member.id}>
+                      {member.fullName} ({member.relationship})
+                    </Option>
+                  ))}
+                </Select>
+              </Form.Item>
+            </Col>
+          )}
+
           <Col xs={24} md={12}>
             <Form.Item
               name="vaccineId"

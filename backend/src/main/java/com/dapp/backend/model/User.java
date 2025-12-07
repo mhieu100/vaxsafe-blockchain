@@ -1,20 +1,13 @@
 package com.dapp.backend.model;
 
-import java.time.LocalDate;
-import java.util.List;
-
 import com.dapp.backend.enums.Gender;
 import com.fasterxml.jackson.annotation.JsonFormat;
-
 import jakarta.persistence.*;
-import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 import lombok.experimental.FieldDefaults;
+
+import java.time.LocalDate;
+import java.util.List;
 
 @Entity
 @Table(name = "users")
@@ -24,7 +17,7 @@ import lombok.experimental.FieldDefaults;
 @AllArgsConstructor
 @Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class User {
+public class User extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     Long id;

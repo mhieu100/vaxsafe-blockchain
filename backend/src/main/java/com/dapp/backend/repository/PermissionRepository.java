@@ -1,11 +1,10 @@
 package com.dapp.backend.repository;
 
-import java.util.List;
-
+import com.dapp.backend.model.Permission;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 
-import com.dapp.backend.model.Permission;
+import java.util.List;
 
 public interface PermissionRepository extends JpaRepository<Permission, Long>, JpaSpecificationExecutor<Permission> {
     boolean existsByModuleAndApiPathAndMethod(String module, String apiPath, String method);

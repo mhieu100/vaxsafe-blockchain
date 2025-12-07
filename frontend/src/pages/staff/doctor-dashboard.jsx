@@ -44,6 +44,7 @@ import { callGetTodayAppointments } from '../../services/appointment.service';
 import dashboardService from '../../services/dashboard.service';
 import { useAccountStore } from '../../stores/useAccountStore';
 import { formatAppointmentTime } from '../../utils/appointment';
+import CompletionModal from './dashboard/components/CompletionModal';
 
 const { Title, Text } = Typography;
 
@@ -52,6 +53,7 @@ const DoctorDashboard = () => {
   const [viewMode, setViewMode] = useState('timeline'); // 'timeline' or 'grid'
   const [detailModalOpen, setDetailModalOpen] = useState(false);
   const [selectedAppointment, setSelectedAppointment] = useState(null);
+  const [completionModalOpen, setCompletionModalOpen] = useState(false);
   const [todayAppointments, setTodayAppointments] = useState([]);
   const [stats, setStats] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -159,6 +161,7 @@ const DoctorDashboard = () => {
     status: apt.status,
     urgent: apt.status === 'RESCHEDULE' || false,
     doseNumber: apt.doseNumber,
+    patientId: apt.patientId,
   });
 
   const handleViewAppointment = (appointment) => {
@@ -177,13 +180,8 @@ const DoctorDashboard = () => {
   };
 
   const handleCompleteAppointment = (appointment) => {
-    Modal.confirm({
-      title: 'Hoàn thành lịch hẹn',
-      content: `Xác nhận hoàn thành lịch hẹn ${appointment.id} cho bệnh nhân ${appointment.patient}?`,
-      okText: 'Hoàn thành',
-      cancelText: 'Hủy',
-      onOk: () => message.success(`✓ Đã hoàn thành lịch hẹn ${appointment.id}`),
-    });
+    setSelectedAppointment(appointment);
+    setCompletionModalOpen(true);
   };
 
   // Render Timeline Item
@@ -233,15 +231,20 @@ const DoctorDashboard = () => {
             <Col>
               <Space>
                 <Tag color={statusConfig.tagColor}>{statusConfig.text}</Tag>
-                {isPending && (
+                {(isPending || appointment.status === 'IN_PROGRESS') && (
                   <Button
                     type="primary"
                     size="small"
                     shape="circle"
-                    icon={<PlayCircleOutlined />}
+                    icon={isPending ? <PlayCircleOutlined /> : <CheckCircleOutlined />}
+                    style={!isPending ? { background: '#52c41a', borderColor: '#52c41a' } : {}}
                     onClick={(e) => {
                       e.stopPropagation();
-                      handleStartAppointment(appointment);
+                      if (isPending) {
+                        handleStartAppointment(appointment);
+                      } else {
+                        handleCompleteAppointment(appointment);
+                      }
                     }}
                   />
                 )}
@@ -438,6 +441,15 @@ const DoctorDashboard = () => {
                               />
                             </Tooltip>
                           ),
+                          appointment.status === 'IN_PROGRESS' && (
+                            <Tooltip key="complete" title="Hoàn thành">
+                              <CheckCircleOutlined
+                                key="complete"
+                                style={{ color: '#52c41a' }}
+                                onClick={() => handleCompleteAppointment(appointment)}
+                              />
+                            </Tooltip>
+                          ),
                         ].filter(Boolean)}
                       >
                         <Card.Meta
@@ -540,6 +552,14 @@ const DoctorDashboard = () => {
       </Row>
 
       {/* Detail Modal */}
+      <CompletionModal
+        open={completionModalOpen}
+        onCancel={() => setCompletionModalOpen(false)}
+        appointment={selectedAppointment}
+        onSuccess={() => {
+          fetchData();
+        }}
+      />
       <Modal
         title={
           <Space>
@@ -568,7 +588,8 @@ const DoctorDashboard = () => {
               Bắt đầu tiêm
             </Button>
           ),
-          selectedAppointment?.status === 'IN_PROGRESS' && (
+          (selectedAppointment?.status === 'IN_PROGRESS' ||
+            selectedAppointment?.status === 'SCHEDULED') && (
             <Button
               key="complete"
               type="primary"

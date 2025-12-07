@@ -1,11 +1,15 @@
 package com.dapp.backend.service;
 
 import com.dapp.backend.dto.request.PaymentRequest;
-import com.dapp.backend.enums.*;
+import com.dapp.backend.enums.BookingEnum;
+import com.dapp.backend.enums.OrderStatus;
+import com.dapp.backend.enums.PaymentEnum;
+import com.dapp.backend.enums.TypeTransactionEnum;
 import com.dapp.backend.exception.AppException;
 import com.dapp.backend.model.Appointment;
 import com.dapp.backend.model.Booking;
 import com.dapp.backend.model.Order;
+import com.dapp.backend.model.Payment;
 import com.dapp.backend.repository.AppointmentRepository;
 import com.dapp.backend.repository.BookingRepository;
 import com.dapp.backend.repository.OrderRepository;
@@ -46,7 +50,7 @@ public class PaymentService {
      * Handle successful payment
      */
     public void successPayment(PaymentRequest request) throws AppException {
-        com.dapp.backend.model.Payment payment = paymentRepository.findById(request.getPaymentId())
+        Payment payment = paymentRepository.findById(request.getPaymentId())
                 .orElseThrow(() -> new AppException("Payment not found!"));
         
         if (request.getType() == TypeTransactionEnum.ORDER) {
@@ -95,7 +99,7 @@ public class PaymentService {
      * Handle cancelled payment
      */
     public void cancelPayment(PaymentRequest request) throws AppException {
-        com.dapp.backend.model.Payment payment = paymentRepository.findById(request.getPaymentId())
+        Payment payment = paymentRepository.findById(request.getPaymentId())
                 .orElseThrow(() -> new AppException("Payment not found!"));
         
         if (request.getType() == TypeTransactionEnum.ORDER) {
@@ -125,7 +129,7 @@ public class PaymentService {
         Appointment appointment = appointmentRepository.findById(Long.parseLong(request.getReferenceId()))
                 .orElseThrow(() -> new AppException("Appointment not found!"));
         Booking booking = appointment.getBooking();
-        com.dapp.backend.model.Payment payment = paymentRepository.findById(request.getPaymentId())
+        Payment payment = paymentRepository.findById(request.getPaymentId())
                 .orElseThrow(() -> new AppException("Payment not found!"));
         
         booking.setStatus(BookingEnum.CONFIRMED);

@@ -2,7 +2,9 @@ package com.dapp.backend.dto.request;
 
 import com.dapp.backend.enums.BloodType;
 import com.dapp.backend.enums.Gender;
-import jakarta.validation.constraints.*;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Pattern;
+import jakarta.validation.constraints.Positive;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;

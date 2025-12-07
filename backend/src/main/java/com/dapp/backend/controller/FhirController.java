@@ -1,23 +1,20 @@
 package com.dapp.backend.controller;
 
 import ca.uhn.fhir.context.FhirContext;
+import com.dapp.backend.dto.mapper.fhir.FhirImmunizationMapper;
 import com.dapp.backend.dto.mapper.fhir.FhirPatientMapper;
 import com.dapp.backend.model.User;
 import com.dapp.backend.model.VaccineRecord;
 import com.dapp.backend.repository.UserRepository;
+import com.dapp.backend.repository.VaccineRecordRepository;
 import lombok.RequiredArgsConstructor;
-
-import java.util.List;
-
 import org.hl7.fhir.r4.model.Bundle;
 import org.hl7.fhir.r4.model.Immunization;
 import org.hl7.fhir.r4.model.Patient;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/fhir")
@@ -25,9 +22,9 @@ import org.springframework.web.bind.annotation.RestController;
 public class FhirController {
 
     private final FhirPatientMapper fhirPatientMapper;
-    private final com.dapp.backend.dto.mapper.fhir.FhirImmunizationMapper fhirImmunizationMapper;
+    private final FhirImmunizationMapper fhirImmunizationMapper;
     private final UserRepository userRepository;
-    private final com.dapp.backend.repository.VaccineRecordRepository vaccineRecordRepository;
+    private final VaccineRecordRepository vaccineRecordRepository;
 
     // Create a single context instance (expensive to create, so keep it as a field)
     private final FhirContext fhirContext = FhirContext.forR4();

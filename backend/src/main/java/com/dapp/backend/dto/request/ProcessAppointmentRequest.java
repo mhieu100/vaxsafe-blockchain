@@ -1,10 +1,10 @@
 package com.dapp.backend.dto.request;
 
-import java.time.LocalTime;
-
 import lombok.AccessLevel;
 import lombok.Data;
 import lombok.experimental.FieldDefaults;
+
+import java.time.LocalTime;
 
 @Data
 @FieldDefaults(level = AccessLevel.PRIVATE)

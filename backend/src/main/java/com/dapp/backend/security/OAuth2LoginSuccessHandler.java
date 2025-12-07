@@ -1,7 +1,15 @@
 package com.dapp.backend.security;
 
-import java.io.IOException;
-
+import com.dapp.backend.model.Role;
+import com.dapp.backend.model.User;
+import com.dapp.backend.repository.RoleRepository;
+import com.dapp.backend.repository.UserRepository;
+import com.dapp.backend.service.NotificationLogService;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken;
@@ -10,17 +18,7 @@ import org.springframework.security.web.authentication.SimpleUrlAuthenticationSu
 import org.springframework.stereotype.Component;
 import org.springframework.web.util.UriComponentsBuilder;
 
-import com.dapp.backend.model.Role;
-import com.dapp.backend.model.User;
-import com.dapp.backend.repository.RoleRepository;
-import com.dapp.backend.repository.UserRepository;
-import com.dapp.backend.security.JwtUtil;
-import com.dapp.backend.service.NotificationLogService;
-import jakarta.servlet.ServletException;
-import jakarta.servlet.http.Cookie;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
-import lombok.RequiredArgsConstructor;
+import java.io.IOException;
 
 @Component
 @RequiredArgsConstructor

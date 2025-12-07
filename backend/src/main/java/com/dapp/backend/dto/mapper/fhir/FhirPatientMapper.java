@@ -2,11 +2,7 @@ package com.dapp.backend.dto.mapper.fhir;
 
 import com.dapp.backend.enums.Gender;
 import com.dapp.backend.model.User;
-import org.hl7.fhir.r4.model.Address;
-import org.hl7.fhir.r4.model.ContactPoint;
-import org.hl7.fhir.r4.model.Enumerations;
-import org.hl7.fhir.r4.model.HumanName;
-import org.hl7.fhir.r4.model.Patient;
+import org.hl7.fhir.r4.model.*;
 import org.springframework.stereotype.Component;
 
 import java.time.ZoneId;

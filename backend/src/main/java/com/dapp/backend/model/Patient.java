@@ -1,19 +1,9 @@
 package com.dapp.backend.model;
 
 import com.dapp.backend.enums.BloodType;
-import com.dapp.backend.enums.Gender;
-import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.persistence.*;
-import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 import lombok.experimental.FieldDefaults;
-
-import java.time.LocalDate;
 
 @Entity
 @Table(name = "patients")
@@ -23,15 +13,15 @@ import java.time.LocalDate;
 @AllArgsConstructor
 @Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class Patient {
+public class Patient extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     long id;
-    
+
     @Column(unique = true)
     String identityNumber;
-    
+
     @Enumerated(EnumType.STRING)
     BloodType bloodType;
     Double heightCm;
@@ -45,5 +35,9 @@ public class Patient {
     @JoinColumn(name = "user_id")
     @EqualsAndHashCode.Exclude
     private User user;
+
+    @OneToMany(mappedBy = "patient", cascade = CascadeType.ALL, orphanRemoval = true)
+    @EqualsAndHashCode.Exclude
+    private java.util.List<Observation> observations;
 
 }
