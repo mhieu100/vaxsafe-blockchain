@@ -28,18 +28,16 @@ public class VaccinationReminderService {
     @Value("${reminder.days.before:1,3,7}")
     private String reminderDaysBeforeConfig;
 
-    
     @Transactional
     public List<VaccinationReminder> createRemindersForAppointment(Appointment appointment) throws AppException {
         log.info("Creating reminders for appointment ID: {}", appointment.getId());
 
         List<VaccinationReminder> reminders = new ArrayList<>();
 
-
-        User user = appointment.getBooking().getPatient();
+        User user = appointment.getPatient();
         if (user == null) {
 
-            FamilyMember familyMember = appointment.getBooking().getFamilyMember();
+            FamilyMember familyMember = appointment.getFamilyMember();
             if (familyMember != null && familyMember.getUser() != null) {
                 user = familyMember.getUser();
             }
@@ -50,9 +48,7 @@ public class VaccinationReminderService {
             throw new AppException("Cannot create reminders: No user found");
         }
 
-
         List<Integer> daysList = parseDaysBeforeConfig();
-
 
         Set<ReminderChannel> channels = getAvailableChannels(user);
 
@@ -60,7 +56,6 @@ public class VaccinationReminderService {
 
         for (Integer days : daysList) {
             LocalDate reminderDate = appointmentDate.minusDays(days);
-
 
             if (reminderDate.isAfter(LocalDate.now()) || reminderDate.isEqual(LocalDate.now())) {
                 for (ReminderChannel channel : channels) {
@@ -93,7 +88,6 @@ public class VaccinationReminderService {
         return reminders;
     }
 
-    
     @Transactional
     public void sendPendingReminders() {
         log.info("Starting to send pending reminders for today...");
@@ -118,19 +112,17 @@ public class VaccinationReminderService {
         log.info("Finished sending reminders. Success: {}, Failed: {}", successCount, failCount);
     }
 
-    
     @Transactional
     public void sendReminder(VaccinationReminder reminder) throws Exception {
         log.info("Sending reminder ID: {} via {}", reminder.getId(), reminder.getChannel());
 
         Appointment appointment = reminder.getAppointment();
-        Booking booking = appointment.getBooking();
 
-        String patientName = booking.getPatient() != null
-                ? booking.getPatient().getFullName()
-                : booking.getFamilyMember().getFullName();
+        String patientName = appointment.getPatient() != null
+                ? appointment.getPatient().getFullName()
+                : appointment.getFamilyMember().getFullName();
 
-        String vaccineName = booking.getVaccine().getName();
+        String vaccineName = appointment.getVaccine().getName();
         LocalDate appointmentDate = appointment.getScheduledDate();
         String timeSlot = appointment.getScheduledTimeSlot() != null
                 ? appointment.getScheduledTimeSlot().name()
@@ -138,7 +130,6 @@ public class VaccinationReminderService {
         String centerName = appointment.getCenter().getName();
         String centerAddress = appointment.getCenter().getAddress();
         Integer doseNumber = appointment.getDoseNumber();
-
 
         if (reminder.getChannel() == ReminderChannel.EMAIL) {
             emailService.sendVaccinationReminder(
@@ -149,12 +140,10 @@ public class VaccinationReminderService {
                     timeSlot,
                     centerName,
                     centerAddress,
-                    doseNumber
-            );
+                    doseNumber);
         } else {
             throw new Exception("Unsupported reminder channel: " + reminder.getChannel());
         }
-
 
         reminder.setStatus(ReminderStatus.SENT);
         reminder.setSentAt(LocalDateTime.now());
@@ -163,7 +152,6 @@ public class VaccinationReminderService {
         log.info("Successfully sent reminder ID: {}", reminder.getId());
     }
 
-    
     @Transactional
     public void retryFailedReminders() {
         log.info("Starting to retry failed reminders...");
@@ -188,7 +176,6 @@ public class VaccinationReminderService {
         log.info("Finished retrying reminders. Success: {}, Failed: {}", successCount, failCount);
     }
 
-    
     @Transactional
     public void cancelRemindersForAppointment(Long appointmentId) {
         log.info("Cancelling reminders for appointment ID: {}", appointmentId);
@@ -205,12 +192,10 @@ public class VaccinationReminderService {
         log.info("Cancelled {} reminders for appointment ID: {}", reminders.size(), appointmentId);
     }
 
-    
     public List<VaccinationReminder> getUserReminders(Long userId) {
         return reminderRepository.findByUserIdOrderByScheduledDateDesc(userId);
     }
 
-    
     public Map<String, Object> getReminderStatistics(LocalDate startDate, LocalDate endDate) {
         List<Object[]> stats = reminderRepository.getReminderStatistics(startDate, endDate);
 
@@ -232,7 +217,6 @@ public class VaccinationReminderService {
         return result;
     }
 
-
     private List<Integer> parseDaysBeforeConfig() {
         try {
             return Arrays.stream(reminderDaysBeforeConfig.split(","))
@@ -248,7 +232,6 @@ public class VaccinationReminderService {
     private Set<ReminderChannel> getAvailableChannels(User user) {
         Set<ReminderChannel> channels = new HashSet<>();
 
-
         if (user.getEmail() != null && !user.getEmail().isEmpty()) {
             channels.add(ReminderChannel.EMAIL);
         }
@@ -260,7 +243,6 @@ public class VaccinationReminderService {
         reminder.setStatus(ReminderStatus.FAILED);
         reminder.setErrorMessage(errorMessage);
         reminder.setRetryCount(reminder.getRetryCount() + 1);
-
 
         int retryDelayMinutes = (int) Math.pow(2, reminder.getRetryCount()) * 30;
         reminder.setNextRetryAt(LocalDateTime.now().plusMinutes(retryDelayMinutes));

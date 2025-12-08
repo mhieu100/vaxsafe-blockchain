@@ -4,7 +4,6 @@ import { MAX_PRICE, MIN_PRICE } from '@/constants';
 import { useVaccine } from '@/hooks/useVaccine';
 import LeftFilterSection from './components/LeftFilterSection';
 import ListVaccineSection from './components/ListVaccineSection';
-import QuickStatsSection from './components/QuickStatsSection';
 import TopFilterSection from './components/TopFilterSection';
 
 const VaccineListPage = () => {
@@ -89,7 +88,6 @@ const VaccineListPage = () => {
                   setViewMode={setViewMode}
                 />
                 <ListVaccineSection vaccines={data?.result || []} viewMode={viewMode} />
-                <QuickStatsSection />
               </>
             )}
           </main>

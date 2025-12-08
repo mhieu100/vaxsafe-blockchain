@@ -8,6 +8,10 @@ import com.dapp.backend.dto.response.AppointmentResponse;
 import com.dapp.backend.dto.response.Pagination;
 import com.dapp.backend.dto.response.RescheduleAppointmentResponse;
 import com.dapp.backend.dto.response.UrgentAppointmentDto;
+import com.dapp.backend.dto.request.BookingRequest;
+import com.dapp.backend.dto.request.WalkInBookingRequest;
+import com.dapp.backend.dto.response.*;
+import com.dapp.backend.dto.mapper.BookingMapper;
 import com.dapp.backend.enums.*;
 import com.dapp.backend.exception.AppException;
 import com.dapp.backend.model.*;
@@ -28,7 +32,9 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.util.ArrayList;
 import java.util.List;
+import static com.dapp.backend.service.PaypalService.EXCHANGE_RATE_TO_USD;
 
 @Service
 @RequiredArgsConstructor
@@ -36,7 +42,6 @@ import java.util.List;
 public class AppointmentService {
 
     private final AuthService authService;
-    private final BookingRepository bookingRepository;
     private final AppointmentRepository appointmentRepository;
     private final DoctorRepository doctorRepository;
     private final DoctorAvailableSlotRepository slotRepository;
@@ -46,6 +51,11 @@ public class AppointmentService {
     private final VaccinationReminderService reminderService;
     private final NextDoseReminderService nextDoseReminderService;
     private final EmailService emailService;
+    private final PaymentService paymentService;
+    private final VaccineRepository vaccineRepository;
+    private final CenterRepository centerRepository;
+    private final FamilyMemberRepository familyMemberRepository;
+    private final UserRepository userRepository;
 
     public Pagination getAllAppointmentOfCenter(Specification<Appointment> specification, Pageable pageable)
             throws AppException {
@@ -123,39 +133,16 @@ public class AppointmentService {
         return pagination;
     }
 
-    private void checkAndUpdateBookingStatus(Booking booking) {
-        List<Appointment> appointments = appointmentRepository.findByBooking(booking);
-
-        if (appointments.stream().allMatch(a -> a.getStatus() == AppointmentStatus.COMPLETED)) {
-            booking.setStatus(BookingEnum.COMPLETED);
-        } else if (appointments.stream().anyMatch(a -> a.getStatus() == AppointmentStatus.CANCELLED)) {
-
-            appointments.stream()
-                    .filter(a -> a.getStatus() == AppointmentStatus.SCHEDULED)
-                    .forEach(a -> {
-                        a.setStatus(AppointmentStatus.CANCELLED);
-                        appointmentRepository.save(a);
-                    });
-
-            booking.setStatus(BookingEnum.CANCELLED);
-
-        }
-
-        bookingRepository.save(booking);
-    }
-
     public AppointmentResponse updateScheduledAppointment(HttpServletRequest request,
             ProcessAppointmentRequest processAppointmentRequest) throws Exception {
         User cashier = authService.getCurrentUserLogin();
         Appointment appointment = appointmentRepository.findById(processAppointmentRequest.getAppointmentId())
                 .orElseThrow(() -> new AppException("Appointment not found"));
 
-
         Doctor doctorEntity = doctorRepository.findById(processAppointmentRequest.getDoctorId())
                 .orElseThrow(
                         () -> new AppException("Doctor not found with id: " + processAppointmentRequest.getDoctorId()));
         User doctor = doctorEntity.getUser();
-
 
         if (appointment.getSlot() != null) {
             DoctorAvailableSlot oldSlot = appointment.getSlot();
@@ -168,7 +155,6 @@ public class AppointmentService {
             }
         }
 
-
         DoctorAvailableSlot slot = null;
         if (processAppointmentRequest.getSlotId() != null) {
 
@@ -176,12 +162,10 @@ public class AppointmentService {
                     .orElseThrow(
                             () -> new AppException("Slot not found with id: " + processAppointmentRequest.getSlotId()));
 
-
             if (slot.getStatus() != SlotStatus.AVAILABLE
                     && (slot.getAppointment() != null && !slot.getAppointment().getId().equals(appointment.getId()))) {
                 throw new AppException("Slot is not available");
             }
-
 
             slot.setStatus(SlotStatus.BOOKED);
             slot.setAppointment(appointment);
@@ -191,7 +175,6 @@ public class AppointmentService {
             LocalTime startTime = processAppointmentRequest.getActualScheduledTime();
             LocalTime endTime = startTime.plusMinutes(15);
             LocalDate slotDate = appointment.getScheduledDate();
-
 
             slot = slotRepository.findByDoctorIdAndSlotDateAndStartTime(
                     processAppointmentRequest.getDoctorId(),
@@ -212,7 +195,6 @@ public class AppointmentService {
                 slot.setEndTime(endTime);
             }
 
-
             slot.setStatus(SlotStatus.BOOKED);
             slot.setAppointment(appointment);
             slot = slotRepository.save(slot);
@@ -222,7 +204,6 @@ public class AppointmentService {
         } else {
             throw new AppException("Either slotId or actualScheduledTime must be provided");
         }
-
 
         if (appointment.getStatus() == AppointmentStatus.RESCHEDULE) {
             if (appointment.getDesiredDate() != null) {
@@ -234,7 +215,6 @@ public class AppointmentService {
 
         }
 
-
         if (processAppointmentRequest.getActualScheduledTime() != null) {
             appointment.setActualScheduledTime(processAppointmentRequest.getActualScheduledTime());
         }
@@ -245,7 +225,6 @@ public class AppointmentService {
         appointment.setStatus(AppointmentStatus.SCHEDULED);
         Appointment savedAppointment = appointmentRepository.save(appointment);
 
-
         try {
             reminderService.createRemindersForAppointment(savedAppointment);
             log.info("Created reminders for appointment ID: {}", savedAppointment.getId());
@@ -254,9 +233,8 @@ public class AppointmentService {
 
         }
 
-
         try {
-            User patient = savedAppointment.getBooking().getPatient();
+            User patient = savedAppointment.getPatient();
             if (patient != null && patient.getEmail() != null && !patient.getEmail().isEmpty()) {
                 String centerAddress = savedAppointment.getCenter().getAddress() != null
                         ? savedAppointment.getCenter().getAddress()
@@ -266,13 +244,12 @@ public class AppointmentService {
                 String doctorName = doctor.getFullName() != null ? "BS. " + doctor.getFullName() : "Chưa xác định";
                 String doctorPhone = doctor.getPhone() != null ? doctor.getPhone() : "";
 
-
                 String timeSlotString = slot.getStartTime() + " - " + slot.getEndTime();
 
                 emailService.sendAppointmentScheduled(
                         patient.getEmail(),
                         patient.getFullName(),
-                        savedAppointment.getBooking().getVaccine().getName(),
+                        savedAppointment.getVaccine().getName(),
                         savedAppointment.getScheduledDate(),
                         timeSlotString,
                         savedAppointment.getCenter().getName(),
@@ -307,15 +284,13 @@ public class AppointmentService {
         Appointment appointment = appointmentRepository.findById(id)
                 .orElseThrow(() -> new AppException("Appointment not found " + id));
 
-
         if (appointment.getVaccinationDate() == null) {
             appointment.setVaccinationDate(LocalDate.now());
         }
 
         appointment.setStatus(AppointmentStatus.COMPLETED);
         appointmentRepository.save(appointment);
-        checkAndUpdateBookingStatus(appointment.getBooking());
-
+        // checkAndUpdateBookingStatus(appointment.getBooking());
 
         try {
             vaccineRecordService.createFromAppointment(appointment, completeRequest);
@@ -324,7 +299,6 @@ public class AppointmentService {
             log.error("Failed to create vaccine record for appointment {}", id, e);
 
         }
-
 
         try {
             nextDoseReminderService.createNextDoseReminder(appointment);
@@ -340,14 +314,13 @@ public class AppointmentService {
         headers.setContentType(MediaType.APPLICATION_JSON);
         headers.set("Authorization", "Bearer " + token);
 
-
         return "Appointment update success";
     }
 
+    @Transactional(rollbackFor = Exception.class)
     public String cancel(HttpServletRequest request, long id) throws AppException {
         Appointment appointment = appointmentRepository.findById(id)
                 .orElseThrow(() -> new AppException("Appointment not found " + id));
-
 
         if (appointment.getSlot() != null) {
             DoctorAvailableSlot slot = appointment.getSlot();
@@ -357,33 +330,37 @@ public class AppointmentService {
             log.info("Released doctor slot ID: {} for cancelled appointment ID: {}", slot.getSlotId(), id);
         }
 
+        if (appointment.getStatus() != AppointmentStatus.CANCELLED
+                && appointment.getStatus() != AppointmentStatus.COMPLETED) {
+            Vaccine vaccine = appointment.getVaccine();
+            if (vaccine != null) {
+                vaccine.setStock(vaccine.getStock() + 1);
+                vaccineRepository.save(vaccine);
+            }
+        }
+
         appointment.setStatus(AppointmentStatus.CANCELLED);
         appointmentRepository.save(appointment);
-        checkAndUpdateBookingStatus(appointment.getBooking());
-
 
         try {
-            User patient = appointment.getBooking().getPatient();
-            if (patient != null && patient.getEmail() != null && !patient.getEmail().isEmpty()) {
+            User patient = appointment.getPatient();
+            if (patient != null && patient.getEmail() != null) {
                 emailService.sendAppointmentCancellation(
                         patient.getEmail(),
                         patient.getFullName(),
-                        appointment.getBooking().getVaccine().getName(),
+                        appointment.getVaccine().getName(),
                         appointment.getScheduledDate(),
                         "Bạn đã yêu cầu hủy lịch hẹn");
                 log.info("Sent cancellation email to: {}", patient.getEmail());
             }
         } catch (Exception e) {
             log.error("Failed to send cancellation email for appointment ID: {}", id, e);
-
         }
 
-        String token = tokenExtractor.extractToken(request);
-
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.APPLICATION_JSON);
-        headers.set("Authorization", "Bearer " + token);
-
+        // String token = tokenExtractor.extractToken(request);
+        // HttpHeaders headers = new HttpHeaders();
+        // headers.setContentType(MediaType.APPLICATION_JSON);
+        // headers.set("Authorization", "Bearer " + token);
 
         return "Appointment update success";
     }
@@ -394,25 +371,22 @@ public class AppointmentService {
 
         User currentUser = authService.getCurrentUserLogin();
 
-
         Appointment appointment = appointmentRepository.findById(request.getAppointmentId())
                 .orElseThrow(() -> new AppException("Appointment not found"));
 
-
-        Booking booking = appointment.getBooking();
+        // Booking booking = appointment.getBooking();
         boolean isOwner = false;
 
-        if (booking.getPatient() != null && booking.getPatient().getId().equals(currentUser.getId())) {
+        if (appointment.getPatient() != null && appointment.getPatient().getId().equals(currentUser.getId())) {
             isOwner = true;
-        } else if (booking.getFamilyMember() != null &&
-                booking.getFamilyMember().getUser().getId().equals(currentUser.getId())) {
+        } else if (appointment.getFamilyMember() != null &&
+                appointment.getFamilyMember().getUser().getId().equals(currentUser.getId())) {
             isOwner = true;
         }
 
         if (!isOwner) {
             throw new AppException("You can only reschedule your own appointments");
         }
-
 
         if (appointment.getStatus() == AppointmentStatus.COMPLETED) {
             throw new AppException("Cannot reschedule completed appointments");
@@ -422,17 +396,14 @@ public class AppointmentService {
             throw new AppException("Cannot reschedule cancelled appointments");
         }
 
-
         LocalDate oldDate = appointment.getScheduledDate();
         TimeSlotEnum oldTimeSlot = appointment.getScheduledTimeSlot();
-
 
         appointment.setDesiredDate(request.getDesiredDate());
         appointment.setDesiredTimeSlot(request.getDesiredTimeSlot());
 
         appointment.setRescheduleReason(request.getReason());
         appointment.setRescheduledAt(LocalDateTime.now());
-
 
         appointment.setStatus(AppointmentStatus.RESCHEDULE);
 
@@ -450,7 +421,6 @@ public class AppointmentService {
                 .build();
     }
 
-    
     public List<com.dapp.backend.dto.response.UrgentAppointmentDto> getUrgentAppointments() throws AppException {
         User currentUser = authService.getCurrentUserLogin();
         Center center = UserMapper.getCenter(currentUser);
@@ -462,7 +432,6 @@ public class AppointmentService {
         List<com.dapp.backend.dto.response.UrgentAppointmentDto> urgentAppointments = new java.util.ArrayList<>();
         LocalDate today = LocalDate.now();
 
-
         List<Appointment> rescheduleRequests = appointmentRepository
                 .findByStatusAndDesiredDateIsNotNullAndCenter(AppointmentStatus.RESCHEDULE, center);
 
@@ -470,7 +439,6 @@ public class AppointmentService {
             urgentAppointments.add(buildUrgentDto(apt, "RESCHEDULE_PENDING",
                     "Yêu cầu đổi lịch chờ phê duyệt", 1));
         }
-
 
         List<Appointment> noDoctorAppointments = appointmentRepository
                 .findAppointmentsWithoutDoctor(
@@ -481,20 +449,9 @@ public class AppointmentService {
 
         for (Appointment apt : noDoctorAppointments) {
 
-
             urgentAppointments.add(buildUrgentDto(apt, "NO_DOCTOR",
                     "KHẨN CẤP: Chưa có bác sĩ", 1));
         }
-
-
-        
-
-
-        
-
-
-        
-
 
         urgentAppointments.sort(java.util.Comparator.comparingInt(
                 com.dapp.backend.dto.response.UrgentAppointmentDto::getPriorityLevel));
@@ -505,16 +462,16 @@ public class AppointmentService {
     private UrgentAppointmentDto buildUrgentDto(
             Appointment appointment, String urgencyType, String urgencyMessage, int priorityLevel) {
 
-        Booking booking = appointment.getBooking();
-        User patient = booking.getPatient();
+        // Booking booking = appointment.getBooking();
+        User patient = appointment.getPatient();
 
         return UrgentAppointmentDto.builder()
                 .id(appointment.getId())
-                .bookingId(booking.getBookingId())
+                .bookingId(appointment.getId())
                 .patientName(patient != null ? patient.getFullName() : "N/A")
                 .patientPhone(patient != null ? patient.getPhone() : "N/A")
                 .patientEmail(patient != null ? patient.getEmail() : "N/A")
-                .vaccineName(booking.getVaccine() != null ? booking.getVaccine().getName() : "N/A")
+                .vaccineName(appointment.getVaccine() != null ? appointment.getVaccine().getName() : "N/A")
                 .doseNumber(appointment.getDoseNumber())
                 .scheduledDate(appointment.getScheduledDate())
                 .scheduledTimeSlot(appointment.getScheduledTimeSlot())
@@ -533,10 +490,8 @@ public class AppointmentService {
                 .build();
     }
 
-    
     public List<AppointmentResponse> getTodayAppointmentsForDoctor() throws AppException {
         User currentUser = authService.getCurrentUserLogin();
-
 
         if (currentUser.getId() == null) {
             throw new AppException("User is not a doctor");
@@ -544,15 +499,350 @@ public class AppointmentService {
 
         LocalDate today = LocalDate.now();
 
-
         List<Appointment> todayAppointments = appointmentRepository
                 .findByDoctorAndScheduledDateOrderByScheduledTimeSlotAsc(
                         currentUser,
                         today);
 
-
         return todayAppointments.stream()
                 .map(AppointmentMapper::toResponse)
+                .toList();
+    }
+
+    @Transactional(rollbackFor = Exception.class)
+    public PaymentResponse createBooking(HttpServletRequest request, BookingRequest bookingRequest) throws Exception {
+        User user = authService.getCurrentUserLogin();
+        Vaccine vaccine = vaccineRepository.findById(bookingRequest.getVaccineId())
+                .orElseThrow(() -> new AppException("Vaccine not found!"));
+
+        if (vaccine.getStock() < 1) {
+            throw new AppException("Vaccine is out of stock!");
+        }
+        vaccine.setStock(vaccine.getStock() - 1);
+        vaccineRepository.save(vaccine);
+
+        Center center = null;
+        if (bookingRequest.getAppointmentCenter() != null) {
+            center = centerRepository.findById(bookingRequest.getAppointmentCenter())
+                    .orElseThrow(() -> new AppException("Center not found!"));
+
+            if (bookingRequest.getAppointmentDate() != null && bookingRequest.getAppointmentTime() != null) {
+                TimeSlotEnum requestedSlot = TimeSlotEnum.fromTime(bookingRequest.getAppointmentTime());
+                int slotCapacity = center.getCapacity() > 0 ? center.getCapacity() / 6 : 50;
+
+                List<Object[]> bookedCounts = appointmentRepository.countAppointmentsBySlot(center.getCenterId(),
+                        bookingRequest.getAppointmentDate());
+                int booked = 0;
+                for (Object[] row : bookedCounts) {
+                    if (row[0] == requestedSlot) {
+                        booked = ((Long) row[1]).intValue();
+                        break;
+                    }
+                }
+
+                if (booked >= slotCapacity) {
+                    throw new AppException("Selected time slot is full. Please choose another time.");
+                }
+            }
+        }
+
+        Appointment appointment = new Appointment();
+        if (bookingRequest.getFamilyMemberId() != null) {
+            FamilyMember familyMember = familyMemberRepository.findById(bookingRequest.getFamilyMemberId())
+                    .orElseThrow(() -> new AppException("Family member not found!"));
+            appointment.setFamilyMember(familyMember);
+            appointment.setPatient(user);
+        } else {
+            appointment.setPatient(user);
+        }
+        appointment.setVaccine(vaccine);
+        appointment.setTotalAmount(bookingRequest.getAmount());
+        appointment.setStatus(AppointmentStatus.PENDING);
+
+        Integer maxDose = appointmentRepository.findMaxDose(user.getId(), vaccine.getId(),
+                bookingRequest.getFamilyMemberId());
+        int currentDose = (maxDose == null) ? 1 : maxDose + 1;
+
+        appointment.setDoseNumber(currentDose);
+
+        appointment.setScheduledDate(bookingRequest.getAppointmentDate());
+        if (bookingRequest.getAppointmentTime() != null) {
+            appointment.setScheduledTimeSlot(TimeSlotEnum.fromTime(bookingRequest.getAppointmentTime()));
+        }
+        appointment.setCenter(center);
+
+        appointmentRepository.save(appointment);
+
+        Payment payment = new Payment();
+        payment.setReferenceId(appointment.getId());
+        payment.setReferenceType(TypeTransactionEnum.APPOINTMENT);
+        payment.setAmount(bookingRequest.getAmount());
+        payment.setMethod(bookingRequest.getPaymentMethod());
+
+        switch (bookingRequest.getPaymentMethod().toString()) {
+            case "PAYPAL" -> payment.setAmount(bookingRequest.getAmount() * EXCHANGE_RATE_TO_USD);
+            case "METAMASK" -> payment.setAmount((double) Math.round(bookingRequest.getAmount() / 200000.0));
+            default -> payment.setAmount(bookingRequest.getAmount());
+        }
+        payment.setCurrency(bookingRequest.getPaymentMethod().getCurrency());
+        payment.setStatus(PaymentEnum.INITIATED);
+        paymentRepository.save(payment);
+
+        PaymentResponse paymentResponse = new PaymentResponse();
+        paymentResponse.setReferenceId(appointment.getId());
+        paymentResponse.setPaymentId(payment.getId());
+        paymentResponse.setMethod(payment.getMethod());
+
+        Center finalCenter = center;
+
+        switch (bookingRequest.getPaymentMethod()) {
+            case BANK:
+                String bankUrl = paymentService.createBankUrl(Math.round(bookingRequest.getAmount()),
+                        paymentResponse.getReferenceId(), paymentResponse.getPaymentId(),
+                        TypeTransactionEnum.APPOINTMENT, request.getRemoteAddr(), request.getHeader("User-Agent"));
+                paymentResponse.setPaymentURL(bankUrl);
+                break;
+            case PAYPAL:
+                String paypalUrl = paymentService.createPaypalUrl(bookingRequest.getAmount(),
+                        paymentResponse.getReferenceId(), paymentResponse.getPaymentId(),
+                        TypeTransactionEnum.APPOINTMENT, request.getHeader("User-Agent"));
+                paymentResponse.setPaymentURL(paypalUrl);
+                break;
+            case METAMASK:
+                paymentResponse.setAmount(bookingRequest.getAmount() / 200000.0);
+                break;
+            case CASH:
+                payment.setStatus(PaymentEnum.PROCESSING);
+                payment.setReferenceType(TypeTransactionEnum.APPOINTMENT);
+                paymentRepository.save(payment);
+                appointment.setStatus(AppointmentStatus.PENDING);
+                appointmentRepository.save(appointment);
+
+                try {
+                    if (user.getEmail() != null && !user.getEmail().isEmpty()
+                            && bookingRequest.getAppointmentDate() != null && finalCenter != null) {
+                        String timeSlot = bookingRequest.getAppointmentTime() != null
+                                ? bookingRequest.getAppointmentTime().toString()
+                                : "Chưa xác định";
+                        emailService.sendAppointmentConfirmation(
+                                user.getEmail(),
+                                user.getFullName(),
+                                vaccine.getName(),
+                                bookingRequest.getAppointmentDate(),
+                                timeSlot,
+                                finalCenter.getName(),
+                                appointment.getId());
+                    }
+                } catch (Exception e) {
+                    log.error("Failed to send confirmation email: " + e.getMessage());
+                }
+                break;
+        }
+
+        return paymentResponse;
+    }
+
+    @Transactional(rollbackFor = Exception.class)
+    public BookingResponse createWalkInBooking(WalkInBookingRequest request) throws Exception {
+        User cashier = authService.getCurrentUserLogin();
+
+        User patient = userRepository.findById(request.getPatientId())
+                .orElseThrow(() -> new AppException("Patient not found!"));
+
+        Vaccine vaccine = vaccineRepository.findById(request.getVaccineId())
+                .orElseThrow(() -> new AppException("Vaccine not found!"));
+
+        if (vaccine.getStock() < 1) {
+            throw new AppException("Vaccine is out of stock!");
+        }
+        vaccine.setStock(vaccine.getStock() - 1);
+        vaccineRepository.save(vaccine);
+
+        Center center = centerRepository.findById(request.getCenterId())
+                .orElseThrow(() -> new AppException("Center not found!"));
+
+        Doctor doctor = doctorRepository.findById(request.getDoctorId())
+                .orElseThrow(() -> new AppException("Doctor not found!"));
+
+        if (doctor == null) {
+            throw new AppException("User is not a doctor!");
+        }
+
+        DoctorAvailableSlot slot = null;
+        if (request.getSlotId() != null) {
+            slot = slotRepository.findById(request.getSlotId())
+                    .orElseThrow(() -> new AppException("Slot not found!"));
+
+            if (slot.getStatus() != SlotStatus.AVAILABLE) {
+                throw new AppException("Slot is not available!");
+            }
+        } else {
+            LocalTime startTime = request.getActualScheduledTime();
+            LocalTime endTime = startTime.plusMinutes(15);
+
+            slot = slotRepository.findByDoctorIdAndSlotDateAndStartTime(
+                    request.getDoctorId(),
+                    request.getAppointmentDate(),
+                    startTime).orElse(null);
+
+            if (slot == null) {
+                slot = new DoctorAvailableSlot();
+                slot.setDoctor(doctor);
+                slot.setSlotDate(request.getAppointmentDate());
+                slot.setStartTime(startTime);
+                slot.setEndTime(endTime);
+                slot.setStatus(SlotStatus.BOOKED);
+
+                if (request.getNotes() != null && !request.getNotes().isEmpty()) {
+                    slot.setNotes(request.getNotes());
+                }
+                slot = slotRepository.save(slot);
+            }
+        }
+
+        Appointment appointment = new Appointment();
+        if (request.getFamilyMemberId() != null) {
+            FamilyMember familyMember = familyMemberRepository.findById(request.getFamilyMemberId())
+                    .orElseThrow(() -> new AppException("Family member not found!"));
+
+            if (!familyMember.getUser().getId().equals(patient.getId())) {
+                throw new AppException("Family member does not belong to this patient");
+            }
+            appointment.setFamilyMember(familyMember);
+        }
+        appointment.setPatient(patient);
+        appointment.setVaccine(vaccine);
+        appointment.setTotalAmount((double) vaccine.getPrice());
+        appointment.setStatus(AppointmentStatus.SCHEDULED);
+
+        Integer maxDose = appointmentRepository.findMaxDose(patient.getId(), vaccine.getId(),
+                request.getFamilyMemberId());
+        int currentDose = (maxDose == null) ? 1 : maxDose + 1;
+
+        appointment.setDoseNumber(currentDose);
+
+        appointment.setScheduledDate(request.getAppointmentDate());
+        appointment.setScheduledTimeSlot(TimeSlotEnum.fromTime(request.getAppointmentTime()));
+        appointment.setActualScheduledTime(request.getActualScheduledTime());
+        appointment.setCenter(center);
+        appointment.setDoctor(doctor.getUser());
+        appointment.setCashier(cashier);
+        appointment.setSlot(slot);
+
+        slot.setStatus(SlotStatus.BOOKED);
+        slotRepository.save(slot);
+
+        Appointment savedAppointment = appointmentRepository.save(appointment);
+
+        Payment payment = new Payment();
+        payment.setReferenceId(savedAppointment.getId());
+        payment.setReferenceType(TypeTransactionEnum.APPOINTMENT);
+        payment.setAmount((double) vaccine.getPrice());
+        payment.setMethod(request.getPaymentMethod());
+        payment.setCurrency(request.getPaymentMethod().getCurrency());
+        payment.setStatus(PaymentEnum.PROCESSING);
+        paymentRepository.save(payment);
+
+        try {
+            if (patient.getEmail() != null && !patient.getEmail().isEmpty()) {
+                emailService.sendAppointmentScheduled(
+                        patient.getEmail(),
+                        patient.getFullName(),
+                        vaccine.getName(),
+                        request.getAppointmentDate(),
+                        request.getAppointmentTime(),
+                        center.getName(),
+                        center.getAddress(),
+                        savedAppointment.getId(),
+                        1,
+                        cashier.getFullName(),
+                        cashier.getPhone() != null ? cashier.getPhone() : "N/A",
+                        doctor.getUser().getFullName(),
+                        doctor.getUser().getPhone() != null ? doctor.getUser().getPhone() : "N/A");
+            }
+        } catch (Exception e) {
+            log.error("Failed to send confirmation email: " + e.getMessage());
+        }
+
+        return BookingMapper.toResponse(savedAppointment);
+    }
+
+    public CenterAvailabilityResponse checkAvailability(Long centerId, LocalDate date) throws AppException {
+        Center center = centerRepository.findById(centerId)
+                .orElseThrow(() -> new AppException("Center not found"));
+
+        int slotCapacity = center.getCapacity() > 0 ? center.getCapacity() / 6 : 50;
+
+        List<Object[]> bookedCounts = appointmentRepository.countAppointmentsBySlot(centerId, date);
+
+        List<SlotAvailabilityDto> slots = new ArrayList<>();
+
+        for (TimeSlotEnum slotEnum : TimeSlotEnum.values()) {
+            int booked = 0;
+            for (Object[] row : bookedCounts) {
+                if (row[0] == slotEnum) {
+                    booked = ((Long) row[1]).intValue();
+                    break;
+                }
+            }
+
+            int available = Math.max(0, slotCapacity - booked);
+
+            slots.add(SlotAvailabilityDto.builder()
+                    .timeSlot(slotEnum)
+                    .time(slotEnum.getDisplayName())
+                    .capacity(slotCapacity)
+                    .booked(booked)
+                    .available(available)
+                    .status(available > 0 ? "AVAILABLE" : "FULL")
+                    .build());
+        }
+
+        return CenterAvailabilityResponse.builder()
+                .date(date)
+                .centerId(centerId)
+                .slots(slots)
+                .build();
+    }
+
+    public List<BookingResponse> getBooking() throws AppException {
+        User user = authService.getCurrentUserLogin();
+        // Return appointments that are confirmed (SCHEDULED or COMPLETED, not
+        // PENDING/CANCELLED logic might vary)
+        // For "My Bookings", typically we want everything or specific statuses.
+        // Original code: findAllByPatientAndStatus(user, BookingEnum.CONFIRMED)
+        // Mapped to AppointmentStatus.SCHEDULED and AppointmentStatus.COMPLETED?
+        // Let's assume SCHEDULED for now to match "Checking for upcoming bookings".
+        // Actually best to return all relevant ones.
+        return appointmentRepository.findByPatientAndStatus(user, AppointmentStatus.SCHEDULED).stream()
+                .map(BookingMapper::toResponse)
+                .toList();
+    }
+
+    public Pagination getAllAppointmentsAsBookings(Specification<Appointment> specification, Pageable pageable)
+            throws Exception {
+        Page<Appointment> page = appointmentRepository.findAll(specification, pageable);
+        Pagination pagination = new Pagination();
+        Pagination.Meta meta = new Pagination.Meta();
+        meta.setPage(pageable.getPageNumber() + 1);
+        meta.setPageSize(pageable.getPageSize());
+        meta.setPages(page.getTotalPages());
+        meta.setTotal(page.getTotalElements());
+
+        pagination.setMeta(meta);
+        List<Appointment> list = page.getContent();
+
+        List<BookingResponse> result = list.stream().map(BookingMapper::toResponse).toList();
+        pagination.setResult(result);
+
+        return pagination;
+    }
+
+    public List<BookingResponse> getHistoryBooking() throws AppException {
+        User user = authService.getCurrentUserLogin();
+        // Original: findAllByPatient(user) -> all bookings
+        return appointmentRepository.findByPatient(user).stream()
+                .map(BookingMapper::toResponse)
                 .toList();
     }
 }

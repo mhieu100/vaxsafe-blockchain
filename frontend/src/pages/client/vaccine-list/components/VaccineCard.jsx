@@ -4,7 +4,6 @@ import {
   HeartOutlined,
   SafetyCertificateFilled,
   ShoppingCartOutlined,
-  StarFilled,
 } from '@ant-design/icons';
 import { Button, Image, message, Tooltip } from 'antd';
 import { useTranslation } from 'react-i18next';
@@ -97,11 +96,6 @@ const VaccineCard = ({ vaccine }) => {
           <span className="text-[10px] font-bold tracking-wider text-blue-600 uppercase bg-blue-50 px-2 py-0.5 rounded-full">
             {vaccine.country}
           </span>
-          <div className="flex items-center gap-1 text-amber-400 text-xs font-bold">
-            <StarFilled />
-            <span>{vaccine.rating || 4.5}</span>
-            <span className="text-slate-400 font-normal">({vaccine.reviews || 128})</span>
-          </div>
         </div>
 
         {}

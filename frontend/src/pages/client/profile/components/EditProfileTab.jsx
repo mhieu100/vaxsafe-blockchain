@@ -141,7 +141,7 @@ const TabEditUser = ({ editMode, setEditMode }) => {
               <Form.Item
                 label={t('client:profile.identityNumber')}
                 name="identityNumber"
-                tooltip="Cannot be changed - used for blockchain identity"
+                tooltip={t('client:profile.cannotChangeBlockchainIdentity')}
               >
                 <Input
                   disabled
@@ -164,13 +164,19 @@ const TabEditUser = ({ editMode, setEditMode }) => {
               </Form.Item>
             </Col>
             <Col xs={24} sm={8}>
-              <Form.Item label={`${t('client:profile.height')} (cm)`} name="heightCm">
-                <Input type="number" placeholder="170" className="rounded-lg" />
+              <Form.Item
+                label={t('client:profile.height') + t('client:profile.heightUnit')}
+                name="heightCm"
+              >
+                <Input type="number" className="rounded-lg" />
               </Form.Item>
             </Col>
             <Col xs={24} sm={8}>
-              <Form.Item label={`${t('client:profile.weight')} (kg)`} name="weightKg">
-                <Input type="number" placeholder="65" className="rounded-lg" />
+              <Form.Item
+                label={t('client:profile.weight') + t('client:profile.weightUnit')}
+                name="weightKg"
+              >
+                <Input type="number" className="rounded-lg" />
               </Form.Item>
             </Col>
           </Row>

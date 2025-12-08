@@ -19,7 +19,6 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDateTime;
 import java.util.Optional;
 
-
 @Service
 @RequiredArgsConstructor
 @Slf4j
@@ -28,11 +27,9 @@ public class NotificationLogService {
     private final NotificationLogRepository logRepository;
     private final UserNotificationSettingRepository settingRepository;
 
-    
     public boolean isNotificationAllowed(User user, ReminderType type, ReminderChannel channel) {
         UserNotificationSetting setting = settingRepository.findByUserId(user.getId())
                 .orElseGet(() -> createDefaultSettings(user));
-
 
         if (type == ReminderType.APPOINTMENT_REMINDER && !setting.getAppointmentReminderEnabled()) {
             log.info("Appointment reminders disabled for user ID: {}", user.getId());
@@ -43,7 +40,6 @@ public class NotificationLogService {
             return false;
         }
 
-
         switch (channel) {
             case EMAIL:
                 return setting.getEmailEnabled();
@@ -53,17 +49,15 @@ public class NotificationLogService {
         }
     }
 
-    
-    public boolean wasRecentlySent(User user, ReminderType type, ReminderChannel channel, 
-                                    Long appointmentId, int hoursWindow) {
+    public boolean wasRecentlySent(User user, ReminderType type, ReminderChannel channel,
+            Long appointmentId, int hoursWindow) {
         LocalDateTime since = LocalDateTime.now().minusHours(hoursWindow);
         return logRepository.existsRecentNotification(user.getId(), type, channel, appointmentId, since);
     }
 
-    
     @Transactional
-    public void logSuccess(User user, ReminderType type, ReminderChannel channel, 
-                          Appointment appointment, String recipient, String content) {
+    public void logSuccess(User user, ReminderType type, ReminderChannel channel,
+            Appointment appointment, String recipient, String content) {
         NotificationLog log = NotificationLog.builder()
                 .user(user)
                 .appointment(appointment)
@@ -77,17 +71,16 @@ public class NotificationLogService {
 
         if (appointment != null) {
             log.setDoseNumber(appointment.getDoseNumber());
-            log.setVaccineId(appointment.getBooking().getVaccine().getId());
+            log.setVaccineId(appointment.getVaccine().getId());
         }
 
         logRepository.save(log);
         this.log.info("Logged successful {} notification to {} via {}", type, recipient, channel);
     }
 
-    
     @Transactional
     public void logFailure(User user, ReminderType type, ReminderChannel channel,
-                          Appointment appointment, String recipient, String errorMessage) {
+            Appointment appointment, String recipient, String errorMessage) {
         NotificationLog log = NotificationLog.builder()
                 .user(user)
                 .appointment(appointment)
@@ -103,18 +96,15 @@ public class NotificationLogService {
         this.log.error("Logged failed {} notification to {} via {}: {}", type, recipient, channel, errorMessage);
     }
 
-    
     public boolean hasUserSettings(User user) {
         return settingRepository.findByUserId(user.getId()).isPresent();
     }
 
-    
     public UserNotificationSetting getUserSettings(User user) throws AppException {
         Optional<UserNotificationSetting> existing = settingRepository.findByUserId(user.getId());
         if (existing.isPresent()) {
             return existing.get();
         }
-        
 
         synchronized (("user_settings_" + user.getId()).intern()) {
 
@@ -122,7 +112,7 @@ public class NotificationLogService {
             if (existing.isPresent()) {
                 return existing.get();
             }
-            
+
             try {
                 return createDefaultSettings(user);
             } catch (DataIntegrityViolationException e) {
@@ -134,20 +124,18 @@ public class NotificationLogService {
         }
     }
 
-    
     @Transactional
-    public UserNotificationSetting updateUserSettings(User user, UserNotificationSetting newSettings) throws AppException {
+    public UserNotificationSetting updateUserSettings(User user, UserNotificationSetting newSettings)
+            throws AppException {
         UserNotificationSetting existing = getUserSettings(user);
-        
 
         existing.setEmailEnabled(newSettings.getEmailEnabled());
         existing.setAppointmentReminderEnabled(newSettings.getAppointmentReminderEnabled());
         existing.setNextDoseReminderEnabled(newSettings.getNextDoseReminderEnabled());
-        
+
         return settingRepository.save(existing);
     }
 
-    
     public UserNotificationSetting createDefaultSettings(User user) {
         UserNotificationSetting setting = UserNotificationSetting.builder()
                 .user(user)
@@ -155,7 +143,7 @@ public class NotificationLogService {
                 .appointmentReminderEnabled(true)
                 .nextDoseReminderEnabled(true)
                 .build();
-        
+
         return settingRepository.save(setting);
     }
 }

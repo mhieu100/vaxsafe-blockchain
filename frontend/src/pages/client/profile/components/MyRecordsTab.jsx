@@ -16,7 +16,7 @@ const MyRecordsTab = ({ editMode, setEditMode }) => {
     },
     {
       key: 'progress',
-      label: 'Tiến độ',
+      label: t('client:myRecords.progress'),
       children: <VaccinationProgressTab />,
     },
     {

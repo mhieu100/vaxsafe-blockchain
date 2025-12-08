@@ -98,6 +98,15 @@
     "proceedCheckout": "Tiến hành thanh toán",
     "secureCheckout": "Thanh toán an toàn với mã hóa SSL"
   },
+  "vaccinationHistory": {
+    "title": "Lịch sử tiêm chủng",
+    "filterDate": "Lọc theo ngày",
+    "all": "Tất cả",
+    "scheduled": "Đã lên lịch",
+    "notScheduled": "Chưa lên lịch",
+    "completed": "Đã tiêm",
+    "cancelled": "Đã hủy"
+  },
   "vaccine": {
     "reviews": "đánh giá",
     "inStock": "Còn hàng",
@@ -157,7 +166,20 @@
       "bookingNow": "Đặt lịch ngay",
       "reviews": "đánh giá",
       "addToCartSuccess": "Đã thêm vắc-xin vào giỏ hàng"
-    }
+    },
+    "manufacturer": "Nhà sản xuất",
+    "dosesRequired": "Số liều bắt buộc",
+    "daysForNextDose": "Khoảng cách liều tiếp theo",
+    "days": "ngày",
+    "injectionTab": "Đường tiêm",
+    "preserveTab": "Bảo quản",
+    "dose": "liều",
+    "doses": "liều",
+    "origin": "Xuất xứ",
+    "selectQuantity": "Chọn số lượng",
+    "totalEstimate": "Tạm tính",
+    "storageRequirements": "Yêu cầu bảo quản",
+    "contraindication": "Lưu ý nghiêm trọng"
   },
   "errors": {
     "403": {

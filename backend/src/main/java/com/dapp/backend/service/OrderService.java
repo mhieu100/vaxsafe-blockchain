@@ -32,12 +32,22 @@ public class OrderService {
     private final PaymentRepository paymentRepository;
     private final PaymentService paymentService;
 
-    public PaymentResponse createOrder(OrderRequest request, String userAgent) throws AppException, PayPalRESTException {
+    @org.springframework.transaction.annotation.Transactional(rollbackFor = Exception.class)
+    public PaymentResponse createOrder(OrderRequest request, String userAgent)
+            throws AppException, PayPalRESTException {
         User user = authService.getCurrentUserLogin();
         Order order = new Order();
         List<OrderItem> orderItems = new ArrayList<>();
-        for(OrderRequest.ItemRequest item: request.getItems()) {
-            Vaccine vaccine = vaccineRepository.findById(item.getId()).orElseThrow(() -> new AppException("Vaccine not found"));
+        for (OrderRequest.ItemRequest item : request.getItems()) {
+            Vaccine vaccine = vaccineRepository.findById(item.getId())
+                    .orElseThrow(() -> new AppException("Vaccine not found"));
+
+            if (vaccine.getStock() < item.getQuantity()) {
+                throw new AppException("Not enough stock for vaccine: " + vaccine.getName());
+            }
+            vaccine.setStock(vaccine.getStock() - item.getQuantity());
+            vaccineRepository.save(vaccine);
+
             OrderItem orderItem = new OrderItem();
             orderItem.setQuantity(item.getQuantity());
             orderItem.setVaccine(vaccine);
@@ -58,9 +68,9 @@ public class OrderService {
         payment.setAmount(request.getTotalAmount());
         payment.setMethod(request.getPaymentMethod());
 
-        if(request.getPaymentMethod().toString().equals("PAYPAL")) {
+        if (request.getPaymentMethod().toString().equals("PAYPAL")) {
             payment.setAmount(request.getTotalAmount() * EXCHANGE_RATE_TO_USD);
-        } else if(request.getPaymentMethod().toString().equals("METAMASK")){
+        } else if (request.getPaymentMethod().toString().equals("METAMASK")) {
             payment.setAmount(request.getTotalAmount() / 200000.0);
         } else {
             payment.setAmount(request.getTotalAmount());
@@ -77,7 +87,8 @@ public class OrderService {
 
         switch (request.getPaymentMethod()) {
             case PAYPAL:
-                String paypalUrl = paymentService.createPaypalUrl(request.getTotalAmount(), response.getReferenceId(), response.getPaymentId(), TypeTransactionEnum.ORDER, userAgent);
+                String paypalUrl = paymentService.createPaypalUrl(request.getTotalAmount(), response.getReferenceId(),
+                        response.getPaymentId(), TypeTransactionEnum.ORDER, userAgent);
                 response.setPaymentURL(paypalUrl);
                 break;
             case METAMASK:

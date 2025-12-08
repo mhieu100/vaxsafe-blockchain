@@ -2,7 +2,6 @@ package com.dapp.backend.repository;
 
 import com.dapp.backend.enums.AppointmentStatus;
 import com.dapp.backend.model.Appointment;
-import com.dapp.backend.model.Booking;
 import com.dapp.backend.model.Center;
 import com.dapp.backend.model.User;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -14,11 +13,12 @@ import java.time.LocalDate;
 import java.util.List;
 
 public interface AppointmentRepository extends JpaRepository<Appointment, Long>, JpaSpecificationExecutor<Appointment> {
-        List<Appointment> findByBooking(Booking booking);
 
+        List<Appointment> findByPatientAndStatus(User patient, AppointmentStatus status);
+
+        List<Appointment> findByPatient(User patient);
 
         List<Appointment> findByStatusAndDesiredDateIsNotNullAndCenter(AppointmentStatus status, Center center);
-
 
         @Query("SELECT a FROM Appointment a WHERE a.doctor IS NULL " +
                         "AND a.status IN :statuses " +
@@ -30,12 +30,10 @@ public interface AppointmentRepository extends JpaRepository<Appointment, Long>,
                         @Param("endDate") LocalDate endDate,
                         @Param("center") Center center);
 
-
         List<Appointment> findByDoctorAndScheduledDateOrderByScheduledTimeSlotAsc(User doctor, LocalDate scheduledDate);
 
         @Query("SELECT a.scheduledDate, COUNT(a) FROM Appointment a WHERE a.scheduledDate >= :startDate GROUP BY a.scheduledDate ORDER BY a.scheduledDate")
         List<Object[]> countAppointmentsByDateSince(@Param("startDate") LocalDate startDate);
-
 
         long countByDoctorAndScheduledDate(User doctor, LocalDate date);
 
@@ -46,7 +44,6 @@ public interface AppointmentRepository extends JpaRepository<Appointment, Long>,
 
         Appointment findFirstByDoctorAndStatusAndScheduledDateGreaterThanEqualOrderByScheduledDateAscScheduledTimeSlotAsc(
                         User doctor, AppointmentStatus status, LocalDate date);
-
 
         long countByCenterAndStatus(Center center, AppointmentStatus status);
 
@@ -61,9 +58,9 @@ public interface AppointmentRepository extends JpaRepository<Appointment, Long>,
                         "GROUP BY a.scheduledTimeSlot")
         List<Object[]> countAppointmentsBySlot(@Param("centerId") Long centerId, @Param("date") LocalDate date);
 
-        @Query("SELECT MAX(a.doseNumber) FROM Appointment a WHERE a.booking.patient.id = :patientId AND a.booking.vaccine.id = :vaccineId AND "
+        @Query("SELECT MAX(a.doseNumber) FROM Appointment a WHERE a.patient.id = :patientId AND a.vaccine.id = :vaccineId AND "
                         +
-                        "((:familyMemberId IS NULL AND a.booking.familyMember IS NULL) OR (:familyMemberId IS NOT NULL AND a.booking.familyMember.id = :familyMemberId)) "
+                        "((:familyMemberId IS NULL AND a.familyMember IS NULL) OR (:familyMemberId IS NOT NULL AND a.familyMember.id = :familyMemberId)) "
                         +
                         "AND a.status != 'CANCELLED'")
         Integer findMaxDose(@Param("patientId") Long patientId, @Param("vaccineId") Long vaccineId,

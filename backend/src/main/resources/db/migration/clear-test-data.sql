@@ -40,9 +40,6 @@ DELETE FROM appointments;
 DELETE FROM doctor_available_slots;
 
 
--- Step 6: Delete bookings
-DELETE FROM bookings;
-
 -- Step 7: Delete vaccine records (if any were created during testing)
 DELETE FROM vaccine_records 
 WHERE appointment_id NOT IN (
@@ -51,8 +48,6 @@ WHERE appointment_id NOT IN (
 
 -- Verify cleanup
 SELECT 'Appointments remaining:' as status, COUNT(*) as count FROM appointments
-UNION ALL
-SELECT 'Bookings remaining:' as status, COUNT(*) as count FROM bookings
 UNION ALL
 SELECT 'Vaccination reminders remaining:' as status, COUNT(*) as count FROM vaccination_reminders
 UNION ALL

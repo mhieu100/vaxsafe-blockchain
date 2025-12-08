@@ -31,4 +31,5 @@ public class VaccineResponse {
     Integer duration;
     LocalDateTime createdAt;
     LocalDateTime updatedAt;
+    Integer daysForNextDose;
 }

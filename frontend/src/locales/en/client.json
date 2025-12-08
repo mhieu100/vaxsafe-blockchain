@@ -86,6 +86,7 @@
     "totalVaccines": "Total Vaccines",
     "coverage": "Coverage",
     "goodStatus": "Good Status",
+    "checkTimeInListing": "Check time in listing",
     "nextAppointment": "Next Appointment",
     "recentActivity": "Recent Activity",
     "viewAll": "View All",
@@ -101,6 +102,7 @@
   },
   "myRecords": {
     "vaccinationHistory": "Vaccination History",
+    "progress": "Progress",
     "digitalPassport": "Digital Passport",
     "medicalRecords": "Medical Records"
   },
@@ -108,6 +110,8 @@
     "title": "Vaccination History",
     "trackBookings": "Track all vaccination bookings for you and your family",
     "totalBookings": "Total Bookings",
+    "scheduled": "Scheduled",
+    "notScheduled": "Not Scheduled",
     "completed": "Completed",
     "inProgress": "In Progress",
     "bookingId": "Booking ID",
@@ -259,6 +263,12 @@
     "vaccinationStatus": "Vaccination Status",
     "actions": "Actions"
   },
+  "common": {
+    "save": "Save",
+    "cancel": "Cancel",
+    "confirm": "Confirm",
+    "note": "Note"
+  },
   "appointments": {
     "title": "My Appointments",
     "upcoming": "Upcoming",
@@ -285,7 +295,49 @@
     "noUpcoming": "No upcoming appointments",
     "bookNew": "Book New Appointment",
     "rescheduleRequestSent": "Reschedule request sent. Waiting for confirmation.",
-    "errorLoading": "Error loading data"
+    "errorLoading": "Error loading data",
+    "confirmed": "Confirmed",
+    "scheduled": "Scheduled",
+    "rescheduling": "Rescheduling",
+    "rescheduleTitle": "Reschedule Appointment",
+    "rescheduleSuccess": "Rescheduled successfully!",
+    "rescheduleFailed": "Failed to reschedule",
+    "rescheduleWarning": "⚠️ Reschedule Request",
+    "oldSchedule": "Current Schedule",
+    "newSchedule": "Desired Schedule",
+    "newDate": "New Date",
+    "selectDate": "Select Date",
+    "requireDate": "Please select a date",
+    "newTimeSlot": "New Time Slot",
+    "selectTimeSlot": "Select Time Slot",
+    "requireTimeSlot": "Please select a time slot",
+    "reasonPlaceholder": "Reason for rescheduling...",
+    "rescheduleRule1": "• Only future dates are allowed",
+    "rescheduleRule2": "• Appointment remains at center: "
+  },
+  "progress": {
+    "title": "Vaccination Progress",
+    "subtitle": "Track your and your family's vaccination journey",
+    "patient": "Patient",
+    "relative": "Relative",
+    "bookNext": "Book Next",
+    "readyToBook": "Ready to Book",
+    "needToBook": "Need to Book"
+  },
+  "relationships": {
+    "WIFE_HUSBAND": "Wife/Husband",
+    "SON": "Son",
+    "DAUGHTER": "Daughter",
+    "FATHER": "Father",
+    "MOTHER": "Mother",
+    "BROTHER": "Brother",
+    "SISTER": "Sister",
+    "OTHER": "Other"
+  },
+  "blockchainAppointmentStatus": {
+    "UP_TO_DATE": "Up to Date",
+    "OVERDUE": "Overdue",
+    "PARTIAL": "Partial"
   },
   "blockchain": {
     "title": "Blockchain Verification",

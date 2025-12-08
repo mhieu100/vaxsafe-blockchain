@@ -47,6 +47,15 @@
     "subtitle": "Using Blockchain technology to ensure transparency and safety in the vaccination process",
     "viewVaccines": "View Vaccines",
     "learnMore": "Learn More",
+    "vaccinationHistory": {
+      "title": "Vaccination History",
+      "filterDate": "Filter by Date",
+      "all": "All",
+      "scheduled": "Scheduled",
+      "notScheduled": "Not Scheduled",
+      "completed": "Completed",
+      "cancelled": "Cancelled"
+    },
     "certificate": {
       "title": "Vaccination Certificate",
       "id": "ID",
@@ -157,7 +166,21 @@
       "bookingNow": "Booking now",
       "reviews": "reviews",
       "addToCartSuccess": "Add vaccine to cart success"
-    }
+    },
+    "manufacturer": "Manufacturer",
+    "dosesRequired": "Doses Required",
+    "daysForNextDose": "Days for Next Dose",
+    "days": "days",
+    "injectionTab": "Injection Route",
+    "preserveTab": "Preservation",
+    "dose": "dose",
+    "doses": "doses",
+    "origin": "Origin",
+    "selectQuantity": "Select Quantity",
+    "totalEstimate": "Total Estimate",
+    "storageRequirements": "Storage Requirements",
+    "contraindication": "Contraindication",
+    "contraindicationsTab": "Contraindications"
   },
   "errors": {
     "403": {

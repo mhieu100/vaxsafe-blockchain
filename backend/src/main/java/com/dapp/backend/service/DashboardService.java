@@ -34,7 +34,6 @@ public class DashboardService {
                 long totalCenters = centerRepository.count();
                 long totalVaccines = vaccineRepository.count();
 
-
                 long pendingAppointments = appointmentRepository
                                 .count((root, query, cb) -> cb.equal(root.get("status"), AppointmentStatus.PENDING));
                 long completedAppointments = appointmentRepository
@@ -42,7 +41,6 @@ public class DashboardService {
                 long cancelledAppointments = appointmentRepository
                                 .count((root, query, cb) -> cb.equal(root.get("status"), AppointmentStatus.CANCELLED));
                 long totalAppointments = appointmentRepository.count();
-
 
                 LocalDate thirtyDaysAgo = LocalDate.now().minusDays(30);
                 List<Object[]> dailyCounts = appointmentRepository.countAppointmentsByDateSince(thirtyDaysAgo);
@@ -52,7 +50,6 @@ public class DashboardService {
                                                 row[0].toString(),
                                                 ((Number) row[1]).longValue()))
                                 .collect(Collectors.toList());
-
 
                 List<Vaccine> vaccines = vaccineRepository.findAll();
                 Map<String, Long> vaccineDistribution = vaccines.stream()
@@ -97,7 +94,6 @@ public class DashboardService {
                 long monthCompleted = appointmentRepository.countByDoctorAndStatusAndScheduledDateBetween(doctorUser,
                                 AppointmentStatus.COMPLETED, startOfMonth, endOfMonth);
 
-
                 double rating = 4.8;
 
                 Appointment nextApt = appointmentRepository
@@ -105,11 +101,11 @@ public class DashboardService {
                                                 doctorUser, AppointmentStatus.SCHEDULED, today);
 
                 DoctorDashboardStatsResponse.NextAppointmentInfo nextAptInfo = null;
-                if (nextApt != null && nextApt.getBooking() != null) {
+                if (nextApt != null) {
                         nextAptInfo = new DoctorDashboardStatsResponse.NextAppointmentInfo(
                                         nextApt.getScheduledTimeSlot().toString(),
-                                        nextApt.getBooking().getPatient().getFullName(),
-                                        nextApt.getBooking().getVaccine().getName());
+                                        nextApt.getPatient().getFullName(),
+                                        nextApt.getVaccine().getName());
                 }
 
                 return DoctorDashboardStatsResponse.builder()

@@ -101,6 +101,7 @@
   },
   "myRecords": {
     "vaccinationHistory": "Lịch sử tiêm chủng",
+    "progress": "Tiến độ",
     "digitalPassport": "Hộ chiếu vắc-xin",
     "medicalRecords": "Hồ sơ y tế"
   },
@@ -108,6 +109,8 @@
     "title": "Lịch sử tiêm chủng",
     "trackBookings": "Theo dõi tất cả lịch đặt tiêm chủng cho bạn và gia đình",
     "totalBookings": "Tổng số lịch đặt",
+    "scheduled": "Đã lên lịch",
+    "notScheduled": "Chưa lên lịch",
     "completed": "Hoàn thành",
     "inProgress": "Đang xử lý",
     "bookingId": "Mã đặt lịch",
@@ -285,7 +288,49 @@
     "noUpcoming": "Không có lịch hẹn sắp tới",
     "bookNew": "Đặt lịch hẹn mới",
     "rescheduleRequestSent": "Đã gửi yêu cầu đổi lịch. Đang chờ xác nhận.",
-    "errorLoading": "Lỗi tải dữ liệu"
+    "errorLoading": "Lỗi tải dữ liệu",
+    "confirmed": "Đã xác nhận",
+    "scheduled": "Đã lên lịch",
+    "rescheduling": "Đang đổi lịch",
+    "rescheduleTitle": "Thay đổi lịch hẹn tiêm chủng",
+    "rescheduleSuccess": "Đã thay đổi lịch hẹn thành công!",
+    "rescheduleFailed": "Không thể thay đổi lịch hẹn",
+    "rescheduleWarning": "⚠️ Yêu cầu đổi lịch hẹn",
+    "oldSchedule": "Lịch cũ",
+    "newSchedule": "Lịch mới mong muốn",
+    "newDate": "Ngày tiêm mới",
+    "selectDate": "Chọn ngày tiêm",
+    "requireDate": "Vui lòng chọn ngày tiêm",
+    "newTimeSlot": "Khung giờ tiêm mới",
+    "selectTimeSlot": "Chọn khung giờ tiêm",
+    "requireTimeSlot": "Vui lòng chọn khung giờ tiêm",
+    "reasonPlaceholder": "Nhập lý do bạn muốn thay đổi lịch hẹn...",
+    "rescheduleRule1": "• Chỉ có thể đổi lịch sang ngày trong tương lai",
+    "rescheduleRule2": "• Lịch hẹn sẽ được giữ nguyên tại trung tâm: "
+  },
+  "progress": {
+    "title": "Tiến độ tiêm chủng",
+    "subtitle": "Theo dõi hành trình tiêm chủng của bạn và người thân",
+    "patient": "Người tiêm",
+    "relative": "Người thân",
+    "bookNext": "Đặt tiếp",
+    "readyToBook": "Sẵn sàng đặt lịch",
+    "needToBook": "Cần đặt lịch"
+  },
+  "relationships": {
+    "WIFE_HUSBAND": "Vợ/Chồng",
+    "SON": "Con trai",
+    "DAUGHTER": "Con gái",
+    "FATHER": "Bố",
+    "MOTHER": "Mẹ",
+    "BROTHER": "Anh/Em trai",
+    "SISTER": "Chị/Em gái",
+    "OTHER": "Khác"
+  },
+  "blockchainAppointmentStatus": {
+    "UP_TO_DATE": "Hoàn thành",
+    "OVERDUE": "Quá hạn",
+    "PARTIAL": "Một phần"
   },
   "blockchain": {
     "title": "Xác minh Blockchain",

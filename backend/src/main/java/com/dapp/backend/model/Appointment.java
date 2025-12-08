@@ -23,8 +23,22 @@ public class Appointment extends BaseEntity {
     Long id;
 
     @ManyToOne
-    @JoinColumn(name = "booking_id", nullable = false)
-    Booking booking;
+    @JoinColumn(name = "patient_id")
+    User patient;
+
+    @ManyToOne
+    @JoinColumn(name = "family_member_id")
+    FamilyMember familyMember;
+
+    @ManyToOne
+    @JoinColumn(name = "vaccine_id")
+    Vaccine vaccine;
+
+    Double totalAmount;
+
+    // @ManyToOne
+    // @JoinColumn(name = "booking_id", nullable = false)
+    // Booking booking;
 
     @ManyToOne
     @JoinColumn(name = "cashier_id")
@@ -44,25 +58,25 @@ public class Appointment extends BaseEntity {
 
     Integer doseNumber;
     LocalDate scheduledDate;
-    
+
     @Enumerated(EnumType.STRING)
     @Column(name = "scheduled_time_slot")
-    TimeSlotEnum scheduledTimeSlot; 
-    
+    TimeSlotEnum scheduledTimeSlot;
+
     @Column(name = "actual_scheduled_time")
-    LocalTime actualScheduledTime; 
+    LocalTime actualScheduledTime;
 
     LocalDate desiredDate;
-    
+
     @Enumerated(EnumType.STRING)
     @Column(name = "desired_time_slot")
     TimeSlotEnum desiredTimeSlot;
-    
+
     String rescheduleReason;
     LocalDateTime rescheduledAt;
 
     @Enumerated(EnumType.STRING)
     AppointmentStatus status;
-    
-    LocalDate vaccinationDate; 
+
+    LocalDate vaccinationDate;
 }

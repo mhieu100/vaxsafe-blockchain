@@ -18,24 +18,23 @@ public class AppointmentMapper {
         response.setRescheduleReason(appointment.getRescheduleReason());
         response.setRescheduledAt(appointment.getRescheduledAt());
         response.setStatus(appointment.getStatus());
-        response.setBookingId(appointment.getBooking().getBookingId());
-        response.setVaccineName(appointment.getBooking().getVaccine().getName());
+        response.setBookingId(appointment.getId());
+        response.setVaccineName(appointment.getVaccine().getName());
         response.setCenterId(appointment.getCenter() != null ? appointment.getCenter().getCenterId() : null);
         response.setCenterName(appointment.getCenter() != null ? appointment.getCenter().getName() : null);
 
-
-        if (appointment.getBooking().getFamilyMember() != null) {
-            response.setPatientName(appointment.getBooking().getFamilyMember().getFullName());
-            response.setPatientPhone(appointment.getBooking().getFamilyMember().getPhone());
+        if (appointment.getFamilyMember() != null) {
+            response.setPatientName(appointment.getFamilyMember().getFullName());
+            response.setPatientPhone(appointment.getFamilyMember().getPhone());
         } else {
-            response.setPatientName(appointment.getBooking().getPatient().getFullName());
-            response.setPatientPhone(appointment.getBooking().getPatient() != null
-                    ? appointment.getBooking().getPatient().getPhone()
+            response.setPatientName(appointment.getPatient().getFullName());
+            response.setPatientPhone(appointment.getPatient() != null
+                    ? appointment.getPatient().getPhone()
                     : null);
 
-            if (appointment.getBooking().getPatient() != null
-                    && appointment.getBooking().getPatient().getPatientProfile() != null) {
-                response.setPatientId(appointment.getBooking().getPatient().getPatientProfile().getId());
+            if (appointment.getPatient() != null
+                    && appointment.getPatient().getPatientProfile() != null) {
+                response.setPatientId(appointment.getPatient().getPatientProfile().getId());
             }
         }
 

@@ -39,9 +39,9 @@ public class VaccineRecordService {
             throw new AppException("Vaccine record already exists for this appointment");
         }
 
-        Booking booking = appointment.getBooking();
-        User patient = booking.getPatient();
-        FamilyMember familyMember = booking.getFamilyMember();
+        // Booking booking = appointment.getBooking();
+        User patient = appointment.getPatient();
+        FamilyMember familyMember = appointment.getFamilyMember();
 
         String patientName;
         String identityHash;
@@ -60,7 +60,7 @@ public class VaccineRecordService {
 
         LocalDate nextDoseDate = calculateNextDoseDate(
                 appointment.getVaccinationDate(),
-                booking.getVaccine(),
+                appointment.getVaccine(),
                 appointment.getDoseNumber());
 
         VaccineRecord record = VaccineRecord.builder()
@@ -68,10 +68,11 @@ public class VaccineRecordService {
                 .familyMember(familyMember)
                 .patientName(patientName)
                 .patientIdentityHash(identityHash)
-                .vaccine(booking.getVaccine())
+                .patientIdentityHash(identityHash)
+                .vaccine(appointment.getVaccine())
                 .doseNumber(appointment.getDoseNumber())
                 .expiryDate(request.getExpiryDate())
-                .manufacturer(booking.getVaccine().getManufacturer())
+                .manufacturer(appointment.getVaccine().getManufacturer())
                 .vaccinationDate(appointment.getVaccinationDate())
                 .site(request.getSite())
                 .doctor(appointment.getDoctor())
@@ -85,7 +86,7 @@ public class VaccineRecordService {
                 .adverseReactions(request.getAdverseReactions())
                 .isVerified(false)
                 .nextDoseDate(nextDoseDate)
-                .nextDoseNumber(appointment.getDoseNumber() + 1)
+                .nextDoseNumber(nextDoseDate != null ? appointment.getDoseNumber() + 1 : null)
                 .build();
 
         VaccineRecord saved = vaccineRecordRepository.save(record);
@@ -191,6 +192,10 @@ public class VaccineRecordService {
 
     private LocalDate calculateNextDoseDate(LocalDate currentDate, Vaccine vaccine, int currentDose) {
 
+        if (currentDose >= vaccine.getDosesRequired()) {
+            return null;
+        }
+
         if (currentDose == 1) {
             return currentDate.plusDays(vaccine.getDaysForNextDose() != null ? vaccine.getDaysForNextDose() : 30);
         } else if (currentDose == 2) {
@@ -262,6 +267,7 @@ public class VaccineRecordService {
                 .vaccineId(record.getVaccine() != null ? record.getVaccine().getId() : null)
                 .vaccineName(record.getVaccine() != null ? record.getVaccine().getName() : "Unknown")
                 .vaccineSlug(record.getVaccine() != null ? record.getVaccine().getSlug() : null)
+                .dosesRequired(record.getVaccine() != null ? record.getVaccine().getDosesRequired() : null)
                 .doseNumber(record.getDoseNumber())
                 .expiryDate(record.getExpiryDate())
                 .manufacturer(record.getManufacturer())

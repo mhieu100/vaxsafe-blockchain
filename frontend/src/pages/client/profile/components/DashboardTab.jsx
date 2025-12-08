@@ -200,17 +200,17 @@ const DashboardTab = ({ onTabChange }) => {
           </div>
         ) : (
           <div className="text-center py-6">
-            <Text type="secondary">Bạn chưa có lịch hẹn sắp tới</Text>
+            <Text type="secondary">{t('client:appointments.noUpcoming')}</Text>
             <div className="mt-4">
               <Button type="primary" onClick={() => onTabChange('2')}>
-                Đặt lịch ngay
+                {t('client:vaccine.bookingNow')}
               </Button>
             </div>
           </div>
         )}
       </Card>
 
-      {}
+      {/* Recent Activity */}
       <Card
         title={t('client:dashboard.recentActivity')}
         className="rounded-3xl shadow-sm border border-slate-100"
@@ -241,7 +241,10 @@ const DashboardTab = ({ onTabChange }) => {
               </div>
             ))
           ) : (
-            <Empty description="Chưa có hoạt động gần đây" image={Empty.PRESENTED_IMAGE_SIMPLE} />
+            <Empty
+              description={t('client:appointments.noAppointments')}
+              image={Empty.PRESENTED_IMAGE_SIMPLE}
+            />
           )}
         </div>
       </Card>

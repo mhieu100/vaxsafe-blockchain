@@ -84,7 +84,6 @@ public class PaymentController {
         paymentRequest.setReferenceId(referenceId);
         paymentRequest.setType(TypeTransactionEnum.valueOf(type));
 
-
         if ("00".equals(vnpParams.get("vnp_ResponseCode"))) {
             paymentService.successPayment(paymentRequest);
             if ("mobile".equals(platform)) {
@@ -107,5 +106,12 @@ public class PaymentController {
     @ApiMessage("Update payment with MetaMask")
     public void updatePaymentMetaMask(@RequestBody PaymentRequest request) throws AppException {
         paymentService.updatePaymentMetaMask(request);
+    }
+
+    @GetMapping("/{paymentId}/result")
+    @ApiMessage("Get payment transaction result details")
+    public com.dapp.backend.dto.response.TransactionResultResponse getTransactionResult(@PathVariable Long paymentId)
+            throws AppException {
+        return paymentService.getTransactionResult(paymentId);
     }
 }

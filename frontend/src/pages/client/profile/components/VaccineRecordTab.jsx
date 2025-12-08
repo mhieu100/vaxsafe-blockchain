@@ -17,7 +17,7 @@ import useAccountStore from '@/stores/useAccountStore';
 const { Title, Text } = Typography;
 
 const VaccineRecordTab = () => {
-  const { t } = useTranslation(['client']);
+  const { t, i18n } = useTranslation(['client']);
   const { user } = useAccountStore();
   const [records, setRecords] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -77,7 +77,7 @@ const VaccineRecordTab = () => {
       render: (date) => (
         <div className="flex items-center gap-2 text-slate-600">
           <CalendarOutlined className="text-emerald-500" />
-          <span>{new Date(date).toLocaleDateString('vi-VN')}</span>
+          <span>{new Date(date).toLocaleDateString(i18n.language)}</span>
         </div>
       ),
     },
@@ -237,7 +237,7 @@ const VaccineRecordTab = () => {
                 {records.length > 0
                   ? new Date(
                       Math.max(...records.map((r) => new Date(r.vaccinationDate)))
-                    ).toLocaleDateString('vi-VN')
+                    ).toLocaleDateString(i18n.language)
                   : 'N/A'}
               </div>
             </div>
@@ -286,7 +286,7 @@ const VaccineRecordTab = () => {
                     </Descriptions.Item>
                     <Descriptions.Item label={t('client:vaccinePassport.expiryDate')}>
                       {record.expiryDate
-                        ? new Date(record.expiryDate).toLocaleDateString('vi-VN')
+                        ? new Date(record.expiryDate).toLocaleDateString(i18n.language)
                         : 'N/A'}
                     </Descriptions.Item>
 

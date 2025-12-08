@@ -37,23 +37,31 @@ const VaccinationProgressTab = () => {
         const groups = {};
 
         bookings.forEach((b) => {
-          const key = `${b.vaccineName}-${b.familyMemberName || b.patientName}`;
-          if (!groups[key]) {
-            groups[key] = {
-              vaccineName: b.vaccineName,
-              vaccineSlug: b.vaccineSlug,
-              patientName: b.familyMemberName || b.patientName,
-              isFamily: !!b.familyMemberName,
-              requiredDoses: b.vaccineTotalDoses || 3,
-              events: [],
-            };
-          }
-
           if (b.appointments) {
             b.appointments.forEach((apt) => {
               if (apt.appointmentStatus !== 'CANCELLED') {
+                const required = b.vaccineTotalDoses || 3;
+                const cycleIndex = Math.ceil(apt.doseNumber / required) - 1;
+                const effectiveDose = ((apt.doseNumber - 1) % required) + 1;
+                const personName = b.familyMemberName || b.patientName;
+
+                const key = `${b.vaccineName}-${personName}-${cycleIndex}`;
+
+                if (!groups[key]) {
+                  groups[key] = {
+                    vaccineName: b.vaccineName,
+                    vaccineSlug: b.vaccineSlug,
+                    patientName: personName,
+                    isFamily: !!b.familyMemberName,
+                    requiredDoses: required,
+                    cycleIndex: cycleIndex,
+                    events: [],
+                  };
+                }
+
                 groups[key].events.push({
-                  doseNumber: apt.doseNumber,
+                  doseNumber: effectiveDose,
+                  realDoseNumber: apt.doseNumber,
                   status: apt.appointmentStatus === 'COMPLETED' ? 'COMPLETED' : 'SCHEDULED',
                   date: apt.scheduledDate,
                   id: apt.appointmentId,
@@ -65,36 +73,46 @@ const VaccinationProgressTab = () => {
         });
 
         completedRecords.forEach((r) => {
-          const key = `${r.vaccineName}-${user.fullName}`;
+          const required = r.dosesRequired || 3;
+          const cycleIndex = Math.ceil(r.doseNumber / required) - 1;
+          const effectiveDose = ((r.doseNumber - 1) % required) + 1;
+          const personName = r.patientName; // Use patientName from record
+
+          const key = `${r.vaccineName}-${personName}-${cycleIndex}`;
 
           if (!groups[key]) {
             groups[key] = {
               vaccineName: r.vaccineName,
               vaccineSlug: r.vaccineSlug,
-              patientName: user.fullName,
-              isFamily: false,
-              requiredDoses: 3,
+              patientName: personName,
+              isFamily: false, // Default false, hard to know from record alone unless we check ID
+              requiredDoses: required,
+              cycleIndex: cycleIndex,
               events: [],
             };
           }
 
           const existing = groups[key].events.find(
-            (e) => e.doseNumber === r.doseNumber && e.status === 'COMPLETED'
+            (e) => e.doseNumber === effectiveDose && e.status === 'COMPLETED'
           );
+
           if (!existing) {
             const scheduledIndex = groups[key].events.findIndex(
-              (e) => e.doseNumber === r.doseNumber
+              (e) => e.doseNumber === effectiveDose
             );
+
             if (scheduledIndex !== -1) {
               groups[key].events[scheduledIndex] = {
                 ...groups[key].events[scheduledIndex],
                 status: 'COMPLETED',
                 date: r.vaccinationDate,
                 source: 'record',
+                realDoseNumber: r.doseNumber,
               };
             } else {
               groups[key].events.push({
-                doseNumber: r.doseNumber,
+                doseNumber: effectiveDose,
+                realDoseNumber: r.doseNumber,
                 status: 'COMPLETED',
                 date: r.vaccinationDate,
                 id: r.id,
@@ -129,10 +147,10 @@ const VaccinationProgressTab = () => {
               const prevEvent = group.events.find((e) => e.doseNumber === i - 1);
               if (i === 1 && !event) {
                 stepStatus = 'wait';
-                description = 'Sẵn sàng đặt lịch';
+                description = t('client:progress.readyToBook');
               } else if (prevEvent && prevEvent.status === 'COMPLETED') {
                 stepStatus = 'wait';
-                description = 'Cần đặt lịch';
+                description = t('client:progress.needToBook');
               }
             }
 
@@ -150,7 +168,11 @@ const VaccinationProgressTab = () => {
           };
         });
 
-        setJourneyData(journeyList);
+        const activeJourneys = journeyList.filter(
+          (journey) =>
+            journey.steps.filter((s) => s.status === 'finish').length < journey.requiredDoses
+        );
+        setJourneyData(activeJourneys);
       } catch (err) {
         console.error(err);
       } finally {
@@ -166,14 +188,14 @@ const VaccinationProgressTab = () => {
   }
 
   if (journeyData.length === 0) {
-    return <Empty description="Chưa có lộ trình tiêm chủng nào" />;
+    return <Empty description={t('client:dashboard.noData')} />;
   }
 
   return (
     <div className="space-y-6">
       <div className="mb-4">
-        <Title level={4}>Tiến độ tiêm chủng</Title>
-        <Text type="secondary">Theo dõi hành trình tiêm chủng của bạn và người thân</Text>
+        <Title level={4}>{t('client:progress.title')}</Title>
+        <Text type="secondary">{t('client:progress.subtitle')}</Text>
       </div>
 
       {journeyData.map((journey, index) => (
@@ -182,24 +204,30 @@ const VaccinationProgressTab = () => {
             <div>
               <h3 className="text-lg font-bold text-blue-800">{journey.vaccineName}</h3>
               <div className="text-slate-500 text-sm">
-                Người tiêm:{' '}
+                {t('client:progress.patient')}:{' '}
                 <span className="font-medium text-slate-700">{journey.patientName}</span>
                 {journey.isFamily && (
                   <Tag color="purple" className="ml-2">
-                    Người thân
+                    {t('client:progress.relative')}
                   </Tag>
                 )}
               </div>
             </div>
-            {}
-            <Button
-              type="primary"
-              size="small"
-              icon={<RightOutlined />}
-              onClick={() => navigate(`/booking?slug=${journey.vaccineSlug}`)}
-            >
-              Đặt tiếp
-            </Button>
+            {/* Action Button */}
+            {journey.steps.filter((s) => s.status === 'finish').length >= journey.requiredDoses ? (
+              <Tag color="green" icon={<CheckCircleFilled />}>
+                {t('client:vaccinationHistory.completed')}
+              </Tag>
+            ) : (
+              <Button
+                type="primary"
+                size="small"
+                icon={<RightOutlined />}
+                onClick={() => navigate(`/booking?slug=${journey.vaccineSlug}`)}
+              >
+                {t('client:progress.bookNext')}
+              </Button>
+            )}
           </div>
 
           <Steps

@@ -15,7 +15,6 @@ import java.util.List;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class VaccineRequest {
 
-
     String slug;
 
     @NotBlank(message = "Vaccine name is required")
@@ -49,5 +48,7 @@ public class VaccineRequest {
     @NotNull(message = "Duration is required")
     @Min(value = 0, message = "Duration must be non-negative")
     Integer duration;
-}
 
+    @Min(value = 0, message = "Days for next dose must be non-negative")
+    Integer daysForNextDose;
+}

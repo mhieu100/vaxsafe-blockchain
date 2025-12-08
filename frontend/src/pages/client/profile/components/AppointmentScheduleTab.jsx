@@ -79,15 +79,15 @@ const AppointmentScheduleTab = () => {
   const getStatusText = (status) => {
     switch (status) {
       case 'CONFIRMED':
-        return 'Confirmed';
+        return t('client:appointments.confirmed');
       case 'COMPLETED':
         return t('client:vaccinationHistory.completed');
       case 'SCHEDULED':
-        return 'Scheduled';
+        return t('client:appointments.scheduled');
       case 'PENDING':
-        return t('client:vaccinationHistory.pending');
+        return t('client:blockchain.pending');
       case 'RESCHEDULE':
-        return 'Rescheduling';
+        return t('client:appointments.rescheduling');
       case 'PROGRESS':
         return t('client:vaccinationHistory.inProgress');
       case 'CANCELLED':

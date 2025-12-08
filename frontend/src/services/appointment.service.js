@@ -18,7 +18,7 @@ export const updatePaymentPaypal = (bookingId, paymentId) => {
 export const updatePaymentMetaMask = (paymentId, bookingId) => {
   return apiClient.post('/api/payments/meta-mask', {
     paymentId,
-    bookingId,
+    referenceId: bookingId,
   });
 };
 

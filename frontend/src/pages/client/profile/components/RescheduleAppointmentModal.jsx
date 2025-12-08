@@ -1,12 +1,14 @@
 import { DatePicker, Form, Input, Modal, message, Select } from 'antd';
 import dayjs from 'dayjs';
 import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { rescheduleAppointment } from '@/services/booking.service';
 import { formatAppointmentTime } from '@/utils/appointment';
 
 const { TextArea } = Input;
 
 const RescheduleAppointmentModal = ({ open, onClose, appointment, onSuccess }) => {
+  const { t } = useTranslation(['client']);
   const [form] = Form.useForm();
   const [loading, setLoading] = useState(false);
 
@@ -32,12 +34,12 @@ const RescheduleAppointmentModal = ({ open, onClose, appointment, onSuccess }) =
 
       await rescheduleAppointment(payload);
 
-      message.success('Đã thay đổi lịch hẹn thành công!');
+      message.success(t('client:appointments.rescheduleSuccess'));
       form.resetFields();
       onSuccess();
       onClose();
     } catch (error) {
-      message.error(error?.message || 'Không thể thay đổi lịch hẹn');
+      message.error(error?.message || t('client:appointments.rescheduleFailed'));
     } finally {
       setLoading(false);
     }
@@ -54,27 +56,29 @@ const RescheduleAppointmentModal = ({ open, onClose, appointment, onSuccess }) =
 
   return (
     <Modal
-      title="Thay đổi lịch hẹn tiêm chủng"
+      title={t('client:appointments.rescheduleTitle')}
       open={open}
       onOk={handleSubmit}
       onCancel={handleCancel}
       confirmLoading={loading}
-      okText="Xác nhận thay đổi"
-      cancelText="Hủy"
+      okText={t('client:common.confirm')}
+      cancelText={t('client:common.cancel')}
       width={600}
     >
       <div className="mb-4 p-3 bg-yellow-50 border border-yellow-200 rounded-lg">
         <div className="text-sm space-y-2">
-          <div className="font-semibold text-yellow-800 mb-2">⚠️ Yêu cầu đổi lịch hẹn</div>
+          <div className="font-semibold text-yellow-800 mb-2">
+            {t('client:appointments.rescheduleWarning')}
+          </div>
           <div>
-            <span className="text-gray-600">Lịch cũ:</span>
+            <span className="text-gray-600">{t('client:appointments.oldSchedule')}:</span>
             <div className="font-medium text-red-600">
               {dayjs(appointment.scheduledDate).format('DD/MM/YYYY')} lúc{' '}
               {formatAppointmentTime(appointment)}
             </div>
           </div>
           <div>
-            <span className="text-gray-600">Lịch mới mong muốn:</span>
+            <span className="text-gray-600">{t('client:appointments.newSchedule')}:</span>
             <div className="font-medium text-green-600">
               {dayjs(appointment.desiredDate || appointment.scheduledDate).format('DD/MM/YYYY')} lúc{' '}
               {appointment.desiredTimeSlot
@@ -98,30 +102,30 @@ const RescheduleAppointmentModal = ({ open, onClose, appointment, onSuccess }) =
         }}
       >
         <Form.Item
-          label="Ngày tiêm mới"
+          label={t('client:appointments.newDate')}
           name="date"
-          rules={[{ required: true, message: 'Vui lòng chọn ngày tiêm' }]}
+          rules={[{ required: true, message: t('client:appointments.requireDate') }]}
         >
           <DatePicker
             className="w-full"
             format="DD/MM/YYYY"
             disabledDate={disabledDate}
-            placeholder="Chọn ngày tiêm"
+            placeholder={t('client:appointments.selectDate')}
           />
         </Form.Item>
 
         <Form.Item
-          label="Khung giờ tiêm mới"
+          label={t('client:appointments.newTimeSlot')}
           name="time"
-          rules={[{ required: true, message: 'Vui lòng chọn khung giờ tiêm' }]}
+          rules={[{ required: true, message: t('client:appointments.requireTimeSlot') }]}
         >
-          <Select placeholder="Chọn khung giờ tiêm" options={timeSlots} />
+          <Select placeholder={t('client:appointments.selectTimeSlot')} options={timeSlots} />
         </Form.Item>
 
-        <Form.Item label="Lý do thay đổi (tùy chọn)" name="reason">
+        <Form.Item label={t('client:appointments.reason') || 'Reason'} name="reason">
           <TextArea
             rows={3}
-            placeholder="Nhập lý do bạn muốn thay đổi lịch hẹn..."
+            placeholder={t('client:appointments.reasonPlaceholder')}
             maxLength={500}
             showCount
           />
@@ -130,15 +134,11 @@ const RescheduleAppointmentModal = ({ open, onClose, appointment, onSuccess }) =
 
       <div className="mt-4 p-3 bg-blue-50 rounded-lg">
         <div className="text-xs text-gray-600 space-y-1">
-          <div className="font-medium text-gray-800 mb-2">📌 Lưu ý:</div>
-          <div>• Chỉ có thể đổi lịch sang ngày trong tương lai</div>
+          <div className="font-medium text-gray-800 mb-2">📌 {t('client:common.note')}:</div>
+          <div>{t('client:appointments.rescheduleRule1')}</div>
           <div>
-            • Chọn khung giờ mong muốn (2 tiếng), Thu ngân sẽ xác định giờ chính thức (15 phút)
+            {t('client:appointments.rescheduleRule2')} <strong>{appointment.centerName}</strong>
           </div>
-          <div>
-            • Lịch hẹn sẽ được giữ nguyên tại trung tâm: <strong>{appointment.centerName}</strong>
-          </div>
-          <div>• Sau khi thay đổi, vui lòng kiểm tra lại thông tin xác nhận</div>
         </div>
       </div>
     </Modal>

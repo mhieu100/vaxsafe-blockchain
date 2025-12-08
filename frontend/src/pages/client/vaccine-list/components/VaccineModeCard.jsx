@@ -4,7 +4,7 @@ import {
   HeartOutlined,
   ShoppingCartOutlined,
 } from '@ant-design/icons';
-import { Badge, Button, Card, Image, message, Rate, Space, Tag, Typography } from 'antd';
+import { Badge, Button, Card, Image, message, Space, Tag, Typography } from 'antd';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import useCartStore from '@/stores/useCartStore';
@@ -73,16 +73,9 @@ const VaccineModeCard = ({ vaccine }) => {
             <Tag color="blue" className="text-xs">
               {vaccine.country}
             </Tag>
-            <Rate disabled defaultValue={vaccine.rating || 4} />
-            <Text type="secondary" className="text-sm">
-              ({vaccine.reviews || 128} {t('vaccine.card.reviews')})
-            </Text>
           </div>
 
-          <Text className="text-gray-600 mb-4 line-clamp-2">
-            {vaccine.descriptionShort ||
-              'High-quality vaccine with excellent features and performance.'}
-          </Text>
+          <Text className="text-gray-600 mb-4 line-clamp-2">{vaccine.descriptionShort}</Text>
 
           <div className="flex justify-between items-center">
             <div className="flex items-center gap-2">

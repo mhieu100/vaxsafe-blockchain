@@ -7,8 +7,8 @@ import com.dapp.backend.dto.response.BookingResponse;
 import com.dapp.backend.dto.response.CenterAvailabilityResponse;
 import com.dapp.backend.dto.response.Pagination;
 import com.dapp.backend.dto.response.PaymentResponse;
-import com.dapp.backend.model.Booking;
-import com.dapp.backend.service.BookingService;
+import com.dapp.backend.model.Appointment;
+import com.dapp.backend.service.AppointmentService;
 import com.turkraft.springfilter.boot.Filter;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
@@ -25,39 +25,40 @@ import java.util.List;
 @RequestMapping("/api/bookings")
 @RequiredArgsConstructor
 public class BookingController {
-        private final BookingService bookingService;
+        private final AppointmentService appointmentService;
 
         @PostMapping
         @ApiMessage("Create a booking")
         public ResponseEntity<PaymentResponse> createBooking(HttpServletRequest request,
                         @RequestBody BookingRequest bookingRequest) throws Exception {
-                return ResponseEntity.ok(bookingService.createBooking(request, bookingRequest));
+                return ResponseEntity.ok(appointmentService.createBooking(request, bookingRequest));
         }
 
         @GetMapping
         @ApiMessage("Get all bookings")
-        public ResponseEntity<Pagination> getAllBookings(@Filter Specification<Booking> specification,
+        public ResponseEntity<Pagination> getAllBookings(@Filter Specification<Appointment> specification,
                         Pageable pageable) throws Exception {
-                return ResponseEntity.ok().body(bookingService.getAllBookings(specification, pageable));
+                return ResponseEntity.ok()
+                                .body(appointmentService.getAllAppointmentsAsBookings(specification, pageable));
         }
 
         @GetMapping("/my-bookings")
         @ApiMessage("Get booking of user")
         public ResponseEntity<List<BookingResponse>> getMyBookings() throws Exception {
-                return ResponseEntity.ok(bookingService.getBooking());
+                return ResponseEntity.ok(appointmentService.getBooking());
         }
 
         @GetMapping("/history")
         @ApiMessage("Get history booking of user")
         public ResponseEntity<List<BookingResponse>> getHistoryBookings() throws Exception {
-                return ResponseEntity.ok(bookingService.getHistoryBooking());
+                return ResponseEntity.ok(appointmentService.getHistoryBooking());
         }
 
         @PostMapping("/walk-in")
         @ApiMessage("Create walk-in booking with direct doctor assignment")
         public ResponseEntity<BookingResponse> createWalkInBooking(@Valid @RequestBody WalkInBookingRequest request)
                         throws Exception {
-                return ResponseEntity.ok(bookingService.createWalkInBooking(request));
+                return ResponseEntity.ok(appointmentService.createWalkInBooking(request));
         }
 
         @GetMapping("/availability")
@@ -65,7 +66,7 @@ public class BookingController {
         public ResponseEntity<CenterAvailabilityResponse> checkAvailability(
                         @RequestParam Long centerId,
                         @RequestParam LocalDate date) throws Exception {
-                return ResponseEntity.ok(bookingService.checkAvailability(centerId, date));
+                return ResponseEntity.ok(appointmentService.checkAvailability(centerId, date));
         }
 
 }

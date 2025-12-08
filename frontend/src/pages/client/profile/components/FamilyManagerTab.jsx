@@ -60,7 +60,7 @@ const FamilyManagerTab = () => {
       emergencyContact: 'Emergency Contact',
       insuranceNumber: 'INS123456789',
       avatar: undefined,
-      vaccinationStatus: index % 3 === 0 ? 'Up to Date' : index % 3 === 1 ? 'Overdue' : 'Partial',
+      vaccinationStatus: index % 3 === 0 ? 'UP_TO_DATE' : index % 3 === 1 ? 'OVERDUE' : 'PARTIAL',
       totalVaccines: Math.floor(Math.random() * 10) + 5,
       lastVaccination: '2024-03-15',
     })) || [];
@@ -131,11 +131,11 @@ const FamilyManagerTab = () => {
 
   const getStatusColor = (status) => {
     switch (status) {
-      case 'Up to Date':
+      case 'UP_TO_DATE':
         return 'green';
-      case 'Overdue':
+      case 'OVERDUE':
         return 'red';
-      case 'Partial':
+      case 'PARTIAL':
         return 'orange';
       default:
         return 'default';
@@ -171,7 +171,8 @@ const FamilyManagerTab = () => {
               {text}
             </Title>
             <Text type="secondary" className="text-xs">
-              {record.relationship} • ID: {record.id}
+              {t(`client:relationships.${record.relationship}`) || record.relationship} • ID:{' '}
+              {record.id}
             </Text>
             <br />
             <Text type="secondary" className="text-xs">
@@ -207,7 +208,7 @@ const FamilyManagerTab = () => {
       render: (status, record) => (
         <div>
           <Tag color={getStatusColor(status)} className="mb-2 rounded-md border-0">
-            {status}
+            {t(`client:blockchainAppointmentStatus.${status}`)}
           </Tag>
           <br />
           <div className="flex items-center gap-2 text-slate-600">
@@ -318,7 +319,7 @@ const FamilyManagerTab = () => {
                 {t('client:family.upToDate')}
               </Text>
               <div className="text-3xl font-bold text-green-600 mt-1">
-                {familyMembers.filter((m) => m.vaccinationStatus === 'Up to Date').length}
+                {familyMembers.filter((m) => m.vaccinationStatus === 'UP_TO_DATE').length}
               </div>
             </div>
             <div className="w-12 h-12 rounded-full bg-green-100 flex items-center justify-center">
@@ -337,7 +338,7 @@ const FamilyManagerTab = () => {
                 {t('client:family.needAttention')}
               </Text>
               <div className="text-3xl font-bold text-red-600 mt-1">
-                {familyMembers.filter((m) => m.vaccinationStatus === 'Overdue').length}
+                {familyMembers.filter((m) => m.vaccinationStatus === 'OVERDUE').length}
               </div>
             </div>
             <div className="w-12 h-12 rounded-full bg-red-100 flex items-center justify-center">
@@ -415,14 +416,14 @@ const FamilyManagerTab = () => {
               rules={[{ required: true, message: t('client:family.selectRelationship') }]}
             >
               <Select placeholder={t('client:family.selectRelationship')} className="rounded-lg">
-                <Option value="Vợ/Chồng">Vợ/Chồng</Option>
-                <Option value="Con trai">Con trai</Option>
-                <Option value="Con gái">Con gái</Option>
-                <Option value="Bố">Bố</Option>
-                <Option value="Mẹ">Mẹ</Option>
-                <Option value="Anh/Em trai">Anh/Em trai</Option>
-                <Option value="Chị/Em gái">Chị/Em gái</Option>
-                <Option value="Khác">Khác</Option>
+                <Option value="WIFE_HUSBAND">{t('client:relationships.WIFE_HUSBAND')}</Option>
+                <Option value="SON">{t('client:relationships.SON')}</Option>
+                <Option value="DAUGHTER">{t('client:relationships.DAUGHTER')}</Option>
+                <Option value="FATHER">{t('client:relationships.FATHER')}</Option>
+                <Option value="MOTHER">{t('client:relationships.MOTHER')}</Option>
+                <Option value="BROTHER">{t('client:relationships.BROTHER')}</Option>
+                <Option value="SISTER">{t('client:relationships.SISTER')}</Option>
+                <Option value="OTHER">{t('client:relationships.OTHER')}</Option>
               </Select>
             </Form.Item>
 

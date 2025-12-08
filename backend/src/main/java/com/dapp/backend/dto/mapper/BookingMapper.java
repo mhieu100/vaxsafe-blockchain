@@ -2,17 +2,15 @@ package com.dapp.backend.dto.mapper;
 
 import com.dapp.backend.dto.response.BookingResponse;
 import com.dapp.backend.model.Appointment;
-import com.dapp.backend.model.Booking;
 import com.dapp.backend.model.FamilyMember;
 import com.dapp.backend.model.User;
 
 import java.util.Collections;
 import java.util.List;
-import java.util.stream.Collectors;
 
 public class BookingMapper {
 
-    public static BookingResponse.AppointmentResponse toResponse(Appointment appointment) {
+    public static BookingResponse.AppointmentResponse toAppointmentResponse(Appointment appointment) {
         if (appointment == null) {
             return null;
         }
@@ -36,29 +34,40 @@ public class BookingMapper {
                 .build();
     }
 
-    public static BookingResponse toResponse(Booking booking) {
-        if (booking == null) {
+    public static BookingResponse toResponse(Appointment appointment) {
+        if (appointment == null) {
             return null;
         }
 
-        FamilyMember familyMember = booking.getFamilyMember();
-        List<BookingResponse.AppointmentResponse> appointmentResponses = booking.getAppointments() != null
-                ? booking.getAppointments().stream().map(BookingMapper::toResponse).collect(Collectors.toList())
-                : Collections.emptyList();
+        FamilyMember familyMember = appointment.getFamilyMember();
+        BookingResponse.AppointmentResponse appointmentResponse = toAppointmentResponse(appointment);
+        List<BookingResponse.AppointmentResponse> appointmentResponses = Collections.singletonList(appointmentResponse);
+
+        // Map AppointmentStatus to BookingEnum
+        com.dapp.backend.enums.BookingEnum bookingStatus;
+        if (appointment.getStatus() == com.dapp.backend.enums.AppointmentStatus.PENDING) {
+            bookingStatus = com.dapp.backend.enums.BookingEnum.PENDING_PAYMENT;
+        } else if (appointment.getStatus() == com.dapp.backend.enums.AppointmentStatus.CANCELLED) {
+            bookingStatus = com.dapp.backend.enums.BookingEnum.CANCELLED;
+        } else if (appointment.getStatus() == com.dapp.backend.enums.AppointmentStatus.COMPLETED) {
+            bookingStatus = com.dapp.backend.enums.BookingEnum.COMPLETED;
+        } else {
+            bookingStatus = com.dapp.backend.enums.BookingEnum.CONFIRMED;
+        }
 
         return BookingResponse.builder()
-                .bookingId(booking.getBookingId())
-                .patientId(booking.getPatient().getId())
-                .patientName(booking.getPatient().getFullName())
+                .bookingId(appointment.getId())
+                .patientId(appointment.getPatient().getId())
+                .patientName(appointment.getPatient().getFullName())
                 .familyMemberId(familyMember != null ? familyMember.getId() : null)
                 .familyMemberName(familyMember != null ? familyMember.getFullName() : null)
-                .vaccineName(booking.getVaccine().getName())
-                .vaccineSlug(booking.getVaccine().getSlug())
-                .totalAmount(booking.getTotalAmount())
-                .totalDoses(booking.getTotalDoses())
-                .vaccineTotalDoses(booking.getVaccine().getDosesRequired())
-                .bookingStatus(booking.getStatus())
-                .createdAt(booking.getCreatedAt())
+                .vaccineName(appointment.getVaccine().getName())
+                .vaccineSlug(appointment.getVaccine().getSlug())
+                .totalAmount(appointment.getTotalAmount())
+                .totalDoses(1) // Always 1 now
+                .vaccineTotalDoses(appointment.getVaccine().getDosesRequired())
+                .bookingStatus(bookingStatus)
+                .createdAt(appointment.getCreatedAt())
                 .appointments(appointmentResponses)
                 .build();
     }

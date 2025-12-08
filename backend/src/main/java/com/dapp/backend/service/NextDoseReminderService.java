@@ -17,7 +17,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
-
 @Service
 @RequiredArgsConstructor
 @Slf4j
@@ -28,24 +27,20 @@ public class NextDoseReminderService {
     private final EmailService emailService;
     private final NotificationLogService notificationLogService;
 
-    
     @Transactional
     public List<VaccinationReminder> createNextDoseReminder(Appointment completedAppointment) throws AppException {
         log.info("Creating next dose reminder for completed appointment ID: {}", completedAppointment.getId());
 
         List<VaccinationReminder> reminders = new ArrayList<>();
 
-        Booking booking = completedAppointment.getBooking();
-        Vaccine vaccine = booking.getVaccine();
+        Vaccine vaccine = completedAppointment.getVaccine();
         int currentDose = completedAppointment.getDoseNumber();
         int requiredDoses = vaccine.getDosesRequired();
-
 
         if (currentDose >= requiredDoses) {
             log.info("No next dose needed. Current dose {} >= required doses {}", currentDose, requiredDoses);
             return reminders;
         }
-
 
         LocalDate completedDate = completedAppointment.getScheduledDate();
         LocalDate nextDoseDate = completedDate.plusDays(vaccine.getDuration());
@@ -53,17 +48,15 @@ public class NextDoseReminderService {
         log.info("Next dose #{} should be scheduled around: {} ({}days after dose #{})",
                 currentDose + 1, nextDoseDate, vaccine.getDuration(), currentDose);
 
-
-        User user = booking.getPatient();
-        if (user == null && booking.getFamilyMember() != null) {
-            user = booking.getFamilyMember().getUser();
+        User user = completedAppointment.getPatient();
+        if (user == null && completedAppointment.getFamilyMember() != null) {
+            user = completedAppointment.getFamilyMember().getUser();
         }
 
         if (user == null) {
-            log.error("No user found for booking ID: {}", booking.getBookingId());
+            log.error("No user found for appointment ID: {}", completedAppointment.getId());
             return reminders;
         }
-
 
         UserNotificationSetting settings = notificationLogService.getUserSettings(user);
         if (!settings.getNextDoseReminderEnabled()) {
@@ -71,9 +64,7 @@ public class NextDoseReminderService {
             return reminders;
         }
 
-
         Set<ReminderChannel> channels = getAvailableChannels(user, settings);
-
 
         for (ReminderChannel channel : channels) {
 
@@ -82,8 +73,7 @@ public class NextDoseReminderService {
                 continue;
             }
 
-
-            if (notificationLogService.wasRecentlySent(user, ReminderType.NEXT_DOSE_REMINDER, 
+            if (notificationLogService.wasRecentlySent(user, ReminderType.NEXT_DOSE_REMINDER,
                     channel, null, 24 * 7)) {
                 log.info("Next dose reminder already sent recently to user ID: {} via {}", user.getId(), channel);
                 continue;
@@ -112,18 +102,15 @@ public class NextDoseReminderService {
         return reminders;
     }
 
-    
     @Transactional
     public void sendNextDoseReminders() {
         log.info("Starting to send next dose reminders for today...");
-
 
         List<VaccinationReminder> reminders = reminderRepository
                 .findByReminderTypeAndScheduledDateAndStatus(
                         ReminderType.NEXT_DOSE_REMINDER,
                         LocalDate.now(),
-                        ReminderStatus.PENDING
-                );
+                        ReminderStatus.PENDING);
 
         log.info("Found {} next dose reminders to send", reminders.size());
 
@@ -144,7 +131,6 @@ public class NextDoseReminderService {
         log.info("Finished sending next dose reminders. Success: {}, Failed: {}", successCount, failCount);
     }
 
-    
     @Transactional
     public void sendNextDoseReminder(VaccinationReminder reminder) throws Exception {
         log.info("Sending next dose reminder ID: {} via {}", reminder.getId(), reminder.getChannel());
@@ -157,22 +143,18 @@ public class NextDoseReminderService {
         String vaccineName = vaccine.getName();
         int nextDoseNumber = reminder.getNextDoseNumber();
 
-
         if (reminder.getChannel() == ReminderChannel.EMAIL) {
             String content = buildNextDoseEmailContent(patientName, vaccineName, nextDoseNumber);
-            
+
             emailService.sendNextDoseReminder(
                     reminder.getRecipientEmail(),
                     patientName,
                     vaccineName,
-                    nextDoseNumber
-            );
-
+                    nextDoseNumber);
 
             reminder.setStatus(ReminderStatus.SENT);
             reminder.setSentAt(java.time.LocalDateTime.now());
             reminderRepository.save(reminder);
-
 
             notificationLogService.logSuccess(
                     user,
@@ -180,8 +162,7 @@ public class NextDoseReminderService {
                     ReminderChannel.EMAIL,
                     null,
                     reminder.getRecipientEmail(),
-                    content
-            );
+                    content);
 
             log.info("Successfully sent next dose reminder ID: {}", reminder.getId());
         } else {
@@ -194,7 +175,6 @@ public class NextDoseReminderService {
         reminder.setErrorMessage(errorMessage);
         reminder.setRetryCount(reminder.getRetryCount() + 1);
 
-
         if (reminder.getRetryCount() < 3) {
             int retryDelayMinutes = switch (reminder.getRetryCount()) {
                 case 1 -> 30;
@@ -206,20 +186,18 @@ public class NextDoseReminderService {
 
         reminderRepository.save(reminder);
 
-
         notificationLogService.logFailure(
                 reminder.getUser(),
                 ReminderType.NEXT_DOSE_REMINDER,
                 reminder.getChannel(),
                 null,
                 reminder.getRecipientEmail(),
-                errorMessage
-        );
+                errorMessage);
     }
 
     private Set<ReminderChannel> getAvailableChannels(User user, UserNotificationSetting settings) {
         Set<ReminderChannel> channels = new java.util.HashSet<>();
-        
+
         if (user.getEmail() != null && !user.getEmail().isEmpty() && settings.getEmailEnabled()) {
             channels.add(ReminderChannel.EMAIL);
         }
@@ -230,10 +208,9 @@ public class NextDoseReminderService {
     private String buildNextDoseEmailContent(String patientName, String vaccineName, int doseNumber) {
         return String.format(
                 "Kính gửi %s,\n\n" +
-                "Đã đến thời gian tiêm mũi %d của vaccine %s.\n" +
-                "Vui lòng đăng nhập vào hệ thống VaxSafe để đặt lịch hẹn.\n\n" +
-                "Trân trọng,\nVaxSafe Team",
-                patientName, doseNumber, vaccineName
-        );
+                        "Đã đến thời gian tiêm mũi %d của vaccine %s.\n" +
+                        "Vui lòng đăng nhập vào hệ thống VaxSafe để đặt lịch hẹn.\n\n" +
+                        "Trân trọng,\nVaxSafe Team",
+                patientName, doseNumber, vaccineName);
     }
 }
