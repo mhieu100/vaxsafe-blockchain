@@ -15,10 +15,10 @@ import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import LanguageSelect from '@/components/common/ui/LanguageSwitcher';
+import DropdownUser from '@/components/dropdown/DropdownUser';
 import { callLogout } from '@/services/auth.service';
 import { useAccountStore } from '@/stores/useAccountStore';
 import useCartStore from '@/stores/useCartStore';
-import DropdownUser from '../dropdown/DropdownUser';
 
 const { Header: AntHeader } = Layout;
 
