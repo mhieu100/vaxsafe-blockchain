@@ -1,5 +1,5 @@
-import VaccineCard from '@/components/card/VaccineCard';
-import VaccineModeCard from '@/components/card/VaccineModeCard';
+import VaccineCard from './VaccineCard';
+import VaccineModeCard from './VaccineModeCard';
 
 /**
  * ListVaccineSection component displays vaccines in grid or list view

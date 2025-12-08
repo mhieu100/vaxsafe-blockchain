@@ -2,7 +2,7 @@ import { LockOutlined, UserOutlined } from '@ant-design/icons';
 import { Button, Tabs } from 'antd';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import TabEditUser from '@/components/tab/TabEditUser';
+import EditProfileTab from './EditProfileTab';
 import ModalUpdatePassword from './ModalUpdatePassword';
 
 const SettingsTab = ({ editMode, setEditMode }) => {
@@ -18,7 +18,7 @@ const SettingsTab = ({ editMode, setEditMode }) => {
           {t('client:settings.profileInfo')}
         </span>
       ),
-      children: <TabEditUser editMode={editMode} setEditMode={setEditMode} />,
+      children: <EditProfileTab editMode={editMode} setEditMode={setEditMode} />,
     },
     {
       key: 'security',

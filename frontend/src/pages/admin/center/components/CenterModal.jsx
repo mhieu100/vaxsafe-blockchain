@@ -8,7 +8,7 @@ import { v4 as uuidv4 } from 'uuid';
 import { callCreateCenter, callUpdateCenter } from '@/services/center.service';
 import { callUploadSingleFile } from '@/services/file.service';
 
-import '@/styles/reset.scss';
+import '@/styles/reset.css';
 
 const ModalCenter = (props) => {
   const { openModal, setOpenModal, reloadTable, dataInit, setDataInit } = props;

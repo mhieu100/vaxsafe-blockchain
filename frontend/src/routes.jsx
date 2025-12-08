@@ -1,14 +1,14 @@
 import { createBrowserRouter } from 'react-router-dom';
-import LayoutAdmin from '@/components/admin/layout.admin';
 import ProtectedAuthRoute from '@/components/auth/ProtectedAuthRoute';
-import LayoutClient from '@/components/client/layout.client';
 import NotFound from '@/components/common/feedback/NotFound';
 import ProtectedAdminRoute from '@/components/common/guards/protected-admin-route';
 import ProtectedStaffRoute from '@/components/common/guards/protected-staff-route';
 import ProtectedUserRoute from '@/components/common/guards/protected-user-route';
 import PublicRoute from '@/components/common/guards/public-route';
+import LayoutAdmin from '@/layouts/AdminLayout';
+import LayoutClient from '@/layouts/ClientLayout';
 // Staff pages
-import LayoutStaff from '@/components/staff/layout.staff';
+import LayoutStaff from '@/layouts/StaffLayout';
 import AiKnowledgePage from '@/pages/admin/ai-knowledge/AiKnowledgePage';
 import CashierPage from '@/pages/admin/cashier';
 import CenterPage from '@/pages/admin/center';

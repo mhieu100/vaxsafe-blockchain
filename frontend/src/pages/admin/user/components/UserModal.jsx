@@ -13,7 +13,7 @@ import customParseFormat from 'dayjs/plugin/customParseFormat';
 import { useEffect, useState } from 'react';
 
 import { callUpdateUser } from '@/services/user.service';
-import '@/styles/reset.scss';
+import '@/styles/reset.css';
 import { callFetchCenter } from '@/services/center.service';
 
 dayjs.extend(customParseFormat);

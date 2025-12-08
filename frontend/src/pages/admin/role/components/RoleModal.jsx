@@ -3,7 +3,7 @@ import { FooterToolbar, ModalForm, ProCard, ProFormText } from '@ant-design/pro-
 import { Col, Form, message, notification, Row } from 'antd';
 import { useState } from 'react';
 
-import '@/styles/reset.scss';
+import '@/styles/reset.css';
 import { callUpdateRole } from '@/services/role.service';
 import ModuleApi from './ModuleApiModal';
 

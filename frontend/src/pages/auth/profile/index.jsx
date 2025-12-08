@@ -12,8 +12,8 @@ import {
 } from '@ant-design/icons';
 import { Avatar, Badge, Button, Card, Col, Row, Skeleton, Statistic, Typography } from 'antd';
 import { useState } from 'react';
-import TabEditUser from '@/components/tab/tab.edit-user';
 import useAccountStore from '@/stores/useAccountStore';
+import TabEditUser from './components/EditProfileTab';
 
 const { Title, Text } = Typography;
 

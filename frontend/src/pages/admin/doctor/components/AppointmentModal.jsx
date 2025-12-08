@@ -5,7 +5,7 @@ import customParseFormat from 'dayjs/plugin/customParseFormat';
 import { useEffect, useState } from 'react';
 import { callUpdateAppointment } from '@/services/appointment.service';
 import { callFetchDoctor } from '@/services/user.service';
-import '../../../styles/reset.scss';
+import '../../../styles/reset.css';
 import { useAccountStore } from '@/stores/useAccountStore';
 
 dayjs.extend(customParseFormat);

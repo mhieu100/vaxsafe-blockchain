@@ -12,7 +12,7 @@ import { useEffect, useState } from 'react';
 
 import { callCreateVaccine, callUpdateVaccine } from '@/services/vaccine.service';
 
-import '@/styles/reset.scss';
+import '@/styles/reset.css';
 
 const ModalVaccine = (props) => {
   const { openModal, setOpenModal, reloadTable, dataInit, setDataInit } = props;

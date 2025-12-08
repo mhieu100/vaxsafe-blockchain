@@ -12,7 +12,7 @@ import { useEffect, useState } from 'react';
 
 import { callCreateNews, callGetNewsCategories, callUpdateNews } from '@/services/news.service';
 
-import '@/styles/reset.scss';
+import '@/styles/reset.css';
 
 const { TextArea } = Input;
 

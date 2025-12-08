@@ -3,7 +3,7 @@ import { FooterToolbar, ModalForm, ProFormSelect, ProFormText } from '@ant-desig
 import { Col, Form, message, notification, Row } from 'antd';
 import { useState } from 'react';
 
-import '@/styles/reset.scss';
+import '@/styles/reset.css';
 import { callCreatePermission, callUpdatePermission } from '@/services/permission.service';
 
 const ModalPermission = (props) => {

@@ -2,7 +2,7 @@ const { Web3 } = require("web3");
 require("dotenv").config();
 
 // Initialize Web3 instance
-const web3 = new Web3(process.env.GANACHE_URL || "http://52.197.232.53:8545");
+const web3 = new Web3(process.env.GANACHE_URL);
 
 /**
  * Get Web3 instance
