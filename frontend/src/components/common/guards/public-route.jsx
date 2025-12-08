@@ -3,10 +3,6 @@ import { Navigate } from 'react-router-dom';
 import Loading from '@/components/common/feedback/Loading';
 import { useAccountStore } from '@/stores/useAccountStore';
 
-/**
- * Protected route for public/client pages
- * Redirects Admin to /admin and Staff to /staff
- */
 const PublicRoute = ({ children }) => {
   const isAuthenticated = useAccountStore((state) => state.isAuthenticated);
   const isLoading = useAccountStore((state) => state.isLoading);

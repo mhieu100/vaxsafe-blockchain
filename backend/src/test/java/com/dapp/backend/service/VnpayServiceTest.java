@@ -12,10 +12,7 @@ import java.nio.charset.StandardCharsets;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-/**
- * Unit test for VNPay payment URL generation
- * Tests the payment URL creation logic without Spring context
- */
+
 class VnpayServiceTest {
 
     private VnpayService vnpayService;
@@ -31,7 +28,7 @@ class VnpayServiceTest {
     void setUp() throws Exception {
         vnpayService = new VnpayService();
         
-        // Inject test configuration values using reflection
+
         setField(vnpayService, "vnpayUrl", "https://sandbox.vnpayment.vn/paymentv2/vpcpay.html");
         setField(vnpayService, "returnUrl", "http://localhost:8080/payments/vnpay/return");
         setField(vnpayService, "tmnCode", "TEST_TMN_CODE");
@@ -56,7 +53,7 @@ class VnpayServiceTest {
 
     @Test
     void testCreatePaymentUrl_Success() throws UnsupportedEncodingException {
-        // When
+
         String paymentUrl = vnpayService.createPaymentUrl(
             testAmount,
             testReferenceId,
@@ -66,9 +63,9 @@ class VnpayServiceTest {
             testUserAgent
         );
 
-        // Then
+
         assertNotNull(paymentUrl, "Payment URL should not be null");
-        assertTrue(paymentUrl.startsWith("https://sandbox.vnpayment.vn/paymentv2/vpcpay.html"), 
+        assertTrue(paymentUrl.startsWith("https://sandbox.vnpayment.vn/paymentv2/vpcpay.html"),
             "Payment URL should start with VNPay sandbox URL");
         assertTrue(paymentUrl.contains("vnp_Amount=10000000"), 
             "Payment URL should contain amount in VND cents (100,000 * 100)");
@@ -77,7 +74,7 @@ class VnpayServiceTest {
         assertTrue(paymentUrl.contains("vnp_CurrCode=VND"), 
             "Payment URL should contain VND currency");
         
-        // Decode the URL to check the vnp_ReturnUrl parameter contents
+
         String decodedUrl = URLDecoder.decode(paymentUrl, StandardCharsets.UTF_8);
         assertTrue(decodedUrl.contains("payment=" + testPaymentId), 
             "Return URL should contain payment ID");
@@ -97,10 +94,10 @@ class VnpayServiceTest {
 
     @Test
     void testCreatePaymentUrl_WithMobileUserAgent() throws UnsupportedEncodingException {
-        // Given - Android user agent
+
         String mobileUserAgent = "okhttp/4.9.0 (Android 11; Mobile)";
 
-        // When
+
         String paymentUrl = vnpayService.createPaymentUrl(
             testAmount,
             testReferenceId,
@@ -110,10 +107,10 @@ class VnpayServiceTest {
             mobileUserAgent
         );
 
-        // Then
+
         assertNotNull(paymentUrl);
         
-        // Decode the URL to check the vnp_ReturnUrl parameter contents
+
         String decodedUrl = URLDecoder.decode(paymentUrl, StandardCharsets.UTF_8);
         assertTrue(decodedUrl.contains("platform=mobile"), 
             "Return URL should contain platform=mobile for Android user agent");
@@ -124,10 +121,10 @@ class VnpayServiceTest {
 
     @Test
     void testCreatePaymentUrl_WithiOSUserAgent() throws UnsupportedEncodingException {
-        // Given - iOS user agent
+
         String iosUserAgent = "MyApp/1.0 CFNetwork/1335.0.3 Darwin/21.6.0";
 
-        // When
+
         String paymentUrl = vnpayService.createPaymentUrl(
             testAmount,
             testReferenceId,
@@ -137,10 +134,10 @@ class VnpayServiceTest {
             iosUserAgent
         );
 
-        // Then
+
         assertNotNull(paymentUrl);
         
-        // Decode the URL to check the vnp_ReturnUrl parameter contents
+
         String decodedUrl = URLDecoder.decode(paymentUrl, StandardCharsets.UTF_8);
         assertTrue(decodedUrl.contains("platform=mobile"), 
             "Return URL should contain platform=mobile for iOS user agent");
@@ -148,7 +145,7 @@ class VnpayServiceTest {
 
     @Test
     void testCreatePaymentUrl_WithNullUserAgent() throws UnsupportedEncodingException {
-        // When
+
         String paymentUrl = vnpayService.createPaymentUrl(
             testAmount,
             testReferenceId,
@@ -158,10 +155,10 @@ class VnpayServiceTest {
             null
         );
 
-        // Then
+
         assertNotNull(paymentUrl);
         
-        // Decode the URL to check the vnp_ReturnUrl parameter contents
+
         String decodedUrl = URLDecoder.decode(paymentUrl, StandardCharsets.UTF_8);
         assertTrue(decodedUrl.contains("platform=web"), 
             "Return URL should default to platform=web when user agent is null");
@@ -169,10 +166,10 @@ class VnpayServiceTest {
 
     @Test
     void testCreatePaymentUrl_LargeAmount() throws UnsupportedEncodingException {
-        // Given
-        Long largeAmount = 50000000L; // 50 million VND
 
-        // When
+        Long largeAmount = 50000000L;
+
+
         String paymentUrl = vnpayService.createPaymentUrl(
             largeAmount,
             testReferenceId,
@@ -182,7 +179,7 @@ class VnpayServiceTest {
             testUserAgent
         );
 
-        // Then
+
         assertNotNull(paymentUrl);
         assertTrue(paymentUrl.contains("vnp_Amount=5000000000"), 
             "Should handle large amounts correctly (50,000,000 * 100)");
@@ -190,10 +187,10 @@ class VnpayServiceTest {
 
     @Test
     void testCreatePaymentUrl_OrderType() throws UnsupportedEncodingException {
-        // Given
+
         TypeTransactionEnum orderType = TypeTransactionEnum.ORDER;
 
-        // When
+
         String paymentUrl = vnpayService.createPaymentUrl(
             testAmount,
             testReferenceId,
@@ -203,10 +200,10 @@ class VnpayServiceTest {
             testUserAgent
         );
 
-        // Then
+
         assertNotNull(paymentUrl);
         
-        // Decode the URL to check the vnp_ReturnUrl parameter contents
+
         String decodedUrl = URLDecoder.decode(paymentUrl, StandardCharsets.UTF_8);
         assertTrue(decodedUrl.contains("type=ORDER"), 
             "Return URL should contain ORDER transaction type");
@@ -214,7 +211,7 @@ class VnpayServiceTest {
 
     @Test
     void testUrlStructure() throws UnsupportedEncodingException {
-        // When
+
         String paymentUrl = vnpayService.createPaymentUrl(
             testAmount,
             testReferenceId,
@@ -224,7 +221,7 @@ class VnpayServiceTest {
             testUserAgent
         );
 
-        // Then - Verify URL has all required VNPay parameters
+
         String[] requiredParams = {
             "vnp_Version=",
             "vnp_Command=",

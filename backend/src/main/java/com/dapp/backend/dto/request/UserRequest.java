@@ -12,7 +12,7 @@ public class UserRequest {
     String email;
     String fullName;
     
-    // Patient profile fields
+
     String phone;
     LocalDate birthday;
     String address;

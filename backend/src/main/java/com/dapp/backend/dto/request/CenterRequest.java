@@ -12,7 +12,7 @@ import lombok.experimental.FieldDefaults;
 @Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class CenterRequest {
-    // Slug will be auto-generated from name, but can be provided if needed
+
     String slug;
 
     @NotBlank(message = "Center name is required")

@@ -6,9 +6,7 @@ import com.dapp.backend.model.Vaccine;
 
 public class VaccineMapper {
 
-    /**
-     * Convert Vaccine entity to VaccineResponse DTO
-     */
+    
     public static VaccineResponse toResponse(Vaccine v) {
         if (v == null)
             return null;
@@ -30,9 +28,7 @@ public class VaccineMapper {
                 .build();
     }
 
-    /**
-     * Convert VaccineRequest to Vaccine entity for creation
-     */
+    
     public static Vaccine toEntity(VaccineRequest request) {
         if (request == null)
             return null;
@@ -51,14 +47,12 @@ public class VaccineMapper {
                 .build();
     }
 
-    /**
-     * Update existing Vaccine entity with data from VaccineRequest
-     */
+    
     public static void updateEntity(Vaccine vaccine, VaccineRequest request) {
         if (vaccine == null || request == null)
             return;
 
-        // Only set slug if it's provided (not null or empty)
+
         if (request.getSlug() != null && !request.getSlug().trim().isEmpty()) {
             vaccine.setSlug(request.getSlug());
         }

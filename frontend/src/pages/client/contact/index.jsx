@@ -12,7 +12,6 @@ import { renderToStaticMarkup } from 'react-dom/server';
 import { MapContainer, Marker, Popup, TileLayer, useMap } from 'react-leaflet';
 import { callFetchCenter } from '@/services/center.service';
 
-// Create custom icon
 const createCustomIcon = () => {
   const iconMarkup = renderToStaticMarkup(
     <div
@@ -40,7 +39,6 @@ const customIcon = createCustomIcon();
 const { Title, Text, Paragraph } = Typography;
 const { Option } = Select;
 
-// Component to update map view when center changes
 const MapUpdater = ({ center }) => {
   const map = useMap();
   useEffect(() => {
@@ -58,7 +56,6 @@ const ContactPage = () => {
   const [filterCity, setFilterCity] = useState('all');
   const [searchTerm, setSearchTerm] = useState('');
 
-  // Default center (Hanoi)
   const defaultPosition = [21.0285, 105.8542];
 
   useEffect(() => {
@@ -68,14 +65,13 @@ const ContactPage = () => {
   const fetchCenters = async () => {
     try {
       setLoading(true);
-      const res = await callFetchCenter('size=100'); // Fetch all centers
+      const res = await callFetchCenter('size=100');
       if (res?.data?.result) {
-        // Mock coordinates if missing (for demo purposes)
         const centersWithCoords = res.data.result.map((c, index) => ({
           ...c,
           latitude: c.latitude || 21.0285 + (Math.random() - 0.5) * 0.1,
           longitude: c.longitude || 105.8542 + (Math.random() - 0.5) * 0.1,
-          city: index % 2 === 0 ? 'Hanoi' : 'Ho Chi Minh', // Mock city
+          city: index % 2 === 0 ? 'Hanoi' : 'Ho Chi Minh',
         }));
         setCenters(centersWithCoords);
         if (centersWithCoords.length > 0) {
@@ -101,7 +97,7 @@ const ContactPage = () => {
     <div className="flex flex-col min-h-screen bg-white">
       <section className="bg-blue-50 flex-1">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          {/* Header */}
+          {}
           <div className="bg-white border-b border-gray-200 py-8 mb-8 rounded-xl mt-6 shadow-sm">
             <div className="container mx-auto px-4 text-center">
               <Title level={2} className="text-blue-700 uppercase mb-2">
@@ -115,7 +111,7 @@ const ContactPage = () => {
 
           <div className="container mx-auto px-4 pb-12">
             <Row gutter={[24, 24]}>
-              {/* Left Column: List & Filter */}
+              {}
               <Col xs={24} lg={8}>
                 <Card className="shadow-sm rounded-xl border-0 h-full flex flex-col">
                   <div className="mb-4 space-y-3">
@@ -193,7 +189,7 @@ const ContactPage = () => {
                 </Card>
               </Col>
 
-              {/* Right Column: Map */}
+              {}
               <Col xs={24} lg={16}>
                 <Card
                   className="shadow-sm rounded-xl border-0 h-[700px] overflow-hidden relative"
@@ -239,7 +235,7 @@ const ContactPage = () => {
                     ))}
                   </MapContainer>
 
-                  {/* Floating Info Card for Selected Center on Map (Mobile friendly) */}
+                  {}
                   {selectedCenter && (
                     <div className="absolute bottom-4 left-4 right-4 md:left-auto md:right-4 md:w-80 bg-white p-4 rounded-xl shadow-lg z-[1000] border border-gray-100 animate-fade-in-up">
                       <h3 className="font-bold text-blue-700 text-lg mb-1">

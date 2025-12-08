@@ -13,12 +13,6 @@ import useCartStore from '@/stores/useCartStore';
 import { formatPrice } from '@/utils/formatPrice';
 import { getImageProps } from '@/utils/imageUtils';
 
-/**
- * VaccineCard component displays a vaccine in card format with grid view
- * @param {Object} props - Component props
- * @param {Object} props.vaccine - Vaccine data object
- * @returns {JSX.Element}
- */
 const VaccineCard = ({ vaccine }) => {
   const { t } = useTranslation();
   const navigate = useNavigate();
@@ -36,7 +30,6 @@ const VaccineCard = ({ vaccine }) => {
   };
 
   return (
-    // biome-ignore lint/a11y/useSemanticElements: Container has nested interactive elements
     <div
       role="button"
       tabIndex={0}
@@ -44,7 +37,7 @@ const VaccineCard = ({ vaccine }) => {
       onClick={() => navigate(`/vaccine/${vaccine.slug}`)}
       onKeyDown={(e) => e.key === 'Enter' && navigate(`/vaccine/${vaccine.slug}`)}
     >
-      {/* Image Section */}
+      {}
       <div className="relative h-48 overflow-hidden bg-slate-100">
         <Image
           {...getImageProps(vaccine.image, vaccine.name)}
@@ -53,10 +46,10 @@ const VaccineCard = ({ vaccine }) => {
           preview={false}
         />
 
-        {/* Overlay Gradient */}
+        {}
         <div className="absolute inset-0 bg-gradient-to-t from-slate-900/40 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
 
-        {/* Top Badges */}
+        {}
         <div className="absolute top-3 left-3 flex gap-2">
           {vaccine.stock > 0 ? (
             <span className="bg-emerald-500/90 backdrop-blur-sm text-white text-[10px] font-bold px-2 py-1 rounded-full uppercase tracking-wider shadow-sm">
@@ -69,14 +62,14 @@ const VaccineCard = ({ vaccine }) => {
           )}
         </div>
 
-        {/* Quick Actions */}
+        {}
         <div className="absolute top-3 right-3 flex flex-col gap-2 translate-x-10 opacity-0 group-hover:translate-x-0 group-hover:opacity-100 transition-all duration-300">
           <Tooltip title={t('vaccine.card.addToWishlist')}>
             <button
               type="button"
               className="w-8 h-8 rounded-full bg-white/90 backdrop-blur-md flex items-center justify-center text-slate-600 hover:text-red-500 hover:bg-white shadow-lg transition-colors"
               onClick={(e) => {
-                e.stopPropagation(); /* Add wishlist logic */
+                e.stopPropagation();
               }}
             >
               <HeartOutlined />
@@ -97,9 +90,9 @@ const VaccineCard = ({ vaccine }) => {
         </div>
       </div>
 
-      {/* Content Section */}
+      {}
       <div className="p-5 flex flex-col flex-grow">
-        {/* Country & Rating */}
+        {}
         <div className="flex justify-between items-center mb-2">
           <span className="text-[10px] font-bold tracking-wider text-blue-600 uppercase bg-blue-50 px-2 py-0.5 rounded-full">
             {vaccine.country}
@@ -111,18 +104,18 @@ const VaccineCard = ({ vaccine }) => {
           </div>
         </div>
 
-        {/* Title */}
+        {}
         <h3 className="text-lg font-bold text-slate-800 mb-2 line-clamp-2 leading-tight group-hover:text-blue-600 transition-colors">
           {vaccine.name}
         </h3>
 
-        {/* Blockchain Badge */}
+        {}
         <div className="mb-4 flex items-center gap-1.5 text-xs text-slate-500">
           <SafetyCertificateFilled className="text-emerald-500" />
           <span>Blockchain Verified</span>
         </div>
 
-        {/* Price & Actions */}
+        {}
         <div className="mt-auto pt-4 border-t border-slate-100">
           <div className="flex items-end justify-between mb-4">
             <div>

@@ -24,9 +24,7 @@ public class ProfileController {
 
     private final ProfileService profileService;
 
-    /**
-     * Update profile for PATIENT role
-     */
+    
     @PutMapping("/patient")
     @PreAuthorize("hasRole('PATIENT')")
     @ApiMessage("Update patient profile successfully")
@@ -36,9 +34,7 @@ public class ProfileController {
         return ResponseEntity.ok(profileService.updatePatientProfile(request));
     }
 
-    /**
-     * Update profile for DOCTOR role
-     */
+    
     @PutMapping("/doctor")
     @PreAuthorize("hasRole('DOCTOR')")
     @ApiMessage("Update doctor profile successfully")
@@ -48,9 +44,7 @@ public class ProfileController {
         return ResponseEntity.ok(profileService.updateDoctorProfile(request));
     }
 
-    /**
-     * Update profile for CASHIER role
-     */
+    
     @PutMapping("/cashier")
     @PreAuthorize("hasRole('CASHIER')")
     @ApiMessage("Update cashier profile successfully")
@@ -60,9 +54,7 @@ public class ProfileController {
         return ResponseEntity.ok(profileService.updateCashierProfile(request));
     }
 
-    /**
-     * Update profile for ADMIN role
-     */
+    
     @PutMapping("/admin")
     @PreAuthorize("hasRole('ADMIN')")
     @ApiMessage("Update admin profile successfully")

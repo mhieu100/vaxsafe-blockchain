@@ -22,82 +22,81 @@ public class VaccineRecord extends BaseEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     Long id;
 
-    // Patient Information (Either User or FamilyMember)
+
     @ManyToOne
     @JoinColumn(name = "user_id")
-    User user; // For adult patients
+    User user;
 
     @ManyToOne
     @JoinColumn(name = "family_member_id")
-    FamilyMember familyMember; // For children
+    FamilyMember familyMember;
 
-    String patientName; // Denormalized for quick access
-    String patientIdentityHash; // blockchainIdentityHash from User or FamilyMember
+    String patientName;
+    String patientIdentityHash;
 
-    // Vaccine Information
+
     @ManyToOne
     @JoinColumn(name = "vaccine_id", nullable = false)
     Vaccine vaccine;
 
-    Integer doseNumber; // Mũi thứ mấy (1, 2, 3...)
+    Integer doseNumber;
 
 
-    LocalDate expiryDate; // Hạn sử dụng của lô vaccine
+    LocalDate expiryDate;
 
-    String manufacturer; // Nhà sản xuất
+    String manufacturer;
 
-    LocalDate vaccinationDate; // Ngày tiêm thực tế
+    LocalDate vaccinationDate;
 
     @Enumerated(EnumType.STRING)
-    VaccinationSite site; // Vị trí tiêm
+    VaccinationSite site;
 
     @ManyToOne
     @JoinColumn(name = "doctor_id", nullable = false)
-    User doctor; // Bác sĩ thực hiện
+    User doctor;
 
     @ManyToOne
     @JoinColumn(name = "center_id", nullable = false)
-    Center center; // Trung tâm tiêm chủng
+    Center center;
 
-    // Related Appointment
+
     @OneToOne
     @JoinColumn(name = "appointment_id")
     Appointment appointment;
 
-    // Medical Information
-    // Pre-vaccination Vitals
-    Double height; // cm
-    Double weight; // kg
-    Double temperature; // Celsius
-    Integer pulse; // bpm
+
+    Double height;
+    Double weight;
+    Double temperature;
+    Integer pulse;
 
     @Column(columnDefinition = "TEXT")
-    String notes; // Ghi chú về phản ứng sau tiêm, tình trạng sức khỏe
+    String notes;
 
     @Column(columnDefinition = "TEXT")
-    String adverseReactions; // Phản ứng phụ nếu có
+    String adverseReactions;
 
-    LocalDateTime followUpDate; // Ngày tái khám (nếu cần)
+    LocalDateTime followUpDate;
 
-    // Blockchain Integration
-    String blockchainRecordId; // Record ID trên blockchain smart contract
+
+    String blockchainRecordId;
 
     @Column(unique = true)
-    String transactionHash; // Transaction hash khi lưu lên blockchain
+    String transactionHash;
 
-    Long blockNumber; // Block number chứa transaction
+    Long blockNumber;
 
-    String ipfsHash; // IPFS hash chứa chi tiết record (có thể bao gồm ảnh, chữ ký điện tử)
+    String ipfsHash;
 
     @Column(columnDefinition = "TEXT")
-    String digitalSignature; // Chữ ký số của bác sĩ
+    String digitalSignature;
 
-    boolean isVerified; // Đã verify trên blockchain chưa
+    boolean isVerified;
 
-    LocalDateTime verifiedAt; // Thời điểm verify
+    LocalDateTime verifiedAt;
 
-    // Next Dose Information
-    LocalDate nextDoseDate; // Ngày dự kiến tiêm mũi tiếp theo
 
-    Integer nextDoseNumber; // Mũi tiếp theo
+    LocalDate nextDoseDate;
+
+    Integer nextDoseNumber;
 }

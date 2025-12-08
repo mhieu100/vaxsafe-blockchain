@@ -39,7 +39,7 @@ public class Doctor extends BaseEntity {
 
     @Column(name = "consultation_duration")
     @Builder.Default
-    Integer consultationDuration = 30; // Default 30 minutes per slot
+    Integer consultationDuration = 30;
 
     @Column(name = "max_patients_per_day")
     @Builder.Default

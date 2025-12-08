@@ -52,12 +52,9 @@ const DashboardTab = ({ onTabChange }) => {
         const records = recordsRes.data || [];
         const bookings = bookingsRes.data || [];
 
-        // Calculate Stats
         const uniqueVaccines = new Set(records.map((r) => r.vaccineName)).size;
 
-        // Filter upcoming appointments (future date and not cancelled/completed)
         const upcoming = bookings.filter((b) => {
-          // Check appointments inside booking
           return (
             b.appointments &&
             b.appointments.some(
@@ -69,7 +66,6 @@ const DashboardTab = ({ onTabChange }) => {
           );
         });
 
-        // Find Next Appointment (nearest future date)
         let nearestApt = null;
         bookings.forEach((b) => {
           if (b.appointments) {
@@ -90,7 +86,6 @@ const DashboardTab = ({ onTabChange }) => {
           }
         });
 
-        // Recent Activity (Latest 3 completed records)
         const sortedRecords = [...records]
           .sort((a, b) => dayjs(b.vaccinationDate).unix() - dayjs(a.vaccinationDate).unix())
           .slice(0, 3);
@@ -98,7 +93,7 @@ const DashboardTab = ({ onTabChange }) => {
         setStats({
           totalVaccines: uniqueVaccines,
           upcomingCount: upcoming.length,
-          coverage: Math.min(Math.round((uniqueVaccines / 12) * 100), 100), // Assuming 12 standard vaccines for 100%
+          coverage: Math.min(Math.round((uniqueVaccines / 12) * 100), 100),
         });
         setNextAppointment(nearestApt);
         setRecentActivity(sortedRecords);
@@ -118,7 +113,7 @@ const DashboardTab = ({ onTabChange }) => {
 
   return (
     <div className="space-y-6 animate-fade-in">
-      {/* Stats Row */}
+      {}
       <Row gutter={[24, 24]}>
         <Col xs={24} md={8}>
           <Card className="rounded-2xl shadow-sm border border-emerald-100 bg-gradient-to-br from-emerald-50 to-white h-full">
@@ -172,7 +167,7 @@ const DashboardTab = ({ onTabChange }) => {
         </Col>
       </Row>
 
-      {/* Next Appointment Card */}
+      {}
       <Card className="rounded-3xl shadow-sm border border-slate-100 overflow-hidden">
         {nextAppointment ? (
           <div className="flex flex-col md:flex-row items-center justify-between gap-6">
@@ -198,7 +193,7 @@ const DashboardTab = ({ onTabChange }) => {
               type="primary"
               size="large"
               className="rounded-xl shadow-lg shadow-blue-500/20"
-              onClick={() => onTabChange('3')} // Switch to Appointments tab
+              onClick={() => onTabChange('3')}
             >
               {t('client:appointments.viewDetails')}
             </Button>
@@ -215,7 +210,7 @@ const DashboardTab = ({ onTabChange }) => {
         )}
       </Card>
 
-      {/* Recent Activity */}
+      {}
       <Card
         title={t('client:dashboard.recentActivity')}
         className="rounded-3xl shadow-sm border border-slate-100"

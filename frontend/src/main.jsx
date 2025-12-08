@@ -6,10 +6,9 @@ import { useEffect, useState } from 'react';
 import { createRoot } from 'react-dom/client';
 import { useTranslation } from 'react-i18next';
 import Root from './App.jsx';
-import './i18n'; // Initialize i18n
+import './i18n';
 import './index.css';
 
-// Suppress findDOMNode warning in development (known issue with antd pro-components)
 if (import.meta.env.DEV) {
   const originalError = console.error;
   console.error = (...args) => {
@@ -20,18 +19,16 @@ if (import.meta.env.DEV) {
   };
 }
 
-// Configure React Query
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
       refetchOnWindowFocus: false,
       retry: 1,
-      staleTime: 5 * 60 * 1000, // 5 minutes
+      staleTime: 5 * 60 * 1000,
     },
   },
 });
 
-// Wrapper component to handle locale changes
 const AppWithLocale = () => {
   const { i18n } = useTranslation();
   const [locale, setLocale] = useState(i18n.language === 'en' ? enUS : viVN);

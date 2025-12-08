@@ -223,11 +223,10 @@ const NewsPage = () => {
   const buildQuery = (params, sort, _filter) => {
     const clone = { ...params };
     const q = {
-      page: clone.current, // Backend configured for one-indexed pages
+      page: clone.current,
       size: clone.pageSize,
     };
 
-    // Build filter
     const filters = [];
     if (clone.title) {
       filters.push(sfLike('title', clone.title));
@@ -243,7 +242,6 @@ const NewsPage = () => {
       q.filter = filters.join(' and ');
     }
 
-    // Build sort
     if (sort?.title) {
       q.sort = `title,${sort.title === 'ascend' ? 'asc' : 'desc'}`;
     }

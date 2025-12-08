@@ -12,13 +12,11 @@ const ModuleApi = (props) => {
 
   useEffect(() => {
     if (listPermissions?.length && singleRole?.id && openModal === true) {
-      //current permissions of role
       const userPermissions = groupByPermission(singleRole.permissions);
 
       const p = {};
 
       listPermissions.forEach((x) => {
-        // First, set all individual permissions
         x.permissions?.forEach((y) => {
           const temp = userPermissions.find((z) => z.module === x.module);
 
@@ -32,15 +30,12 @@ const ModuleApi = (props) => {
           }
         });
 
-        // Then check if all permissions in this module are selected
-        // Based on what we just set in the p object
         if (x.permissions?.length > 0) {
           const allSelected = x.permissions.every((y) => {
             return p[y.id] === true;
           });
           p[x.module] = allSelected;
         } else {
-          // If module has no permissions, switch should be OFF
           p[x.module] = false;
         }
       });
@@ -52,13 +47,11 @@ const ModuleApi = (props) => {
         permissions: p,
       });
 
-      // Force update form after a short delay to ensure switches sync
       setTimeout(() => {
         form.setFieldsValue({ permissions: p });
-        setForceRenderKey((prev) => prev + 1); // Force re-render
+        setForceRenderKey((prev) => prev + 1);
       }, 50);
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
     form.setFieldsValue,
     listPermissions.forEach,
@@ -72,40 +65,32 @@ const ModuleApi = (props) => {
   ]);
 
   const handleSingleCheck = (value, child, parent) => {
-    // Get current form values
     const currentPermissions = form.getFieldValue('permissions') || {};
 
-    // Update the individual permission switch
     const updatedPermissions = {
       ...currentPermissions,
       [child]: value,
     };
 
-    // Then check if all permissions in this module are now selected
     const temp = listPermissions?.find((item) => item.module === parent);
     if (temp?.permissions) {
-      // Check if all permissions will be true AFTER this change
       const allTrue = temp.permissions.every((permission) => {
         return updatedPermissions[permission.id] === true;
       });
       updatedPermissions[parent] = allTrue;
     }
 
-    // Update all permissions at once
     form.setFieldsValue({ permissions: updatedPermissions });
   };
 
   const handleModuleCheck = (value, module) => {
-    // Get current form values
     const currentPermissions = form.getFieldValue('permissions') || {};
 
-    // Update the module-level switch
     const updatedPermissions = {
       ...currentPermissions,
       [module]: value,
     };
 
-    // Find all permissions in this module and set them to the same value
     const temp = listPermissions?.find((item) => item.module === module);
     if (temp?.permissions) {
       temp.permissions.forEach((permission) => {
@@ -113,11 +98,9 @@ const ModuleApi = (props) => {
       });
     }
 
-    // Update all permissions at once
     form.setFieldsValue({ permissions: updatedPermissions });
   };
 
-  // Convert the data structure for use with `items` prop
   const panels = listPermissions?.map((item, index) => ({
     key: `${index}-parent`,
     label: (
@@ -190,30 +173,25 @@ const ModuleApi = (props) => {
     ),
   }));
 
-  // Watch form changes for debug display
   const [formPermissions, setFormPermissions] = useState({});
 
-  // Update form permissions state whenever form changes
   useEffect(() => {
     const updateFormState = () => {
       const perms = form.getFieldValue('permissions') || {};
       setFormPermissions(perms);
     };
 
-    // Initial load
     updateFormState();
 
-    // Subscribe to form changes (if your form supports it)
     const interval = setInterval(updateFormState, 100);
     return () => clearInterval(interval);
   }, [form]);
 
-  // Get current permissions for debug display
   const currentPermissions = formPermissions;
 
   return (
     <Card size="small" bordered={false}>
-      {/* Debug Toggle */}
+      {}
       <div
         style={{
           marginBottom: 10,
@@ -229,7 +207,7 @@ const ModuleApi = (props) => {
         </Space>
       </div>
 
-      {/* Debug Panel */}
+      {}
       {debugMode && (
         <Alert
           message="Debug Info"

@@ -50,7 +50,7 @@ const BookingStepsSection = () => {
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8 relative">
-          {/* Connecting Line (Desktop only) */}
+          {}
           <div className="hidden md:block absolute top-12 left-[12%] right-[12%] h-0.5 bg-gradient-to-r from-blue-100 via-purple-100 to-orange-100 -z-10"></div>
 
           {steps.map((step) => (

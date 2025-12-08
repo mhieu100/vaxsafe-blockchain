@@ -6,9 +6,7 @@ import com.dapp.backend.model.Center;
 
 public class CenterMapper {
 
-    /**
-     * Convert Center entity to CenterResponse DTO
-     */
+    
     public static CenterResponse toResponse(Center center) {
         if (center == null)
             return null;
@@ -28,9 +26,7 @@ public class CenterMapper {
                 .build();
     }
 
-    /**
-     * Convert CenterRequest to Center entity for creation
-     */
+    
     public static Center toEntity(CenterRequest request) {
         if (request == null)
             return null;
@@ -47,14 +43,12 @@ public class CenterMapper {
                 .build();
     }
 
-    /**
-     * Update existing Center entity with data from CenterRequest
-     */
+    
     public static void updateEntity(Center center, CenterRequest request) {
         if (center == null || request == null)
             return;
 
-        // Only set slug if it's provided (not null or empty)
+
         if (request.getSlug() != null && !request.getSlug().trim().isEmpty()) {
             center.setSlug(request.getSlug());
         }

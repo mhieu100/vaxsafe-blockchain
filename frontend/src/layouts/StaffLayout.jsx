@@ -157,7 +157,7 @@ const LayoutStaff = () => {
         }}
       >
         <div className="flex flex-col h-full">
-          {/* Logo Area */}
+          {}
           <div className="h-20 flex items-center justify-center px-6 border-b border-slate-800/50 flex-shrink-0">
             <div className="flex items-center gap-3">
               <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-emerald-500 to-teal-600 flex items-center justify-center shadow-lg shadow-emerald-500/20 flex-shrink-0">
@@ -176,7 +176,7 @@ const LayoutStaff = () => {
             </div>
           </div>
 
-          {/* Menu */}
+          {}
           <div className="flex-1 overflow-y-auto py-4 custom-scrollbar">
             <Menu
               theme="dark"
@@ -188,7 +188,7 @@ const LayoutStaff = () => {
             />
           </div>
 
-          {/* User Profile - Bottom Sidebar */}
+          {}
           <div className="p-4 border-t border-slate-800/50 flex-shrink-0">
             <Dropdown menu={{ items: userMenuItems }} placement="topRight" trigger={['click']}>
               <div
@@ -237,7 +237,7 @@ const LayoutStaff = () => {
             boxShadow: '0 4px 20px 0 rgba(0,0,0,0.02)',
           }}
         >
-          {/* Left Header: Collapse & Search */}
+          {}
           <div className="flex items-center gap-6">
             <Button
               type="text"
@@ -260,7 +260,7 @@ const LayoutStaff = () => {
             </div>
           </div>
 
-          {/* Right Header: Actions */}
+          {}
           <Space size={20}>
             <Tooltip title="Notifications">
               <Button

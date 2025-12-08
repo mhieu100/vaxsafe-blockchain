@@ -17,10 +17,8 @@ const OAuth2Callback = () => {
     const userId = searchParams.get('userId');
 
     if (token && email) {
-      // Store token in localStorage
       localStorage.setItem('token', token);
 
-      // Update user info in store
       const userData = {
         id: userId,
         email,
@@ -31,14 +29,12 @@ const OAuth2Callback = () => {
 
       setUserLoginInfo(userData);
 
-      // Check if profile is complete - only PATIENT needs to complete profile
       if (!isProfileComplete && role === 'PATIENT') {
         message.info('Vui lòng hoàn thiện hồ sơ sức khỏe để bắt đầu đặt lịch tiêm');
         navigate('/complete-profile');
       } else {
         message.success('Đăng nhập thành công!');
 
-        // Navigate based on role
         if (role === 'ADMIN') {
           navigate('/admin');
         } else if (role === 'CASHIER') {

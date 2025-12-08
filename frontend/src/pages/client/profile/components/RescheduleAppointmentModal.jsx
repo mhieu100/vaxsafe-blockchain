@@ -10,7 +10,6 @@ const RescheduleAppointmentModal = ({ open, onClose, appointment, onSuccess }) =
   const [form] = Form.useForm();
   const [loading, setLoading] = useState(false);
 
-  // Time slots with enum mapping (2-hour windows)
   const timeSlots = [
     { value: 'SLOT_07_00', label: '07:00 - 09:00' },
     { value: 'SLOT_09_00', label: '09:00 - 11:00' },
@@ -27,7 +26,7 @@ const RescheduleAppointmentModal = ({ open, onClose, appointment, onSuccess }) =
       const payload = {
         appointmentId: appointment.appointmentId,
         desiredDate: dayjs(values.date).format('YYYY-MM-DD'),
-        desiredTimeSlot: values.time, // Already in enum format
+        desiredTimeSlot: values.time,
         reason: values.reason || '',
       };
 
@@ -49,7 +48,6 @@ const RescheduleAppointmentModal = ({ open, onClose, appointment, onSuccess }) =
     onClose();
   };
 
-  // Disable dates before tomorrow
   const disabledDate = (current) => {
     return current && current < dayjs().startOf('day');
   };
@@ -96,7 +94,7 @@ const RescheduleAppointmentModal = ({ open, onClose, appointment, onSuccess }) =
         layout="vertical"
         initialValues={{
           date: dayjs(appointment.scheduledDate),
-          time: appointment.scheduledTimeSlot, // Use enum value directly
+          time: appointment.scheduledTimeSlot,
         }}
       >
         <Form.Item

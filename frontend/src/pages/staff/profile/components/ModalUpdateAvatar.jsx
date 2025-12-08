@@ -17,7 +17,6 @@ const ModalUpdateAvatar = ({ open, setOpen }) => {
     try {
       setUploading(true);
 
-      // Step 1: Upload file to /files
       const uploadRes = await callUploadSingleFile(file, 'user');
       if (!uploadRes?.data?.fileName) {
         throw new Error('Upload failed: no file URL returned');
@@ -25,22 +24,14 @@ const ModalUpdateAvatar = ({ open, setOpen }) => {
 
       const avatarUrl = uploadRes.data.fileName;
 
-      // Step 2: Update avatar via /auth/avatar
       const updateRes = await callUpdateAvatar(avatarUrl);
 
       console.log(updateRes);
-
-      // The backend returns the avatar URL string directly in the response body
-      // Axios wraps this in a 'data' property
-      // So updateRes should be the avatar URL string if using the service correctly
-      // But let's check what the service returns.
-      // profile.service.js returns response.data.
 
       if (!updateRes) {
         throw new Error('Update avatar failed');
       }
 
-      // Step 3: Update avatar in store directly (no page reload)
       updateUserInfo({ avatar: avatarUrl });
 
       message.success(t('client:profile.updateAvatarSuccess'));
@@ -58,13 +49,11 @@ const ModalUpdateAvatar = ({ open, setOpen }) => {
 
       const defaultAvatar = `${import.meta.env.VITE_API_BASE_URL}/storage/user/default.png`;
 
-      // Update avatar to default image
       const updateRes = await callUpdateAvatar(defaultAvatar);
       if (!updateRes) {
         throw new Error('Xóa ảnh đại diện thất bại');
       }
 
-      // Update avatar in store directly (no page reload)
       updateUserInfo({ avatar: defaultAvatar });
 
       message.success(t('client:profile.removeAvatarSuccess'));
@@ -89,7 +78,7 @@ const ModalUpdateAvatar = ({ open, setOpen }) => {
         return Upload.LIST_IGNORE;
       }
       handleUpload(file);
-      return false; // Prevent auto upload
+      return false;
     },
     showUploadList: false,
   };

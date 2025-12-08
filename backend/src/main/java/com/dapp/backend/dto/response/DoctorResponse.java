@@ -22,7 +22,7 @@ public class DoctorResponse {
     Integer maxPatientsPerDay;
     Boolean isAvailable;
     
-    // Center information
+
     Long centerId;
     String centerName;
 }

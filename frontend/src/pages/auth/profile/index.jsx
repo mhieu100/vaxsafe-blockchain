@@ -21,20 +21,16 @@ const Profile = () => {
   const [editMode, setEditMode] = useState(false);
   const { user, isAuthenticated } = useAccountStore();
 
-  const handleOpenSettings = () => {
-    // TODO: Implement settings modal
-  };
+  const handleOpenSettings = () => {};
 
-  const handleChangeAvatar = () => {
-    // TODO: Implement avatar upload
-  };
+  const handleChangeAvatar = () => {};
 
   const avatarUrl = user?.avatar || undefined;
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-green-50 to-blue-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 py-8">
-        {/* User Info Card */}
+        {}
         <Card className="mb-8 rounded-2xl shadow-lg border-0 overflow-hidden">
           <div className="bg-gradient-to-r from-blue-600 to-purple-600 h-32 relative" />
 
@@ -109,7 +105,7 @@ const Profile = () => {
               </div>
             </div>
 
-            {/* Profile Stats */}
+            {}
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mt-6 pt-6 border-t border-gray-100">
               <div className="text-center">
                 {isAuthenticated ? (
@@ -164,7 +160,7 @@ const Profile = () => {
           </div>
         </Card>
 
-        {/* Main Content */}
+        {}
         <Row gutter={[24, 24]}>
           <Col xs={24}>
             <Card className="rounded-xl shadow-sm border-0">

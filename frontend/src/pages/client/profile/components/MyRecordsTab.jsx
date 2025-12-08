@@ -11,12 +11,12 @@ const MyRecordsTab = ({ editMode, setEditMode }) => {
   const items = [
     {
       key: 'info',
-      label: t('client:settings.profileInfo'), // Reuse existing translation key or add new one
+      label: t('client:settings.profileInfo'),
       children: <EditProfileTab editMode={editMode} setEditMode={setEditMode} />,
     },
     {
       key: 'progress',
-      label: 'Tiến độ', // Add translation key later
+      label: 'Tiến độ',
       children: <VaccinationProgressTab />,
     },
     {

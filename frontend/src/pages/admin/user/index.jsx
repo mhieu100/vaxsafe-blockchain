@@ -163,11 +163,10 @@ const UserPage = () => {
   const buildQuery = (params, sort) => {
     const clone = { ...params };
     const q = {
-      page: clone.current, // Backend configured for one-indexed pages
+      page: clone.current,
       size: clone.pageSize,
     };
 
-    // Build filter
     const filters = [];
     if (clone.fullName) {
       filters.push(sfLike('fullName', clone.fullName));
@@ -183,7 +182,6 @@ const UserPage = () => {
       q.filter = filters.join(' and ');
     }
 
-    // Build sort
     if (sort?.fullName) {
       q.sort = `fullName,${sort.fullName === 'ascend' ? 'asc' : 'desc'}`;
     }

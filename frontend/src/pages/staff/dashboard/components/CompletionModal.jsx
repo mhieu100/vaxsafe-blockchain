@@ -74,9 +74,7 @@ const CompletionModal = ({ open, onCancel, appointment, onSuccess }) => {
     try {
       await form.validateFields();
       setCurrentStep(currentStep + 1);
-    } catch (_err) {
-      // Form validation failed
-    }
+    } catch (_err) {}
   };
 
   const prev = () => setCurrentStep(currentStep - 1);

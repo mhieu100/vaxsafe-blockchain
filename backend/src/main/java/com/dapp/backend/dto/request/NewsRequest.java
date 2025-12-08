@@ -16,7 +16,7 @@ import java.time.LocalDateTime;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class NewsRequest {
 
-    String slug; // Optional, auto-generated if not provided
+    String slug;
 
     @NotBlank(message = "Title is required")
     @Size(max = 500, message = "Title must not exceed 500 characters")
@@ -45,7 +45,7 @@ public class NewsRequest {
     LocalDateTime publishedAt;
 
     @Size(max = 500, message = "Tags must not exceed 500 characters")
-    String tags; // Comma-separated tags
+    String tags;
 
     @Size(max = 500, message = "Source must not exceed 500 characters")
     String source;

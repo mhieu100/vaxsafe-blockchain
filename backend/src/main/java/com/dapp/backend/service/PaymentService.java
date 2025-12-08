@@ -32,23 +32,17 @@ public class PaymentService {
     private final PaypalService paypalService;
     private final EmailService emailService;
 
-    /**
-     * Create VNPay payment URL
-     */
+    
     public String createBankUrl(long amount, Long referenceId, Long paymentId, TypeTransactionEnum type, String ipAddress, String userAgent) throws UnsupportedEncodingException {
         return vnpayService.createPaymentUrl(amount, referenceId, paymentId, type, ipAddress, userAgent);
     }
 
-    /**
-     * Create PayPal payment URL
-     */
+    
     public String createPaypalUrl(Double amount, Long referenceId, Long paymentId, TypeTransactionEnum type, String userAgent) throws PayPalRESTException {
         return paypalService.createPaymentUrl(amount, referenceId, paymentId, type, userAgent);
     }
 
-    /**
-     * Handle successful payment
-     */
+    
     public void successPayment(PaymentRequest request) throws AppException {
         Payment payment = paymentRepository.findById(request.getPaymentId())
                 .orElseThrow(() -> new AppException("Payment not found!"));
@@ -59,7 +53,7 @@ public class PaymentService {
             order.setStatus(OrderStatus.PROCESSING);
             payment.setReferenceType(request.getType());
         } else if (request.getType() == TypeTransactionEnum.APPOINTMENT) {
-            // referenceId is appointmentId
+
             Appointment appointment = appointmentRepository.findById(Long.parseLong(request.getReferenceId()))
                     .orElseThrow(() -> new AppException("Appointment not found!"));
             Booking booking = appointment.getBooking();
@@ -67,7 +61,7 @@ public class PaymentService {
             bookingRepository.save(booking);
             payment.setReferenceType(request.getType());
             
-            // Send appointment confirmation email
+
             try {
                 var patient = booking.getPatient();
                 if (patient != null && patient.getEmail() != null && !patient.getEmail().isEmpty() 
@@ -86,7 +80,7 @@ public class PaymentService {
                     );
                 }
             } catch (Exception e) {
-                // Log but don't fail payment if email fails
+
                 System.err.println("Failed to send confirmation email: " + e.getMessage());
             }
         }
@@ -95,9 +89,7 @@ public class PaymentService {
         paymentRepository.save(payment);
     }
 
-    /**
-     * Handle cancelled payment
-     */
+    
     public void cancelPayment(PaymentRequest request) throws AppException {
         Payment payment = paymentRepository.findById(request.getPaymentId())
                 .orElseThrow(() -> new AppException("Payment not found!"));
@@ -108,7 +100,7 @@ public class PaymentService {
             order.setStatus(OrderStatus.CANCELLED);
             payment.setReferenceType(request.getType());
         } else if (request.getType() == TypeTransactionEnum.APPOINTMENT) {
-            // referenceId is appointmentId
+
             Appointment appointment = appointmentRepository.findById(Long.parseLong(request.getReferenceId()))
                     .orElseThrow(() -> new AppException("Appointment not found!"));
             Booking booking = appointment.getBooking();
@@ -121,11 +113,9 @@ public class PaymentService {
         paymentRepository.save(payment);
     }
 
-    /**
-     * Update payment status for MetaMask
-     */
+    
     public void updatePaymentMetaMask(PaymentRequest request) throws AppException {
-        // referenceId is appointmentId
+
         Appointment appointment = appointmentRepository.findById(Long.parseLong(request.getReferenceId()))
                 .orElseThrow(() -> new AppException("Appointment not found!"));
         Booking booking = appointment.getBooking();
@@ -137,7 +127,7 @@ public class PaymentService {
         bookingRepository.save(booking);
         paymentRepository.save(payment);
         
-        // Send appointment confirmation email
+
         try {
             var patient = booking.getPatient();
             if (patient != null && patient.getEmail() != null && !patient.getEmail().isEmpty() 
@@ -156,7 +146,7 @@ public class PaymentService {
                 );
             }
         } catch (Exception e) {
-            // Log but don't fail payment if email fails
+
             System.err.println("Failed to send confirmation email: " + e.getMessage());
         }
     }

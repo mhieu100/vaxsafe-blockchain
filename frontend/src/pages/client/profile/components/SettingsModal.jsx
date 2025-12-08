@@ -19,7 +19,6 @@ const SettingsModal = ({ open, setOpen, setSecurityModalVisible }) => {
     nextDoseReminderEnabled: true,
   });
 
-  // Fetch settings when modal opens
   useEffect(() => {
     if (open) {
       fetchSettings();
@@ -56,7 +55,7 @@ const SettingsModal = ({ open, setOpen, setSecurityModalVisible }) => {
     } catch (error) {
       console.error('Failed to update settings:', error);
       message.error(t('client:settingsModal.updateSettingsFailed'));
-      // Revert on error
+
       setSettings(settings);
     } finally {
       setUpdating(false);
@@ -89,7 +88,7 @@ const SettingsModal = ({ open, setOpen, setSecurityModalVisible }) => {
       <Spin spinning={loading}>
         <div className="py-4">
           <div className="!space-y-6">
-            {/* Email Notifications */}
+            {}
             <Card className="rounded-lg border border-gray-200">
               <div className="flex items-center justify-between mb-4">
                 <div className="flex items-center gap-3">
@@ -109,7 +108,7 @@ const SettingsModal = ({ open, setOpen, setSecurityModalVisible }) => {
               </div>
             </Card>
 
-            {/* Appointment Reminders */}
+            {}
             <Card className="rounded-lg border border-gray-200">
               <div className="flex items-center justify-between mb-4">
                 <div className="flex items-center gap-3">
@@ -129,7 +128,7 @@ const SettingsModal = ({ open, setOpen, setSecurityModalVisible }) => {
               </div>
             </Card>
 
-            {/* Next Dose Reminders */}
+            {}
             <Card className="rounded-lg border border-gray-200">
               <div className="flex items-center justify-between mb-4">
                 <div className="flex items-center gap-3">
@@ -149,7 +148,7 @@ const SettingsModal = ({ open, setOpen, setSecurityModalVisible }) => {
               </div>
             </Card>
 
-            {/* Security Settings */}
+            {}
             <Card className="rounded-lg border border-gray-200">
               <div className="flex items-center justify-between mb-4">
                 <div className="flex items-center gap-3">
@@ -167,7 +166,7 @@ const SettingsModal = ({ open, setOpen, setSecurityModalVisible }) => {
               </div>
             </Card>
 
-            {/* Privacy Settings */}
+            {}
             <Card className="rounded-lg border border-gray-200">
               <div className="flex items-center justify-between mb-4">
                 <div className="flex items-center gap-3">
@@ -187,7 +186,7 @@ const SettingsModal = ({ open, setOpen, setSecurityModalVisible }) => {
               </div>
             </Card>
 
-            {/* Language Settings */}
+            {}
             <Card className="rounded-lg border border-gray-200">
               <div className="flex items-center justify-between mb-4">
                 <div className="flex items-center gap-3">
@@ -210,7 +209,7 @@ const SettingsModal = ({ open, setOpen, setSecurityModalVisible }) => {
               </div>
             </Card>
 
-            {/* Danger Zone */}
+            {}
             <Card className="rounded-lg border border-red-200 bg-red-50">
               <Title level={5} className="text-red-600 mb-4">
                 {t('client:settingsModal.dangerZone')}

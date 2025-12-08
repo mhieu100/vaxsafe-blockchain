@@ -38,13 +38,11 @@ const WalkInBookingModal = ({ open, setOpen, patient, onSuccess }) => {
   const [centers, setCenters] = useState([]);
   const [_selectedVaccine, setSelectedVaccine] = useState(null);
 
-  // Doctor slot selection
   const [loadingSlots, setLoadingSlots] = useState(false);
   const [selectedSlotId, setSelectedSlotId] = useState(null);
   const [selectedSlot, setSelectedSlot] = useState(null);
   const [availableSlots, setAvailableSlots] = useState([]);
 
-  // Family Member Logic
   const [appointmentFor, setAppointmentFor] = useState('self');
   const [familyMembers, setFamilyMembers] = useState([]);
 
@@ -56,7 +54,6 @@ const WalkInBookingModal = ({ open, setOpen, patient, onSuccess }) => {
         fetchFamilyMembers(patient.id);
       }
     } else {
-      // Reset when modal closes
       form.resetFields();
       setSelectedVaccine(null);
       setSelectedSlotId(null);
@@ -116,7 +113,6 @@ const WalkInBookingModal = ({ open, setOpen, patient, onSuccess }) => {
     setSelectedSlot(slot);
   };
 
-  // Fetch available slots when center, date, and time slot are selected
   const fetchAvailableSlots = async (centerId, date, timeSlot) => {
     if (!centerId || !date || !timeSlot) {
       setAvailableSlots([]);
@@ -143,16 +139,13 @@ const WalkInBookingModal = ({ open, setOpen, patient, onSuccess }) => {
     }
   };
 
-  // Watch for changes in center, date, and time slot
   const handleFormValuesChange = (changedValues, allValues) => {
     const { appointmentCenter, appointmentDate, appointmentTime } = allValues;
 
-    // Only fetch slots when all three values are present and time slot changes
     if (changedValues.appointmentTime && appointmentCenter && appointmentDate && appointmentTime) {
       fetchAvailableSlots(appointmentCenter, appointmentDate.format('YYYY-MM-DD'), appointmentTime);
     }
 
-    // Reset slots if any required field is cleared
     if (
       changedValues.appointmentCenter !== undefined ||
       changedValues.appointmentDate !== undefined ||
@@ -179,7 +172,6 @@ const WalkInBookingModal = ({ open, setOpen, patient, onSuccess }) => {
         return;
       }
 
-      // Create walk-in booking payload
       const bookingPayload = {
         patientId: patient.id,
         familyMemberId: appointmentFor === 'family' ? values.familyMemberId : null,
@@ -187,11 +179,11 @@ const WalkInBookingModal = ({ open, setOpen, patient, onSuccess }) => {
         vaccineId: values.vaccineId,
         doctorId: selectedSlot.doctorId,
         appointmentDate: values.appointmentDate.format('YYYY-MM-DD'),
-        appointmentTime: TimeSlotTime[values.appointmentTime], // Convert SLOT_15_00 to "15:00"
+        appointmentTime: TimeSlotTime[values.appointmentTime],
         actualScheduledTime: selectedSlot.startTime,
-        slotId: selectedSlot.slotId || null, // Real slot ID or null for virtual slot
+        slotId: selectedSlot.slotId || null,
         notes: values.notes || '',
-        paymentMethod: 'CASH', // Walk-in bookings default to cash
+        paymentMethod: 'CASH',
       };
 
       const response = await callCreateWalkInBooking(bookingPayload);
@@ -364,7 +356,7 @@ const WalkInBookingModal = ({ open, setOpen, patient, onSuccess }) => {
         initialValues={{ appointmentFor: 'self' }}
       >
         <Row gutter={16}>
-          {/* Booking For Selection */}
+          {}
           <Col xs={24}>
             <Form.Item name="appointmentFor" label="Đặt lịch cho">
               <Radio.Group
@@ -379,7 +371,7 @@ const WalkInBookingModal = ({ open, setOpen, patient, onSuccess }) => {
             </Form.Item>
           </Col>
 
-          {/* Family Member Select */}
+          {}
           {appointmentFor === 'family' && (
             <Col xs={24}>
               <Form.Item

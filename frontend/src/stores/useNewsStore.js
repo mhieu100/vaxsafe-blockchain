@@ -2,7 +2,6 @@ import { create } from 'zustand';
 import { callFetchNews } from '../services/news.service';
 
 const useNewsStore = create((set) => ({
-  // State
   isFetching: true,
   meta: {
     page: 1,
@@ -12,7 +11,6 @@ const useNewsStore = create((set) => ({
   },
   result: [],
 
-  // Actions
   fetchNews: async (query) => {
     set({ isFetching: true });
     try {

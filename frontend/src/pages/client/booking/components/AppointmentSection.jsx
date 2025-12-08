@@ -40,7 +40,6 @@ const AppointmentSection = ({ bookingForm, vaccine, setCurrentStep, setBookingDa
   const { data: centers } = useCenter(filter);
   const { data: families } = useFamilyMember(filter);
 
-  // Default time slots (fallback)
   const defaultTimeSlots = useMemo(
     () => [
       { value: '07:00', label: '07:00 - 09:00' },
@@ -52,7 +51,6 @@ const AppointmentSection = ({ bookingForm, vaccine, setCurrentStep, setBookingDa
     []
   );
 
-  // Fetch availability when center and date are selected
   useEffect(() => {
     const fetchAvailability = async () => {
       if (appointmentCenterId && appointmentDate) {
@@ -104,7 +102,6 @@ const AppointmentSection = ({ bookingForm, vaccine, setCurrentStep, setBookingDa
     }
   };
 
-  // Generate options for Select component
   const timeSlotOptions = useMemo(() => {
     if (!appointmentCenterId || !appointmentDate) {
       return defaultTimeSlots;
@@ -112,7 +109,7 @@ const AppointmentSection = ({ bookingForm, vaccine, setCurrentStep, setBookingDa
 
     if (availableSlots.length > 0) {
       return availableSlots.map((slot) => ({
-        value: slot.timeSlot.replace('SLOT_', '').replace('_', ':'), // Convert SLOT_07_00 to 07:00
+        value: slot.timeSlot.replace('SLOT_', '').replace('_', ':'),
         label: (
           <div className="flex justify-between items-center w-full">
             <span>{slot.time}</span>
@@ -133,9 +130,9 @@ const AppointmentSection = ({ bookingForm, vaccine, setCurrentStep, setBookingDa
     <div className="animate-fade-in">
       <Form form={bookingForm} layout="vertical">
         <Row gutter={32}>
-          {/* Left Column: Booking Form */}
+          {}
           <Col xs={24} lg={16}>
-            {/* 1. Who is this for? */}
+            {}
             <div className="bg-white p-8 rounded-3xl shadow-sm border border-slate-100 mb-8">
               <div className="flex items-center gap-3 mb-6">
                 <div className="w-10 h-10 rounded-full bg-blue-50 flex items-center justify-center text-blue-600">
@@ -226,7 +223,7 @@ const AppointmentSection = ({ bookingForm, vaccine, setCurrentStep, setBookingDa
               )}
             </div>
 
-            {/* 2. Where and When? */}
+            {}
             <div className="bg-white p-8 rounded-3xl shadow-sm border border-slate-100 mb-8">
               <div className="flex items-center gap-3 mb-6">
                 <div className="w-10 h-10 rounded-full bg-purple-50 flex items-center justify-center text-purple-600">
@@ -248,7 +245,7 @@ const AppointmentSection = ({ bookingForm, vaccine, setCurrentStep, setBookingDa
                   className="w-full"
                   onChange={(value) => {
                     setAppointmentCenterId(value);
-                    // Reset time when center changes
+
                     bookingForm.setFieldValue('appointmentTime', null);
                     setAppointmentTime(null);
                   }}
@@ -273,7 +270,7 @@ const AppointmentSection = ({ bookingForm, vaccine, setCurrentStep, setBookingDa
                       disabledDate={disabledDate}
                       onChange={(date) => {
                         setAppointmentDate(date);
-                        // Reset time when date changes
+
                         bookingForm.setFieldValue('appointmentTime', null);
                         setAppointmentTime(null);
                       }}
@@ -312,7 +309,7 @@ const AppointmentSection = ({ bookingForm, vaccine, setCurrentStep, setBookingDa
             </div>
           </Col>
 
-          {/* Right Column: Vaccine Summary */}
+          {}
           <Col xs={24} lg={8}>
             {vaccine && (
               <div className="sticky top-24">

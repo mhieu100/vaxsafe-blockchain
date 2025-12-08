@@ -9,7 +9,6 @@ const SuccessPage = () => {
   const { t } = useTranslation('common');
 
   useEffect(() => {
-    // Auto redirect after 5 seconds
     const timer = setTimeout(() => {
       navigate('/profile');
     }, 5000);

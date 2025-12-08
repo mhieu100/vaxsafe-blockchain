@@ -1,41 +1,26 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 
-/**
- * Shopping cart store with persistent localStorage
- * @typedef {object} CartItem
- * @property {object} vaccine - Vaccine object with id, name, price, etc.
- * @property {number} quantity - Quantity of this vaccine in cart
- */
-
 const useCartStore = create(
   persist(
     (set, get) => ({
       items: [],
 
-      /**
-       * Add item to cart or increase quantity if already exists
-       * @param {object} vaccine - Vaccine object to add
-       * @param {number} quantity - Quantity to add (default: 1)
-       */
       addItem: (vaccine, quantity = 1) => {
         const items = get().items;
         const exist = items.find((i) => i.vaccine.id === vaccine.id);
 
         if (exist) {
-          // If exists, increase quantity
           set({
             items: items.map((i) =>
               i.vaccine.id === vaccine.id ? { ...i, quantity: i.quantity + quantity } : i
             ),
           });
         } else {
-          // Add new item
           set({ items: [...items, { vaccine, quantity }] });
         }
       },
 
-      // Backward compatibility with old addToCart
       addToCart: (product) => {
         get().addItem(product, 1);
       },
@@ -45,15 +30,10 @@ const useCartStore = create(
           items: get().items.filter((i) => i.vaccine.id !== id),
         }),
 
-      // Backward compatibility with old removeFromCart
       removeFromCart: (vaccineId) => {
         get().removeItem(vaccineId);
       },
 
-      /**
-       * Increase item quantity by 1
-       * @param {number|string} id - Vaccine ID
-       */
       increase: (id) => {
         const items = get().items;
 
@@ -62,10 +42,6 @@ const useCartStore = create(
         });
       },
 
-      /**
-       * Decrease item quantity by 1, remove if quantity becomes 0
-       * @param {number|string} id - Vaccine ID
-       */
       decrease: (id) => {
         const items = get().items;
         const target = items.find((i) => i.vaccine.id === id);
@@ -82,7 +58,6 @@ const useCartStore = create(
         }
       },
 
-      // Backward compatibility with old updateQuantity
       updateQuantity: (vaccineId, quantity) => {
         if (quantity <= 0) {
           get().removeItem(vaccineId);
@@ -97,20 +72,11 @@ const useCartStore = create(
 
       clearCart: () => set({ items: [] }),
 
-      /**
-       * Get total quantity of all items
-       * @returns {number} Total quantity
-       */
       totalQuantity: () => get().items.reduce((acc, item) => acc + item.quantity, 0),
 
-      /**
-       * Get total price of all items
-       * @returns {number} Total price
-       */
       totalPrice: () =>
         get().items.reduce((acc, item) => acc + item.vaccine.price * item.quantity, 0),
 
-      // Computed properties for backward compatibility
       get itemCount() {
         return get().totalQuantity();
       },
@@ -119,7 +85,7 @@ const useCartStore = create(
       },
     }),
     {
-      name: 'cart-storage', // localStorage key
+      name: 'cart-storage',
     }
   )
 );

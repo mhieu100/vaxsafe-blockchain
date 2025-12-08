@@ -40,7 +40,6 @@ const ModalUser = (props) => {
 
   useEffect(() => {
     if (openModal && dataInit?.id) {
-      // Map data from API response to form fields
       form.setFieldsValue({
         fullName: dataInit.fullName,
         email: dataInit.email,
@@ -64,12 +63,11 @@ const ModalUser = (props) => {
 
     try {
       if (dataInit?.id) {
-        // Update user - map phoneNumber to phone for backend
         const res = await callUpdateUser(
           dataInit.id,
           fullName,
           email,
-          phoneNumber, // frontend uses phoneNumber
+          phoneNumber,
           birthday,
           address
         );
@@ -98,7 +96,7 @@ const ModalUser = (props) => {
     form.resetFields();
     setDataInit(null);
     setRole(null);
-    // Add animation when closing modal
+
     setAnimation('close');
     await new Promise((resolve) => setTimeout(resolve, 400));
     setOpenModal(false);

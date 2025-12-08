@@ -16,11 +16,11 @@ public class VaccineRecordResponse {
 
     Long id;
 
-    // Patient Information
+
     String patientName;
     String patientIdentityHash;
 
-    // Vaccine Information
+
     Long vaccineId;
     String vaccineName;
     String vaccineSlug;
@@ -29,27 +29,27 @@ public class VaccineRecordResponse {
     LocalDate expiryDate;
     String manufacturer;
 
-    // Vaccination Details
+
     LocalDate vaccinationDate;
     VaccinationSite site;
 
-    // Doctor Information
+
     Long doctorId;
     String doctorName;
 
-    // Center Information
+
     Long centerId;
     String centerName;
 
-    // Appointment
+
     Long appointmentId;
 
-    // Medical Information
+
     String notes;
     String adverseReactions;
     LocalDateTime followUpDate;
 
-    // Vitals
+
     Double height;
     Double weight;
     Double temperature;
@@ -57,7 +57,7 @@ public class VaccineRecordResponse {
     Integer systolic;
     Integer diastolic;
 
-    // Blockchain Information
+
     String blockchainRecordId;
     String transactionHash;
     Long blockNumber;
@@ -66,11 +66,11 @@ public class VaccineRecordResponse {
     boolean isVerified;
     LocalDateTime verifiedAt;
 
-    // Next Dose Information
+
     LocalDate nextDoseDate;
     Integer nextDoseNumber;
 
-    // Timestamps
+
     LocalDateTime createdAt;
     LocalDateTime updatedAt;
 }

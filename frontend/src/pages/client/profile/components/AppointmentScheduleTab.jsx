@@ -184,7 +184,6 @@ const AppointmentScheduleTab = () => {
     (appointments) => appointments.length > 0 && appointments[0].isFamily
   );
 
-  // Loading Skeleton
   if (loading) {
     return (
       <div className="space-y-6 animate-fade-in">
@@ -335,7 +334,7 @@ const AppointmentScheduleTab = () => {
                     )}
                   </div>
 
-                  {/* Action buttons */}
+                  {}
                   {apt.appointmentStatus !== 'COMPLETED' &&
                     apt.appointmentStatus !== 'CANCELLED' &&
                     apt.appointmentStatus !== 'RESCHEDULE' &&
@@ -427,7 +426,7 @@ const AppointmentScheduleTab = () => {
         </div>
       </Card>
 
-      {/* Reschedule Modal */}
+      {}
       {selectedAppointment && (
         <RescheduleAppointmentModal
           open={rescheduleModalOpen}

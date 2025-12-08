@@ -30,7 +30,6 @@ const ModalUpdatePassword = ({ open, setOpen }) => {
         newPassword: values.newPassword,
       });
 
-      // Response structure: { statusCode: 200, message: "Update password", data: true/false }
       if (response && typeof response === 'object' && 'data' in response) {
         if (response.data === true) {
           message.success(response.message || 'Password updated successfully');

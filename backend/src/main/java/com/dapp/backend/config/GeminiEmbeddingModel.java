@@ -32,12 +32,12 @@ public class GeminiEmbeddingModel implements EmbeddingModel {
 
     @Override
     public EmbeddingResponse call(EmbeddingRequest request) {
-        // Construct the request body
+
         Map<String, Object> body = Map.of(
                 "input", request.getInstructions(),
                 "model", model);
 
-        // Make the API call
+
         Map response = restClient.post()
                 .uri(baseUrl + "/embeddings")
                 .header("Authorization", "Bearer " + apiKey)
@@ -50,7 +50,7 @@ public class GeminiEmbeddingModel implements EmbeddingModel {
             throw new RuntimeException("Invalid response from Gemini API: " + response);
         }
 
-        // Parse response
+
         List<Map<String, Object>> data = (List<Map<String, Object>>) response.get("data");
         List<Embedding> embeddings = data.stream()
                 .map(item -> {
@@ -60,7 +60,7 @@ public class GeminiEmbeddingModel implements EmbeddingModel {
                 })
                 .collect(Collectors.toList());
 
-        // Create metadata (ignoring usage to avoid NPE)
+
         return new EmbeddingResponse(embeddings, new EmbeddingResponseMetadata());
     }
 

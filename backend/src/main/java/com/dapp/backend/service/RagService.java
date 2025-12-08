@@ -36,8 +36,7 @@ public class RagService {
                 .map(content -> new Document(content, Map.of()))
                 .collect(Collectors.toList());
 
-        // Split documents into chunks to fit embedding model context and improve
-        // retrieval
+
         TokenTextSplitter splitter = new TokenTextSplitter();
         List<Document> splitDocuments = splitter.apply(documents);
 
@@ -67,7 +66,7 @@ public class RagService {
                     v.getManufacturer(),
                     v.getPrice(),
                     v.getDescription(),
-                    v.getInjection(), // Assuming 'injection' field contains schedule/target info
+                    v.getInjection(),
                     v.getContraindications(),
                     v.getPreserve(),
                     v.getDosesRequired(),
@@ -82,7 +81,7 @@ public class RagService {
     }
 
     public List<Document> similaritySearch(String query) {
-        // Increase top-k to retrieve more relevant context
+
         return vectorStore.similaritySearch(SearchRequest.query(query).withTopK(5));
     }
 
@@ -103,8 +102,7 @@ public class RagService {
                     : "Chưa có thông tin";
             String condition = request.getHealthCondition() != null ? request.getHealthCondition() : "Bình thường";
 
-            // 1. Retrieve similar documents with higher top-k
-            // We combine query with age/keywords to find relevant schedule info
+
             String searchContext = query + " lịch tiêm chủng " + age;
             List<Document> similarDocuments = vectorStore
                     .similaritySearch(SearchRequest.query(searchContext).withTopK(6));
@@ -113,7 +111,7 @@ public class RagService {
                     .map(Document::getContent)
                     .collect(Collectors.joining("\n\n"));
 
-            // 2. Construct System Prompt (Expert Consultant)
+
             String systemPromptText = """
                     Bạn là Bác sĩ AI chuyên gia về tiêm chủng của hệ thống VaxSafe.
 
@@ -151,7 +149,7 @@ public class RagService {
                     "condition", condition,
                     "information", information));
 
-            // 3. Call Chat Model
+
             var userMessage = new UserMessage(query);
             var prompt = new Prompt(List.of(systemMessage, userMessage));
 

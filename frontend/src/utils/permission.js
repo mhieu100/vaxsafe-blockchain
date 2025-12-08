@@ -1,5 +1,3 @@
-/* eslint-disable import/no-extraneous-dependencies */
-
 import { blue, green, grey, orange, red } from '@ant-design/colors';
 import groupBy from 'lodash/groupBy';
 import map from 'lodash/map';

@@ -24,7 +24,6 @@ const ProtectedUserRoute = (props) => {
     return <Navigate to="/login" replace />;
   }
 
-  // Block ADMIN, DOCTOR, CASHIER from accessing user routes
   if (isAuthenticated && user?.role && ['ADMIN', 'DOCTOR', 'CASHIER'].includes(user.role)) {
     return <NotPermitted />;
   }

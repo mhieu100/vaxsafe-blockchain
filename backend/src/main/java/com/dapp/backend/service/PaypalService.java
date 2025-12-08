@@ -24,11 +24,9 @@ public class PaypalService {
     @Value("${paypal.success-url}")
     private String paypalSuccessUrl;
 
-    /**
-     * Create PayPal payment URL
-     */
+    
     public String createPaymentUrl(Double amount, Long referenceId, Long paymentId, TypeTransactionEnum type, String userAgent) throws PayPalRESTException {
-        // Detect platform from User-Agent
+
         String platform = detectPlatform(userAgent);
         
         String cancelUrl = paypalCancelUrl + "?referenceId=" + referenceId + "&type=" + type + "&payment=" + paymentId + "&platform=" + platform;
@@ -52,9 +50,7 @@ public class PaypalService {
         return null;
     }
 
-    /**
-     * Create PayPal payment object
-     */
+    
     private Payment createPayment(
             Double total,
             String currency,
@@ -91,16 +87,14 @@ public class PaypalService {
         return payment.create(apiContext);
     }
     
-    /**
-     * Detect platform from User-Agent header
-     */
+    
     private String detectPlatform(String userAgent) {
         if (userAgent == null) {
             return "web";
         }
         userAgent = userAgent.toLowerCase();
         
-        // Check for mobile app indicators
+
         if (userAgent.contains("android") || userAgent.contains("okhttp") || userAgent.contains("retrofit")) {
             return "mobile";
         }

@@ -5,12 +5,7 @@ import jakarta.validation.Payload;
 
 import java.lang.annotation.*;
 
-/**
- * Validates that a birthday is within a reasonable range
- * - Must be in the past
- * - Must not be more than 150 years ago
- * - Can be as recent as today (for newborns)
- */
+
 @Target({ElementType.FIELD, ElementType.PARAMETER})
 @Retention(RetentionPolicy.RUNTIME)
 @Constraint(validatedBy = BirthdayValidator.class)
@@ -23,13 +18,9 @@ public @interface ValidBirthday {
     
     Class<? extends Payload>[] payload() default {};
     
-    /**
-     * Maximum age in years (default 150)
-     */
+    
     int maxAge() default 150;
     
-    /**
-     * Whether birthday is required
-     */
+    
     boolean required() default true;
 }

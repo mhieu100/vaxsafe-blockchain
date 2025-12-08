@@ -1,13 +1,6 @@
 import VaccineCard from './VaccineCard';
 import VaccineModeCard from './VaccineModeCard';
 
-/**
- * ListVaccineSection component displays vaccines in grid or list view
- * @param {object} props - Component props
- * @param {string} props.viewMode - View mode: 'grid' or 'list'
- * @param {Array} props.vaccines - Array of vaccine objects
- * @returns {React.Component}
- */
 const ListVaccineSection = ({ vaccines, viewMode }) => {
   return (
     <div

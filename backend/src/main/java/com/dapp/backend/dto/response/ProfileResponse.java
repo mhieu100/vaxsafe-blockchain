@@ -12,9 +12,7 @@ import java.time.LocalDate;
 
 public class ProfileResponse {
 
-    /**
-     * Common user fields for all profiles
-     */
+    
     @Data
     @Builder
     @NoArgsConstructor
@@ -32,15 +30,13 @@ public class ProfileResponse {
         private String role;
     }
 
-    /**
-     * Patient profile response
-     */
+    
     @Data
     @Builder
     @NoArgsConstructor
     @AllArgsConstructor
     public static class PatientProfile {
-        // Common user fields
+
         private Long id;
         private String avatar;
         private String fullName;
@@ -52,7 +48,7 @@ public class ProfileResponse {
         private String address;
         private String role;
 
-        // Patient specific fields
+
         private Long patientId;
         private String identityNumber;
         private BloodType bloodType;
@@ -64,15 +60,13 @@ public class ProfileResponse {
         private boolean consentForAIAnalysis;
     }
 
-    /**
-     * Doctor profile response
-     */
+    
     @Data
     @Builder
     @NoArgsConstructor
     @AllArgsConstructor
     public static class DoctorProfile {
-        // Common user fields
+
         private Long id;
         private String avatar;
         private String fullName;
@@ -84,7 +78,7 @@ public class ProfileResponse {
         private String address;
         private String role;
 
-        // Doctor specific fields
+
         private Long doctorId;
         private String licenseNumber;
         private String specialization;
@@ -92,21 +86,19 @@ public class ProfileResponse {
         private Integer maxPatientsPerDay;
         private Boolean isAvailable;
 
-        // Center info
+
         private Long centerId;
         private String centerName;
         private String centerAddress;
     }
 
-    /**
-     * Cashier profile response
-     */
+    
     @Data
     @Builder
     @NoArgsConstructor
     @AllArgsConstructor
     public static class CashierProfile {
-        // Common user fields
+
         private Long id;
         private String avatar;
         private String fullName;
@@ -118,28 +110,26 @@ public class ProfileResponse {
         private String address;
         private String role;
 
-        // Cashier specific fields
+
         private Long cashierId;
         private String employeeCode;
         private String shiftStartTime;
         private String shiftEndTime;
         private Boolean isActive;
 
-        // Center info
+
         private Long centerId;
         private String centerName;
         private String centerAddress;
     }
 
-    /**
-     * Admin profile response
-     */
+    
     @Data
     @Builder
     @NoArgsConstructor
     @AllArgsConstructor
     public static class AdminProfile {
-        // Common user fields only
+
         private Long id;
         private String avatar;
         private String fullName;

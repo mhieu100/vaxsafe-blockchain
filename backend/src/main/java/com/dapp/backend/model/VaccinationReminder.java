@@ -25,11 +25,11 @@ public class VaccinationReminder extends BaseEntity {
 
     @ManyToOne
     @JoinColumn(name = "appointment_id")
-    Appointment appointment; // Null if reminderType = NEXT_DOSE_REMINDER
+    Appointment appointment;
 
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)
-    User user; // Người nhận reminder
+    User user;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
@@ -37,21 +37,21 @@ public class VaccinationReminder extends BaseEntity {
     ReminderType reminderType = ReminderType.APPOINTMENT_REMINDER;
 
     @Enumerated(EnumType.STRING)
-    ReminderChannel channel; // EMAIL, SMS, ZALO
+    ReminderChannel channel;
 
-    LocalDate scheduledDate; // Ngày dự định gửi reminder
+    LocalDate scheduledDate;
 
-    LocalDateTime sentAt; // Thời điểm thực tế gửi
+    LocalDateTime sentAt;
 
     @Enumerated(EnumType.STRING)
     @Builder.Default
     ReminderStatus status = ReminderStatus.PENDING;
 
-    Integer daysBefore; // Số ngày trước lịch hẹn (cho APPOINTMENT_REMINDER)
+    Integer daysBefore;
 
-    // For NEXT_DOSE_REMINDER only
-    Long vaccineId; // Vaccine cần tiêm mũi tiếp theo
-    Integer nextDoseNumber; // Mũi số mấy (2, 3, booster)
+
+    Long vaccineId;
+    Integer nextDoseNumber;
 
     String recipientEmail;
 
@@ -63,9 +63,9 @@ public class VaccinationReminder extends BaseEntity {
     String message;
 
     @Column(columnDefinition = "TEXT")
-    String errorMessage; // Lỗi nếu gửi thất bại
+    String errorMessage;
 
-    Integer retryCount; // Số lần thử lại
+    Integer retryCount;
 
-    LocalDateTime nextRetryAt; // Thời gian thử lại tiếp theo
+    LocalDateTime nextRetryAt;
 }

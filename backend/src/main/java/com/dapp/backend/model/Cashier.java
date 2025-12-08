@@ -32,10 +32,10 @@ public class Cashier extends BaseEntity {
     String employeeCode;
 
     @Column(name = "shift_start_time")
-    String shiftStartTime; // e.g., "08:00"
+    String shiftStartTime;
 
     @Column(name = "shift_end_time")
-    String shiftEndTime; // e.g., "17:00"
+    String shiftEndTime;
 
     @Column(name = "is_active")
     @Builder.Default

@@ -16,7 +16,6 @@ const ModalPermission = (props) => {
     const { name, method, apiPath, module } = valuesForm;
     try {
       if (dataInit?.id) {
-        // Update user
         const res = await callUpdatePermission(dataInit.id, name, method, apiPath, module);
 
         if (res.data) {
@@ -28,7 +27,6 @@ const ModalPermission = (props) => {
           });
         }
       } else {
-        // Create user
         const res = await callCreatePermission(name, method, apiPath, module);
 
         if (res.data) {
@@ -54,7 +52,7 @@ const ModalPermission = (props) => {
   const handleReset = async () => {
     form.resetFields();
     setDataInit(null);
-    // Add animation when closing modal
+
     setAnimation('close');
     await new Promise((resolve) => setTimeout(resolve, 400));
     setOpenModal(false);

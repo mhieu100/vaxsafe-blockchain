@@ -18,7 +18,7 @@ const CardInfoUser = ({ setOpen }) => {
   const isAuthenticated = useAccountStore((state) => state.isAuthenticated);
 
   const _memberSince = useMemo(() => {
-    if (!user?.createdAt) return '--'; // Assuming createdAt exists, or fallback
+    if (!user?.createdAt) return '--';
     try {
       return dayjs(user.createdAt).format('MMM YYYY');
     } catch {
@@ -31,7 +31,7 @@ const CardInfoUser = ({ setOpen }) => {
   return (
     <Card className="!mb-8 rounded-3xl shadow-sm border border-slate-100 overflow-hidden bg-white">
       <div className="p-6 flex flex-col md:flex-row items-center gap-8">
-        {/* Avatar Section */}
+        {}
         <div className="relative group">
           <div className="p-1 rounded-full bg-gradient-to-br from-blue-500 to-emerald-500">
             <Avatar
@@ -50,7 +50,7 @@ const CardInfoUser = ({ setOpen }) => {
           />
         </div>
 
-        {/* Info Section */}
+        {}
         <div className="flex-1 text-center md:text-left">
           <div className="flex flex-col md:flex-row md:items-center gap-3 mb-2 justify-center md:justify-start">
             <Title level={2} className="!mb-0 text-slate-800">
@@ -87,7 +87,7 @@ const CardInfoUser = ({ setOpen }) => {
           </div>
         </div>
 
-        {/* QR Code Section (Decorative) */}
+        {}
         <div className="hidden md:flex flex-col items-center justify-center p-4 bg-slate-50 rounded-2xl border border-slate-100">
           <QrcodeOutlined className="text-4xl text-slate-800 mb-2" />
           <span className="text-xs font-bold text-slate-400 uppercase tracking-wider">

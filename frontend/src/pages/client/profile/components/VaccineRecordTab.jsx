@@ -33,7 +33,6 @@ const VaccineRecordTab = () => {
         setLoading(true);
         setError(null);
 
-        // Fetch vaccine records from backend
         const response = await apiClient.get(`/api/vaccine-records/patient/${user.id}`);
 
         if (response.data) {
@@ -291,7 +290,7 @@ const VaccineRecordTab = () => {
                         : 'N/A'}
                     </Descriptions.Item>
 
-                    {/* Blockchain Information */}
+                    {}
                     {record.transactionHash && (
                       <>
                         <Descriptions.Item
@@ -373,7 +372,7 @@ const VaccineRecordTab = () => {
         </ul>
       </Card>
 
-      {/* Blockchain Verification Modal */}
+      {}
       <BlockchainVerificationModal
         open={verificationModalOpen}
         onClose={() => setVerificationModalOpen(false)}

@@ -87,7 +87,7 @@ const CompleteProfilePage = () => {
 
   return (
     <div className="min-h-screen bg-slate-50 py-12 px-4 sm:px-6 lg:px-8 flex flex-col items-center justify-center">
-      {/* Header Section */}
+      {}
       <div className="text-center mb-10 max-w-2xl">
         <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-blue-600 text-white mb-6 shadow-lg shadow-blue-500/30">
           <SafetyCertificateFilled className="text-3xl" />
@@ -116,7 +116,7 @@ const CompleteProfilePage = () => {
             size="large"
             className="space-y-8"
           >
-            {/* Section 1: Personal Information */}
+            {}
             <div>
               <div className="flex items-center gap-3 mb-6 pb-4 border-b border-slate-100">
                 <div className="w-10 h-10 rounded-full bg-blue-50 flex items-center justify-center text-blue-600">
@@ -189,7 +189,7 @@ const CompleteProfilePage = () => {
               </div>
             </div>
 
-            {/* Section 2: Contact Details */}
+            {}
             <div>
               <div className="flex items-center gap-3 mb-6 pb-4 border-b border-slate-100">
                 <div className="w-10 h-10 rounded-full bg-emerald-50 flex items-center justify-center text-emerald-600">
@@ -239,7 +239,7 @@ const CompleteProfilePage = () => {
               </div>
             </div>
 
-            {/* Section 3: Medical Info */}
+            {}
             <div>
               <div className="flex items-center gap-3 mb-6 pb-4 border-b border-slate-100">
                 <div className="w-10 h-10 rounded-full bg-red-50 flex items-center justify-center text-red-600">

@@ -50,9 +50,7 @@ const PaymentSection = ({ paymentForm, setCurrentStep, setBookingData }) => {
     try {
       await paymentForm.validateFields();
       setCurrentStep(2);
-    } catch {
-      // Validation failed
-    }
+    } catch {}
   };
 
   return (
@@ -92,7 +90,7 @@ const PaymentSection = ({ paymentForm, setCurrentStep, setBookingData }) => {
                 >
                   <Radio value={method.value} className="hidden" />
 
-                  {/* Check Icon */}
+                  {}
                   <div
                     className={`absolute top-6 right-6 transition-all duration-300 ${
                       selectedMethod === method.value

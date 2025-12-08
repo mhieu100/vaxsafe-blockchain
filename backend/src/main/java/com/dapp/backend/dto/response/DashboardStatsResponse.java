@@ -18,15 +18,15 @@ public class DashboardStatsResponse {
     private long totalCenters;
     private long totalVaccines;
 
-    // Appointment stats
+
     private long pendingAppointments;
     private long completedAppointments;
     private long cancelledAppointments;
     private long totalAppointments;
 
-    // Charts data
-    private List<DailyStat> dailyAppointments; // Last 30 days
-    private Map<String, Long> vaccineDistribution; // By vaccine name or type
+
+    private List<DailyStat> dailyAppointments;
+    private Map<String, Long> vaccineDistribution;
 
     @Data
     @Builder

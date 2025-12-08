@@ -2,10 +2,6 @@ import { CheckCircleFilled, SafetyCertificateOutlined } from '@ant-design/icons'
 import { Badge, Tooltip } from 'antd';
 import { useTranslation } from 'react-i18next';
 
-/**
- * Simple badge showing blockchain verification status
- * Shows: ✓ Verified on Blockchain
- */
 const BlockchainBadge = ({ verified = false, compact = false }) => {
   const { t } = useTranslation(['common']);
 

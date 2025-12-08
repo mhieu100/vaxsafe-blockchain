@@ -16,10 +16,10 @@ import java.util.List;
 public interface AppointmentRepository extends JpaRepository<Appointment, Long>, JpaSpecificationExecutor<Appointment> {
         List<Appointment> findByBooking(Booking booking);
 
-        // Find appointments with pending reschedule requests
+
         List<Appointment> findByStatusAndDesiredDateIsNotNullAndCenter(AppointmentStatus status, Center center);
 
-        // Find appointments without doctor assigned, scheduled within date range
+
         @Query("SELECT a FROM Appointment a WHERE a.doctor IS NULL " +
                         "AND a.status IN :statuses " +
                         "AND a.scheduledDate BETWEEN :startDate AND :endDate " +
@@ -30,13 +30,13 @@ public interface AppointmentRepository extends JpaRepository<Appointment, Long>,
                         @Param("endDate") LocalDate endDate,
                         @Param("center") Center center);
 
-        // Find appointments for a doctor on a specific date, ordered by time slot
+
         List<Appointment> findByDoctorAndScheduledDateOrderByScheduledTimeSlotAsc(User doctor, LocalDate scheduledDate);
 
         @Query("SELECT a.scheduledDate, COUNT(a) FROM Appointment a WHERE a.scheduledDate >= :startDate GROUP BY a.scheduledDate ORDER BY a.scheduledDate")
         List<Object[]> countAppointmentsByDateSince(@Param("startDate") LocalDate startDate);
 
-        // Doctor Stats
+
         long countByDoctorAndScheduledDate(User doctor, LocalDate date);
 
         long countByDoctorAndScheduledDateBetween(User doctor, LocalDate startDate, LocalDate endDate);
@@ -47,7 +47,7 @@ public interface AppointmentRepository extends JpaRepository<Appointment, Long>,
         Appointment findFirstByDoctorAndStatusAndScheduledDateGreaterThanEqualOrderByScheduledDateAscScheduledTimeSlotAsc(
                         User doctor, AppointmentStatus status, LocalDate date);
 
-        // Cashier/Center Stats
+
         long countByCenterAndStatus(Center center, AppointmentStatus status);
 
         long countByCenterAndScheduledDate(Center center, LocalDate date);

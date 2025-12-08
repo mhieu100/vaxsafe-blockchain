@@ -28,7 +28,7 @@ public class VaccineResponse {
     List<String> preserve;
     List<String> contraindications;
     Integer dosesRequired;
-    Integer duration; // duration in days/months depending on business rule
+    Integer duration;
     LocalDateTime createdAt;
     LocalDateTime updatedAt;
 }

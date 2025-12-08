@@ -54,7 +54,7 @@ public class NewsMapper {
     public static void updateEntity(News news, NewsRequest request) {
         if (news == null || request == null) return;
 
-        // Only update slug if provided
+
         if (request.getSlug() != null && !request.getSlug().trim().isEmpty()) {
             news.setSlug(request.getSlug());
         }

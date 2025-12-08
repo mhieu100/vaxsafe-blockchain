@@ -12,5 +12,5 @@ public class SlotAvailabilityDto {
     private int capacity;
     private int booked;
     private int available;
-    private String status; // AVAILABLE, FULL
+    private String status;
 }

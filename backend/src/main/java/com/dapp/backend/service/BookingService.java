@@ -47,18 +47,18 @@ public class BookingService {
         Vaccine vaccine = vaccineRepository.findById(bookingRequest.getVaccineId())
                 .orElseThrow(() -> new AppException("Vaccine not found!"));
 
-        // Get center for first appointment only if provided
+
         Center center = null;
         if (bookingRequest.getAppointmentCenter() != null) {
             center = centerRepository.findById(bookingRequest.getAppointmentCenter())
                     .orElseThrow(() -> new AppException("Center not found!"));
 
-            // Validate slot availability
+
             if (bookingRequest.getAppointmentDate() != null && bookingRequest.getAppointmentTime() != null) {
                 TimeSlotEnum requestedSlot = TimeSlotEnum.fromTime(bookingRequest.getAppointmentTime());
                 int slotCapacity = center.getCapacity() > 0 ? center.getCapacity() / 6 : 50;
 
-                // Count existing bookings for this slot
+
                 List<Object[]> bookedCounts = appointmentRepository.countAppointmentsBySlot(center.getCenterId(),
                         bookingRequest.getAppointmentDate());
                 int booked = 0;
@@ -87,17 +87,15 @@ public class BookingService {
         booking.setVaccine(vaccine);
         booking.setTotalAmount(bookingRequest.getAmount());
         booking.setStatus(BookingEnum.PENDING_PAYMENT);
-        // Calculate dose number
+
         Integer maxDose = appointmentRepository.findMaxDose(user.getId(), vaccine.getId(),
                 bookingRequest.getFamilyMemberId());
         int currentDose = (maxDose == null) ? 1 : maxDose + 1;
 
-        // Optional: specific check if fully vaccinated
-        // if (currentDose > vaccine.getDosesRequired()) { ... }
 
-        booking.setTotalDoses(1); // This booking covers 1 dose
+        booking.setTotalDoses(1);
 
-        // Create single appointment
+
         List<Appointment> appointments = new ArrayList<>();
         Appointment appointment = new Appointment();
         appointment.setBooking(booking);
@@ -122,7 +120,7 @@ public class BookingService {
 
         bookingRepository.save(booking);
 
-        // Payment links to first appointment (dose 1)
+
         Appointment firstAppointment = appointments.get(0);
         Payment payment = new Payment();
         payment.setReferenceId(firstAppointment.getId());
@@ -168,7 +166,7 @@ public class BookingService {
                 booking.setStatus(BookingEnum.CONFIRMED);
                 bookingRepository.save(booking);
 
-                // Send appointment confirmation email for CASH payment
+
                 try {
                     if (user.getEmail() != null && !user.getEmail().isEmpty()
                             && bookingRequest.getAppointmentDate() != null && center != null) {
@@ -185,7 +183,7 @@ public class BookingService {
                                 firstAppointment.getId());
                     }
                 } catch (Exception e) {
-                    // Log but don't fail booking if email fails
+
                     System.err.println("Failed to send confirmation email: " + e.getMessage());
                 }
                 break;
@@ -226,25 +224,22 @@ public class BookingService {
                 .toList();
     }
 
-    /**
-     * Create walk-in booking with direct doctor assignment
-     * Bypasses PENDING status - goes straight to SCHEDULED
-     */
+    
     public BookingResponse createWalkInBooking(WalkInBookingRequest request) throws Exception {
         User cashier = authService.getCurrentUserLogin();
-        // Validate patient
+
         User patient = userRepository.findById(request.getPatientId())
                 .orElseThrow(() -> new AppException("Patient not found!"));
 
-        // Validate vaccine
+
         Vaccine vaccine = vaccineRepository.findById(request.getVaccineId())
                 .orElseThrow(() -> new AppException("Vaccine not found!"));
 
-        // Validate center
+
         Center center = centerRepository.findById(request.getCenterId())
                 .orElseThrow(() -> new AppException("Center not found!"));
 
-        // Validate doctor user
+
         Doctor doctor = doctorRepository.findById(request.getDoctorId())
                 .orElseThrow(() -> new AppException("Doctor not found!"));
 
@@ -252,19 +247,19 @@ public class BookingService {
             throw new AppException("User is not a doctor!");
         }
 
-        // Handle slot (create if virtual, use existing if real)
+
         DoctorAvailableSlot slot = null;
         if (request.getSlotId() != null) {
-            // Real slot - get from database
+
             slot = slotRepository.findById(request.getSlotId())
                     .orElseThrow(() -> new AppException("Slot not found!"));
 
-            // Check if slot is available
+
             if (slot.getStatus() != SlotStatus.AVAILABLE) {
                 throw new AppException("Slot is not available!");
             }
         } else {
-            // Virtual slot - check if already exists, if not create new
+
             LocalTime startTime = request.getActualScheduledTime();
             LocalTime endTime = startTime.plusMinutes(15);
 
@@ -274,14 +269,14 @@ public class BookingService {
                     startTime).orElse(null);
 
             if (slot == null) {
-                // Create new virtual slot
+
                 slot = new DoctorAvailableSlot();
                 slot.setDoctor(doctor);
                 slot.setSlotDate(request.getAppointmentDate());
                 slot.setStartTime(startTime);
                 slot.setEndTime(endTime);
                 slot.setStatus(SlotStatus.BOOKED);
-                // Store notes in slot if provided
+
                 if (request.getNotes() != null && !request.getNotes().isEmpty()) {
                     slot.setNotes(request.getNotes());
                 }
@@ -289,12 +284,12 @@ public class BookingService {
             }
         }
 
-        // Create booking
+
         Booking booking = new Booking();
         if (request.getFamilyMemberId() != null) {
             FamilyMember familyMember = familyMemberRepository.findById(request.getFamilyMemberId())
                     .orElseThrow(() -> new AppException("Family member not found!"));
-            // Validate relationship
+
             if (!familyMember.getUser().getId().equals(patient.getId())) {
                 throw new AppException("Family member does not belong to this patient");
             }
@@ -303,32 +298,32 @@ public class BookingService {
         booking.setPatient(patient);
         booking.setVaccine(vaccine);
         booking.setTotalAmount((double) vaccine.getPrice());
-        booking.setStatus(BookingEnum.CONFIRMED); // Walk-in is confirmed immediately
-        // Calculate dose number
+        booking.setStatus(BookingEnum.CONFIRMED);
+
         Integer maxDose = appointmentRepository.findMaxDose(patient.getId(), vaccine.getId(),
                 request.getFamilyMemberId());
         int currentDose = (maxDose == null) ? 1 : maxDose + 1;
 
         booking.setTotalDoses(1);
 
-        // Create appointments
+
         List<Appointment> appointments = new ArrayList<>();
 
         Appointment appointment = new Appointment();
         appointment.setBooking(booking);
         appointment.setDoseNumber(currentDose);
 
-        // First dose - assign immediately
+
         appointment.setScheduledDate(request.getAppointmentDate());
         appointment.setScheduledTimeSlot(TimeSlotEnum.fromTime(request.getAppointmentTime()));
         appointment.setActualScheduledTime(request.getActualScheduledTime());
         appointment.setCenter(center);
-        appointment.setDoctor(doctor.getUser()); // Use User entity here
-        appointment.setCashier(cashier); // Set cashier who created the walk-in booking
+        appointment.setDoctor(doctor.getUser());
+        appointment.setCashier(cashier);
         appointment.setSlot(slot);
-        appointment.setStatus(AppointmentStatus.SCHEDULED); // Skip PENDING
+        appointment.setStatus(AppointmentStatus.SCHEDULED);
 
-        // Mark slot as booked
+
         slot.setStatus(SlotStatus.BOOKED);
         slotRepository.save(slot);
 
@@ -337,7 +332,7 @@ public class BookingService {
         booking.setAppointments(appointments);
         Booking savedBooking = bookingRepository.save(booking);
 
-        // Create payment record (after booking is saved so appointment has ID)
+
         Appointment firstAppointment = savedBooking.getAppointments().get(0);
         Payment payment = new Payment();
         payment.setReferenceId(firstAppointment.getId());
@@ -345,14 +340,14 @@ public class BookingService {
         payment.setAmount((double) vaccine.getPrice());
         payment.setMethod(request.getPaymentMethod());
         payment.setCurrency(request.getPaymentMethod().getCurrency());
-        payment.setStatus(PaymentEnum.PROCESSING); // Walk-in payment is processing
+        payment.setStatus(PaymentEnum.PROCESSING);
         paymentRepository.save(payment);
         System.out.println("Walk-in booking created successfully for patient ID: " + patient.getId());
-        // Send confirmation email
+
         try {
             if (patient.getEmail() != null && !patient.getEmail().isEmpty()) {
-                // Use sendAppointmentScheduled for walk-in bookings (already has doctor
-                // assigned)
+
+
                 emailService.sendAppointmentScheduled(
                         patient.getEmail(),
                         patient.getFullName(),
@@ -362,14 +357,14 @@ public class BookingService {
                         center.getName(),
                         center.getAddress(),
                         firstAppointment.getId(),
-                        1, // First dose
-                        cashier.getFullName(), // Cashier is the one creating walk-in booking
+                        1,
+                        cashier.getFullName(),
                         cashier.getPhone() != null ? cashier.getPhone() : "N/A",
                         doctor.getUser().getFullName(),
                         doctor.getUser().getPhone() != null ? doctor.getUser().getPhone() : "N/A");
             }
         } catch (Exception e) {
-            // Log but don't fail booking if email fails
+
             System.err.println("Failed to send confirmation email: " + e.getMessage());
         }
 
@@ -380,12 +375,10 @@ public class BookingService {
         Center center = centerRepository.findById(centerId)
                 .orElseThrow(() -> new AppException("Center not found"));
 
-        // Get capacity per slot (assuming center.capacity is total daily capacity,
-        // divide by 6 slots for now)
-        // Or better: assume capacity is per slot if not specified
-        int slotCapacity = center.getCapacity() > 0 ? center.getCapacity() / 6 : 50; // Default 50 if not set
 
-        // Get booked counts
+        int slotCapacity = center.getCapacity() > 0 ? center.getCapacity() / 6 : 50;
+
+
         List<Object[]> bookedCounts = appointmentRepository.countAppointmentsBySlot(centerId, date);
 
         List<SlotAvailabilityDto> slots = new ArrayList<>();
@@ -393,7 +386,7 @@ public class BookingService {
         for (TimeSlotEnum slotEnum : TimeSlotEnum.values()) {
             int booked = 0;
 
-            // Find booked count for this slot
+
             for (Object[] row : bookedCounts) {
                 if (row[0] == slotEnum) {
                     booked = ((Long) row[1]).intValue();

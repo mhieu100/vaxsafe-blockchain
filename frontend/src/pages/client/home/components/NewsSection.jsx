@@ -16,17 +16,15 @@ const NewsSection = () => {
     const fetchNews = async () => {
       try {
         setLoading(true);
-        // Try to get featured news first
+
         let res = await callFetchFeaturedNews();
         let newsData = res?.data || [];
 
-        // If no featured news, fallback to published news
         if (newsData.length === 0) {
           res = await callFetchPublishedNews();
           newsData = res?.data || [];
         }
 
-        // Take top 4 items for a balanced layout
         setNews(newsData.slice(0, 4));
       } catch (error) {
         console.error('Failed to fetch news:', error);
@@ -41,7 +39,7 @@ const NewsSection = () => {
   return (
     <section className="py-24 bg-white relative">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        {/* Section Header */}
+        {}
         <div className="flex flex-col md:flex-row justify-between items-end mb-12 gap-6">
           <div className="max-w-2xl">
             <span className="text-blue-600 font-semibold tracking-wider uppercase text-sm mb-2 block">
@@ -67,7 +65,7 @@ const NewsSection = () => {
           </Button>
         </div>
 
-        {/* News Grid */}
+        {}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
           {loading
             ? [1, 2, 3].map((i) => (
@@ -88,7 +86,7 @@ const NewsSection = () => {
                     }
                   }}
                 >
-                  {/* Image Container */}
+                  {}
                   <div className="relative h-48 overflow-hidden">
                     <img
                       src={item.thumbnailImage || 'https://placehold.co/600x400?text=News'}
@@ -102,7 +100,7 @@ const NewsSection = () => {
                     </div>
                   </div>
 
-                  {/* Content */}
+                  {}
                   <div className="flex flex-col flex-grow p-6">
                     <div className="flex items-center gap-x-4 text-xs text-slate-500 mb-3">
                       <span className="flex items-center gap-1">
@@ -129,7 +127,7 @@ const NewsSection = () => {
               ))}
         </div>
 
-        {/* Mobile View All Button */}
+        {}
         <div className="mt-12 text-center md:hidden">
           <Button
             type="primary"

@@ -5,10 +5,7 @@ import org.springframework.data.jpa.domain.Specification;
 
 public class VaccineSpecifications {
 
-    /**
-     * Specification to filter out soft-deleted vaccines
-     * Returns vaccines where isDeleted is NULL or FALSE
-     */
+    
     public static Specification<Vaccine> notDeleted() {
         return (root, query, criteriaBuilder) -> 
             criteriaBuilder.or(
@@ -17,9 +14,7 @@ public class VaccineSpecifications {
             );
     }
 
-    /**
-     * Specification to filter vaccines by name (like search)
-     */
+    
     public static Specification<Vaccine> nameContains(String name) {
         return (root, query, criteriaBuilder) -> {
             if (name == null || name.trim().isEmpty()) {
@@ -32,9 +27,7 @@ public class VaccineSpecifications {
         };
     }
 
-    /**
-     * Specification to filter vaccines by country
-     */
+    
     public static Specification<Vaccine> fromCountry(String country) {
         return (root, query, criteriaBuilder) -> {
             if (country == null || country.trim().isEmpty()) {
@@ -44,9 +37,7 @@ public class VaccineSpecifications {
         };
     }
 
-    /**
-     * Specification to filter vaccines by slug
-     */
+    
     public static Specification<Vaccine> hasSlug(String slug) {
         return (root, query, criteriaBuilder) -> {
             if (slug == null || slug.trim().isEmpty()) {
@@ -56,9 +47,7 @@ public class VaccineSpecifications {
         };
     }
 
-    /**
-     * Specification to filter vaccines by manufacturer (like search)
-     */
+    
     public static Specification<Vaccine> manufacturerContains(String manufacturer) {
         return (root, query, criteriaBuilder) -> {
             if (manufacturer == null || manufacturer.trim().isEmpty()) {
@@ -71,9 +60,7 @@ public class VaccineSpecifications {
         };
     }
 
-    /**
-     * Specification to filter vaccines by price range
-     */
+    
     public static Specification<Vaccine> priceBetween(Integer minPrice, Integer maxPrice) {
         return (root, query, criteriaBuilder) -> {
             if (minPrice == null && maxPrice == null) {
@@ -89,9 +76,7 @@ public class VaccineSpecifications {
         };
     }
 
-    /**
-     * Specification to filter vaccines by stock availability
-     */
+    
     public static Specification<Vaccine> hasStockGreaterThan(Integer stock) {
         return (root, query, criteriaBuilder) -> {
             if (stock == null) {
@@ -101,9 +86,7 @@ public class VaccineSpecifications {
         };
     }
 
-    /**
-     * Specification to filter vaccines that are in stock (stock > 0)
-     */
+    
     public static Specification<Vaccine> inStock() {
         return (root, query, criteriaBuilder) -> 
             criteriaBuilder.greaterThan(root.get("stock"), 0);

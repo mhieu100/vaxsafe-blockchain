@@ -84,10 +84,6 @@ public class PaymentController {
         paymentRequest.setReferenceId(referenceId);
         paymentRequest.setType(TypeTransactionEnum.valueOf(type));
 
-        // String secureHash = vnpParams.remove("vnp_SecureHash");
-        // boolean isValid = VnpayUtils.verifySignature(vnpParams, secureHash,
-        // hashSecret);
-        // if (isValid && "00".equals(vnpParams.get("vnp_ResponseCode"))) {
 
         if ("00".equals(vnpParams.get("vnp_ResponseCode"))) {
             paymentService.successPayment(paymentRequest);

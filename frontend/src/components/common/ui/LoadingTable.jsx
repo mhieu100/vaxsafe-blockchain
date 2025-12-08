@@ -2,16 +2,6 @@ import { Card, Empty, Skeleton, Table } from 'antd';
 import PropTypes from 'prop-types';
 import { useEffect, useState } from 'react';
 
-/**
- * Component bảng với trạng thái loading
- *
- * @param {Array} columns - Các cột của bảng
- * @param {number} rowCount - Số dòng hiển thị khi đang loading
- * @param {boolean} loading - Trạng thái loading
- * @param {Array} dataSource - Dữ liệu bảng
- * @param {number} timeout - Thời gian timeout tối thiểu (ms)
- * @param {Function} onLoadingComplete - Callback khi loading hoàn tất
- */
 const LoadingTable = ({
   columns,
   rowCount = 5,
@@ -26,7 +16,6 @@ const LoadingTable = ({
   useEffect(() => {
     setIsLoading(loading);
 
-    // Nếu đang loading, thiết lập timeout để giả lập thời gian tải dữ liệu
     let timer;
     if (loading) {
       timer = setTimeout(() => {
@@ -40,7 +29,6 @@ const LoadingTable = ({
     };
   }, [loading, timeout, onLoadingComplete]);
 
-  // Tạo dữ liệu giả cho trạng thái loading
   const loadingData = Array(rowCount)
     .fill()
     .map((_, index) => ({
@@ -48,12 +36,10 @@ const LoadingTable = ({
       __loading__: true,
     }));
 
-  // Tùy chỉnh hiển thị cho mỗi ô trong trạng thái loading
   const loadingColumns = columns.map((column) => ({
     ...column,
     render: (text, record) => {
       if (record.__loading__) {
-        // Xác định chiều rộng dựa trên độ dài tiêu đề cột hoặc sử dụng giá trị mặc định
         const width = column.title?.length * 8 || 100;
         return <Skeleton.Input active size="small" style={{ width: `${width}px` }} />;
       }

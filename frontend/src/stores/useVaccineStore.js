@@ -2,7 +2,6 @@ import { create } from 'zustand';
 import { callFetchVaccine } from '../services/vaccine.service';
 
 const useVaccineStore = create((set) => ({
-  // State
   isFetching: true,
   meta: {
     page: 1,
@@ -12,7 +11,6 @@ const useVaccineStore = create((set) => ({
   },
   result: [],
 
-  // Actions
   fetchVaccine: async (query) => {
     set({ isFetching: true });
     try {

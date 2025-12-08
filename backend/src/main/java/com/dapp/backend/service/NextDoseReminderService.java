@@ -17,10 +17,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
-/**
- * Service to create Next Dose Reminders based on vaccine protocol
- * Nhắc nhở mũi tiếp theo dựa trên phác đồ vaccine
- */
+
 @Service
 @RequiredArgsConstructor
 @Slf4j
@@ -31,11 +28,7 @@ public class NextDoseReminderService {
     private final EmailService emailService;
     private final NotificationLogService notificationLogService;
 
-    /**
-     * Create next dose reminder after completing an appointment
-     * Called when appointment status = COMPLETED
-     * @throws AppException 
-     */
+    
     @Transactional
     public List<VaccinationReminder> createNextDoseReminder(Appointment completedAppointment) throws AppException {
         log.info("Creating next dose reminder for completed appointment ID: {}", completedAppointment.getId());
@@ -47,20 +40,20 @@ public class NextDoseReminderService {
         int currentDose = completedAppointment.getDoseNumber();
         int requiredDoses = vaccine.getDosesRequired();
 
-        // Check if there's a next dose
+
         if (currentDose >= requiredDoses) {
             log.info("No next dose needed. Current dose {} >= required doses {}", currentDose, requiredDoses);
             return reminders;
         }
 
-        // Calculate next dose date based on vaccine protocol (duration in days)
+
         LocalDate completedDate = completedAppointment.getScheduledDate();
         LocalDate nextDoseDate = completedDate.plusDays(vaccine.getDuration());
 
         log.info("Next dose #{} should be scheduled around: {} ({}days after dose #{})",
                 currentDose + 1, nextDoseDate, vaccine.getDuration(), currentDose);
 
-        // Determine recipient user
+
         User user = booking.getPatient();
         if (user == null && booking.getFamilyMember() != null) {
             user = booking.getFamilyMember().getUser();
@@ -71,38 +64,38 @@ public class NextDoseReminderService {
             return reminders;
         }
 
-        // Check user notification preferences
+
         UserNotificationSetting settings = notificationLogService.getUserSettings(user);
         if (!settings.getNextDoseReminderEnabled()) {
             log.info("Next dose reminders disabled for user ID: {}", user.getId());
             return reminders;
         }
 
-        // Get available channels
+
         Set<ReminderChannel> channels = getAvailableChannels(user, settings);
 
-        // Create reminder for each channel
+
         for (ReminderChannel channel : channels) {
-            // Check if user allows this channel
+
             if (!notificationLogService.isNotificationAllowed(user, ReminderType.NEXT_DOSE_REMINDER, channel)) {
                 log.info("Channel {} disabled for user ID: {}", channel, user.getId());
                 continue;
             }
 
-            // Check if reminder was recently sent (prevent duplicates)
+
             if (notificationLogService.wasRecentlySent(user, ReminderType.NEXT_DOSE_REMINDER, 
-                    channel, null, 24 * 7)) { // 7 days window
+                    channel, null, 24 * 7)) {
                 log.info("Next dose reminder already sent recently to user ID: {} via {}", user.getId(), channel);
                 continue;
             }
 
             VaccinationReminder reminder = VaccinationReminder.builder()
-                    .appointment(null) // No specific appointment yet
+                    .appointment(null)
                     .user(user)
                     .reminderType(ReminderType.NEXT_DOSE_REMINDER)
                     .channel(channel)
                     .scheduledDate(nextDoseDate)
-                    .daysBefore(null) // Not applicable for next dose
+                    .daysBefore(null)
                     .vaccineId(vaccine.getId())
                     .nextDoseNumber(currentDose + 1)
                     .status(ReminderStatus.PENDING)
@@ -119,14 +112,12 @@ public class NextDoseReminderService {
         return reminders;
     }
 
-    /**
-     * Send next dose reminders that are due today
-     */
+    
     @Transactional
     public void sendNextDoseReminders() {
         log.info("Starting to send next dose reminders for today...");
 
-        // Find pending next dose reminders scheduled for today
+
         List<VaccinationReminder> reminders = reminderRepository
                 .findByReminderTypeAndScheduledDateAndStatus(
                         ReminderType.NEXT_DOSE_REMINDER,
@@ -153,9 +144,7 @@ public class NextDoseReminderService {
         log.info("Finished sending next dose reminders. Success: {}, Failed: {}", successCount, failCount);
     }
 
-    /**
-     * Send a single next dose reminder
-     */
+    
     @Transactional
     public void sendNextDoseReminder(VaccinationReminder reminder) throws Exception {
         log.info("Sending next dose reminder ID: {} via {}", reminder.getId(), reminder.getChannel());
@@ -168,7 +157,7 @@ public class NextDoseReminderService {
         String vaccineName = vaccine.getName();
         int nextDoseNumber = reminder.getNextDoseNumber();
 
-        // Only EMAIL supported for now
+
         if (reminder.getChannel() == ReminderChannel.EMAIL) {
             String content = buildNextDoseEmailContent(patientName, vaccineName, nextDoseNumber);
             
@@ -179,12 +168,12 @@ public class NextDoseReminderService {
                     nextDoseNumber
             );
 
-            // Mark as sent
+
             reminder.setStatus(ReminderStatus.SENT);
             reminder.setSentAt(java.time.LocalDateTime.now());
             reminderRepository.save(reminder);
 
-            // Log success
+
             notificationLogService.logSuccess(
                     user,
                     ReminderType.NEXT_DOSE_REMINDER,
@@ -205,7 +194,7 @@ public class NextDoseReminderService {
         reminder.setErrorMessage(errorMessage);
         reminder.setRetryCount(reminder.getRetryCount() + 1);
 
-        // Schedule retry with exponential backoff
+
         if (reminder.getRetryCount() < 3) {
             int retryDelayMinutes = switch (reminder.getRetryCount()) {
                 case 1 -> 30;
@@ -217,7 +206,7 @@ public class NextDoseReminderService {
 
         reminderRepository.save(reminder);
 
-        // Log failure
+
         notificationLogService.logFailure(
                 reminder.getUser(),
                 ReminderType.NEXT_DOSE_REMINDER,

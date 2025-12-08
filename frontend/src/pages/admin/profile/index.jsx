@@ -85,7 +85,6 @@ const AdminProfilePage = () => {
     },
   ];
 
-  // Add activity tab for doctors
   if (user?.role === 'DOCTOR') {
     tabItems.push({
       key: '3',
@@ -109,7 +108,7 @@ const AdminProfilePage = () => {
   return (
     <div className="min-h-screen bg-gray-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 py-8">
-        {/* Profile Header */}
+        {}
         <Card className="mb-6">
           <Row gutter={[24, 24]} align="middle">
             <Col>
@@ -138,12 +137,12 @@ const AdminProfilePage = () => {
           </Row>
         </Card>
 
-        {/* Profile Content */}
+        {}
         <Card>
           <Tabs defaultActiveKey="1" items={tabItems} />
         </Card>
 
-        {/* Modals */}
+        {}
         <ModalUpdateAvatar open={avatarModalVisible} setOpen={setAvatarModalVisible} />
         <ModalUpdatePassword open={passwordModalVisible} setOpen={setPasswordModalVisible} />
       </div>

@@ -2,35 +2,23 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { toast } from 'react-toastify';
 import profileService from '@/services/profile.service';
 
-/**
- * Custom hook to fetch and manage user profile
- * @param {string} role - User role (patient, doctor, cashier, admin)
- * @returns {Object} Query result with profile data
- */
 export const useProfile = (role) => {
   return useQuery({
     queryKey: ['profile', role],
-    queryFn: () => Promise.resolve(null), // GET methods removed as per requirement
+    queryFn: () => Promise.resolve(null),
     enabled: false,
-    staleTime: 5 * 60 * 1000, // 5 minutes
+    staleTime: 5 * 60 * 1000,
   });
 };
 
-/**
- * Custom hook to update user profile
- * @param {string} role - User role (patient, doctor, cashier, admin)
- * @returns {Object} Mutation object
- */
 export const useUpdateProfile = (role) => {
   const queryClient = useQueryClient();
 
   return useMutation({
     mutationFn: (data) => profileService.updateProfile(role, data),
     onSuccess: (data) => {
-      // Invalidate and refetch profile data
       queryClient.invalidateQueries(['profile', role]);
 
-      // Update user info in auth query if exists
       queryClient.invalidateQueries(['auth', 'user']);
 
       toast.success(data.message || 'Profile updated successfully');
@@ -42,13 +30,10 @@ export const useUpdateProfile = (role) => {
   });
 };
 
-/**
- * Hook for patient profile
- */
 export const usePatientProfile = () => {
   return useQuery({
     queryKey: ['profile', 'patient'],
-    queryFn: () => Promise.resolve(null), // GET methods removed
+    queryFn: () => Promise.resolve(null),
     enabled: false,
     staleTime: 5 * 60 * 1000,
   });
@@ -70,13 +55,10 @@ export const useUpdatePatientProfile = () => {
   });
 };
 
-/**
- * Hook for doctor profile
- */
 export const useDoctorProfile = () => {
   return useQuery({
     queryKey: ['profile', 'doctor'],
-    queryFn: () => Promise.resolve(null), // GET methods removed
+    queryFn: () => Promise.resolve(null),
     enabled: false,
     staleTime: 5 * 60 * 1000,
   });
@@ -98,13 +80,10 @@ export const useUpdateDoctorProfile = () => {
   });
 };
 
-/**
- * Hook for cashier profile
- */
 export const useCashierProfile = () => {
   return useQuery({
     queryKey: ['profile', 'cashier'],
-    queryFn: () => Promise.resolve(null), // GET methods removed
+    queryFn: () => Promise.resolve(null),
     enabled: false,
     staleTime: 5 * 60 * 1000,
   });
@@ -126,13 +105,10 @@ export const useUpdateCashierProfile = () => {
   });
 };
 
-/**
- * Hook for admin profile
- */
 export const useAdminProfile = () => {
   return useQuery({
     queryKey: ['profile', 'admin'],
-    queryFn: () => Promise.resolve(null), // GET methods removed
+    queryFn: () => Promise.resolve(null),
     enabled: false,
     staleTime: 5 * 60 * 1000,
   });

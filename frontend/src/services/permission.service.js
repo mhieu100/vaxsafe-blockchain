@@ -1,10 +1,5 @@
 import apiClient from '../services/apiClient';
 
-/**
- *
-Module Permission
- */
-
 export const callCreatePermission = (name, method, apiPath, module) => {
   return apiClient.post('/permissions', {
     name,

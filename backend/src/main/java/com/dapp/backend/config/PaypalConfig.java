@@ -35,7 +35,7 @@ public class PaypalConfig {
 
     private Map<String, String> configMap() {
         Map<String, String> configMap = new HashMap<>();
-        configMap.put("mode", mode); // sandbox or live
+        configMap.put("mode", mode);
         return configMap;
     }
 }

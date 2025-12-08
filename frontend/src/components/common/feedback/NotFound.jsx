@@ -9,14 +9,14 @@ const NotFound = () => {
 
   return (
     <div className="min-h-screen w-full flex items-center justify-center bg-slate-50 relative overflow-hidden">
-      {/* Background Blobs */}
+      {}
       <div className="absolute top-0 left-0 w-full h-full overflow-hidden pointer-events-none">
         <div className="absolute top-[-10%] left-[-10%] w-[500px] h-[500px] bg-blue-500/20 rounded-full blur-[80px] animate-blob" />
         <div className="absolute bottom-[-10%] right-[-10%] w-[500px] h-[500px] bg-indigo-500/20 rounded-full blur-[80px] animate-blob animation-delay-2000" />
       </div>
 
       <div className="relative z-10 max-w-lg w-full px-6 text-center">
-        {/* Icon Container */}
+        {}
         <div className="mb-8 relative inline-block">
           <div className="absolute inset-0 bg-blue-500/20 rounded-full blur-xl animate-pulse" />
           <div className="relative w-24 h-24 bg-white rounded-3xl shadow-xl shadow-blue-500/10 flex items-center justify-center mx-auto transform rotate-12 hover:rotate-0 transition-transform duration-500">
@@ -24,7 +24,7 @@ const NotFound = () => {
           </div>
         </div>
 
-        {/* Text Content */}
+        {}
         <h1 className="text-8xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-indigo-600 mb-2 tracking-tighter">
           404
         </h1>
@@ -36,7 +36,7 @@ const NotFound = () => {
             "Oops! The page you are looking for doesn't exist or has been moved."}
         </p>
 
-        {/* Action Button */}
+        {}
         <Button
           type="primary"
           size="large"

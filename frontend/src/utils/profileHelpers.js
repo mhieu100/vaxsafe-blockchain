@@ -1,49 +1,23 @@
 import { USER_ROLES } from '@/constants/profile';
 
-/**
- * Get profile endpoint based on user role
- * @param {string} role - User role
- * @returns {string} Profile endpoint path
- */
 export const getProfileEndpoint = (role) => {
   return `/profile/${role?.toLowerCase() || ''}`;
 };
 
-/**
- * Format blood type for display
- * @param {string} bloodType - Blood type enum value
- * @returns {string} Formatted blood type
- */
 export const formatBloodType = (bloodType) => {
   if (!bloodType) return 'N/A';
   return bloodType.replace('_', '');
 };
 
-/**
- * Format gender for display
- * @param {string} gender - Gender enum value
- * @returns {string} Formatted gender
- */
 export const formatGender = (gender) => {
   if (!gender) return 'N/A';
   return gender.charAt(0) + gender.slice(1).toLowerCase();
 };
 
-/**
- * Check if user has specific role
- * @param {string} userRole - User's current role
- * @param {string} requiredRole - Required role to check
- * @returns {boolean}
- */
 export const hasRole = (userRole, requiredRole) => {
   return userRole?.toUpperCase() === requiredRole?.toUpperCase();
 };
 
-/**
- * Get role display name
- * @param {string} role - User role
- * @returns {string} Display name
- */
 export const getRoleDisplayName = (role) => {
   const roleMap = {
     [USER_ROLES.PATIENT]: 'Patient',
@@ -54,12 +28,6 @@ export const getRoleDisplayName = (role) => {
   return roleMap[role?.toUpperCase()] || role;
 };
 
-/**
- * Check if field is editable by role
- * @param {string} fieldName - Field name
- * @param {string} role - User role
- * @returns {boolean}
- */
 export const isFieldEditable = (fieldName, role) => {
   const restrictedFields = {
     email: [],
@@ -75,11 +43,6 @@ export const isFieldEditable = (fieldName, role) => {
   return allowedRoles.includes(role?.toUpperCase());
 };
 
-/**
- * Format date for display
- * @param {string} date - ISO date string
- * @returns {string} Formatted date
- */
 export const formatDate = (date) => {
   if (!date) return 'N/A';
   return new Date(date).toLocaleDateString('en-US', {
@@ -89,39 +52,19 @@ export const formatDate = (date) => {
   });
 };
 
-/**
- * Format time (shift times)
- * @param {string} time - Time string (HH:mm)
- * @returns {string} Formatted time
- */
 export const formatTime = (time) => {
   if (!time) return 'N/A';
   return time;
 };
 
-/**
- * Validate phone number
- * @param {string} phone - Phone number
- * @returns {boolean}
- */
 export const isValidPhone = (phone) => {
   return /^[0-9]{9,11}$/.test(phone);
 };
 
-/**
- * Validate identity number
- * @param {string} identityNumber - Identity number
- * @returns {boolean}
- */
 export const isValidIdentityNumber = (identityNumber) => {
   return /^[0-9]{9,12}$/.test(identityNumber);
 };
 
-/**
- * Get initials from full name
- * @param {string} fullName - User's full name
- * @returns {string} Initials
- */
 export const getInitials = (fullName) => {
   if (!fullName) return '';
   return fullName
@@ -132,11 +75,6 @@ export const getInitials = (fullName) => {
     .slice(0, 2);
 };
 
-/**
- * Calculate age from birthday
- * @param {string} birthday - Birthday ISO string
- * @returns {number} Age in years
- */
 export const calculateAge = (birthday) => {
   if (!birthday) return 0;
   const birthDate = new Date(birthday);
@@ -151,23 +89,12 @@ export const calculateAge = (birthday) => {
   return age;
 };
 
-/**
- * Calculate BMI (Body Mass Index)
- * @param {number} heightCm - Height in centimeters
- * @param {number} weightKg - Weight in kilograms
- * @returns {number|null} BMI value
- */
 export const calculateBMI = (heightCm, weightKg) => {
   if (!heightCm || !weightKg) return null;
   const heightM = heightCm / 100;
   return (weightKg / (heightM * heightM)).toFixed(1);
 };
 
-/**
- * Get BMI category
- * @param {number} bmi - BMI value
- * @returns {string} BMI category
- */
 export const getBMICategory = (bmi) => {
   if (!bmi) return 'Unknown';
   if (bmi < 18.5) return 'Underweight';
@@ -176,18 +103,9 @@ export const getBMICategory = (bmi) => {
   return 'Obese';
 };
 
-/**
- * Format profile data for API
- * @param {Object} formData - Form data from react-hook-form
- * @param {string} role - User role
- * @returns {Object} Formatted data for API
- */
 export const formatProfileForAPI = (formData, role) => {
-  // Remove read-only fields
-  // eslint-disable-next-line no-unused-vars
   const { id, email, role: userRole, ...rest } = formData;
 
-  // Remove role-specific read-only fields
   if (role === USER_ROLES.DOCTOR) {
     delete rest.licenseNumber;
     delete rest.centerId;
@@ -203,12 +121,6 @@ export const formatProfileForAPI = (formData, role) => {
   return rest;
 };
 
-/**
- * Check if profile is complete
- * @param {Object} profile - Profile data
- * @param {string} role - User role
- * @returns {boolean}
- */
 export const isProfileComplete = (profile, role) => {
   const requiredFields = ['fullName', 'email'];
 
@@ -219,12 +131,6 @@ export const isProfileComplete = (profile, role) => {
   return requiredFields.every((field) => profile?.[field]);
 };
 
-/**
- * Get profile completion percentage
- * @param {Object} profile - Profile data
- * @param {string} role - User role
- * @returns {number} Completion percentage (0-100)
- */
 export const getProfileCompletionPercentage = (profile, role) => {
   if (!profile) return 0;
 

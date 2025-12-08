@@ -67,7 +67,7 @@ const DoctorProfileForm = () => {
 
       <form onSubmit={handleSubmit(onSubmit)}>
         <div className="space-y-6">
-          {/* Personal Information */}
+          {}
           <div className="border-b pb-4">
             <h3 className="text-lg font-semibold text-gray-700 mb-4">Personal Information</h3>
 
@@ -161,7 +161,7 @@ const DoctorProfileForm = () => {
             </div>
           </div>
 
-          {/* Professional Information */}
+          {}
           <div className="border-b pb-4">
             <h3 className="text-lg font-semibold text-gray-700 mb-4">Professional Information</h3>
 
@@ -223,7 +223,7 @@ const DoctorProfileForm = () => {
             </div>
           </div>
 
-          {/* Center Information */}
+          {}
           <div className="border-b pb-4">
             <h3 className="text-lg font-semibold text-gray-700 mb-4">Center Assignment</h3>
 

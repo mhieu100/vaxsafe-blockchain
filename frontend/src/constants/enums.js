@@ -1,9 +1,3 @@
-/**
- * Backend Enums - Synchronized with backend/src/main/java/com/dapp/backend/enums/
- * Last updated: 2025-12-01
- */
-
-// AppointmentEnum.java
 export const AppointmentStatus = {
   PENDING: 'PENDING',
   RESCHEDULE: 'RESCHEDULE',
@@ -12,7 +6,6 @@ export const AppointmentStatus = {
   CANCELLED: 'CANCELLED',
 };
 
-// TimeSlotEnum.java
 export const TimeSlot = {
   SLOT_07_00: 'SLOT_07_00',
   SLOT_09_00: 'SLOT_09_00',
@@ -37,7 +30,6 @@ export const TimeSlotTime = {
   SLOT_15_00: '15:00',
 };
 
-// PaymentEnum.java
 export const PaymentStatus = {
   INITIATED: 'INITIATED',
   PROCESSING: 'PROCESSING',
@@ -45,7 +37,6 @@ export const PaymentStatus = {
   FAILED: 'FAILED',
 };
 
-// MethodPaymentEnum.java
 export const PaymentMethod = {
   METAMASK: 'METAMASK',
   PAYPAL: 'PAYPAL',
@@ -60,7 +51,6 @@ export const PaymentMethodCurrency = {
   CASH: 'VND',
 };
 
-// BookingEnum.java
 export const BookingStatus = {
   PENDING_PAYMENT: 'PENDING_PAYMENT',
   CONFIRMED: 'CONFIRMED',
@@ -68,7 +58,6 @@ export const BookingStatus = {
   CANCELLED: 'CANCELLED',
 };
 
-// BloodType.java
 export const BloodType = {
   O: 'O',
   A: 'A',
@@ -76,13 +65,11 @@ export const BloodType = {
   AB: 'AB',
 };
 
-// Gender.java
 export const Gender = {
   MALE: 'MALE',
   FEMALE: 'FEMALE',
 };
 
-// NewsCategory.java
 export const NewsCategory = {
   HEALTH_GENERAL: 'HEALTH_GENERAL',
   VACCINE_INFO: 'VACCINE_INFO',
@@ -98,7 +85,6 @@ export const NewsCategory = {
   VACCINATION_SCHEDULE: 'VACCINATION_SCHEDULE',
 };
 
-// OrderStatus.java
 export const OrderStatus = {
   PENDING: 'PENDING',
   PROCESSING: 'PROCESSING',
@@ -107,26 +93,22 @@ export const OrderStatus = {
   CANCELLED: 'CANCELLED',
 };
 
-// TypeTransactionEnum.java
 export const TransactionType = {
   APPOINTMENT: 'APPOINTMENT',
   ORDER: 'ORDER',
 };
 
-// SlotStatus.java
 export const SlotStatus = {
   AVAILABLE: 'AVAILABLE',
   BOOKED: 'BOOKED',
   BLOCKED: 'BLOCKED',
 };
 
-// Exchange rates
 export const EXCHANGE_RATES = {
-  USD_TO_VND: 25000, // 1 USD = 25,000 VND (update this rate as needed)
-  ETH_TO_VND: 75000000, // 1 ETH ≈ 75,000,000 VND (update as needed)
+  USD_TO_VND: 25000,
+  ETH_TO_VND: 75000000,
 };
 
-// Utility functions
 export const getPaymentStatusColor = (status) => {
   switch (status) {
     case PaymentStatus.SUCCESS:
@@ -141,12 +123,6 @@ export const getPaymentStatusColor = (status) => {
   }
 };
 
-/**
- * Convert payment amount to VND based on payment method
- * @param {number} amount - Original amount
- * @param {string} method - Payment method (PAYPAL, METAMASK, etc.)
- * @returns {number} - Amount in VND
- */
 export const convertToVND = (amount, method) => {
   if (!amount) return 0;
 
@@ -156,23 +132,16 @@ export const convertToVND = (amount, method) => {
     case PaymentMethod.METAMASK:
       return amount * EXCHANGE_RATES.ETH_TO_VND;
     default:
-      return amount; // Already in VND
+      return amount;
   }
 };
 
-/**
- * Format payment amount display with currency
- * @param {number} amount - Amount to display
- * @param {string} method - Payment method
- * @returns {object} - Formatted display with original and VND amounts
- */
 export const formatPaymentAmount = (amount, method) => {
   if (!amount) return { display: '0 đ', vnd: 0 };
 
   const currency = PaymentMethodCurrency[method] || 'VND';
-  const vndAmount = Math.round(convertToVND(amount, method)); // Round to remove decimals
+  const vndAmount = Math.round(convertToVND(amount, method));
 
-  // If already in VND, just show VND
   if (currency === 'VND') {
     return {
       display: `${vndAmount.toLocaleString('vi-VN')} đ`,
@@ -181,7 +150,6 @@ export const formatPaymentAmount = (amount, method) => {
     };
   }
 
-  // For foreign currency, show both original and VND
   return {
     display: `${vndAmount.toLocaleString('vi-VN')} đ`,
     vnd: vndAmount,

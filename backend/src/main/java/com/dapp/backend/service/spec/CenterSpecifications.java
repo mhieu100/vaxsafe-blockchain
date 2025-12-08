@@ -5,10 +5,7 @@ import org.springframework.data.jpa.domain.Specification;
 
 public class CenterSpecifications {
 
-    /**
-     * Specification to filter out soft-deleted centers
-     * Returns centers where isDeleted is NULL or FALSE
-     */
+    
     public static Specification<Center> notDeleted() {
         return (root, query, criteriaBuilder) -> 
             criteriaBuilder.or(
@@ -17,9 +14,7 @@ public class CenterSpecifications {
             );
     }
 
-    /**
-     * Specification to filter centers by name (like search)
-     */
+    
     public static Specification<Center> nameContains(String name) {
         return (root, query, criteriaBuilder) -> {
             if (name == null || name.trim().isEmpty()) {
@@ -32,9 +27,7 @@ public class CenterSpecifications {
         };
     }
 
-    /**
-     * Specification to filter centers by address (like search)
-     */
+    
     public static Specification<Center> addressContains(String address) {
         return (root, query, criteriaBuilder) -> {
             if (address == null || address.trim().isEmpty()) {
@@ -47,9 +40,7 @@ public class CenterSpecifications {
         };
     }
 
-    /**
-     * Specification to filter centers by slug
-     */
+    
     public static Specification<Center> hasSlug(String slug) {
         return (root, query, criteriaBuilder) -> {
             if (slug == null || slug.trim().isEmpty()) {
@@ -59,9 +50,7 @@ public class CenterSpecifications {
         };
     }
 
-    /**
-     * Specification to filter centers by capacity (greater than or equal)
-     */
+    
     public static Specification<Center> capacityGreaterThanOrEqual(Integer capacity) {
         return (root, query, criteriaBuilder) -> {
             if (capacity == null) {

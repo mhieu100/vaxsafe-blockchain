@@ -13,10 +13,6 @@ import { useTranslation } from 'react-i18next';
 
 const { Text, Paragraph } = Typography;
 
-/**
- * Detailed modal showing blockchain verification details
- * Level 2: For users who want to understand the verification
- */
 const BlockchainVerificationModal = ({ open, onClose, record }) => {
   const { t } = useTranslation(['common']);
   const [activeTab, setActiveTab] = useState('verification');
@@ -65,7 +61,7 @@ const BlockchainVerificationModal = ({ open, onClose, record }) => {
       ),
       children: (
         <div className="space-y-6">
-          {/* Verification Status */}
+          {}
           <div className="bg-emerald-50 border border-emerald-200 rounded-xl p-4">
             <div className="flex items-center gap-3">
               <div className="w-12 h-12 rounded-full bg-emerald-100 flex items-center justify-center">
@@ -82,7 +78,7 @@ const BlockchainVerificationModal = ({ open, onClose, record }) => {
             </div>
           </div>
 
-          {/* Verification Timeline */}
+          {}
           <div>
             <Text className="font-semibold text-slate-700 mb-3 block">
               {t('common:blockchain.verificationProcess')}
@@ -100,7 +96,7 @@ const BlockchainVerificationModal = ({ open, onClose, record }) => {
             />
           </div>
 
-          {/* Blockchain Details */}
+          {}
           <Descriptions
             title={t('common:blockchain.blockchainDetails')}
             bordered
@@ -151,7 +147,7 @@ const BlockchainVerificationModal = ({ open, onClose, record }) => {
       ),
       children: (
         <div className="space-y-4">
-          {/* IPFS Info */}
+          {}
           <div className="bg-purple-50 border border-purple-200 rounded-xl p-4">
             <div className="flex items-center gap-3 mb-3">
               <CloudOutlined className="text-purple-600 text-xl" />
@@ -189,7 +185,7 @@ const BlockchainVerificationModal = ({ open, onClose, record }) => {
             )}
           </div>
 
-          {/* FHIR Standard Explanation */}
+          {}
           <div className="bg-blue-50 border border-blue-200 rounded-xl p-4">
             <Text className="font-semibold text-blue-800 block mb-2">
               {t('common:blockchain.whatIsFhir')}
@@ -199,7 +195,7 @@ const BlockchainVerificationModal = ({ open, onClose, record }) => {
             </Paragraph>
           </div>
 
-          {/* Timeline of Data Flow */}
+          {}
           <Timeline
             items={[
               {
@@ -256,7 +252,7 @@ const BlockchainVerificationModal = ({ open, onClose, record }) => {
             {t('common:blockchain.forDevelopers')}
           </Text>
 
-          {/* Raw Record Data */}
+          {}
           <div>
             <Text className="font-semibold block mb-2">{t('common:blockchain.recordData')}</Text>
             <div className="bg-slate-900 text-green-400 p-4 rounded-lg overflow-auto max-h-96 font-mono text-xs">
@@ -272,7 +268,7 @@ const BlockchainVerificationModal = ({ open, onClose, record }) => {
             </Button>
           </div>
 
-          {/* API Endpoints */}
+          {}
           <div>
             <Text className="font-semibold block mb-2">{t('common:blockchain.apiEndpoints')}</Text>
             <div className="space-y-2">

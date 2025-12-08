@@ -67,7 +67,7 @@ public class FamilyMemberService {
     public FamilyMemberResponse addFamilyMember(FamilyMemberRequest request) throws AppException {
         User user = authService.getCurrentUserLogin();
 
-        // Validate identity number (9-12 digits for Vietnam ID/Birth Certificate)
+
         if (request.getIdentityNumber() == null || request.getIdentityNumber().trim().isEmpty()) {
             throw new AppException("Identity number is required for family member");
         }
@@ -75,7 +75,7 @@ public class FamilyMemberService {
             throw new AppException("Identity number must be 9-12 digits");
         }
 
-        // Check for duplicate identity number
+
         if (familyMemberRepository.existsByIdentityNumber(request.getIdentityNumber())) {
             throw new AppException("Identity number already exists");
         }
@@ -83,9 +83,9 @@ public class FamilyMemberService {
         FamilyMember familyMember = toEntity(request);
         familyMember.setUser(user);
 
-        // Generate blockchain identity BEFORE saving (to satisfy NOT NULL constraint)
+
         try {
-            // Determine identity type based on date of birth
+
             IdentityType idType = identityService.determineIdentityType(familyMember.getDateOfBirth());
             String identityHash = identityService.generateFamilyMemberIdentityHash(familyMember);
             String did = identityService.generateDID(identityHash, idType);
@@ -102,10 +102,10 @@ public class FamilyMemberService {
             throw new AppException("Failed to generate blockchain identity for family member: " + e.getMessage());
         }
 
-        // Save to database with blockchain identity
+
         FamilyMember savedMember = familyMemberRepository.save(familyMember);
 
-        // Sync to blockchain (async, non-blocking)
+
         try {
             if (blockchainService.isBlockchainServiceAvailable()) {
                 IdentityType idType = identityService.determineIdentityType(savedMember.getDateOfBirth());
@@ -126,7 +126,7 @@ public class FamilyMemberService {
             }
         } catch (Exception e) {
             log.error("Error syncing blockchain identity for family member: {}", savedMember.getFullName(), e);
-            // Continue - family member is already saved in database
+
         }
 
         return toResponse(savedMember);

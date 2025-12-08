@@ -20,7 +20,6 @@ const AiKnowledgePage = () => {
       return;
     }
 
-    // Split by newlines and filter empty lines
     const documents = ingestText.split('\n').filter((line) => line.trim() !== '');
 
     if (documents.length === 0) return;
@@ -80,7 +79,7 @@ const AiKnowledgePage = () => {
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        {/* Ingest Section */}
+        {}
         <Card title="Ingest New Knowledge" bordered={false} className="shadow-sm">
           <div className="mb-4">
             <Text type="secondary" className="block mb-2">
@@ -106,7 +105,7 @@ const AiKnowledgePage = () => {
           </div>
         </Card>
 
-        {/* Search Section */}
+        {}
         <Card title="Test Retrieval (Search)" bordered={false} className="shadow-sm">
           <div className="mb-4">
             <Text type="secondary" className="block mb-2">
@@ -145,7 +144,7 @@ const AiKnowledgePage = () => {
           </div>
         </Card>
 
-        {/* Database Sync Section */}
+        {}
         <Card
           title="Database Synchronization"
           bordered={false}

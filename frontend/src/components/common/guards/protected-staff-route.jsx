@@ -5,11 +5,9 @@ import Loading from '@/components/common/feedback/Loading';
 import { useAccountStore } from '@/stores/useAccountStore';
 import NotPermitted from './not-permitted';
 
-// Staff role-based route protection (only DOCTOR and CASHIER can access)
 const StaffRoleRoute = (props) => {
   const user = useAccountStore((state) => state.user);
 
-  // Only DOCTOR and CASHIER can access staff routes
   if (user?.role === 'DOCTOR' || user?.role === 'CASHIER') {
     return <>{props.children}</>;
   } else {

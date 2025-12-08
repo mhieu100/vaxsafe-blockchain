@@ -26,7 +26,7 @@ public class FhirController {
     private final UserRepository userRepository;
     private final VaccineRecordRepository vaccineRecordRepository;
 
-    // Create a single context instance (expensive to create, so keep it as a field)
+
     private final FhirContext fhirContext = FhirContext.forR4();
 
     @GetMapping(value = "/Patient/{id}", produces = "application/json")
@@ -34,13 +34,13 @@ public class FhirController {
         User user = userRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("User not found"));
 
-        // Get patient profile if exists
+
         com.dapp.backend.model.Patient patientProfile = user.getPatientProfile();
 
-        // Map to FHIR Patient
+
         Patient fhirPatient = fhirPatientMapper.toFhirPatient(user, patientProfile);
 
-        // Serialize to JSON using HAPI FHIR Parser
+
         String json = fhirContext.newJsonParser().setPrettyPrint(true).encodeResourceToString(fhirPatient);
 
         return ResponseEntity.ok(json);
@@ -52,7 +52,7 @@ public class FhirController {
         List<VaccineRecord> records = vaccineRecordRepository
                 .findByUserIdOrderByVaccinationDateDesc(patientId);
 
-        // Create a Bundle to hold multiple Immunization resources
+
         Bundle bundle = new Bundle();
         bundle.setType(Bundle.BundleType.SEARCHSET);
 

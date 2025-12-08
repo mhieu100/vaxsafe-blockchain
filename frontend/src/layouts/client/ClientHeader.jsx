@@ -118,7 +118,7 @@ const Navbar = () => {
     <>
       <AntHeader className="sticky top-0 z-[2000] glass-panel-light px-4 md:px-6 transition-all duration-300">
         <div className="mx-auto flex h-full max-w-[1220px] items-center justify-between">
-          {/* Left: Logo */}
+          {}
           <div className="flex items-center flex-1">
             <Link
               to="/"
@@ -131,7 +131,7 @@ const Navbar = () => {
             </Link>
           </div>
 
-          {/* Center: Menu */}
+          {}
           <div className="hidden lg:flex flex-1 justify-center">
             <Menu
               mode="horizontal"
@@ -145,7 +145,7 @@ const Navbar = () => {
             />
           </div>
 
-          {/* Right: Actions */}
+          {}
           <div className="flex items-center justify-end gap-2 md:gap-4 flex-1">
             <Space className="hidden sm:flex" size="small">
               <LanguageSelect />
@@ -194,7 +194,7 @@ const Navbar = () => {
         </div>
       </AntHeader>
 
-      {/* Mobile Menu Drawer */}
+      {}
       <Drawer
         title={
           <div className="flex items-center gap-2">
@@ -209,7 +209,7 @@ const Navbar = () => {
         className="md:hidden"
       >
         <div className="flex h-full flex-col">
-          {/* User Section */}
+          {}
           <div className="border-b border-gray-200 pb-4">
             {isAuthenticated ? (
               <div className="flex items-center gap-3">
@@ -252,7 +252,7 @@ const Navbar = () => {
             )}
           </div>
 
-          {/* Navigation Menu */}
+          {}
           <div className="flex-1 overflow-y-auto py-4">
             <Menu
               mode="vertical"
@@ -262,7 +262,7 @@ const Navbar = () => {
               className="border-none"
             />
 
-            {/* User Menu Items (if authenticated) */}
+            {}
             {isAuthenticated && (
               <>
                 <div className="my-4 border-t border-gray-200" />
@@ -276,7 +276,7 @@ const Navbar = () => {
             )}
           </div>
 
-          {/* Additional Mobile Actions */}
+          {}
           <div className="border-t border-gray-200 pt-4">
             <div className="grid grid-cols-2 gap-2">
               <Button

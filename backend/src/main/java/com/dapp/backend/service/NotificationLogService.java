@@ -19,9 +19,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDateTime;
 import java.util.Optional;
 
-/**
- * Service to manage notification logs and prevent spam/duplicate sends
- */
+
 @Service
 @RequiredArgsConstructor
 @Slf4j
@@ -30,14 +28,12 @@ public class NotificationLogService {
     private final NotificationLogRepository logRepository;
     private final UserNotificationSettingRepository settingRepository;
 
-    /**
-     * Check if user allows this type of notification
-     */
+    
     public boolean isNotificationAllowed(User user, ReminderType type, ReminderChannel channel) {
         UserNotificationSetting setting = settingRepository.findByUserId(user.getId())
                 .orElseGet(() -> createDefaultSettings(user));
 
-        // Check if reminder type is enabled
+
         if (type == ReminderType.APPOINTMENT_REMINDER && !setting.getAppointmentReminderEnabled()) {
             log.info("Appointment reminders disabled for user ID: {}", user.getId());
             return false;
@@ -47,29 +43,24 @@ public class NotificationLogService {
             return false;
         }
 
-        // Check if channel is enabled
+
         switch (channel) {
             case EMAIL:
                 return setting.getEmailEnabled();
-            // Future: Add SMS, ZALO checks
+
             default:
                 return false;
         }
     }
 
-    /**
-     * Check if notification was recently sent to prevent spam
-     * @param hoursWindow Time window to check for recent sends (e.g., 24 hours)
-     */
+    
     public boolean wasRecentlySent(User user, ReminderType type, ReminderChannel channel, 
                                     Long appointmentId, int hoursWindow) {
         LocalDateTime since = LocalDateTime.now().minusHours(hoursWindow);
         return logRepository.existsRecentNotification(user.getId(), type, channel, appointmentId, since);
     }
 
-    /**
-     * Log a successful notification send
-     */
+    
     @Transactional
     public void logSuccess(User user, ReminderType type, ReminderChannel channel, 
                           Appointment appointment, String recipient, String content) {
@@ -93,9 +84,7 @@ public class NotificationLogService {
         this.log.info("Logged successful {} notification to {} via {}", type, recipient, channel);
     }
 
-    /**
-     * Log a failed notification attempt
-     */
+    
     @Transactional
     public void logFailure(User user, ReminderType type, ReminderChannel channel,
                           Appointment appointment, String recipient, String errorMessage) {
@@ -114,27 +103,21 @@ public class NotificationLogService {
         this.log.error("Logged failed {} notification to {} via {}: {}", type, recipient, channel, errorMessage);
     }
 
-    /**
-     * Check if user already has notification settings
-     */
+    
     public boolean hasUserSettings(User user) {
         return settingRepository.findByUserId(user.getId()).isPresent();
     }
 
-    /**
-     * Get user notification settings
-     * Uses synchronized block to prevent race condition when creating default settings
-     * @throws AppException 
-     */
+    
     public UserNotificationSetting getUserSettings(User user) throws AppException {
         Optional<UserNotificationSetting> existing = settingRepository.findByUserId(user.getId());
         if (existing.isPresent()) {
             return existing.get();
         }
         
-        // Synchronize on user ID to prevent multiple threads creating settings for same user
+
         synchronized (("user_settings_" + user.getId()).intern()) {
-            // Double-check after acquiring lock
+
             existing = settingRepository.findByUserId(user.getId());
             if (existing.isPresent()) {
                 return existing.get();
@@ -143,7 +126,7 @@ public class NotificationLogService {
             try {
                 return createDefaultSettings(user);
             } catch (DataIntegrityViolationException e) {
-                // Race condition still occurred, fetch the created settings
+
                 log.warn("Race condition detected when creating settings for user {}, fetching existing", user.getId());
                 return settingRepository.findByUserId(user.getId())
                         .orElseThrow(() -> new AppException("Failed to get user notification settings"));
@@ -151,18 +134,12 @@ public class NotificationLogService {
         }
     }
 
-    /**
-     * Update user notification settings
-     * @param user User to update settings for
-     * @param newSettings New settings values
-     * @return Updated settings
-     * @throws AppException if user not found
-     */
+    
     @Transactional
     public UserNotificationSetting updateUserSettings(User user, UserNotificationSetting newSettings) throws AppException {
         UserNotificationSetting existing = getUserSettings(user);
         
-        // Update only email-related settings
+
         existing.setEmailEnabled(newSettings.getEmailEnabled());
         existing.setAppointmentReminderEnabled(newSettings.getAppointmentReminderEnabled());
         existing.setNextDoseReminderEnabled(newSettings.getNextDoseReminderEnabled());
@@ -170,9 +147,7 @@ public class NotificationLogService {
         return settingRepository.save(existing);
     }
 
-    /**
-     * Create default settings for new user (public method for AuthService)
-     */
+    
     public UserNotificationSetting createDefaultSettings(User user) {
         UserNotificationSetting setting = UserNotificationSetting.builder()
                 .user(user)

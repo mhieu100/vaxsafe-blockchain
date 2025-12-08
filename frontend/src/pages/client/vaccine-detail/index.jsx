@@ -20,7 +20,6 @@ const VaccineDetailPage = () => {
         const response = await callGetBySlug(slug);
         setVaccine(response.data);
       } catch {
-        // Error loading vaccine
       } finally {
         setLoading(false);
       }

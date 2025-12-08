@@ -28,15 +28,13 @@ public class NewsService {
         this.newsRepository = newsRepository;
     }
 
-    /**
-     * Generate slug from Vietnamese text
-     */
+    
     private String generateSlug(String name) {
         if (name == null || name.trim().isEmpty()) return "";
 
         String slug = name.toLowerCase().trim();
 
-        // Replace Vietnamese characters
+
         slug = slug.replaceAll("[àáạảãâầấậẩẫăằắặẳẵ]", "a");
         slug = slug.replaceAll("[èéẹẻẽêềếệểễ]", "e");
         slug = slug.replaceAll("[ìíịỉĩ]", "i");
@@ -45,7 +43,7 @@ public class NewsService {
         slug = slug.replaceAll("[ỳýỵỷỹ]", "y");
         slug = slug.replaceAll("đ", "d");
 
-        // Remove special characters and replace spaces with hyphens
+
         slug = slug.replaceAll("[^a-z0-9\\s-]", "");
         slug = slug.replaceAll("\\s+", "-");
         slug = slug.replaceAll("-+", "-");
@@ -54,9 +52,7 @@ public class NewsService {
         return slug;
     }
 
-    /**
-     * Generate unique slug
-     */
+    
     private String generateUniqueSlug(String baseName, Long excludeId) {
         String baseSlug = generateSlug(baseName);
         String uniqueSlug = baseSlug;
@@ -72,9 +68,7 @@ public class NewsService {
         return uniqueSlug;
     }
 
-    /**
-     * Get all news with pagination and filtering
-     */
+    
     public Pagination getAllNews(Specification<News> specification, Pageable pageable) {
         Specification<News> finalSpec = specification != null
                 ? specification.and(NewsSpecifications.notDeleted())
@@ -97,27 +91,21 @@ public class NewsService {
         return pagination;
     }
 
-    /**
-     * Get published news only
-     */
+    
     public List<NewsResponse> getPublishedNews() {
         return newsRepository.findPublishedNews().stream()
                 .map(NewsMapper::toResponse)
                 .collect(Collectors.toList());
     }
 
-    /**
-     * Get featured news
-     */
+    
     public List<NewsResponse> getFeaturedNews() {
         return newsRepository.findFeaturedNews().stream()
                 .map(NewsMapper::toResponse)
                 .collect(Collectors.toList());
     }
 
-    /**
-     * Get news by slug and increment view count
-     */
+    
     @Transactional
     public NewsResponse getNewsBySlug(String slug) throws AppException {
         News news = newsRepository.findBySlug(slug)
@@ -127,16 +115,14 @@ public class NewsService {
             throw new AppException("News not found with slug: " + slug);
         }
 
-        // Increment view count
+
         newsRepository.incrementViewCount(news.getId());
         news.setViewCount(news.getViewCount() + 1);
 
         return NewsMapper.toResponse(news);
     }
 
-    /**
-     * Get news by ID
-     */
+    
     public NewsResponse getNewsById(Long id) throws AppException {
         News news = newsRepository.findById(id)
                 .orElseThrow(() -> new AppException("News not found with id: " + id));
@@ -148,9 +134,7 @@ public class NewsService {
         return NewsMapper.toResponse(news);
     }
 
-    /**
-     * Get news by category
-     */
+    
     public List<NewsResponse> getNewsByCategory(NewsCategory category) {
         Specification<News> spec = NewsSpecifications.notDeleted()
                 .and(NewsSpecifications.hasCategory(category))
@@ -161,30 +145,26 @@ public class NewsService {
                 .collect(Collectors.toList());
     }
 
-    /**
-     * Get all categories
-     */
+    
     public List<NewsCategory> getAllCategories() {
         return newsRepository.findDistinctCategories();
     }
 
-    /**
-     * Create news
-     */
+    
     @Transactional
     public NewsResponse createNews(NewsRequest request) throws AppException {
-        // Generate slug if not provided
+
         if (request.getSlug() == null || request.getSlug().trim().isEmpty()) {
             String slug = generateUniqueSlug(request.getTitle(), null);
             request.setSlug(slug);
         } else {
-            // Check if slug already exists
+
             if (newsRepository.findBySlug(request.getSlug()).isPresent()) {
                 throw new AppException("News with slug already exists: " + request.getSlug());
             }
         }
 
-        // Set published date if published
+
         if (Boolean.TRUE.equals(request.getIsPublished()) && request.getPublishedAt() == null) {
             request.setPublishedAt(LocalDateTime.now());
         }
@@ -195,9 +175,7 @@ public class NewsService {
         return NewsMapper.toResponse(savedNews);
     }
 
-    /**
-     * Update news
-     */
+    
     @Transactional
     public NewsResponse updateNews(Long id, NewsRequest request) throws AppException {
         News existingNews = newsRepository.findById(id)
@@ -207,19 +185,19 @@ public class NewsService {
             throw new AppException("News not found with id: " + id);
         }
 
-        // Update slug if changed
+
         if (request.getSlug() == null || request.getSlug().trim().isEmpty()) {
             String slug = generateUniqueSlug(request.getTitle(), id);
             request.setSlug(slug);
         } else if (!request.getSlug().equals(existingNews.getSlug())) {
-            // Check if new slug already exists
+
             var existingWithSlug = newsRepository.findBySlug(request.getSlug());
             if (existingWithSlug.isPresent() && !existingWithSlug.get().getId().equals(id)) {
                 throw new AppException("News with slug already exists: " + request.getSlug());
             }
         }
 
-        // Set published date if status changes to published
+
         if (Boolean.TRUE.equals(request.getIsPublished())
                 && Boolean.FALSE.equals(existingNews.getIsPublished())
                 && request.getPublishedAt() == null) {
@@ -232,9 +210,7 @@ public class NewsService {
         return NewsMapper.toResponse(updatedNews);
     }
 
-    /**
-     * Delete news (soft delete)
-     */
+    
     @Transactional
     public void deleteNews(Long id) throws AppException {
         News news = newsRepository.findById(id)
@@ -244,9 +220,7 @@ public class NewsService {
         newsRepository.save(news);
     }
 
-    /**
-     * Publish news
-     */
+    
     @Transactional
     public NewsResponse publishNews(Long id) throws AppException {
         News news = newsRepository.findById(id)
@@ -265,9 +239,7 @@ public class NewsService {
         return NewsMapper.toResponse(updatedNews);
     }
 
-    /**
-     * Unpublish news
-     */
+    
     @Transactional
     public NewsResponse unpublishNews(Long id) throws AppException {
         News news = newsRepository.findById(id)

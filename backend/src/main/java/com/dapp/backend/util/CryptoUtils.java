@@ -4,17 +4,10 @@ import javax.crypto.Mac;
 import javax.crypto.spec.SecretKeySpec;
 import java.nio.charset.StandardCharsets;
 
-/**
- * Utility class for cryptographic operations
- */
+
 public class CryptoUtils {
 
-    /**
-     * Generate HMAC SHA512 hash
-     * @param key Secret key
-     * @param data Data to hash
-     * @return Hex string of the hash
-     */
+    
     public static String hmacSHA512(String key, String data) {
         try {
             Mac hmac = Mac.getInstance("HmacSHA512");
@@ -30,11 +23,7 @@ public class CryptoUtils {
         }
     }
 
-    /**
-     * Convert byte array to hex string
-     * @param bytes Byte array
-     * @return Hex string
-     */
+    
     public static String bytesToHex(byte[] bytes) {
         StringBuilder result = new StringBuilder(bytes.length * 2);
         for (byte b : bytes) {

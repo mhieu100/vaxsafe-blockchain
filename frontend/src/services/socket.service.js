@@ -1,14 +1,6 @@
-/* eslint-disable import/no-extraneous-dependencies */
 import { io } from 'socket.io-client';
 
-/**
- * Socket.io service for real-time blockchain updates
- */
 class SocketService {
-  /**
-   * Create a new SocketService instance
-   * @param {string} url - Socket.io server URL (default: http://localhost:4000)
-   */
   constructor(url = 'http://localhost:4000') {
     this.socket = null;
     this.url = url;
@@ -16,10 +8,6 @@ class SocketService {
     this.maxReconnectAttempts = 5;
   }
 
-  /**
-   * Connect to Socket.io server
-   * @returns {object} Socket instance
-   */
   connect() {
     if (this.socket?.connected) {
       return this.socket;
@@ -36,10 +24,6 @@ class SocketService {
     return this.socket;
   }
 
-  /**
-   * Setup default socket event listeners
-   * @private
-   */
   setupListeners() {
     if (!this.socket) return;
 
@@ -56,28 +40,16 @@ class SocketService {
     this.socket.on('error', (_error) => {});
   }
 
-  /**
-   * Listen for blockchain statistics updates
-   * @param {Function} callback - Callback function to handle stats data
-   */
   onBlockchainStats(callback) {
     if (!this.socket) return;
     this.socket.on('blockchainStats', callback);
   }
 
-  /**
-   * Listen for new block events
-   * @param {Function} callback - Callback function to handle new block data
-   */
   onNewBlock(callback) {
     if (!this.socket) return;
     this.socket.on('newBlock', callback);
   }
 
-  /**
-   * Stop listening for blockchain stats
-   * @param {Function} [callback] - Optional specific callback to remove
-   */
   offBlockchainStats(callback) {
     if (!this.socket) return;
     if (callback) {
@@ -87,10 +59,6 @@ class SocketService {
     }
   }
 
-  /**
-   * Stop listening for new blocks
-   * @param {Function} [callback] - Optional specific callback to remove
-   */
   offNewBlock(callback) {
     if (!this.socket) return;
     if (callback) {
@@ -100,27 +68,16 @@ class SocketService {
     }
   }
 
-  /**
-   * Request blockchain statistics
-   */
   getStats() {
     if (!this.socket) return;
     this.socket.emit('getStats');
   }
 
-  /**
-   * Listen for contract transactions
-   * @param {Function} callback - Callback function to handle transaction data
-   */
   onContractTransaction(callback) {
     if (!this.socket) return;
     this.socket.on('contractTransaction', callback);
   }
 
-  /**
-   * Stop listening for contract transactions
-   * @param {Function} [callback] - Optional specific callback to remove
-   */
   offContractTransaction(callback) {
     if (!this.socket) return;
     if (callback) {
@@ -130,19 +87,11 @@ class SocketService {
     }
   }
 
-  /**
-   * Listen for contract events
-   * @param {Function} callback - Callback function to handle event data
-   */
   onContractEvent(callback) {
     if (!this.socket) return;
     this.socket.on('contractEvent', callback);
   }
 
-  /**
-   * Stop listening for contract events
-   * @param {Function} [callback] - Optional specific callback to remove
-   */
   offContractEvent(callback) {
     if (!this.socket) return;
     if (callback) {
@@ -152,9 +101,6 @@ class SocketService {
     }
   }
 
-  /**
-   * Disconnect from Socket.io server
-   */
   disconnect() {
     if (this.socket) {
       this.socket.disconnect();
@@ -162,24 +108,15 @@ class SocketService {
     }
   }
 
-  /**
-   * Check if socket is connected
-   * @returns {boolean} Connection status
-   */
   isConnected() {
     return this.socket?.connected || false;
   }
 
-  /**
-   * Get the socket instance
-   * @returns {object|null} Socket instance or null
-   */
   getSocket() {
     return this.socket;
   }
 }
 
-// Export singleton instance
 export const socketService = new SocketService(
   import.meta.env.VITE_SOCKET_URL || 'http://localhost:4000'
 );

@@ -55,12 +55,12 @@ public class PermissionService {
     }
 
     public void deletePermission(Long id) {
-        // delete permission_role
+
         Optional<Permission> permissionOptional = this.permissionRepository.findById(id);
         Permission currentPermission = permissionOptional.get();
         currentPermission.getRoles().forEach(role -> role.getPermissions().remove(currentPermission));
 
-        // delete permission
+
         this.permissionRepository.delete(currentPermission);
     }
 

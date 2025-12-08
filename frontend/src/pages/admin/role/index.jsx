@@ -69,11 +69,10 @@ const RolePage = () => {
   const buildQuery = (params, sort) => {
     const clone = { ...params };
     const q = {
-      page: clone.current, // Backend configured for one-indexed pages
+      page: clone.current,
       size: clone.pageSize,
     };
 
-    // Build filter
     const filters = [];
     if (clone.name) {
       filters.push(sfLike('name', clone.name));
@@ -83,7 +82,6 @@ const RolePage = () => {
       q.filter = filters.join(' and ');
     }
 
-    // Build sort
     if (sort?.name) {
       q.sort = `name,${sort.name === 'ascend' ? 'asc' : 'desc'}`;
     }

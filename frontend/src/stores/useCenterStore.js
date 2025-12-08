@@ -2,7 +2,6 @@ import { create } from 'zustand';
 import { callFetchCenter } from '../services/center.service';
 
 const useCenterStore = create((set) => ({
-  // State
   isFetching: true,
   meta: {
     page: 1,
@@ -12,7 +11,6 @@ const useCenterStore = create((set) => ({
   },
   result: [],
 
-  // Actions
   fetchCenter: async (query) => {
     set({ isFetching: true });
     try {

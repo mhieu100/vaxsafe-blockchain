@@ -1,9 +1,5 @@
 import apiClient from '../services/apiClient';
 
-/**
- * Center API Module
- */
-
 export const callCreateCenter = (data) => {
   return apiClient.post('/api/centers', data);
 };

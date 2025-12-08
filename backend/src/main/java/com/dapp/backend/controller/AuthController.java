@@ -64,12 +64,12 @@ public class AuthController {
             throws AppException {
         RegisterPatientResponse registerResponse = authService.register(request);
 
-        // Generate tokens for immediate login after registration
+
         String accessToken = jwtUtil.createAccessToken(registerResponse.getEmail(), registerResponse.getRole());
         String refreshToken = jwtUtil.createRefreshToken(registerResponse.getEmail());
         authService.updateUserToken(refreshToken, registerResponse.getEmail());
 
-        // Create login response with tokens
+
         LoginResponse.UserLogin userLogin = LoginResponse.UserLogin.builder()
                 .id(registerResponse.getId())
                 .avatar(registerResponse.getAvatar())

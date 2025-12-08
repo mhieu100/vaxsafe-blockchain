@@ -13,9 +13,9 @@ public class BookingRequest {
     long vaccineId;
     Long familyMemberId;
     
-    // Single appointment info
+
     LocalDate appointmentDate;
-    String appointmentTime; // Will be converted to TimeSlotEnum
+    String appointmentTime;
     Long appointmentCenter;
     
     double amount;

@@ -40,7 +40,6 @@ const TabEditUser = ({ editMode, setEditMode }) => {
     try {
       setLoading(true);
 
-      // New payload format for profile API
       const payload = {
         fullName: values.fullName,
         phone: values.phone,
@@ -61,7 +60,6 @@ const TabEditUser = ({ editMode, setEditMode }) => {
         throw new Error('Update failed');
       }
 
-      // Update store with new user data from backend
       setUserLoginInfo(response.data);
 
       message.success(t('client:profile.updateSuccess'));

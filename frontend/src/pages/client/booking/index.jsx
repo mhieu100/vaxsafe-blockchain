@@ -31,7 +31,6 @@ const BookingPage = () => {
     try {
       const response = await callGetBySlug(slug);
 
-      // Handle different response formats
       let vaccineData = null;
       if (response?.result) {
         vaccineData = response.result;
@@ -42,7 +41,6 @@ const BookingPage = () => {
       }
 
       if (vaccineData) {
-        // Validate required fields
         if (!vaccineData.dosesRequired) {
         }
         if (!vaccineData.duration) {
@@ -50,7 +48,6 @@ const BookingPage = () => {
 
         setVaccine(vaccineData);
 
-        // IMPORTANT: Update bookingData with vaccineId from vaccine object
         setBookingData((prev) => ({
           ...prev,
           vaccineId: vaccineData.id,
@@ -63,7 +60,6 @@ const BookingPage = () => {
     }
   };
 
-  // Load vaccine data from URL params
   useEffect(() => {
     const slug = searchParams.get('slug');
 
@@ -72,7 +68,6 @@ const BookingPage = () => {
     }
   }, [searchParams]);
 
-  // Sync form data to bookingData state every 1 second
   useEffect(() => {
     const interval = setInterval(() => {
       const bookingValues = bookingForm.getFieldsValue();
@@ -92,14 +87,11 @@ const BookingPage = () => {
     try {
       setLoading(true);
 
-      // Validate all forms
       await bookingForm.validateFields();
       await paymentForm.validateFields();
 
-      // Amount is just the vaccine price (backend will create all appointment records)
       const totalAmount = vaccine?.price || 0;
 
-      // Prepare booking payload matching new simplified BookingRequest DTO
       const bookingPayload = {
         vaccineId: bookingData.vaccineId || vaccine?.id,
         familyMemberId: bookingData.bookingFor === 'family' ? bookingData.familyMemberId : null,
@@ -113,19 +105,16 @@ const BookingPage = () => {
 
       const response = await callCreateBooking(bookingPayload);
 
-      // Handle both response.result and response.data formats
       const paymentData = response?.result || response?.data;
 
       if (paymentData) {
         message.success('Đặt lịch tiêm thành công!');
 
-        // Handle payment redirects based on method from response (same as safevax-repo)
         if (paymentData.method === 'PAYPAL' && paymentData.paymentURL) {
           window.location.href = paymentData.paymentURL;
         } else if (paymentData.method === 'BANK' && paymentData.paymentURL) {
           window.location.href = paymentData.paymentURL;
         } else {
-          // For CASH and METAMASK, redirect to success page
           navigate('/success');
         }
       } else {

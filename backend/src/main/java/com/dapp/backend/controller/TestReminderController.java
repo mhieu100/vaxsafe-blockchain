@@ -32,10 +32,7 @@ public class TestReminderController {
     private final NextDoseReminderService nextDoseReminderService;
     private final EmailService emailService;
 
-    /**
-     * Test endpoint to create a fake appointment with upcoming date
-     * POST /api/test/create-test-appointment?daysFromNow=3&userId=1
-     */
+    
     @PostMapping("/create-test-appointment")
     public ResponseEntity<Map<String, Object>> createTestAppointment(
             @RequestParam(defaultValue = "3") int daysFromNow,
@@ -44,7 +41,7 @@ public class TestReminderController {
         try {
             log.info("Creating test appointment {} days from now for user ID: {}", daysFromNow, userId);
             
-            // Get user
+
             User user = userRepository.findById(userId)
                     .orElseThrow(() -> new RuntimeException("User not found with ID: " + userId));
             
@@ -55,22 +52,22 @@ public class TestReminderController {
                 ));
             }
             
-            // Get any vaccine
+
             Vaccine vaccine = vaccineRepository.findAll().stream()
                     .findFirst()
                     .orElseThrow(() -> new RuntimeException("No vaccines found in database"));
             
-            // Get any center
+
             Center center = centerRepository.findAll().stream()
                     .findFirst()
                     .orElseThrow(() -> new RuntimeException("No vaccination centers found in database"));
             
-            // Get any time slot
+
             DoctorAvailableSlot timeSlot = doctorAvailableSlotRepository.findAll().stream()
                     .findFirst()
                     .orElseThrow(() -> new RuntimeException("No time slots found in database"));
             
-            // Create booking first
+
             Booking booking = Booking.builder()
                     .patient(user)
                     .vaccine(vaccine)
@@ -82,7 +79,7 @@ public class TestReminderController {
             Booking savedBooking = bookingRepository.save(booking);
             log.info("Created test booking with ID: {}", savedBooking.getBookingId());
             
-            // Create appointment
+
             LocalDate appointmentDate = LocalDate.now().plusDays(daysFromNow);
             
             Appointment appointment = Appointment.builder()
@@ -97,11 +94,11 @@ public class TestReminderController {
             Appointment savedAppointment = appointmentRepository.save(appointment);
             log.info("Created test appointment with ID: {}", savedAppointment.getId());
             
-            // Create reminders
+
             reminderService.createRemindersForAppointment(savedAppointment);
             log.info("Created reminders for test appointment ID: {}", savedAppointment.getId());
             
-            // Send confirmation email
+
             try {
                 emailService.sendAppointmentConfirmation(
                     user.getEmail(),
@@ -115,7 +112,7 @@ public class TestReminderController {
                 log.info("Sent appointment confirmation email to: {}", user.getEmail());
             } catch (Exception e) {
                 log.error("Failed to send confirmation email", e);
-                // Don't fail appointment creation if email fails
+
             }
             
             Map<String, Object> response = new HashMap<>();
@@ -146,10 +143,7 @@ public class TestReminderController {
         }
     }
     
-    /**
-     * Test endpoint to send reminders immediately
-     * POST /api/test/send-test-reminder
-     */
+    
     @PostMapping("/send-test-reminder")
     public ResponseEntity<Map<String, Object>> sendTestReminder() {
         try {
@@ -171,10 +165,7 @@ public class TestReminderController {
         }
     }
 
-    /**
-     * Test endpoint to complete an appointment and trigger next dose reminder
-     * POST /api/test/complete-appointment/{appointmentId}
-     */
+    
     @PostMapping("/complete-appointment/{appointmentId}")
     public ResponseEntity<Map<String, Object>> completeTestAppointment(
             @PathVariable Long appointmentId) {
@@ -185,14 +176,14 @@ public class TestReminderController {
             Appointment appointment = appointmentRepository.findById(appointmentId)
                     .orElseThrow(() -> new RuntimeException("Appointment not found: " + appointmentId));
             
-            // Mark as completed
+
             appointment.setStatus(AppointmentStatus.COMPLETED);
             appointment.setVaccinationDate(LocalDate.now());
             appointmentRepository.save(appointment);
             
             log.info("Appointment {} marked as COMPLETED", appointmentId);
             
-            // Create next dose reminder
+
             nextDoseReminderService.createNextDoseReminder(appointment);
             log.info("Next dose reminder created for appointment {}", appointmentId);
             

@@ -30,12 +30,12 @@ public class WalkInBookingRequest {
     LocalDate appointmentDate;
 
     @NotNull(message = "Appointment time slot is required")
-    String appointmentTime; // TimeSlotEnum (e.g., "SLOT_13_00")
+    String appointmentTime;
 
     @NotNull(message = "Actual scheduled time is required")
-    LocalTime actualScheduledTime; // Actual time like 13:00:00
+    LocalTime actualScheduledTime;
 
-    Long slotId; // Can be null for virtual slots
+    Long slotId;
 
     String notes;
 

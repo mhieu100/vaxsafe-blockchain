@@ -14,7 +14,6 @@ const PatientProfileForm = () => {
     formState: { errors, isDirty },
   } = useForm();
 
-  // Reset form when profile data is loaded
   useEffect(() => {
     if (profileData?.data) {
       reset(profileData.data);
@@ -69,7 +68,7 @@ const PatientProfileForm = () => {
       </div>
 
       <form onSubmit={handleSubmit(onSubmit, (errors) => console.error('Form errors:', errors))}>
-        {/* Common User Fields */}
+        {}
         <div className="space-y-6">
           <div className="border-b pb-4">
             <h3 className="text-lg font-semibold text-gray-700 mb-4">Personal Information</h3>
@@ -164,7 +163,7 @@ const PatientProfileForm = () => {
             </div>
           </div>
 
-          {/* Patient Specific Fields */}
+          {}
           <div className="border-b pb-4">
             <h3 className="text-lg font-semibold text-gray-700 mb-4">Medical Information</h3>
 

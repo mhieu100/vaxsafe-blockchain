@@ -5,7 +5,7 @@ import {
   SortAscendingOutlined,
 } from '@ant-design/icons';
 import { Button, Select, Slider } from 'antd';
-// eslint-disable-next-line import/no-extraneous-dependencies
+
 import debounce from 'lodash/debounce';
 import { useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -15,16 +15,6 @@ import { formatPrice } from '@/utils/formatPrice';
 
 const { Option } = Select;
 
-/**
- * LeftFilterSection component for filtering vaccines
- * @param {object} props - Component props
- * @param {Function} props.setPriceRange - Function to set price range filter
- * @param {Array} props.country - Selected countries array
- * @param {Function} props.setCountry - Function to set country filter
- * @param {string|null} props.sortBy - Sort by value
- * @param {Function} props.setSortBy - Function to set sort by value
- * @returns {React.Component}
- */
 const LeftFilterSection = ({ setPriceRange, country, setCountry, sortBy, setSortBy }) => {
   const { t } = useTranslation();
   const [countries, setCountries] = useState([]);
@@ -96,7 +86,7 @@ const LeftFilterSection = ({ setPriceRange, country, setCountry, sortBy, setSort
           )}
         </div>
 
-        {/* Sort Section */}
+        {}
         <div className="mb-8">
           <label className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-3 block">
             Sort By
@@ -118,7 +108,7 @@ const LeftFilterSection = ({ setPriceRange, country, setCountry, sortBy, setSort
           </Select>
         </div>
 
-        {/* Country Section */}
+        {}
         <div className="mb-8">
           <label className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-3 block flex items-center gap-2">
             <GlobalOutlined /> Origin Country
@@ -144,7 +134,7 @@ const LeftFilterSection = ({ setPriceRange, country, setCountry, sortBy, setSort
           </Select>
         </div>
 
-        {/* Price Section */}
+        {}
         <div>
           <label className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-4 block flex items-center gap-2">
             <DollarOutlined /> Price Range

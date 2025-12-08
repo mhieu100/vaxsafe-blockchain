@@ -7,7 +7,7 @@ const LayoutApp = (props) => {
 };
 
 LayoutApp.propTypes = {
-  children: PropTypes.node.isRequired, // Đảm bảo children là bắt buộc và là một node hợp lệ
+  children: PropTypes.node.isRequired,
 };
 
 export default LayoutApp;

@@ -1,4 +1,3 @@
-/* eslint-disable import/no-extraneous-dependencies */
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 import { callFetchAccount } from '../services/auth.service';
@@ -6,10 +5,9 @@ import { callFetchAccount } from '../services/auth.service';
 const useAccountStore = create(
   persist(
     (set) => ({
-      // State
       isAuthenticated: false,
       isLoading: true,
-      isActive: true, // Profile completion status
+      isActive: true,
       user: {
         id: '',
         fullName: '',
@@ -31,7 +29,6 @@ const useAccountStore = create(
         avatar: '',
       },
 
-      // Actions
       setUserLoginInfo: (userData) =>
         set({
           isAuthenticated: true,
@@ -60,7 +57,6 @@ const useAccountStore = create(
         }),
 
       logout: () => {
-        // Clear all localStorage items
         localStorage.removeItem('token');
 
         set({
@@ -94,7 +90,6 @@ const useAccountStore = create(
         try {
           const response = await callFetchAccount();
           if (response.data) {
-            // Check if profile is complete (has required fields)
             const hasProfile = response.data.phone && response.data.address;
 
             set({

@@ -28,18 +28,13 @@ public class VaccineRecordService {
     private final BlockchainService blockchainService;
     private final FhirImmunizationMapper fhirImmunizationMapper;
 
-    // HAPI FHIR Context (Thread-safe, expensive to create)
     private static final ca.uhn.fhir.context.FhirContext fhirContext = ca.uhn.fhir.context.FhirContext.forR4();
 
-    /**
-     * Create vaccine record from completed appointment
-     */
     @Transactional
     public VaccineRecord createFromAppointment(
             Appointment appointment,
             com.dapp.backend.dto.request.CompleteAppointmentRequest request) throws AppException {
 
-        // Check if record already exists
         if (vaccineRecordRepository.findByAppointmentId(appointment.getId()).isPresent()) {
             throw new AppException("Vaccine record already exists for this appointment");
         }
@@ -48,23 +43,21 @@ public class VaccineRecordService {
         User patient = booking.getPatient();
         FamilyMember familyMember = booking.getFamilyMember();
 
-        // Determine patient info
         String patientName;
         String identityHash;
 
         if (patient != null) {
-            // Adult patient
+
             patientName = patient.getFullName();
             identityHash = patient.getBlockchainIdentityHash();
         } else if (familyMember != null) {
-            // Child patient
+
             patientName = familyMember.getFullName();
             identityHash = familyMember.getBlockchainIdentityHash();
         } else {
             throw new AppException("No patient information found in booking");
         }
 
-        // Calculate next dose date if applicable
         LocalDate nextDoseDate = calculateNextDoseDate(
                 appointment.getVaccinationDate(),
                 booking.getVaccine(),
@@ -99,24 +92,16 @@ public class VaccineRecordService {
 
         log.info("Created vaccine record {} for appointment {}", saved.getId(), appointment.getId());
 
-        // =================================================================================
-        // BLOCKCHAIN + FHIR + IPFS INTEGRATION (The "Killer Feature")
-        // Optimized: Upload to IPFS first, then create single transaction on blockchain
-        // =================================================================================
-
         String ipfsHash = null;
 
-        // Step 1: Upload to IPFS
         try {
             if (blockchainService.isBlockchainServiceAvailable()) {
-                // 1. Convert to FHIR Standard
+
                 org.hl7.fhir.r4.model.Immunization fhirImmunization = fhirImmunizationMapper.toFhirImmunization(saved);
 
-                // 2. Serialize to JSON
                 String fhirJson = fhirContext.newJsonParser().setPrettyPrint(true)
                         .encodeResourceToString(fhirImmunization);
 
-                // 3. Upload to IPFS
                 ipfsHash = blockchainService.uploadToIpfs(fhirJson);
 
                 if (ipfsHash != null) {
@@ -131,14 +116,12 @@ public class VaccineRecordService {
             }
         } catch (Exception e) {
             log.error("⚠️ Failed to generate FHIR JSON or upload to IPFS", e);
-            // Continue - we will still try to create the blockchain record (without IPFS
-            // hash if failed)
+
         }
 
-        // Step 2: Push to blockchain (Single Transaction)
         try {
             if (blockchainService.isBlockchainServiceAvailable()) {
-                // createVaccineRecord will now include the ipfsHash if it was set in 'saved'
+
                 var blockchainResponse = blockchainService.createVaccineRecord(saved);
 
                 if (blockchainResponse != null && blockchainResponse.isSuccess()) {
@@ -161,30 +144,18 @@ public class VaccineRecordService {
         return saved;
     }
 
-    /**
-     * Get vaccine history for user
-     */
     public List<VaccineRecord> getUserVaccineHistory(Long userId) {
         return vaccineRecordRepository.findByUserIdOrderByVaccinationDateDesc(userId);
     }
 
-    /**
-     * Get vaccine history for family member
-     */
     public List<VaccineRecord> getFamilyMemberVaccineHistory(Long familyMemberId) {
         return vaccineRecordRepository.findByFamilyMemberIdOrderByVaccinationDateDesc(familyMemberId);
     }
 
-    /**
-     * Get combined vaccine history (for displaying in UI)
-     */
     public List<VaccineRecord> getCombinedVaccineHistory(Long userId, Long familyMemberId) {
         return vaccineRecordRepository.findVaccineHistory(userId, familyMemberId);
     }
 
-    /**
-     * Verify record on blockchain
-     */
     @Transactional
     public VaccineRecord verifyOnBlockchain(Long recordId) throws AppException {
         VaccineRecord record = vaccineRecordRepository.findById(recordId)
@@ -194,22 +165,12 @@ public class VaccineRecordService {
             throw new AppException("Record already verified");
         }
 
-        // TODO: Verify on blockchain
-        // boolean isValid =
-        // blockchainService.verifyRecord(record.getBlockchainTxHash());
-        // if (!isValid) {
-        // throw new AppException("Blockchain verification failed");
-        // }
-
         record.setVerified(true);
         record.setVerifiedAt(LocalDateTime.now());
 
         return vaccineRecordRepository.save(record);
     }
 
-    /**
-     * Add adverse reactions to record
-     */
     @Transactional
     public VaccineRecord addAdverseReactions(Long recordId, String reactions) throws AppException {
         VaccineRecord record = vaccineRecordRepository.findById(recordId)
@@ -217,7 +178,6 @@ public class VaccineRecordService {
 
         record.setAdverseReactions(reactions);
 
-        // If serious, set follow-up date
         if (reactions.toLowerCase().contains("severe") || reactions.toLowerCase().contains("nghiêm trọng")) {
             record.setFollowUpDate(LocalDateTime.now().plusDays(3));
         }
@@ -225,18 +185,12 @@ public class VaccineRecordService {
         return vaccineRecordRepository.save(record);
     }
 
-    /**
-     * Get records needing follow-up for a center
-     */
     public List<VaccineRecord> getRecordsNeedingFollowUp(Long centerId) {
         return vaccineRecordRepository.findRecordsNeedingFollowUp(centerId);
     }
 
-    /**
-     * Calculate next dose date based on vaccine schedule
-     */
     private LocalDate calculateNextDoseDate(LocalDate currentDate, Vaccine vaccine, int currentDose) {
-        // Default intervals (can be customized per vaccine)
+
         if (currentDose == 1) {
             return currentDate.plusDays(vaccine.getDaysForNextDose() != null ? vaccine.getDaysForNextDose() : 30);
         } else if (currentDose == 2) {
@@ -245,12 +199,9 @@ public class VaccineRecordService {
             return currentDate.plusYears(1);
         }
 
-        return null; // No next dose
+        return null;
     }
 
-    /**
-     * Get vaccination statistics for a patient
-     */
     public VaccinationStatistics getStatistics(Long userId, Long familyMemberId) {
         List<VaccineRecord> records = getCombinedVaccineHistory(userId, familyMemberId);
 
@@ -270,9 +221,6 @@ public class VaccineRecordService {
                 nextDueDate);
     }
 
-    /**
-     * Statistics DTO
-     */
     public record VaccinationStatistics(
             long totalVaccinations,
             long verifiedCount,
@@ -280,24 +228,15 @@ public class VaccineRecordService {
             LocalDate nextDueDate) {
     }
 
-    /**
-     * Get all vaccine records for a patient (includes both user records and family
-     * member records)
-     * 
-     * @param userId The ID of the user (patient or guardian)
-     * @return List of vaccine records
-     */
     public List<VaccineRecordResponse> getAllVaccineRecordsByPatient(Long userId) throws AppException {
         log.info("Fetching vaccine records for user ID: {}", userId);
 
         List<VaccineRecord> records = new ArrayList<>();
 
-        // Get records for the user themselves (adult patient)
         List<VaccineRecord> userRecords = vaccineRecordRepository.findByUserIdOrderByVaccinationDateDesc(userId);
         records.addAll(userRecords);
         log.info("Found {} records for user ID: {}", userRecords.size(), userId);
 
-        // Get records for family members (children) of this user
         List<FamilyMember> familyMembers = familyMemberRepository.findByUserId(userId);
         log.info("Found {} family members for user ID: {}", familyMembers.size(), userId);
 
@@ -315,9 +254,6 @@ public class VaccineRecordService {
                 .collect(Collectors.toList());
     }
 
-    /**
-     * Map VaccineRecord entity to VaccineRecordResponse DTO
-     */
     private VaccineRecordResponse mapToResponse(VaccineRecord record) {
         return VaccineRecordResponse.builder()
                 .id(record.getId())

@@ -14,10 +14,7 @@ import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
 
-/**
- * Request to complete patient profile after initial registration
- * Used for both password and Google registration
- */
+
 @Data
 @Builder
 @NoArgsConstructor

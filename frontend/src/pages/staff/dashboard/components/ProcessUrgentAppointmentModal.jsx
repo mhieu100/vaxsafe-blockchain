@@ -54,7 +54,6 @@ const ProcessUrgentAppointmentModal = ({ open, onClose, appointment, onSuccess }
   const user = useAccountStore((state) => state.user);
   const userCenterId = user?.centerId;
 
-  // Identify values from appointment
   const isRescheduleRequest = appointment?.urgencyType === 'RESCHEDULE_PENDING';
   const targetDate = isRescheduleRequest ? appointment?.desiredDate : appointment?.scheduledDate;
 
@@ -66,7 +65,6 @@ const ProcessUrgentAppointmentModal = ({ open, onClose, appointment, onSuccess }
         setDoctors(res.data);
       }
     } catch (_error) {
-      // Silent fail
     } finally {
       setLoadingDoctors(false);
     }
@@ -79,7 +77,6 @@ const ProcessUrgentAppointmentModal = ({ open, onClose, appointment, onSuccess }
       const res = await callGetDoctorAvailableSlots(doctorId, formattedDate);
 
       if (res?.data) {
-        // Generate unique UI ID for each slot to handle virtual slots safely
         const slotsWithIds = res.data.map((slot, index) => ({
           ...slot,
           uiId: slot.slotId ? String(slot.slotId) : `virtual-${index}-${slot.startTime}`,
@@ -119,7 +116,6 @@ const ProcessUrgentAppointmentModal = ({ open, onClose, appointment, onSuccess }
     setAvailableSlots([]);
   };
 
-  // Early return if no appointment data
   if (!appointment) return null;
 
   const handleDoctorChange = (doctorId) => {
@@ -136,7 +132,7 @@ const ProcessUrgentAppointmentModal = ({ open, onClose, appointment, onSuccess }
     const slot = availableSlots.find((s) => s.uiId === uiId);
     if (slot) {
       form.setFieldsValue({
-        slotId: slot.slotId, // Nullable
+        slotId: slot.slotId,
         actualScheduledTime: slot.startTime,
       });
     }
@@ -220,7 +216,6 @@ const ProcessUrgentAppointmentModal = ({ open, onClose, appointment, onSuccess }
 
   const renderDateComparison = () => {
     if (!isRescheduleRequest) {
-      // Normal assignment
       return (
         <Card
           size="small"
@@ -237,7 +232,6 @@ const ProcessUrgentAppointmentModal = ({ open, onClose, appointment, onSuccess }
       );
     }
 
-    // Reschedule Request
     return (
       <Card
         size="small"
@@ -369,7 +363,7 @@ const ProcessUrgentAppointmentModal = ({ open, onClose, appointment, onSuccess }
       ]}
     >
       <Row gutter={24}>
-        {/* LEFT COLUMN: INFO */}
+        {}
         <Col span={10} style={{ borderRight: '1px solid #f0f0f0' }}>
           {renderPatientInfo()}
           {renderDateComparison()}
@@ -388,7 +382,7 @@ const ProcessUrgentAppointmentModal = ({ open, onClose, appointment, onSuccess }
           </Form>
         </Col>
 
-        {/* RIGHT COLUMN: ACTION */}
+        {}
         <Col span={14}>
           <Alert
             type="info"

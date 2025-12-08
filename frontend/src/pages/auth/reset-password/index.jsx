@@ -60,7 +60,6 @@ const ResetPasswordPage = () => {
         navigate('/login');
       }, 3000);
     } catch {
-      // Password reset error
       setLoading(false);
     } finally {
       setLoading(false);

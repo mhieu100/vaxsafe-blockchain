@@ -10,9 +10,7 @@ import java.util.stream.Collectors;
 
 public class UserMapper {
 
-    /**
-     * Convert User entity to comprehensive UserResponse with all details
-     */
+    
     public static UserResponse toUserResponse(User user) {
         if (user == null) {
             return null;
@@ -30,39 +28,33 @@ public class UserMapper {
                 .build();
     }
 
-    /**
-     * Get center info from Doctor or Cashier profile
-     */
+    
     public static UserResponse.CenterInfo getCenterInfo(User user) {
-        // Check if user is a doctor
+
         if (user.getDoctor() != null && user.getDoctor().getCenter() != null) {
             return mapCenter(user.getDoctor().getCenter());
         }
-        // Check if user is a cashier
+
         if (user.getCashier() != null && user.getCashier().getCenter() != null) {
             return mapCenter(user.getCashier().getCenter());
         }
         return null;
     }
 
-    /**
-     * Get Center entity from User (for services that need Center object)
-     */
+    
     public static Center getCenter(User user) {
-        // Check if user is a doctor
+
         if (user.getDoctor() != null) {
             return user.getDoctor().getCenter();
         }
-        // Check if user is a cashier
+
         if (user.getCashier() != null) {
             return user.getCashier().getCenter();
         }
         return null;
     }
 
-    /**
-     * Map Role entity to RoleInfo DTO with permissions
-     */
+    
     private static UserResponse.RoleInfo mapRole(Role role) {
         if (role == null) {
             return null;
@@ -81,9 +73,7 @@ public class UserMapper {
                 .build();
     }
 
-    /**
-     * Map Permission entity to PermissionInfo DTO
-     */
+    
     private static UserResponse.PermissionInfo mapPermission(Permission permission) {
         if (permission == null) {
             return null;
@@ -98,9 +88,7 @@ public class UserMapper {
                 .build();
     }
 
-    /**
-     * Map Patient entity to PatientInfo DTO
-     */
+    
     private static UserResponse.PatientInfo mapPatientProfile(Patient patient) {
         if (patient == null) {
             return null;
@@ -123,9 +111,7 @@ public class UserMapper {
                 .build();
     }
 
-    /**
-     * Map Center entity to CenterInfo DTO
-     */
+    
     private static UserResponse.CenterInfo mapCenter(Center center) {
         if (center == null) {
             return null;
@@ -142,9 +128,7 @@ public class UserMapper {
                 .build();
     }
 
-    /**
-     * Convert User to DoctorResponse (for backward compatibility)
-     */
+    
     public static DoctorResponse toResponse(User user) {
         return DoctorResponse.builder()
                 .doctorId(user.getId())

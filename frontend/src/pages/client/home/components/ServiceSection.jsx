@@ -41,7 +41,7 @@ const ServiceSection = () => {
 
   return (
     <section className="relative py-24 bg-slate-50 overflow-hidden">
-      {/* Decorative background elements */}
+      {}
       <div className="absolute top-0 left-0 w-full h-full overflow-hidden pointer-events-none">
         <div className="absolute -top-[20%] -left-[10%] w-[50%] h-[50%] rounded-full bg-blue-200/20 blur-3xl"></div>
         <div className="absolute top-[40%] -right-[10%] w-[40%] h-[60%] rounded-full bg-purple-200/20 blur-3xl"></div>
@@ -70,7 +70,7 @@ const ServiceSection = () => {
               className="group bg-white p-8 rounded-3xl shadow-sm border border-slate-100 transition-all duration-300 hover:shadow-2xl hover:-translate-y-2 hover:border-blue-100 relative overflow-hidden"
               style={{ animationDelay: f.delay }}
             >
-              {/* Hover Gradient Overlay */}
+              {}
               <div className="absolute inset-0 bg-gradient-to-br from-blue-50/50 to-purple-50/50 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
 
               <div className="relative z-10">

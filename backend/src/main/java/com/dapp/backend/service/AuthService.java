@@ -43,7 +43,7 @@ public class AuthService {
     private LoginResponse.UserLogin toUserLogin(User user) {
         Patient patient = user.getPatientProfile();
 
-        // Get center from Doctor or Cashier profile
+
         Center center = null;
         if (user.getDoctor() != null) {
             center = user.getDoctor().getCenter();
@@ -105,27 +105,26 @@ public class AuthService {
                 .email(request.getEmail())
                 .password(passwordEncoder.encode(request.getPassword()))
                 .isDeleted(false)
-                .isActive(false) // Account is inactive until profile is completed
+                .isActive(false)
                 .build();
 
         Role role = roleRepository.findByName("PATIENT")
                 .orElseThrow(() -> new AppException("Role PATIENT not found"));
         user.setRole(role);
 
-        // Save user first to get ID
+
         User savedUser = userRepository.save(user);
 
-        // Create default notification settings for new user
+
         try {
             notificationLogService.createDefaultSettings(savedUser);
             log.info("Default notification settings created for user: {}", savedUser.getEmail());
         } catch (Exception e) {
             log.error("Error creating notification settings for user: {}", savedUser.getEmail(), e);
-            // Continue - user is still created successfully
+
         }
 
-        // Generate blockchain identity hash (deterministic, based on email + name)
-        // Will be synced to blockchain later when profile is completed (has birthday)
+
         try {
             String identityHash = identityService.generateUserIdentityHash(savedUser);
             String did = identityService.generateDID(identityHash, IdentityType.ADULT);
@@ -135,14 +134,14 @@ public class AuthService {
             savedUser.setDid(did);
             savedUser.setIpfsDataHash(ipfsDataHash);
 
-            // Save to database (blockchain sync will happen in completeProfile)
+
             savedUser = userRepository.save(savedUser);
 
             log.info("Identity hash generated for user: {} (will sync to blockchain after profile completion)",
                     savedUser.getEmail());
         } catch (Exception e) {
             log.error("Error generating identity hash for user: {}", savedUser.getEmail(), e);
-            // Continue - user is still created in database
+
         }
 
         return RegisterPatientResponse.builder()
@@ -159,13 +158,13 @@ public class AuthService {
         User user = getCurrentUserLogin();
         user.setFullName(request.getUser().getFullName());
 
-        // Update common fields on user
+
         user.setAddress(request.getPatientProfile().getAddress());
         user.setPhone(request.getPatientProfile().getPhone());
         user.setBirthday(request.getPatientProfile().getBirthday());
         user.setGender(request.getPatientProfile().getGender());
 
-        // Update patient-specific fields
+
         Patient patient = user.getPatientProfile();
         patient.setIdentityNumber(request.getPatientProfile().getIdentityNumber());
         patient.setBloodType(request.getPatientProfile().getBloodType());
@@ -237,10 +236,7 @@ public class AuthService {
         return userRepository.findByEmail(email).orElseThrow(() -> new AppException("User not found"));
     }
 
-    /**
-     * Complete profile for users registered via password or Google
-     * This method is used for the unified complete-profile flow
-     */
+    
     public LoginResponse.UserLogin completeProfile(CompleteProfileRequest request) throws AppException {
         User user = getCurrentUserLogin();
 
@@ -252,13 +248,13 @@ public class AuthService {
             throw new AppException("Identity number already exists");
         }
 
-        // Set common fields on user
+
         user.setAddress(request.getAddress());
         user.setPhone(request.getPhone());
         user.setBirthday(request.getBirthday());
         user.setGender(request.getGender());
 
-        // Create patient profile with patient-specific fields
+
         Patient patient = Patient.builder()
                 .identityNumber(request.getIdentityNumber())
                 .bloodType(request.getBloodType())
@@ -272,9 +268,9 @@ public class AuthService {
                 .build();
 
         user.setPatientProfile(patient);
-        user.setActive(true); // Activate account after completing profile
+        user.setActive(true);
 
-        // Generate and sync identity to blockchain
+
         generateAndSyncBlockchainIdentity(user);
 
         return toUserLogin(user);
@@ -282,7 +278,7 @@ public class AuthService {
 
     private void generateAndSyncBlockchainIdentity(User user) {
         try {
-            // Generate identity data
+
             String identityHash = identityService.generateUserIdentityHash(user);
             String did = identityService.generateDID(identityHash, IdentityType.ADULT);
             String ipfsDataHash = identityService.generateIdentityDataJson(user);
@@ -301,10 +297,10 @@ public class AuthService {
                     "╚═══════════════════════════════════════════════════════════════════╝",
                     user.getEmail(), identityHash, did);
 
-            // Save to database first
+
             userRepository.save(user);
 
-            // Sync to blockchain
+
             if (blockchainService.isBlockchainServiceAvailable()) {
                 var response = blockchainService.createIdentity(
                         identityHash,
@@ -331,14 +327,14 @@ public class AuthService {
             }
         } catch (Exception e) {
             log.error("Error syncing blockchain identity for user: {}", user.getEmail(), e);
-            // Ensure user is saved even if blockchain sync fails
+
             userRepository.save(user);
         }
     }
 
     public LoginResponse loginGoogleMobile(GoogleMobileLoginRequest request) throws AppException {
         try {
-            // 1. Verify ID Token
+
             com.google.api.client.googleapis.auth.oauth2.GoogleIdTokenVerifier verifier = new com.google.api.client.googleapis.auth.oauth2.GoogleIdTokenVerifier.Builder(
                     new com.google.api.client.http.javanet.NetHttpTransport(),
                     new com.google.api.client.json.gson.GsonFactory())
@@ -356,11 +352,11 @@ public class AuthService {
             String name = (String) payload.get("name");
             String pictureUrl = (String) payload.get("picture");
 
-            // 2. Check if user exists
+
             User user = userRepository.findByEmail(email).orElse(null);
 
             if (user == null) {
-                // Register new user
+
                 Role role = roleRepository.findByName("PATIENT")
                         .orElseThrow(() -> new AppException("Role PATIENT not found"));
 
@@ -369,14 +365,14 @@ public class AuthService {
                         .fullName(name)
                         .avatar(pictureUrl)
                         .role(role)
-                        .isActive(false) // Inactive until profile completed
+                        .isActive(false)
                         .isDeleted(false)
                         .password(passwordEncoder.encode("GOOGLE_AUTH_" + java.util.UUID.randomUUID()))
                         .build();
 
                 user = userRepository.save(user);
 
-                // Create default notification settings for new Google user
+
                 try {
                     notificationLogService.createDefaultSettings(user);
                     log.info("Default notification settings created for Google user: {}", user.getEmail());
@@ -385,7 +381,7 @@ public class AuthService {
                 }
             }
 
-            // 3. Generate Tokens
+
             String accessToken = jwtUtil.createAccessToken(email, user.getRole().getName());
 
             return LoginResponse.builder()

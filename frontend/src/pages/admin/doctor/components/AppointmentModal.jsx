@@ -21,7 +21,7 @@ const ModalAppointment = (props) => {
   const fetchDoctor = async () => {
     const res = await callFetchDoctor();
     const _list = res.data?.result || [];
-    // list.filter((doctor) => doctor. === user.clinicId);
+
     if (res?.data) {
       setListDoctor(res.data?.result);
     }

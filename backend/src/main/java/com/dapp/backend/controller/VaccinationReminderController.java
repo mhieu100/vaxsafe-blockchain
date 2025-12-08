@@ -22,10 +22,7 @@ public class VaccinationReminderController {
 
     private final VaccinationReminderService reminderService;
 
-    /**
-     * Get all reminders for current user
-     * GET /api/reminders/my-reminders
-     */
+    
     @GetMapping("/my-reminders")
     @ApiMessage("Get user reminders")
     @PreAuthorize("hasRole('ROLE_PATIENT')")
@@ -35,23 +32,17 @@ public class VaccinationReminderController {
         return ResponseEntity.ok(reminders);
     }
 
-    /**
-     * Get reminders by appointment
-     * GET /api/reminders/appointment/{appointmentId}
-     */
+    
     @GetMapping("/appointment/{appointmentId}")
     @ApiMessage("Get appointment reminders")
     public ResponseEntity<List<VaccinationReminder>> getAppointmentReminders(
             @PathVariable Long appointmentId) {
         log.info("Request to get reminders for appointment ID: {}", appointmentId);
-        // Implementation would call repository method
+
         return ResponseEntity.ok(List.of());
     }
 
-    /**
-     * Manually trigger sending pending reminders (Admin only)
-     * POST /api/reminders/send-pending
-     */
+    
     @PostMapping("/send-pending")
     @ApiMessage("Send pending reminders")
     @PreAuthorize("hasRole('ROLE_ADMIN')")
@@ -67,10 +58,7 @@ public class VaccinationReminderController {
         }
     }
 
-    /**
-     * Retry failed reminders (Admin only)
-     * POST /api/reminders/retry-failed
-     */
+    
     @PostMapping("/retry-failed")
     @ApiMessage("Retry failed reminders")
     @PreAuthorize("hasRole('ROLE_ADMIN')")
@@ -86,10 +74,7 @@ public class VaccinationReminderController {
         }
     }
 
-    /**
-     * Cancel reminders for an appointment
-     * DELETE /api/reminders/appointment/{appointmentId}
-     */
+    
     @DeleteMapping("/appointment/{appointmentId}")
     @ApiMessage("Cancel appointment reminders")
     public ResponseEntity<Map<String, String>> cancelAppointmentReminders(
@@ -105,10 +90,7 @@ public class VaccinationReminderController {
         }
     }
 
-    /**
-     * Get reminder statistics (Admin only)
-     * GET /api/reminders/statistics
-     */
+    
     @GetMapping("/statistics")
     @ApiMessage("Get reminder statistics")
     @PreAuthorize("hasRole('ROLE_ADMIN')")

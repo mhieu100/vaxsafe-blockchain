@@ -34,7 +34,7 @@ const VaccineListPage = () => {
     <div className="min-h-screen bg-slate-50 py-8">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex flex-col md:flex-row gap-6">
-          {/* Sidebar Filter */}
+          {}
           <aside className="md:w-64 sticky top-[88px] self-start h-[calc(100vh-88px)] overflow-y-auto hidden md:block">
             {isLoading ? (
               <Card className="rounded-2xl shadow-sm border border-slate-100">
@@ -51,11 +51,11 @@ const VaccineListPage = () => {
             )}
           </aside>
 
-          {/* Main Content */}
+          {}
           <main className="flex-1 min-w-0">
             {isLoading ? (
               <div className="space-y-6">
-                {/* Top Filter Skeleton */}
+                {}
                 <Card className="rounded-2xl shadow-sm border border-slate-100">
                   <div className="flex justify-between items-center">
                     <Skeleton.Input active size="default" className="!w-48" />
@@ -63,7 +63,7 @@ const VaccineListPage = () => {
                   </div>
                 </Card>
 
-                {/* Grid Skeleton */}
+                {}
                 <Row gutter={[24, 24]}>
                   {[1, 2, 3, 4, 5, 6].map((i) => (
                     <Col key={i} xs={24} sm={12} lg={8}>

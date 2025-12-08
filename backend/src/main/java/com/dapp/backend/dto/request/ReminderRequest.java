@@ -14,7 +14,7 @@ import java.util.Set;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class ReminderRequest {
     Long appointmentId;
-    Set<ReminderChannel> channels; // EMAIL, SMS, ZALO
+    Set<ReminderChannel> channels;
     LocalDate reminderDate;
     Integer daysBefore;
 }

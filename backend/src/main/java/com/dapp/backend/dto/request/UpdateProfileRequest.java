@@ -12,15 +12,13 @@ import lombok.NoArgsConstructor;
 
 public class UpdateProfileRequest {
 
-    /**
-     * Update request for PATIENT role
-     */
+    
     @Data
     @Builder
     @NoArgsConstructor
     @AllArgsConstructor
     public static class PatientProfileUpdate {
-        // Common user fields
+
         private String fullName;
 
         @Pattern(regexp = "^[0-9]{9,11}$", message = "Phone must be 9-11 digits")
@@ -30,7 +28,7 @@ public class UpdateProfileRequest {
 
         private String address;
 
-        // Patient specific fields
+
         private BloodType bloodType;
 
         @Positive(message = "Height must be positive")
@@ -45,15 +43,13 @@ public class UpdateProfileRequest {
         private Boolean consentForAIAnalysis;
     }
 
-    /**
-     * Update request for DOCTOR role
-     */
+    
     @Data
     @Builder
     @NoArgsConstructor
     @AllArgsConstructor
     public static class DoctorProfileUpdate {
-        // Common user fields
+
         @NotBlank(message = "Full name is required")
         private String fullName;
 
@@ -64,21 +60,19 @@ public class UpdateProfileRequest {
 
         private String address;
 
-        // Doctor specific fields (usually not editable by doctor themselves)
+
         private String specialization;
         private Integer consultationDuration;
         private Integer maxPatientsPerDay;
     }
 
-    /**
-     * Update request for CASHIER role
-     */
+    
     @Data
     @Builder
     @NoArgsConstructor
     @AllArgsConstructor
     public static class CashierProfileUpdate {
-        // Common user fields
+
         @NotBlank(message = "Full name is required")
         private String fullName;
 
@@ -89,20 +83,18 @@ public class UpdateProfileRequest {
 
         private String address;
 
-        // Cashier specific fields (shift times - usually not editable by cashier)
+
         private String shiftStartTime;
         private String shiftEndTime;
     }
 
-    /**
-     * Update request for ADMIN role
-     */
+    
     @Data
     @Builder
     @NoArgsConstructor
     @AllArgsConstructor
     public static class AdminProfileUpdate {
-        // Common user fields only
+
         @NotBlank(message = "Full name is required")
         private String fullName;
 

@@ -71,7 +71,6 @@ const DashboardPage = () => {
     return <div>Failed to load data</div>;
   }
 
-  // Prepare chart data
   const dailyLabels = stats.dailyAppointments?.map((d) => d.date) || [];
   const dailyData = stats.dailyAppointments?.map((d) => d.count) || [];
 
@@ -120,7 +119,7 @@ const DashboardPage = () => {
         </p>
       </div>
 
-      {/* Summary Cards */}
+      {}
       <Row gutter={[16, 16]} className="mb-6">
         <Col xs={24} sm={12} lg={6}>
           <Card bordered={false} className="shadow-sm">
@@ -164,7 +163,7 @@ const DashboardPage = () => {
         </Col>
       </Row>
 
-      {/* Appointment Status Cards */}
+      {}
       <Row gutter={[16, 16]} className="mb-6">
         <Col xs={24} sm={8}>
           <Card bordered={false} className="shadow-sm bg-yellow-50">
@@ -204,7 +203,7 @@ const DashboardPage = () => {
         </Col>
       </Row>
 
-      {/* Charts */}
+      {}
       <Row gutter={[16, 16]}>
         <Col xs={24} lg={16}>
           <Card title="Xu hướng đặt lịch (30 ngày qua)" bordered={false} className="shadow-sm">

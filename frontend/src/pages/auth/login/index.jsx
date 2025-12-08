@@ -83,9 +83,9 @@ const Login = () => {
 
   return (
     <div className="min-h-screen flex w-full bg-slate-50">
-      {/* Left Side - Form Area */}
+      {}
       <div className="w-full lg:w-1/2 flex flex-col justify-center px-6 md:px-12 lg:px-24 xl:px-32 bg-white z-10 relative shadow-2xl shadow-slate-200/50">
-        {/* Header Actions */}
+        {}
         <div className="absolute top-8 left-8 right-8 flex justify-between items-center">
           <Link
             to="/"
@@ -109,7 +109,7 @@ const Login = () => {
         </div>
 
         <div className="w-full max-w-[440px] mx-auto mt-20 lg:mt-0">
-          {/* Logo & Title */}
+          {}
           <div className="mb-10 text-center lg:text-left">
             <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-blue-600 text-white mb-6 shadow-lg shadow-blue-500/30">
               <SafetyCertificateFilled className="text-3xl" />
@@ -164,7 +164,7 @@ const Login = () => {
 
             <div className="flex justify-between items-center mb-2">
               <Form.Item name="remember" valuePropName="checked" noStyle>
-                {/* Checkbox can be added here if needed */}
+                {}
               </Form.Item>
               <Link
                 to="/forgot-password"
@@ -219,7 +219,7 @@ const Login = () => {
         </div>
       </div>
 
-      {/* Right Side - Image Area */}
+      {}
       <div className="hidden lg:block w-1/2 relative overflow-hidden bg-slate-900">
         <div className="absolute inset-0 bg-gradient-to-br from-blue-600/90 to-purple-900/90 mix-blend-multiply z-10" />
         <img
@@ -228,7 +228,7 @@ const Login = () => {
           className="absolute inset-0 w-full h-full object-cover opacity-50 mix-blend-overlay"
         />
 
-        {/* Decorative Elements */}
+        {}
         <div className="absolute inset-0 z-20 flex flex-col justify-center items-center text-white p-12 text-center">
           <div className="max-w-lg space-y-6 animate-fade-in">
             <div className="w-20 h-20 bg-white/10 backdrop-blur-md rounded-3xl flex items-center justify-center mx-auto mb-8 border border-white/20">
@@ -245,7 +245,7 @@ const Login = () => {
               family's health history with military-grade security.
             </p>
 
-            {/* Stats */}
+            {}
             <div className="grid grid-cols-3 gap-6 mt-12 pt-12 border-t border-white/10">
               <div>
                 <div className="text-3xl font-bold text-white">1M+</div>

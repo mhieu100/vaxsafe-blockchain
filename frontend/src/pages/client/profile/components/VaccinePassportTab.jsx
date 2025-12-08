@@ -21,7 +21,6 @@ const VaccinePassportTab = () => {
   const { user } = useAccountStore();
   const [showQR, setShowQR] = useState(false);
 
-  // Mock blockchain-verified vaccine records
   const vaccineRecords = [
     {
       id: '1',
@@ -63,17 +62,13 @@ const VaccinePassportTab = () => {
     consensusProtocol: 'Proof of Health',
   };
 
-  const handleDownload = () => {
-    // TODO: Implement download logic
-  };
+  const handleDownload = () => {};
 
-  const handleShare = () => {
-    // TODO: Implement share logic
-  };
+  const handleShare = () => {};
 
   return (
     <div className="vaccine-passport-container">
-      {/* Blockchain Header Banner */}
+      {}
       <Card
         className="mb-6 border-0 shadow-lg"
         style={{
@@ -123,7 +118,7 @@ const VaccinePassportTab = () => {
       </Card>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        {/* Passport Information Card */}
+        {}
         <div className="lg:col-span-2">
           <Card className="shadow-sm rounded-xl border-2 border-purple-100">
             <div className="flex items-center justify-between mb-6">
@@ -181,7 +176,7 @@ const VaccinePassportTab = () => {
 
             <Divider />
 
-            {/* Blockchain Verification Section */}
+            {}
             <div className="mb-6">
               <Title level={5} className="mb-4">
                 <BlockOutlined className="mr-2 text-purple-600" />
@@ -215,7 +210,7 @@ const VaccinePassportTab = () => {
               </Card>
             </div>
 
-            {/* Vaccination Timeline */}
+            {}
             <Title level={5} className="mb-4">
               <LinkOutlined className="mr-2 text-purple-600" />
               {t('client:vaccinePassport.verifiedRecords')}
@@ -282,7 +277,7 @@ const VaccinePassportTab = () => {
           </Card>
         </div>
 
-        {/* QR Code & Quick Actions */}
+        {}
         <div className="lg:col-span-1">
           <Card className="shadow-sm rounded-xl border-2 border-purple-100 mb-6">
             <Title level={5} className="text-center mb-4">
@@ -310,7 +305,7 @@ const VaccinePassportTab = () => {
             </div>
           </Card>
 
-          {/* Blockchain Stats */}
+          {}
           <Card className="shadow-sm rounded-xl border-2 border-purple-100">
             <Title level={5} className="mb-4">
               <BlockOutlined className="mr-2 text-purple-600" />
@@ -372,7 +367,7 @@ const VaccinePassportTab = () => {
         </div>
       </div>
 
-      {/* Blockchain Explorer Link */}
+      {}
       <Card className="!mt-6 shadow-sm rounded-xl bg-gradient-to-r from-purple-50 to-blue-50 border-2 border-purple-200">
         <div className="flex items-center justify-between">
           <div>

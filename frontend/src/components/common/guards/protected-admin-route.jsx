@@ -1,4 +1,3 @@
-// eslint-disable-next-line import/no-extraneous-dependencies
 import PropTypes from 'prop-types';
 import { useEffect, useState } from 'react';
 import { Navigate } from 'react-router-dom';
@@ -9,7 +8,6 @@ import NotPermitted from './not-permitted';
 const RoleBaseRoute = (props) => {
   const user = useAccountStore((state) => state.user);
 
-  // Only ADMIN can access admin routes
   if (user?.role === 'ADMIN') {
     return <>{props.children}</>;
   } else {

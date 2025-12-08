@@ -20,21 +20,7 @@ public class BlockchainService {
     @Value("${blockchain.service.url}")
     private String blockchainServiceUrl;
 
-    /**
-     * Create identity on blockchain
-     * 
-     * Guardian address is automatically set to accounts[0] by blockchain-service.
-     * This is a simplified approach for MVP:
-     * - All identities (users and family members) have the same guardian on-chain
-     * - Parent-child relationship exists only in database, not on blockchain
-     * - Suitable for use cases where backend acts as trusted guardian
-     * 
-     * Future considerations:
-     * - Option 1: Keep simplified (backend as universal guardian) - easier
-     * - Option 2: Create wallets for each parent, pass real guardian address -
-     * complex
-     * - Option 3: Multi-sig guardian with backend + parent - most secure
-     */
+    
     public BlockchainIdentityResponse createIdentity(
             String identityHash,
             String did,
@@ -49,7 +35,7 @@ public class BlockchainService {
                     .did(did)
                     .idType(idType.name())
                     .ipfsDataHash(ipfsDataHash != null ? ipfsDataHash : "")
-                    .email(email) // For logging
+                    .email(email)
                     .build();
 
             HttpHeaders headers = new HttpHeaders();
@@ -86,10 +72,7 @@ public class BlockchainService {
         }
     }
 
-    /**
-     * Link document to identity on blockchain
-     * Transaction sender is automatically set to accounts[0] by blockchain-service
-     */
+    
     public BlockchainDocumentResponse linkDocument(
             String identityHash,
             String documentType,
@@ -137,9 +120,7 @@ public class BlockchainService {
         }
     }
 
-    /**
-     * Get identity from blockchain
-     */
+    
     public BlockchainIdentityDetails getIdentity(String identityHash) {
         try {
             String url = blockchainServiceUrl + "/identity/" + identityHash;
@@ -160,9 +141,7 @@ public class BlockchainService {
         }
     }
 
-    /**
-     * Create vaccine record on blockchain
-     */
+    
     public BlockchainVaccineRecordResponse createVaccineRecord(VaccineRecord record) {
         try {
             String url = blockchainServiceUrl + "/vaccine-records/create";
@@ -224,9 +203,7 @@ public class BlockchainService {
         }
     }
 
-    /**
-     * Get vaccine record from blockchain
-     */
+    
     public BlockchainVaccineRecordDetails getVaccineRecord(Long recordId) {
         try {
             String url = blockchainServiceUrl + "/vaccine-records/" + recordId;
@@ -247,9 +224,7 @@ public class BlockchainService {
         }
     }
 
-    /**
-     * Get all vaccine records for an identity from blockchain
-     */
+    
     public BlockchainVaccineRecordList getVaccineRecordsByIdentity(String identityHash) {
         try {
             String url = blockchainServiceUrl + "/vaccine-records/identity/" + identityHash;
@@ -270,9 +245,7 @@ public class BlockchainService {
         }
     }
 
-    /**
-     * Update vaccine record IPFS hash on blockchain
-     */
+    
     public boolean updateVaccineRecordIpfs(String recordId, String ipfsHash) {
         try {
             String url = blockchainServiceUrl + "/vaccine-records/" + recordId + "/ipfs";
@@ -280,7 +253,7 @@ public class BlockchainService {
             HttpHeaders headers = new HttpHeaders();
             headers.setContentType(MediaType.APPLICATION_JSON);
             
-            // Create request body with ipfsHash
+
             java.util.Map<String, String> requestBody = new java.util.HashMap<>();
             requestBody.put("ipfsHash", ipfsHash);
             
@@ -305,9 +278,7 @@ public class BlockchainService {
         }
     }
 
-    /**
-     * Check blockchain service status
-     */
+    
     public boolean isBlockchainServiceAvailable() {
         try {
             String url = blockchainServiceUrl + "/ganache/status";
@@ -319,9 +290,7 @@ public class BlockchainService {
         }
     }
 
-    /**
-     * Upload JSON to IPFS via Blockchain Service
-     */
+    
     public String uploadToIpfs(String jsonContent) {
         try {
             String url = blockchainServiceUrl + "/ipfs/upload";
@@ -337,8 +306,8 @@ public class BlockchainService {
                     String.class);
 
             if (response.getStatusCode() == HttpStatus.OK && response.getBody() != null) {
-                // Parse response to get IPFS hash
-                // Response format: { success: true, data: { ipfsHash: "...", url: "..." } }
+
+
                 com.fasterxml.jackson.databind.JsonNode root = new com.fasterxml.jackson.databind.ObjectMapper()
                         .readTree(response.getBody());
                 if (root.has("success") && root.get("success").asBoolean()) {

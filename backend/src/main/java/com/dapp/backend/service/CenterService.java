@@ -22,19 +22,17 @@ import java.util.List;
 public class CenterService {
     private final CenterRepository centerRepository;
 
-    /**
-     * Generate URL-friendly slug from center name
-     */
+    
     private String generateSlug(String name) {
         if (name == null || name.trim().isEmpty()) {
             return "";
         }
 
-        // Normalize Vietnamese characters to ASCII
-        String normalized = Normalizer.normalize(name, Normalizer.Form.NFD);
-        String slug = normalized.replaceAll("\\p{M}", ""); // Remove diacritical marks
 
-        // Convert to lowercase and replace spaces/special chars with hyphens
+        String normalized = Normalizer.normalize(name, Normalizer.Form.NFD);
+        String slug = normalized.replaceAll("\\p{M}", "");
+
+
         slug = slug.toLowerCase()
                 .replaceAll("[đĐ]", "d")
                 .replaceAll("[^a-z0-9\\s-]", "")
@@ -45,9 +43,7 @@ public class CenterService {
         return slug;
     }
 
-    /**
-     * Generate unique slug by appending number if slug already exists
-     */
+    
     private String generateUniqueSlug(String baseName, Long excludeId) {
         String baseSlug = generateSlug(baseName);
         String uniqueSlug = baseSlug;
@@ -58,14 +54,14 @@ public class CenterService {
             var existing = centerRepository.findBySlug(checkSlug);
 
             if (existing.isEmpty()) {
-                break; // Slug is unique
+                break;
             }
 
             if (excludeId != null && existing.get().getCenterId().equals(excludeId)) {
-                break; // It's the same center being updated
+                break;
             }
 
-            // Append counter to make it unique
+
             uniqueSlug = baseSlug + "-" + counter;
             counter++;
         }
@@ -88,7 +84,7 @@ public class CenterService {
     }
 
     public Pagination getAllCenters(Specification<Center> specification, Pageable pageable) {
-        // Use CenterSpecifications to filter out soft-deleted records
+
         Specification<Center> finalSpec = specification != null 
             ? specification.and(CenterSpecifications.notDeleted()) 
             : CenterSpecifications.notDeleted();
@@ -106,18 +102,18 @@ public class CenterService {
     }
 
     public CenterResponse createCenter(CenterRequest request) throws AppException {
-        // Auto-generate slug from name if not provided
+
         if (request.getSlug() == null || request.getSlug().trim().isEmpty()) {
             String slug = generateUniqueSlug(request.getName(), null);
             request.setSlug(slug);
         }
 
-        // Check if center with same name already exists
+
         if (centerRepository.existsByName(request.getName())) {
             throw new AppException("Center already exists with name: " + request.getName());
         }
 
-        // Convert request to entity and save
+
         Center center = CenterMapper.toEntity(request);
         Center savedCenter = centerRepository.save(center);
 
@@ -125,17 +121,17 @@ public class CenterService {
     }
 
     public CenterResponse updateCenter(Long id, CenterRequest request) throws AppException {
-        // Find existing center
+
         Center existingCenter = centerRepository.findById(id)
                 .orElseThrow(() -> new AppException("Center not found with id: " + id));
 
-        // Auto-generate slug from name if not provided (excluding current center from uniqueness check)
+
         if (request.getSlug() == null || request.getSlug().trim().isEmpty()) {
             String slug = generateUniqueSlug(request.getName(), id);
             request.setSlug(slug);
         }
 
-        // Update the existing center with new data
+
         CenterMapper.updateEntity(existingCenter, request);
         Center updatedCenter = centerRepository.save(existingCenter);
 
@@ -146,7 +142,7 @@ public class CenterService {
         Center center = centerRepository.findById(id)
                 .orElseThrow(() -> new AppException("Center not found with id: " + id));
 
-        // Soft delete
+
         center.setIsDeleted(true);
         centerRepository.save(center);
     }

@@ -15,10 +15,7 @@ public class ReminderScheduler {
     private final VaccinationReminderService reminderService;
     private final NextDoseReminderService nextDoseReminderService;
 
-    /**
-     * Send pending reminders every day at 8:00 AM
-     * Cron format: second minute hour day month weekday
-     */
+    
     @Scheduled(cron = "${reminder.cron:0 0 8 * * ?}")
     public void sendDailyReminders() {
         log.info("======= Starting daily reminder scheduler =======");
@@ -33,9 +30,7 @@ public class ReminderScheduler {
         log.info("======= Finished daily reminder scheduler =======");
     }
 
-    /**
-     * Send next dose reminders at 8:00 AM (same batch as appointment reminders)
-     */
+    
     @Scheduled(cron = "${reminder.cron:0 0 8 * * ?}")
     public void sendNextDoseReminders() {
         log.info("======= Starting next dose reminder scheduler =======");
@@ -50,9 +45,7 @@ public class ReminderScheduler {
         log.info("======= Finished next dose reminder scheduler =======");
     }
 
-    /**
-     * Retry failed reminders every 2 hours
-     */
+    
     @Scheduled(cron = "0 0 */2 * * ?")
     public void retryFailedReminders() {
         log.info("======= Starting retry failed reminders scheduler =======");

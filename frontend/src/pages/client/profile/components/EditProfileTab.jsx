@@ -38,20 +38,10 @@ const TabEditUser = ({ editMode, setEditMode }) => {
     try {
       setLoading(true);
 
-      // Call API to update user profile based on role
-      // Assuming 'patient' role for now as this component seems to be used for patients
-      // Ideally, we should get the role from the user object or props
       const role = user.role || 'patient';
-
-      // Filter out empty values to avoid sending nulls where not appropriate
-      // But for update, we usually want to send all fields from the form
-
-      // Note: birthday and identityNumber are disabled in form but might be in values if not handled correctly
-      // The backend ignores them anyway, but good to be clean
 
       await updateProfile(role, values);
 
-      // Update local store
       if (updateUserInfo) {
         updateUserInfo(values);
       }

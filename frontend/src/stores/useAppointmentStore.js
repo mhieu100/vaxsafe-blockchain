@@ -2,7 +2,6 @@ import { create } from 'zustand';
 import { callFetchAppointmentOfCenter, callMySchedule } from '../services/appointment.service';
 
 const useAppointmentStore = create((set) => ({
-  // State
   isFetching: true,
   meta: {
     page: 1,
@@ -12,7 +11,6 @@ const useAppointmentStore = create((set) => ({
   },
   result: [],
 
-  // Actions
   fetchAppointmentOfCenter: async (query) => {
     set({ isFetching: true });
     try {

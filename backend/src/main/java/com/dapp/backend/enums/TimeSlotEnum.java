@@ -2,14 +2,7 @@ package com.dapp.backend.enums;
 
 import lombok.Getter;
 
-/**
- * Time slot enum for appointment scheduling
- * Each slot represents a 2-hour window for patient scheduling
- * Within each time slot, doctors have 30-minute consultation slots
- * 
- * Example: SLOT_11_00 (11:00 - 13:00) contains:
- * - 11:00-11:30, 11:30-12:00, 12:00-12:30, 12:30-13:00
- */
+
 @Getter
 public enum TimeSlotEnum {
     SLOT_07_00("07:00", "7:00 - 9:00"),

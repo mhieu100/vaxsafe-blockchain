@@ -27,7 +27,7 @@ public class RequestLoggingInterceptor implements HandlerInterceptor {
         String fullUrl = query != null ? uri + "?" + query : uri;
         String methodEmoji = getMethodEmoji(method);
         
-        // Get important headers only
+
         String contentType = request.getHeader("Content-Type");
         String userAgent = request.getHeader("User-Agent");
         String shortUserAgent = userAgent != null && userAgent.length() > 50 
@@ -62,7 +62,7 @@ public class RequestLoggingInterceptor implements HandlerInterceptor {
 
     @Override
     public void postHandle(HttpServletRequest request, HttpServletResponse response, Object handler, ModelAndView modelAndView) throws Exception {
-        // Optional: can be used for additional logging after handler execution
+
     }
 
     @Override
@@ -98,10 +98,10 @@ public class RequestLoggingInterceptor implements HandlerInterceptor {
     }
     
     private String getDurationColor(long duration) {
-        if (duration < 100) return "⚡"; // Fast
-        if (duration < 500) return "🟢"; // Normal
-        if (duration < 1000) return "🟡"; // Slow
-        return "🔴"; // Very slow
+        if (duration < 100) return "⚡";
+        if (duration < 500) return "🟢";
+        if (duration < 1000) return "🟡";
+        return "🔴";
     }
 
     private String getClientIp(HttpServletRequest request) {

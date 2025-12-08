@@ -56,7 +56,7 @@ public class UserService {
         meta.setTotal(pageUser.getTotalElements());
         pagination.setMeta(meta);
 
-        // Use the new comprehensive mapper
+
         List<UserResponse> listUsers = pageUser.getContent().stream()
                 .map(UserMapper::toUserResponse)
                 .collect(Collectors.toList());
@@ -71,14 +71,14 @@ public class UserService {
         user.setEmail(request.getEmail());
         user.setFullName(request.getFullName());
         
-        // Update common fields on user
+
         if (request.getPhone() != null) {
             user.setPhone(request.getPhone());
             user.setBirthday(request.getBirthday());
             user.setAddress(request.getAddress());
         }
 
-        // Use the new comprehensive mapper
+
         return UserMapper.toUserResponse(userRepository.save(user));
     }
 

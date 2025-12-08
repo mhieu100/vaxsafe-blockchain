@@ -15,14 +15,14 @@ const Footer = () => {
 
   return (
     <footer className="bg-slate-900 text-slate-300 pt-20 pb-10 relative overflow-hidden">
-      {/* Decorative Elements */}
+      {}
       <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-blue-600 via-purple-600 to-emerald-500"></div>
       <div className="absolute -top-[200px] -right-[200px] w-[500px] h-[500px] bg-blue-600/10 rounded-full blur-[100px] pointer-events-none"></div>
       <div className="absolute bottom-[10%] left-[10%] w-[300px] h-[300px] bg-purple-600/10 rounded-full blur-[80px] pointer-events-none"></div>
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 mb-16">
-          {/* Brand & Description */}
+          {}
           <div className="lg:col-span-4 space-y-6">
             <div className="flex items-center gap-2">
               <div className="h-10 w-10 rounded-xl bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center shadow-lg shadow-blue-500/20">
@@ -53,7 +53,7 @@ const Footer = () => {
             </div>
           </div>
 
-          {/* Quick Links */}
+          {}
           <div className="lg:col-span-2 md:col-span-4">
             <h3 className="text-white font-semibold mb-6 tracking-wide uppercase text-sm">
               Solutions
@@ -95,7 +95,7 @@ const Footer = () => {
             </ul>
           </div>
 
-          {/* Newsletter */}
+          {}
           <div className="lg:col-span-4 md:col-span-4">
             <h3 className="text-white font-semibold mb-6 tracking-wide uppercase text-sm">
               Stay Updated
@@ -119,7 +119,7 @@ const Footer = () => {
           </div>
         </div>
 
-        {/* Bottom Bar */}
+        {}
         <div className="border-t border-slate-800 pt-8 flex flex-col md:flex-row justify-between items-center gap-4">
           <p className="text-slate-500 text-sm">
             © {new Date().getFullYear()} SafeVax Blockchain. All rights reserved.

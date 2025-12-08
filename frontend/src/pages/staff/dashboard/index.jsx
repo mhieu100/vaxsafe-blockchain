@@ -84,19 +84,16 @@ const StaffDashboard = () => {
         dashboardService.getDoctorStats(),
       ]);
       if (todayRes?.data) {
-        // setTodayAppointments(todayRes.data);
       }
       if (statsRes) {
         setStats(statsRes);
       }
     } catch (_err) {
-      // Handle error
     } finally {
       setLoadingToday(false);
     }
   };
 
-  // Fetch data based on role
   useEffect(() => {
     const fetchData = async () => {
       if (isCashierRole) {
@@ -112,7 +109,6 @@ const StaffDashboard = () => {
   }, [isCashierRole, isDoctorRole]);
 
   const handleAssignAppointment = (appointment) => {
-    // Open modal to process the urgent appointment
     setSelectedAppointment(appointment);
     setProcessModalOpen(true);
   };
@@ -129,11 +125,11 @@ const StaffDashboard = () => {
 
   const getUrgencyColor = (priorityLevel) => {
     const colors = {
-      1: 'red', // Highest priority
-      2: 'orange', // High priority
-      3: 'gold', // Medium priority
-      4: 'blue', // Low priority
-      5: 'default', // Lowest priority
+      1: 'red',
+      2: 'orange',
+      3: 'gold',
+      4: 'blue',
+      5: 'default',
     };
     return colors[priorityLevel] || 'default';
   };
@@ -149,10 +145,9 @@ const StaffDashboard = () => {
     return texts[priorityLevel] || 'THẤP';
   };
 
-  // Render Cashier Dashboard
   const renderCashierDashboard = () => (
     <div style={{ padding: '24px', background: '#f5f7fa', minHeight: '100vh' }}>
-      {/* Header */}
+      {}
       <div style={{ marginBottom: 24 }}>
         <Row justify="space-between" align="middle">
           <Col>
@@ -181,7 +176,7 @@ const StaffDashboard = () => {
         </Row>
       </div>
 
-      {/* Statistics Cards */}
+      {}
       <Row gutter={[16, 16]} style={{ marginBottom: 24 }}>
         <Col xs={24} sm={12} lg={6}>
           <Card hoverable style={{ borderRadius: 12 }}>
@@ -215,7 +210,7 @@ const StaffDashboard = () => {
               valueStyle={{ color: '#1890ff' }}
             />
             <Progress
-              percent={70} // Mock percentage or calculate if possible
+              percent={70}
               size="small"
               strokeColor="#1890ff"
               showInfo={false}
@@ -273,7 +268,7 @@ const StaffDashboard = () => {
       </Row>
 
       <Row gutter={[24, 24]}>
-        {/* Main Content: Urgent Appointments */}
+        {}
         <Col xs={24} lg={16}>
           <Card
             title={
@@ -324,17 +319,17 @@ const StaffDashboard = () => {
                   <Card
                     hoverable
                     style={{
-                      marginBottom: 12, // Reduced margin
+                      marginBottom: 12,
                       borderLeft: `4px solid ${getUrgencyColor(item.priorityLevel)}`,
                       borderRadius: 8,
                       boxShadow: '0 1px 4px rgba(0,0,0,0.05)',
                     }}
-                    bodyStyle={{ padding: '12px 16px' }} // Compact padding
+                    bodyStyle={{ padding: '12px 16px' }}
                     actions={[
                       <Button
                         key="process"
                         type="primary"
-                        size="small" // Small button
+                        size="small"
                         icon={<ThunderboltOutlined />}
                         style={{ minWidth: 100, borderRadius: 4 }}
                         onClick={() => handleAssignAppointment(item)}
@@ -343,7 +338,7 @@ const StaffDashboard = () => {
                       </Button>,
                       <Button
                         key="view"
-                        size="small" // Small button
+                        size="small"
                         style={{ minWidth: 100, borderRadius: 4 }}
                         onClick={() => navigate(`/staff/appointments/${item.id}`)}
                       >
@@ -352,7 +347,7 @@ const StaffDashboard = () => {
                     ]}
                   >
                     <div style={{ display: 'flex', alignItems: 'flex-start' }}>
-                      {/* Compact Icon Block */}
+                      {}
                       <div style={{ marginRight: 12, marginTop: 2 }}>
                         <Badge
                           count={item.priorityLevel}
@@ -362,7 +357,7 @@ const StaffDashboard = () => {
                           <div
                             style={{
                               width: 40,
-                              height: 40, // Smaller size
+                              height: 40,
                               borderRadius: '50%',
                               background: '#fff1f0',
                               border: '1px solid #ffccc7',
@@ -376,9 +371,9 @@ const StaffDashboard = () => {
                         </Badge>
                       </div>
 
-                      {/* Content Block */}
+                      {}
                       <div style={{ flex: 1, minWidth: 0 }}>
-                        {/* Line 1: Header & Date */}
+                        {}
                         <div
                           style={{
                             display: 'flex',
@@ -423,7 +418,7 @@ const StaffDashboard = () => {
                           </Text>
                         </div>
 
-                        {/* Line 2: Tags & Alert mixed inline */}
+                        {}
                         <div
                           style={{
                             display: 'flex',
@@ -451,7 +446,7 @@ const StaffDashboard = () => {
                             Mũi {item.doseNumber || 1}
                           </Tag>
 
-                          {/* Inline Alert Message */}
+                          {}
                           <div
                             style={{
                               display: 'flex',
@@ -467,7 +462,7 @@ const StaffDashboard = () => {
                           </div>
                         </div>
 
-                        {/* Line 3: Desired Date (Only if exists) */}
+                        {}
                         {item.desiredDate && (
                           <div style={{ fontSize: 12, color: '#cf1322', marginTop: 2 }}>
                             <ClockCircleOutlined style={{ marginRight: 4 }} />
@@ -484,7 +479,7 @@ const StaffDashboard = () => {
           </Card>
         </Col>
 
-        {/* Sidebar: Quick Actions & Guide */}
+        {}
         <Col xs={24} lg={8}>
           <Card
             title={
@@ -563,7 +558,7 @@ const StaffDashboard = () => {
         </Col>
       </Row>
 
-      {/* Modals */}
+      {}
       <Modal
         open={showGuideModal}
         onCancel={() => setShowGuideModal(false)}
@@ -591,14 +586,12 @@ const StaffDashboard = () => {
     </div>
   );
 
-  // Redirect doctor to their dashboard
   useEffect(() => {
     if (isDoctorRole) {
       navigate('/staff/dashboard-doctor');
     }
   }, [isDoctorRole, navigate]);
 
-  // Render Doctor Dashboard (Fallback or Simple View if not using dedicated component)
   const renderDoctorDashboard = () => {
     return (
       <div

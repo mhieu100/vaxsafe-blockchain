@@ -45,7 +45,6 @@ const CalendarView = () => {
   const [detailModalOpen, setDetailModalOpen] = useState(false);
   const [selectedAppointment, setSelectedAppointment] = useState(null);
 
-  // Mock doctors data - should be replaced with API call
   const doctors = [
     { id: 'all', name: 'Tất cả bác sĩ' },
     { id: 'BS001', name: 'BS. Nguyễn Văn Minh' },
@@ -79,7 +78,6 @@ const CalendarView = () => {
       console.log('Calendar appointments response:', response);
       const rawAppointments = response?.data?.data?.result || response?.data?.result || [];
 
-      // Transform API data to match component structure
       const transformedAppointments = rawAppointments.map((apt) => ({
         ...apt,
         appointmentId: apt.id,
@@ -107,13 +105,10 @@ const CalendarView = () => {
     }
   };
 
-  // Fetch appointments based on view mode
   useEffect(() => {
     fetchAppointments();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [viewMode, selectedDate, selectedDoctor]);
 
-  // Navigation handlers
   const handlePrevious = () => {
     if (viewMode === 'day') {
       setSelectedDate(selectedDate.subtract(1, 'day'));
@@ -143,7 +138,6 @@ const CalendarView = () => {
     setDetailModalOpen(true);
   };
 
-  // Get vaccine color
   const getVaccineColor = (vaccineName) => {
     if (!vaccineName) return 'blue';
     const name = vaccineName.toLowerCase();
@@ -154,23 +148,20 @@ const CalendarView = () => {
     return 'purple';
   };
 
-  // Render Week View
   const renderWeekView = () => {
     const weekStart = selectedDate.startOf('isoWeek');
     const weekDays = Array.from({ length: 7 }, (_, i) => weekStart.add(i, 'day'));
 
-    // Generate time slots from 7:00 to 17:00
     const timeSlots = Array.from({ length: 11 }, (_, i) => {
       const hour = 7 + i;
       return `${String(hour).padStart(2, '0')}:00`;
     });
 
-    // Group appointments by date and hour
     const appointmentsByDateTime = {};
     appointments.forEach((apt) => {
       const date = dayjs(apt.scheduledDate).format('YYYY-MM-DD');
       const time = formatAppointmentTime(apt);
-      // Extract hour from time (e.g., "12:30" -> "12:00")
+
       const hour = time.substring(0, 2);
       const timeSlot = `${hour}:00`;
       const key = `${date}-${timeSlot}`;
@@ -190,7 +181,7 @@ const CalendarView = () => {
           border: '1px solid #e0e0e0',
         }}
       >
-        {/* Header Row */}
+        {}
         <div
           style={{
             background: '#f5f5f5',
@@ -220,7 +211,7 @@ const CalendarView = () => {
           );
         })}
 
-        {/* Time Slots */}
+        {}
         {timeSlots.map((time) => (
           <>
             <div
@@ -298,7 +289,6 @@ const CalendarView = () => {
     );
   };
 
-  // Render Day View
   const renderDayView = () => {
     return (
       <div style={{ background: 'white' }}>
@@ -363,7 +353,6 @@ const CalendarView = () => {
     );
   };
 
-  // Render Month View
   const renderMonthView = () => {
     const monthStart = selectedDate.startOf('month');
     const monthEnd = selectedDate.endOf('month');
@@ -382,7 +371,6 @@ const CalendarView = () => {
       weeks.push(week);
     }
 
-    // Group appointments by date
     const appointmentsByDate = {};
     appointments.forEach((apt) => {
       const date = dayjs(apt.scheduledDate).format('YYYY-MM-DD');
@@ -402,7 +390,7 @@ const CalendarView = () => {
           border: '1px solid #e0e0e0',
         }}
       >
-        {/* Header */}
+        {}
         {['T2', 'T3', 'T4', 'T5', 'T6', 'T7', 'CN'].map((day) => (
           <div
             key={day}
@@ -417,7 +405,7 @@ const CalendarView = () => {
           </div>
         ))}
 
-        {/* Calendar cells */}
+        {}
         {weeks.map((week) =>
           week.map((day) => {
             const isCurrentMonth = day.month() === selectedDate.month();
@@ -495,7 +483,6 @@ const CalendarView = () => {
     );
   };
 
-  // Get current period text
   const getCurrentPeriodText = () => {
     if (viewMode === 'day') {
       return `${selectedDate.format('dddd, DD MMMM, YYYY')}`;
@@ -512,7 +499,7 @@ const CalendarView = () => {
 
   return (
     <div style={{ padding: '24px' }}>
-      {/* Header */}
+      {}
       <Card
         style={{
           background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
@@ -537,7 +524,7 @@ const CalendarView = () => {
         </Row>
       </Card>
 
-      {/* View Controls */}
+      {}
       <Card style={{ marginBottom: '24px' }}>
         <Row gutter={[16, 16]} align="middle">
           <Col xs={24} sm={24} md={8}>
@@ -578,7 +565,7 @@ const CalendarView = () => {
         </Row>
       </Card>
 
-      {/* Current Period Display */}
+      {}
       <Card
         title={
           <Row justify="space-between" align="middle">
@@ -608,7 +595,7 @@ const CalendarView = () => {
         {viewMode === 'month' && renderMonthView()}
       </Card>
 
-      {/* Appointment Detail Modal */}
+      {}
       <Modal
         title={
           <Space>

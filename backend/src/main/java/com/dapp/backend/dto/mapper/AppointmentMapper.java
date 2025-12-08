@@ -23,7 +23,7 @@ public class AppointmentMapper {
         response.setCenterId(appointment.getCenter() != null ? appointment.getCenter().getCenterId() : null);
         response.setCenterName(appointment.getCenter() != null ? appointment.getCenter().getName() : null);
 
-        // Get patient name and phone from either User or FamilyMember
+
         if (appointment.getBooking().getFamilyMember() != null) {
             response.setPatientName(appointment.getBooking().getFamilyMember().getFullName());
             response.setPatientPhone(appointment.getBooking().getFamilyMember().getPhone());

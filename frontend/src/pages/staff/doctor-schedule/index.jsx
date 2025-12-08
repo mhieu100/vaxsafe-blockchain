@@ -48,7 +48,6 @@ const DoctorSchedule = () => {
       const dateStr = selectedDate.format('YYYY-MM-DD');
       const response = await getDoctorsWithScheduleAPI(dateStr);
 
-      // Transform API response to match component structure
       const transformedDoctors = response.data.map((doctor) => ({
         id: `BS${String(doctor.doctorId).padStart(3, '0')}`,
         doctorId: doctor.doctorId,
@@ -75,18 +74,16 @@ const DoctorSchedule = () => {
       setLoading(false);
     }
   };
-  // Fetch doctors with schedule when component mounts or date changes
+
   useEffect(() => {
     fetchDoctorsWithSchedule();
   }, [selectedDate]);
 
-  // Get color for doctor based on ID
   const getColorForDoctor = (doctorId) => {
     const colors = ['blue', 'green', 'cyan', 'orange', 'purple', 'magenta'];
     return colors[doctorId % colors.length];
   };
 
-  // Calculate summary statistics
   const summary = {
     totalDoctors: doctors.length,
     totalAvailableSlots: doctors.reduce((sum, doc) => sum + doc.availableSlots, 0),
@@ -96,7 +93,6 @@ const DoctorSchedule = () => {
     (summary.totalAvailableSlots / (summary.totalAvailableSlots + summary.totalBookedSlots)) * 100
   );
 
-  // Handle view mode change
   const handleViewModeChange = (mode) => {
     setViewMode(mode);
     if (mode === 'today') {
@@ -106,13 +102,11 @@ const DoctorSchedule = () => {
     }
   };
 
-  // Handle date change
   const handleDateChange = (date) => {
     setSelectedDate(date);
     setViewMode('custom');
   };
 
-  // Handle slot click
   const handleSlotClick = (doctor, slot) => {
     if (slot.status === 'available') {
       setSelectedDoctor(doctor);
@@ -121,14 +115,12 @@ const DoctorSchedule = () => {
     }
   };
 
-  // Handle view doctor detail
   const handleViewDoctorDetail = (doctor) => {
     setSelectedDoctor(doctor);
     setSelectedSlot(null);
     setDetailModalOpen(true);
   };
 
-  // Render time slot
   const renderTimeSlot = (doctor, slot, index) => {
     const isAvailable = slot.status === 'available';
 
@@ -190,7 +182,7 @@ const DoctorSchedule = () => {
 
   return (
     <div style={{ padding: '24px' }}>
-      {/* Header */}
+      {}
       <Card
         style={{
           background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
@@ -215,7 +207,7 @@ const DoctorSchedule = () => {
         </Row>
       </Card>
 
-      {/* Loading Spinner */}
+      {}
       {loading && (
         <div style={{ textAlign: 'center', padding: '50px' }}>
           <Spin size="large" indicator={<LoadingOutlined style={{ fontSize: 48 }} spin />} />
@@ -225,10 +217,10 @@ const DoctorSchedule = () => {
         </div>
       )}
 
-      {/* Main content - only show when not loading */}
+      {}
       {!loading && (
         <>
-          {/* Controls */}
+          {}
           <Card style={{ marginBottom: '24px' }}>
             <Row gutter={[16, 16]} align="middle">
               <Col xs={24} sm={12} md={16}>
@@ -255,7 +247,7 @@ const DoctorSchedule = () => {
             </Row>
           </Card>
 
-          {/* Current Date Display */}
+          {}
           <Card
             style={{
               marginBottom: '24px',
@@ -273,7 +265,7 @@ const DoctorSchedule = () => {
             </Space>
           </Card>
 
-          {/* Doctors Grid */}
+          {}
           <Row gutter={[16, 16]} style={{ marginBottom: '24px' }}>
             {doctors.length === 0 ? (
               <Col span={24}>
@@ -385,7 +377,7 @@ const DoctorSchedule = () => {
             )}
           </Row>
 
-          {/* Summary Statistics */}
+          {}
           <Card
             title={
               <Space>
@@ -432,7 +424,7 @@ const DoctorSchedule = () => {
         </>
       )}
 
-      {/* Detail Modal */}
+      {}
       <Modal
         title={
           selectedSlot ? (

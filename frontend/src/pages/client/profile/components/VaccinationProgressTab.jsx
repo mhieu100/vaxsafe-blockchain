@@ -27,19 +27,15 @@ const VaccinationProgressTab = () => {
       if (!user?.id) return;
       try {
         setLoading(true);
-        // 1. Fetch completed records (Vaccine Passport)
+
         const recordRes = await apiClient.get(`/api/vaccine-records/patient/${user.id}`);
         const completedRecords = recordRes.data || [];
 
-        // 2. Fetch booking history (Scheduled/Pending)
         const bookingRes = await getMyBookingHistory();
         const bookings = bookingRes.data || [];
 
-        // 3. Merge Phase
-        // We group by "Vaccine Name" AND "Patient Name" (to handle family members)
         const groups = {};
 
-        // Process Bookings first (contains vaccineTotalDoses info)
         bookings.forEach((b) => {
           const key = `${b.vaccineName}-${b.familyMemberName || b.patientName}`;
           if (!groups[key]) {
@@ -48,15 +44,13 @@ const VaccinationProgressTab = () => {
               vaccineSlug: b.vaccineSlug,
               patientName: b.familyMemberName || b.patientName,
               isFamily: !!b.familyMemberName,
-              requiredDoses: b.vaccineTotalDoses || 3, // Fallback if missing
+              requiredDoses: b.vaccineTotalDoses || 3,
               events: [],
             };
           }
 
-          // Add appointments from booking
           if (b.appointments) {
             b.appointments.forEach((apt) => {
-              // Only add if not cancelled
               if (apt.appointmentStatus !== 'CANCELLED') {
                 groups[key].events.push({
                   doseNumber: apt.doseNumber,
@@ -70,31 +64,24 @@ const VaccinationProgressTab = () => {
           }
         });
 
-        // Process Completed Records
         completedRecords.forEach((r) => {
-          const key = `${r.vaccineName}-${user.fullName}`; // Assumptions: Records are usually for the logged-in user unless filtered
-          // Actually, fetching /patient/{id} only returns logs for that user?
-          // If family members have own records, they might be missing here unless backend supports it.
-          // For now assume these are mainly for the main user.
+          const key = `${r.vaccineName}-${user.fullName}`;
 
           if (!groups[key]) {
             groups[key] = {
               vaccineName: r.vaccineName,
               vaccineSlug: r.vaccineSlug,
-              patientName: user.fullName, // Default to user
+              patientName: user.fullName,
               isFamily: false,
-              requiredDoses: 3, // We don't verify dose count from record easily
+              requiredDoses: 3,
               events: [],
             };
           }
 
-          // Check if this dose already exists from booking (avoid duplicates)
           const existing = groups[key].events.find(
             (e) => e.doseNumber === r.doseNumber && e.status === 'COMPLETED'
           );
           if (!existing) {
-            // If we have a SCHEDULED event for this dose, mark it completed or replace it?
-            // Usually Record is the source of truth for completion.
             const scheduledIndex = groups[key].events.findIndex(
               (e) => e.doseNumber === r.doseNumber
             );
@@ -117,17 +104,14 @@ const VaccinationProgressTab = () => {
           }
         });
 
-        // 4. Format for UI
         const journeyList = Object.values(groups).map((group) => {
-          // Sort events by dose
           group.events.sort((a, b) => a.doseNumber - b.doseNumber);
 
-          // Generate Steps items
           const steps = [];
           for (let i = 1; i <= group.requiredDoses; i++) {
             const event = group.events.find((e) => e.doseNumber === i);
             let stepStatus = 'wait';
-            let description = t('client:vaccinationHistory.notScheduled'); // Update translation later
+            let description = t('client:vaccinationHistory.notScheduled');
             const title = `${t('client:vaccinationHistory.dose')} ${i}`;
             let date = null;
 
@@ -142,13 +126,12 @@ const VaccinationProgressTab = () => {
                 date = event.date;
               }
             } else {
-              // Start logic: if previous dose finished, this is 'next'
               const prevEvent = group.events.find((e) => e.doseNumber === i - 1);
               if (i === 1 && !event) {
-                stepStatus = 'wait'; // Ready to start
+                stepStatus = 'wait';
                 description = 'Sẵn sàng đặt lịch';
               } else if (prevEvent && prevEvent.status === 'COMPLETED') {
-                stepStatus = 'wait'; // Needs action
+                stepStatus = 'wait';
                 description = 'Cần đặt lịch';
               }
             }
@@ -208,7 +191,7 @@ const VaccinationProgressTab = () => {
                 )}
               </div>
             </div>
-            {/* Action Button logic */}
+            {}
             <Button
               type="primary"
               size="small"

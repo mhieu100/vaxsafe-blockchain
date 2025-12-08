@@ -19,12 +19,10 @@ const ForgotPasswordPage = () => {
   const handleSubmit = async (values) => {
     setLoading(true);
     try {
-      // Simulate API call
       await new Promise((resolve) => setTimeout(resolve, 1000));
       setEmail(values.email);
       setEmailSent(true);
     } catch {
-      // Error sending reset email
     } finally {
       setLoading(false);
     }
@@ -35,7 +33,6 @@ const ForgotPasswordPage = () => {
     try {
       await new Promise((resolve) => setTimeout(resolve, 1000));
     } catch {
-      // Error resending email
     } finally {
       setLoading(false);
     }

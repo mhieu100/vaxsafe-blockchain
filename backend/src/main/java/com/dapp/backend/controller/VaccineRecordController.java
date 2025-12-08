@@ -22,10 +22,7 @@ public class VaccineRecordController {
 
     private final VaccineRecordService vaccineRecordService;
 
-    /**
-     * Get all vaccine records for a patient (includes their own records and family members' records)
-     * GET /api/vaccine-records/patient/{userId}
-     */
+    
     @GetMapping("/patient/{userId}")
     @ApiMessage("Get all vaccine records for patient")
     public ResponseEntity<List<VaccineRecordResponse>> getVaccineRecordsByPatient(

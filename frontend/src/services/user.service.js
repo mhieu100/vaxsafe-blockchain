@@ -1,8 +1,4 @@
 import apiClient from '../services/apiClient';
-/**
- *
-Module User
- */
 
 export const callUpdateUser = (id, fullName, email, phone, birthday, address) => {
   return apiClient.put('/api/users', {

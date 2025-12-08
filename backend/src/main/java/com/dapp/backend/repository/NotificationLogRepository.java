@@ -14,7 +14,7 @@ import java.util.List;
 @Repository
 public interface NotificationLogRepository extends JpaRepository<NotificationLog, Long> {
 
-    // Check if notification was already sent to prevent duplicates
+
     @Query("""
         SELECT COUNT(nl) > 0 FROM NotificationLog nl
         WHERE nl.user.id = :userId
@@ -31,9 +31,9 @@ public interface NotificationLogRepository extends JpaRepository<NotificationLog
             @Param("since") LocalDateTime since
     );
 
-    // Get notification history for user
+
     List<NotificationLog> findByUser_IdOrderBySentAtDesc(Long userId);
 
-    // Get logs by appointment
+
     List<NotificationLog> findByAppointment_IdOrderBySentAtDesc(Long appointmentId);
 }

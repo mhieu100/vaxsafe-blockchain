@@ -35,7 +35,7 @@ const UrgencyGuide = () => {
       <Title level={4}>📊 Các Mức Độ Ưu Tiên</Title>
 
       <Row gutter={[16, 16]} style={{ marginBottom: 32 }}>
-        {/* Priority 1 - Type 1 */}
+        {}
         <Col xs={24} lg={12}>
           <Card
             style={{
@@ -84,7 +84,7 @@ const UrgencyGuide = () => {
           </Card>
         </Col>
 
-        {/* Priority 1 - Type 2: No Doctor within 24 hours */}
+        {}
         <Col xs={24} lg={12}>
           <Card
             style={{
@@ -141,7 +141,7 @@ const UrgencyGuide = () => {
           </Card>
         </Col>
 
-        {/* Priority 2 */}
+        {}
         <Col xs={24} lg={12}>
           <Card
             style={{
@@ -190,7 +190,7 @@ const UrgencyGuide = () => {
           </Card>
         </Col>
 
-        {/* Priority 3 */}
+        {}
         <Col xs={24} lg={12}>
           <Card
             style={{

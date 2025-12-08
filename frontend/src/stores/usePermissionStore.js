@@ -2,7 +2,6 @@ import { create } from 'zustand';
 import { callFetchPermission } from '../services/permission.service';
 
 const usePermissionStore = create((set) => ({
-  // State
   isFetching: true,
   meta: {
     page: 1,
@@ -12,7 +11,6 @@ const usePermissionStore = create((set) => ({
   },
   result: [],
 
-  // Actions
   fetchPermission: async (query) => {
     set({ isFetching: true });
     try {

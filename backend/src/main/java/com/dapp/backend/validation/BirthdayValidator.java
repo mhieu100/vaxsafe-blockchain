@@ -7,10 +7,7 @@ import lombok.extern.slf4j.Slf4j;
 import java.time.LocalDate;
 import java.time.Period;
 
-/**
- * Validator for birthday dates
- * Ensures birthday is within a reasonable range
- */
+
 @Slf4j
 public class BirthdayValidator implements ConstraintValidator<ValidBirthday, LocalDate> {
 
@@ -25,7 +22,7 @@ public class BirthdayValidator implements ConstraintValidator<ValidBirthday, Loc
 
     @Override
     public boolean isValid(LocalDate birthday, ConstraintValidatorContext context) {
-        // If birthday is null
+
         if (birthday == null) {
             if (required) {
                 context.disableDefaultConstraintViolation();
@@ -33,12 +30,12 @@ public class BirthdayValidator implements ConstraintValidator<ValidBirthday, Loc
                         .addConstraintViolation();
                 return false;
             }
-            return true; // null is valid if not required
+            return true;
         }
 
         LocalDate today = LocalDate.now();
         
-        // Birthday cannot be in the future
+
         if (birthday.isAfter(today)) {
             context.disableDefaultConstraintViolation();
             context.buildConstraintViolationWithTemplate("Birthday cannot be in the future")
@@ -46,11 +43,11 @@ public class BirthdayValidator implements ConstraintValidator<ValidBirthday, Loc
             return false;
         }
 
-        // Calculate age
+
         Period age = Period.between(birthday, today);
         int years = age.getYears();
 
-        // Birthday cannot be more than maxAge years ago
+
         if (years > maxAge) {
             context.disableDefaultConstraintViolation();
             context.buildConstraintViolationWithTemplate(
@@ -59,8 +56,7 @@ public class BirthdayValidator implements ConstraintValidator<ValidBirthday, Loc
             return false;
         }
 
-        // Additional validation: Birthday should be a valid date
-        // LocalDate already handles this (e.g., no Feb 31)
+
         
         log.debug("Valid birthday: {} (age: {} years)", birthday, years);
         return true;

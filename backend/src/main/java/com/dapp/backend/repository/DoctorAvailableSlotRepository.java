@@ -52,9 +52,7 @@ public interface DoctorAvailableSlotRepository extends JpaRepository<DoctorAvail
         Long doctorId, LocalDate slotDate, LocalTime startTime
     );
     
-    /**
-     * Find slot by doctor ID, date and start time (for virtual slot creation)
-     */
+    
     @Query("SELECT s FROM DoctorAvailableSlot s " +
            "WHERE s.doctor.doctorId = :doctorId " +
            "AND s.slotDate = :slotDate " +
@@ -65,11 +63,7 @@ public interface DoctorAvailableSlotRepository extends JpaRepository<DoctorAvail
         @Param("startTime") LocalTime startTime
     );
     
-    /**
-     * Optimized query: Chỉ lấy slots BOOKED/BLOCKED (không lấy AVAILABLE)
-     * Index: doctor_id, slot_date, start_time
-     * Performance: O(log n) với index
-     */
+    
     @Query("SELECT s FROM DoctorAvailableSlot s " +
            "WHERE s.doctor.doctorId = :doctorId " +
            "AND s.slotDate BETWEEN :startDate AND :endDate " +
@@ -85,10 +79,7 @@ public interface DoctorAvailableSlotRepository extends JpaRepository<DoctorAvail
            "AND s.status = 'AVAILABLE'")
     long countAvailableSlots(@Param("doctorId") Long doctorId, @Param("date") LocalDate date);
     
-    /**
-     * Batch query cho multiple doctors - tránh N+1 problem
-     * Dùng khi cần query slots cho nhiều doctors cùng lúc (dashboard, center view)
-     */
+    
     @Query("SELECT s FROM DoctorAvailableSlot s " +
            "WHERE s.doctor.doctorId IN :doctorIds " +
            "AND s.slotDate BETWEEN :startDate AND :endDate " +

@@ -4,9 +4,7 @@ import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
-/**
- * User preferences for email notifications
- */
+
 @Entity
 @Table(name = "user_notification_settings")
 @Data

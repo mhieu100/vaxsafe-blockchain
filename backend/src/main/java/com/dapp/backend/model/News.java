@@ -60,8 +60,8 @@ public class News extends BaseEntity {
     java.time.LocalDateTime publishedAt;
 
     @Column(length = 500)
-    String tags; // Comma-separated tags
+    String tags;
 
     @Column(length = 500)
-    String source; // Nguồn tin tức
+    String source;
 }

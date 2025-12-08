@@ -2,18 +2,6 @@ import { AppstoreOutlined, BarsOutlined } from '@ant-design/icons';
 import { Button, Pagination, Space } from 'antd';
 import { useTranslation } from 'react-i18next';
 
-/**
- * TopFilterSection component for pagination and view mode controls
- * @param {object} props - Component props
- * @param {object} props.meta - Meta data with total count
- * @param {number} props.currentPage - Current page number
- * @param {Function} props.setCurrentPage - Function to set current page
- * @param {number} props.pageSize - Page size
- * @param {Function} props.setPageSize - Function to set page size
- * @param {string} props.viewMode - View mode: 'grid' or 'list'
- * @param {Function} props.setViewMode - Function to set view mode
- * @returns {React.Component}
- */
 const TopFilterSection = ({
   meta,
   pageSize,

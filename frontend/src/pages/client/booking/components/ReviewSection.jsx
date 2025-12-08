@@ -60,9 +60,9 @@ const ReviewSection = ({ bookingData, vaccine, setCurrentStep, handleBookingSubm
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-        {/* Left Column: Details */}
+        {}
         <div className="lg:col-span-2 space-y-6">
-          {/* Vaccine Info Card */}
+          {}
           <div className="bg-white p-6 rounded-3xl shadow-sm border border-slate-100">
             <div className="flex items-center gap-3 mb-4">
               <div className="w-10 h-10 rounded-full bg-blue-50 flex items-center justify-center text-blue-600">
@@ -90,7 +90,7 @@ const ReviewSection = ({ bookingData, vaccine, setCurrentStep, handleBookingSubm
             </div>
           </div>
 
-          {/* Appointment Info Card */}
+          {}
           <div className="bg-white p-6 rounded-3xl shadow-sm border border-slate-100">
             <div className="flex items-center gap-3 mb-4">
               <div className="w-10 h-10 rounded-full bg-purple-50 flex items-center justify-center text-purple-600">
@@ -145,7 +145,7 @@ const ReviewSection = ({ bookingData, vaccine, setCurrentStep, handleBookingSubm
             </div>
           </div>
 
-          {/* Terms */}
+          {}
           <div className="bg-white p-6 rounded-3xl shadow-sm border border-slate-100">
             <div className="space-y-3">
               <Checkbox checked={acceptTerms} onChange={(e) => setAcceptTerms(e.target.checked)}>
@@ -168,11 +168,11 @@ const ReviewSection = ({ bookingData, vaccine, setCurrentStep, handleBookingSubm
           </div>
         </div>
 
-        {/* Right Column: Ticket Summary */}
+        {}
         <div className="lg:col-span-1">
           <div className="sticky top-24">
             <div className="bg-white rounded-3xl shadow-xl overflow-hidden border border-slate-100 relative">
-              {/* Ticket Header */}
+              {}
               <div className="bg-slate-900 p-6 text-white relative overflow-hidden">
                 <div className="absolute top-0 right-0 w-32 h-32 bg-blue-500 rounded-full blur-3xl opacity-20 -translate-y-1/2 translate-x-1/2" />
                 <div className="relative z-10 flex justify-between items-start">
@@ -188,9 +188,9 @@ const ReviewSection = ({ bookingData, vaccine, setCurrentStep, handleBookingSubm
                 </div>
               </div>
 
-              {/* Ticket Body */}
+              {}
               <div className="p-6 relative">
-                {/* Perforated Line Effect */}
+                {}
                 <div className="absolute top-0 left-0 w-full -translate-y-1/2 flex justify-between px-4">
                   <div className="w-6 h-6 bg-slate-50 rounded-full" />
                   <div className="flex-1 border-t-2 border-dashed border-slate-200 mx-2 self-center" />

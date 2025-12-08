@@ -39,39 +39,38 @@ public class OAuth2LoginSuccessHandler extends SimpleUrlAuthenticationSuccessHan
         OAuth2AuthenticationToken oauthToken = (OAuth2AuthenticationToken) authentication;
         OAuth2User oAuth2User = oauthToken.getPrincipal();
 
-        // Extract user info from Google
+
         String email = oAuth2User.getAttribute("email");
         String name = oAuth2User.getAttribute("name");
 
-        // Find or create user
+
         User user = userRepository.findByEmail(email)
                 .orElseGet(() -> {
-                    // Get PATIENT role (Google OAuth only creates PATIENT users)
+
                     Role patientRole = roleRepository.findByName("PATIENT")
                             .orElseThrow(() -> new RuntimeException("Patient role not found"));
 
-                    // Create new user with builder
-                    // Only PATIENT role requires profile completion (isActive = false)
+
                     User newUser = User.builder()
                             .email(email)
                             .fullName(name)
                             .role(patientRole)
-                            .isActive(false) // PATIENT must complete profile before using the system
+                            .isActive(false)
                             .isDeleted(false)
                             .build();
 
                     return userRepository.save(newUser);
                 });
 
-        // Create default notification settings for new OAuth user if not exists
+
         if (user.getId() != null) {
             try {
-                // Check if settings already exist (in case of race condition)
+
                 if (!notificationLogService.hasUserSettings(user)) {
                     notificationLogService.createDefaultSettings(user);
                 }
             } catch (Exception e) {
-                // Log error but don't fail the login process
+
                 System.err.println("Error creating notification settings for OAuth user: " + user.getEmail() + " - "
                         + e.getMessage());
             }
@@ -79,23 +78,21 @@ public class OAuth2LoginSuccessHandler extends SimpleUrlAuthenticationSuccessHan
         String accessToken = jwtUtil.createAccessToken(user.getEmail(), user.getRole().getName());
         String refreshToken = jwtUtil.createRefreshToken(user.getEmail());
 
-        // Update refresh token in database using direct query to avoid collection
-        // issues
+
         userRepository.updateRefreshTokenByEmail(user.getEmail(), refreshToken);
 
-        // Add refresh token as HTTP-only cookie
+
         Cookie refreshTokenCookie = new Cookie("refreshToken", refreshToken);
         refreshTokenCookie.setHttpOnly(true);
-        refreshTokenCookie.setSecure(false); // Set to true in production with HTTPS
+        refreshTokenCookie.setSecure(false);
         refreshTokenCookie.setPath("/");
-        refreshTokenCookie.setMaxAge(7 * 24 * 60 * 60); // 7 days
+        refreshTokenCookie.setMaxAge(7 * 24 * 60 * 60);
         response.addCookie(refreshTokenCookie);
 
-        // Check if profile is complete - user is active means profile is completed
+
         boolean isProfileComplete = user.isActive();
 
-        // Redirect to frontend with token and user info (encode to handle Unicode
-        // characters)
+
         String redirectUrl = UriComponentsBuilder.fromUriString(frontendUrl + "/oauth2/callback")
                 .queryParam("token", accessToken)
                 .queryParam("email", user.getEmail())

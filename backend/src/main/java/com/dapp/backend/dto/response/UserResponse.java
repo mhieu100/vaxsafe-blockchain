@@ -19,13 +19,13 @@ public class UserResponse {
     String fullName;
     String email;
 
-    // Role information
+
     RoleInfo role;
 
-    // Patient profile (if user is a patient)
+
     PatientInfo patientProfile;
 
-    // Center information (if user is staff)
+
     CenterInfo center;
 
     boolean isDeleted;

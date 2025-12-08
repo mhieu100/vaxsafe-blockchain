@@ -59,7 +59,6 @@ const PendingAppointmentPage = () => {
   const [openAssignModal, setOpenAssignModal] = useState(false);
   const [selectedAppointment, setSelectedAppointment] = useState(null);
 
-  // Filter states
   const [searchText, setSearchText] = useState('');
   const [vaccineFilter, setVaccineFilter] = useState('');
   const [dateFilter, setDateFilter] = useState(null);
@@ -69,7 +68,6 @@ const PendingAppointmentPage = () => {
     tableRef?.current?.reload();
   };
 
-  // Calculate statistics from appointments
   const statistics = {
     pendingSchedule: appointments.filter((apt) => apt.status === AppointmentStatus.PENDING).length,
     pendingApproval: appointments.filter((apt) => apt.status === AppointmentStatus.RESCHEDULE)
@@ -178,7 +176,6 @@ const PendingAppointmentPage = () => {
         const isReschedule = record.status === 'RESCHEDULE';
         const isPending = record.status === AppointmentStatus.PENDING;
 
-        // Nếu chưa có lịch chính thức
         if (!scheduledDate || isPending) {
           return (
             <Space direction="vertical" size={4}>
@@ -357,7 +354,6 @@ const PendingAppointmentPage = () => {
       filter: '',
     };
 
-    // Add filters
     const filters = [];
 
     if (searchText) {
@@ -381,7 +377,7 @@ const PendingAppointmentPage = () => {
 
   return (
     <div style={{ padding: '24px', background: '#f0f2f5', minHeight: '100vh' }}>
-      {/* Page Header */}
+      {}
       <div style={{ marginBottom: 24 }}>
         <Space align="center" size="middle">
           <ClockCircleOutlined style={{ fontSize: 32, color: '#faad14' }} />
@@ -399,7 +395,7 @@ const PendingAppointmentPage = () => {
         </Space>
       </div>
 
-      {/* Statistics Cards */}
+      {}
       <Row gutter={[16, 16]} style={{ marginBottom: 24 }}>
         <Col xs={24} sm={12} lg={6}>
           <Card hoverable bordered={false}>
@@ -463,7 +459,7 @@ const PendingAppointmentPage = () => {
         </Col>
       </Row>
 
-      {/* Filters */}
+      {}
       <Card
         style={{ marginBottom: 24 }}
         title={
@@ -533,7 +529,7 @@ const PendingAppointmentPage = () => {
         </Row>
       </Card>
 
-      {/* Data Table */}
+      {}
       <Card
         title={
           <Space>
@@ -574,7 +570,7 @@ const PendingAppointmentPage = () => {
         />
       </Card>
 
-      {/* Conditional Modal Rendering - Replaced with ProcessUrgentAppointmentModal */}
+      {}
       <ProcessUrgentAppointmentModal
         open={openAssignModal}
         onClose={() => setOpenAssignModal(false)}

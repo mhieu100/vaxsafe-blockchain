@@ -29,14 +29,12 @@ const ChatBot = () => {
 
   const { user, isAuthenticated } = useAccountStore();
 
-  // Medical Profile State
   const [profile, setProfile] = useState({
     age: '',
     vaccinationHistory: '',
     healthCondition: '',
   });
 
-  // Auto-fill profile from user data when authenticated
   useEffect(() => {
     if (isAuthenticated && user) {
       let ageString = '';
@@ -56,7 +54,6 @@ const ChatBot = () => {
       setProfile((prev) => ({
         ...prev,
         age: ageString || prev.age,
-        // We could fetch vaccination history from backend here if available
       }));
     }
   }, [isAuthenticated, user]);
@@ -99,7 +96,6 @@ const ChatBot = () => {
 
     setMessages((prev) => [...prev, userMessage]);
 
-    // Prepare data for consult API
     const consultData = {
       query: inputValue,
       age: profile.age,
@@ -121,10 +117,10 @@ const ChatBot = () => {
 
   return (
     <div className="fixed bottom-6 right-6 z-[2000] flex flex-col items-end">
-      {/* Chat Window */}
+      {}
       {isOpen && (
         <div className="mb-4 w-[350px] sm:w-[400px] h-[500px] bg-white rounded-2xl shadow-2xl border border-slate-100 flex flex-col overflow-hidden animate-fade-in-up">
-          {/* Header */}
+          {}
           <div className="bg-gradient-to-r from-blue-600 to-indigo-600 p-4 flex items-center justify-between shrink-0">
             <div className="flex items-center gap-3">
               <div className="bg-white/20 p-2 rounded-full backdrop-blur-sm">
@@ -160,7 +156,7 @@ const ChatBot = () => {
             </div>
           </div>
 
-          {/* Content Area */}
+          {}
           {isSettingsOpen ? (
             <div className="flex-1 overflow-y-auto p-4 bg-slate-50">
               <h4 className="font-bold text-slate-700 mb-4">Hồ sơ sức khỏe</h4>
@@ -198,7 +194,7 @@ const ChatBot = () => {
             </div>
           ) : (
             <>
-              {/* Messages Area */}
+              {}
               <div className="flex-1 overflow-y-auto p-4 bg-slate-50 space-y-4 custom-scrollbar">
                 {messages.map((msg) => (
                   <div
@@ -235,7 +231,7 @@ const ChatBot = () => {
                 <div ref={messagesEndRef} />
               </div>
 
-              {/* Input Area */}
+              {}
               <div className="p-4 bg-white border-t border-slate-100 shrink-0">
                 <div className="flex gap-2">
                   <Input
@@ -265,7 +261,7 @@ const ChatBot = () => {
         </div>
       )}
 
-      {/* Toggle Button */}
+      {}
       <button
         type="button"
         onClick={() => setIsOpen(!isOpen)}
@@ -279,7 +275,7 @@ const ChatBot = () => {
           <MessageOutlined className="text-white text-2xl animate-pulse" />
         )}
 
-        {/* Notification Badge (Optional - can be dynamic later) */}
+        {}
         {!isOpen && (
           <span className="absolute top-0 right-0 flex h-3 w-3">
             <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span>

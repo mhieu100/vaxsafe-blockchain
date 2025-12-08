@@ -108,7 +108,7 @@ const ClientNewsPage = () => {
 
   return (
     <div className="flex flex-col ">
-      {/* Header Banner */}
+      {}
       <div className="bg-gradient-to-r from-blue-600 to-purple-600 text-white py-16 mb-8">
         <div className="container mx-auto px-4 text-center">
           <Title level={1} className="!text-white mb-4">
@@ -123,7 +123,7 @@ const ClientNewsPage = () => {
 
       <section className="bg-blue-50 py-16">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          {/* Filters */}
+          {}
           <div className="bg-white p-6 rounded-xl shadow-sm mb-8">
             <Row gutter={[16, 16]} align="middle">
               <Col xs={24} md={12}>
@@ -158,7 +158,7 @@ const ClientNewsPage = () => {
             </Row>
           </div>
 
-          {/* News Grid */}
+          {}
           {loading ? (
             <Row gutter={[24, 24]}>
               {[1, 2, 3, 4, 5, 6].map((i) => (
@@ -246,7 +246,7 @@ const ClientNewsPage = () => {
                 </div>
               )}
 
-              {/* Pagination */}
+              {}
               {news.length > 0 && (
                 <div className="flex justify-center mt-12">
                   <Pagination

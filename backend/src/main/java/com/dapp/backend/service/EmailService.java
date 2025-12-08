@@ -30,11 +30,7 @@ public class EmailService {
     @Value("${mail.from.name}")
     private String fromName;
 
-    /**
-     * Send vaccination reminder email
-     * 
-     * @throws UnsupportedEncodingException
-     */
+    
     @Async
     public void sendVaccinationReminder(
             String toEmail,
@@ -66,11 +62,7 @@ public class EmailService {
         log.info("Sent vaccination reminder email to: {}", toEmail);
     }
 
-    /**
-     * Send appointment confirmation email
-     * 
-     * @throws UnsupportedEncodingException
-     */
+    
     @Async
     public void sendAppointmentConfirmation(
             String toEmail,
@@ -100,11 +92,7 @@ public class EmailService {
         log.info("Sent appointment confirmation email to: {}", toEmail);
     }
 
-    /**
-     * Send appointment scheduled email with full details (cashier, doctor)
-     * 
-     * @throws UnsupportedEncodingException
-     */
+    
     @Async
     public void sendAppointmentScheduled(
             String toEmail,
@@ -146,11 +134,7 @@ public class EmailService {
         log.info("Sent appointment scheduled email to: {}", toEmail);
     }
 
-    /**
-     * Send appointment cancellation email
-     * 
-     * @throws UnsupportedEncodingException
-     */
+    
     @Async
     public void sendAppointmentCancellation(
             String toEmail,
@@ -176,11 +160,7 @@ public class EmailService {
         log.info("Sent appointment cancellation email to: {}", toEmail);
     }
 
-    /**
-     * Send generic HTML email
-     * 
-     * @throws UnsupportedEncodingException
-     */
+    
     public void sendHtmlEmail(String toEmail, String subject, String htmlContent)
             throws MessagingException, UnsupportedEncodingException {
         MimeMessage message = mailSender.createMimeMessage();
@@ -195,11 +175,7 @@ public class EmailService {
         log.info("Email sent successfully to: {}", toEmail);
     }
 
-    /**
-     * Send next dose reminder email
-     * 
-     * @throws UnsupportedEncodingException
-     */
+    
     @Async
     public void sendNextDoseReminder(
             String toEmail,
@@ -223,11 +199,7 @@ public class EmailService {
         log.info("Sent next dose reminder email to: {} for dose #{}", toEmail, nextDoseNumber);
     }
 
-    /**
-     * Send simple text email
-     * 
-     * @throws UnsupportedEncodingException
-     */
+    
     public void sendSimpleEmail(String toEmail, String subject, String text)
             throws MessagingException, UnsupportedEncodingException {
         MimeMessage message = mailSender.createMimeMessage();

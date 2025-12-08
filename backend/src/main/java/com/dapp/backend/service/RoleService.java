@@ -48,7 +48,7 @@ public class RoleService {
             return null;
         }
         
-        // check permissions
+
         if (role.getPermissions() != null) {
             List<Long> reqPermissions = role.getPermissions()
                     .stream().map(Permission::getId)
@@ -57,7 +57,7 @@ public class RoleService {
             List<Permission> dbPermissions = this.permissionRepository.findByIdIn(reqPermissions);
             roleDB.setPermissions(dbPermissions);
         } else {
-            // If permissions is null, clear all permissions
+
             roleDB.setPermissions(null);
         }
 

@@ -24,19 +24,16 @@ public class VaccineService {
         this.vaccineRepository = vaccineRepository;
     }
 
-    /**
-     * Generate URL-friendly slug from vaccine name
-     * Converts Vietnamese characters to ASCII and formats for URLs
-     */
+    
     private String generateSlug(String name) {
         if (name == null || name.trim().isEmpty()) {
             return "";
         }
 
-        // Normalize Vietnamese characters to ASCII
+
         String slug = name.toLowerCase().trim();
         
-        // Remove Vietnamese accents
+
         slug = slug.replaceAll("[àáạảãâầấậẩẫăằắặẳẵ]", "a");
         slug = slug.replaceAll("[èéẹẻẽêềếệểễ]", "e");
         slug = slug.replaceAll("[ìíịỉĩ]", "i");
@@ -45,7 +42,7 @@ public class VaccineService {
         slug = slug.replaceAll("[ỳýỵỷỹ]", "y");
         slug = slug.replaceAll("đ", "d");
         
-        // Remove special characters and replace spaces with hyphens
+
         slug = slug.replaceAll("[^a-z0-9\\s-]", "");
         slug = slug.replaceAll("\\s+", "-");
         slug = slug.replaceAll("-+", "-");
@@ -53,9 +50,7 @@ public class VaccineService {
         return slug;
     }
 
-    /**
-     * Generate unique slug by appending number if slug already exists
-     */
+    
     private String generateUniqueSlug(String baseName, Long excludeId) {
         String baseSlug = generateSlug(baseName);
         String uniqueSlug = baseSlug;
@@ -66,14 +61,14 @@ public class VaccineService {
             var existing = vaccineRepository.findBySlug(checkSlug);
             
             if (existing.isEmpty()) {
-                break; // Slug is unique
+                break;
             }
             
             if (excludeId != null && existing.get().getId() == excludeId) {
-                break; // It's the same vaccine being updated
+                break;
             }
             
-            // Append counter to make it unique
+
             uniqueSlug = baseSlug + "-" + counter;
             counter++;
         }
@@ -96,7 +91,7 @@ public class VaccineService {
     }
 
     public Pagination getAllVaccines(Specification<Vaccine> specification, Pageable pageable) {
-        // Use VaccineSpecifications to filter out soft-deleted records
+
         Specification<Vaccine> finalSpec = specification != null 
             ? specification.and(VaccineSpecifications.notDeleted()) 
             : VaccineSpecifications.notDeleted();
@@ -114,13 +109,13 @@ public class VaccineService {
     }
 
     public VaccineResponse createVaccine(VaccineRequest request) throws AppException {
-        // Auto-generate slug from name if not provided
+
         if (request.getSlug() == null || request.getSlug().trim().isEmpty()) {
             String slug = generateUniqueSlug(request.getName(), null);
             request.setSlug(slug);
         }
 
-        // Convert request to entity and save
+
         Vaccine vaccine = VaccineMapper.toEntity(request);
         Vaccine savedVaccine = vaccineRepository.save(vaccine);
 
@@ -128,17 +123,17 @@ public class VaccineService {
     }
 
     public VaccineResponse updateVaccine(Long id, VaccineRequest request) throws AppException {
-        // Find existing vaccine
+
         Vaccine existingVaccine = vaccineRepository.findById(id)
                 .orElseThrow(() -> new AppException("Vaccine not found with id: " + id));
 
-        // Auto-generate slug from name if not provided (excluding current vaccine from uniqueness check)
+
         if (request.getSlug() == null || request.getSlug().trim().isEmpty()) {
             String slug = generateUniqueSlug(request.getName(), id);
             request.setSlug(slug);
         }
 
-        // Update the existing vaccine with new data
+
         VaccineMapper.updateEntity(existingVaccine, request);
         Vaccine updatedVaccine = vaccineRepository.save(existingVaccine);
 
@@ -149,7 +144,7 @@ public class VaccineService {
         Vaccine vaccine = vaccineRepository.findById(id)
                 .orElseThrow(() -> new AppException("Vaccine not found with id: " + id));
 
-        // Soft delete
+
         vaccine.setIsDeleted(true);
         vaccineRepository.save(vaccine);
     }

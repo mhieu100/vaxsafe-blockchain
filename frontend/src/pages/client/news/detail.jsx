@@ -49,10 +49,9 @@ const ClientNewsDetailPage = () => {
     try {
       const res = await callFetchPublishedNews();
       if (res?.data) {
-        // Randomly pick or sort by view count for "Trending"
         const trending = res.data
           .filter((item) => item.id !== currentId)
-          .sort(() => 0.5 - Math.random()) // Shuffle for demo
+          .sort(() => 0.5 - Math.random())
           .slice(0, 5);
         setTrendingNews(trending);
       }
@@ -92,16 +91,16 @@ const ClientNewsDetailPage = () => {
       <div className="flex flex-col min-h-screen bg-white">
         <section className="bg-blue-50 flex-1">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            {/* Breadcrumb Skeleton */}
+            {}
             <div className="border-b border-gray-100 py-4">
               <Skeleton.Input active size="small" style={{ width: 200 }} />
             </div>
 
             <div className="container mx-auto px-4 py-8">
               <Row gutter={[48, 32]}>
-                {/* Main Content Skeleton */}
+                {}
                 <Col xs={24} lg={16}>
-                  {/* Title */}
+                  {}
                   <div className="mb-6">
                     <Skeleton
                       active
@@ -109,7 +108,7 @@ const ClientNewsDetailPage = () => {
                       title={{ width: '90%', style: { height: 40, marginBottom: 16 } }}
                     />
 
-                    {/* Meta */}
+                    {}
                     <div className="flex gap-4 mt-4">
                       <Skeleton.Button active size="small" shape="round" style={{ width: 100 }} />
                       <Skeleton.Button active size="small" shape="round" style={{ width: 120 }} />
@@ -117,24 +116,24 @@ const ClientNewsDetailPage = () => {
                     </div>
                   </div>
 
-                  {/* Image */}
+                  {}
                   <div className="w-full aspect-video rounded-xl overflow-hidden mb-8 bg-gray-100">
                     <Skeleton.Image active className="!w-full !h-full" />
                   </div>
 
-                  {/* Content */}
+                  {}
                   <Skeleton active paragraph={{ rows: 12 }} />
                 </Col>
 
-                {/* Sidebar Skeleton */}
+                {}
                 <Col xs={24} lg={8}>
                   <div className="space-y-8">
-                    {/* Ad Banner Skeleton */}
+                    {}
                     <div className="rounded-xl overflow-hidden">
                       <Skeleton.Button active block style={{ height: 300 }} />
                     </div>
 
-                    {/* Trending News Skeleton */}
+                    {}
                     <div>
                       <Skeleton
                         active
@@ -168,7 +167,7 @@ const ClientNewsDetailPage = () => {
     <div className="flex flex-col ">
       <section className="bg-blue-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          {/* Breadcrumb */}
+          {}
           <div className="border-b border-gray-100">
             <div className="container mx-auto px-4 py-4">
               <Breadcrumb
@@ -187,10 +186,10 @@ const ClientNewsDetailPage = () => {
 
           <div className="container mx-auto px-4 py-8">
             <Row gutter={[48, 32]}>
-              {/* Main Content (Left) */}
+              {}
               <Col xs={24} lg={16}>
                 <article>
-                  {/* Header */}
+                  {}
                   <div className="mb-6">
                     <Title
                       level={1}
@@ -219,7 +218,7 @@ const ClientNewsDetailPage = () => {
                     </div>
                   </div>
 
-                  {/* Featured Image */}
+                  {}
                   {news.coverImage && (
                     <div className="w-full aspect-video rounded-xl overflow-hidden mb-8 bg-gray-100">
                       <img
@@ -230,7 +229,7 @@ const ClientNewsDetailPage = () => {
                     </div>
                   )}
 
-                  {/* Content Body */}
+                  {}
                   <div className="prose prose-lg max-w-none text-gray-800">
                     {news.shortDescription && (
                       <p className="lead text-xl text-gray-600 font-medium mb-8">
@@ -240,7 +239,7 @@ const ClientNewsDetailPage = () => {
                     <div dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(news.content) }} />
                   </div>
 
-                  {/* Tags & Share */}
+                  {}
                   <div className="mt-10 pt-6 border-t border-gray-100 flex flex-wrap justify-between items-center gap-4">
                     <div className="flex gap-2">
                       {news.tags?.split(',').map((tag) => (
@@ -259,10 +258,10 @@ const ClientNewsDetailPage = () => {
                 </article>
               </Col>
 
-              {/* Sidebar (Right) */}
+              {}
               <Col xs={24} lg={8}>
                 <div className="sticky top-24 space-y-8">
-                  {/* Ad Banner */}
+                  {}
                   <div className="bg-gradient-to-r from-emerald-800 to-teal-900 rounded-xl p-6 text-white shadow-lg relative overflow-hidden">
                     <h3 className="font-bold text-lg mb-2">
                       Every Shot. <br />
@@ -274,7 +273,7 @@ const ClientNewsDetailPage = () => {
                     </Button>
                   </div>
 
-                  {/* Trending News */}
+                  {}
                   <div>
                     <div className="flex items-center gap-2 mb-4">
                       <div className="w-1 h-6 bg-blue-600 rounded-full"></div>

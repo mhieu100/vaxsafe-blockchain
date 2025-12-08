@@ -22,7 +22,6 @@ const ModalNews = (props) => {
   const [animation, setAnimation] = useState('open');
   const [categories, setCategories] = useState([]);
 
-  // Fetch categories on mount
   useEffect(() => {
     const fetchCategories = async () => {
       try {
@@ -107,12 +106,10 @@ const ModalNews = (props) => {
 
   useEffect(() => {
     if (openModal && dataInit?.id) {
-      // Set form values when editing
       form.setFieldsValue({
         ...dataInit,
       });
     } else if (openModal && !dataInit) {
-      // Reset form when creating new
       form.resetFields();
     }
   }, [dataInit, openModal, form]);

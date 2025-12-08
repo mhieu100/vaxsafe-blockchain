@@ -15,7 +15,7 @@ import java.util.List;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class VaccineRequest {
 
-    // Slug will be auto-generated from name, but can be provided if needed
+
     String slug;
 
     @NotBlank(message = "Vaccine name is required")

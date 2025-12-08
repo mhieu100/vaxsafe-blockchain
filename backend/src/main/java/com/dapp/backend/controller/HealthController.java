@@ -10,10 +10,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/api/health")
 public class HealthController {
 
-  /**
-   * Health check endpoint - accessible without authentication
-   * Used for CI/CD pipeline testing
-   */
+  
   @GetMapping("/hello")
   @ApiMessage("Health check endpoint")
   public ResponseEntity<HealthResponse> hello() {

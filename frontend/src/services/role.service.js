@@ -1,10 +1,5 @@
 import apiClient from '../services/apiClient';
 
-/**
- *
-Module Role
- */
-
 export const callFetchRole = (query) => {
   return apiClient.get(`/roles?${query}`);
 };

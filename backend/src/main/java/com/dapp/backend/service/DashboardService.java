@@ -22,19 +22,19 @@ import java.util.stream.Collectors;
 public class DashboardService {
 
         private final PatientRepository patientRepository;
-        private final UserRepository userRepository; // For doctors (via role)
+        private final UserRepository userRepository;
         private final CenterRepository centerRepository;
         private final VaccineRepository vaccineRepository;
         private final AppointmentRepository appointmentRepository;
 
         public DashboardStatsResponse getStats() {
-                // 1. Basic Counts
+
                 long totalPatients = patientRepository.count();
                 long totalDoctors = userRepository.countByRole_Name("DOCTOR");
                 long totalCenters = centerRepository.count();
                 long totalVaccines = vaccineRepository.count();
 
-                // 2. Appointment Stats
+
                 long pendingAppointments = appointmentRepository
                                 .count((root, query, cb) -> cb.equal(root.get("status"), AppointmentStatus.PENDING));
                 long completedAppointments = appointmentRepository
@@ -43,7 +43,7 @@ public class DashboardService {
                                 .count((root, query, cb) -> cb.equal(root.get("status"), AppointmentStatus.CANCELLED));
                 long totalAppointments = appointmentRepository.count();
 
-                // 3. Daily Appointments (Last 30 days)
+
                 LocalDate thirtyDaysAgo = LocalDate.now().minusDays(30);
                 List<Object[]> dailyCounts = appointmentRepository.countAppointmentsByDateSince(thirtyDaysAgo);
 
@@ -53,7 +53,7 @@ public class DashboardService {
                                                 ((Number) row[1]).longValue()))
                                 .collect(Collectors.toList());
 
-                // 4. Vaccine Distribution (by Country for now as proxy for type)
+
                 List<Vaccine> vaccines = vaccineRepository.findAll();
                 Map<String, Long> vaccineDistribution = vaccines.stream()
                                 .collect(Collectors.groupingBy(
@@ -97,7 +97,7 @@ public class DashboardService {
                 long monthCompleted = appointmentRepository.countByDoctorAndStatusAndScheduledDateBetween(doctorUser,
                                 AppointmentStatus.COMPLETED, startOfMonth, endOfMonth);
 
-                // Mock rating for now
+
                 double rating = 4.8;
 
                 Appointment nextApt = appointmentRepository

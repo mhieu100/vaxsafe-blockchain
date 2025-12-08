@@ -80,7 +80,7 @@ const VaccinationHistoryTab = () => {
       case 'PENDING':
         return t('client:vaccinationHistory.pending');
       case 'CONFIRMED':
-        return 'Confirmed'; // Assuming this status might exist, or map to pending/completed
+        return 'Confirmed';
       case 'CANCELLED':
         return t('client:appointments.cancelled');
       case 'PROGRESS':
@@ -120,7 +120,6 @@ const VaccinationHistoryTab = () => {
     );
   }
 
-  // Main booking columns
   const bookingColumns = [
     {
       title: t('client:vaccinationHistory.bookingId'),
@@ -199,7 +198,6 @@ const VaccinationHistoryTab = () => {
     },
   ];
 
-  // Appointment detail columns (for expanded row)
   const appointmentColumns = [
     {
       title: t('client:vaccinationHistory.dose'),

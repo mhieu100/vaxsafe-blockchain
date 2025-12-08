@@ -16,13 +16,13 @@ import java.util.List;
 @Repository
 public interface VaccinationReminderRepository extends JpaRepository<VaccinationReminder, Long> {
 
-    // Find reminders by appointment
+
     List<VaccinationReminder> findByAppointmentId(Long appointmentId);
 
-    // Find reminders by user
+
     List<VaccinationReminder> findByUserIdOrderByScheduledDateDesc(Long userId);
 
-    // Find pending reminders that should be sent today
+
     @Query("""
         SELECT vr FROM VaccinationReminder vr 
         WHERE vr.status = 'PENDING' 
@@ -31,7 +31,7 @@ public interface VaccinationReminderRepository extends JpaRepository<Vaccination
         """)
     List<VaccinationReminder> findPendingRemindersForToday(@Param("today") LocalDate today);
 
-    // Find failed reminders that need retry
+
     @Query("""
         SELECT vr FROM VaccinationReminder vr 
         WHERE vr.status = 'FAILED' 
@@ -40,16 +40,16 @@ public interface VaccinationReminderRepository extends JpaRepository<Vaccination
         """)
     List<VaccinationReminder> findFailedRemindersForRetry(@Param("now") LocalDateTime now);
 
-    // Find reminders by status
+
     List<VaccinationReminder> findByStatusOrderByScheduledDateDesc(ReminderStatus status);
 
-    // Find next dose reminders by date and status
+
     List<VaccinationReminder> findByReminderTypeAndScheduledDateAndStatus(
             ReminderType reminderType, 
             LocalDate scheduledDate, 
             ReminderStatus status);
 
-    // Check if reminder exists
+
     @Query("""
         SELECT COUNT(vr) > 0 FROM VaccinationReminder vr 
         WHERE vr.appointment.id = :appointmentId 
@@ -61,7 +61,7 @@ public interface VaccinationReminderRepository extends JpaRepository<Vaccination
             @Param("channel") ReminderChannel channel, 
             @Param("daysBefore") Integer daysBefore);
 
-    // Get statistics
+
     @Query("""
         SELECT vr.channel, vr.status, COUNT(vr) 
         FROM VaccinationReminder vr 

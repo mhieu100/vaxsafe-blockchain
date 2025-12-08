@@ -48,8 +48,6 @@ const ModalVaccine = (props) => {
       contraindications,
     } = valuesForm;
 
-    // Prepare data matching backend VaccineRequest
-    // Slug will be auto-generated in backend from name
     const vaccineData = {
       name,
       manufacturer,
@@ -95,13 +93,11 @@ const ModalVaccine = (props) => {
 
   useEffect(() => {
     if (openModal && dataInit?.id) {
-      // Set form values when editing
       form.setFieldsValue({
         ...dataInit,
       });
       setValue(dataInit.description || '');
     } else if (openModal && !dataInit) {
-      // Reset form when creating new
       form.resetFields();
       setValue('');
     }

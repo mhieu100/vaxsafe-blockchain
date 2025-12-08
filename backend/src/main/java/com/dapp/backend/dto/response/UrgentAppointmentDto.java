@@ -22,19 +22,19 @@ public class UrgentAppointmentDto {
     String vaccineName;
     Integer doseNumber;
 
-    // Scheduled info
+
     LocalDate scheduledDate;
     TimeSlotEnum scheduledTimeSlot;
     java.time.LocalTime actualScheduledTime;
 
-    // Reschedule info (if applicable)
+
     LocalDate desiredDate;
     TimeSlotEnum desiredTimeSlot;
     java.time.LocalTime actualDesiredTime;
     String rescheduleReason;
     LocalDateTime rescheduledAt;
 
-    // Doctor and Cashier info
+
     String doctorName;
     String cashierName;
 
@@ -42,7 +42,7 @@ public class UrgentAppointmentDto {
 
     AppointmentStatus status;
 
-    String urgencyType; // RESCHEDULE_PENDING, NO_DOCTOR, COMING_SOON, OVERDUE
+    String urgencyType;
     String urgencyMessage;
-    Integer priorityLevel; // 1 = highest, 5 = lowest
+    Integer priorityLevel;
 }

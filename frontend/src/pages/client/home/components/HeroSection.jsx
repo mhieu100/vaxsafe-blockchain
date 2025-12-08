@@ -24,7 +24,7 @@ const HeroSection = () => {
     const centerX = rect.width / 2;
     const centerY = rect.height / 2;
 
-    const rotateX = ((y - centerY) / centerY) * -10; // Max rotation 10deg
+    const rotateX = ((y - centerY) / centerY) * -10;
     const rotateY = ((x - centerX) / centerX) * 10;
 
     setRotate({ x: rotateX, y: rotateY });
@@ -36,17 +36,17 @@ const HeroSection = () => {
 
   return (
     <section className="hero-container relative min-h-[800px] flex items-center py-20 overflow-hidden">
-      {/* Animated Background Blobs */}
+      {}
       <div className="hero-blob hero-blob-1" />
       <div className="hero-blob hero-blob-2" />
       <div className="hero-blob hero-blob-3" />
 
-      {/* Grid Overlay for Tech Feel */}
+      {}
       <div className="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-20"></div>
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
-          {/* Left Column: Text Content */}
+          {}
           <div className="text-white space-y-8">
             <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full glass-panel border-blue-500/30 text-blue-300 text-sm font-medium mb-4">
               <span className="relative flex h-3 w-3">
@@ -97,8 +97,8 @@ const HeroSection = () => {
             </div>
           </div>
 
-          {/* Right Column: 3D Interactive Card */}
-          {/* biome-ignore lint/a11y/noStaticElementInteractions: Interactive 3D effect */}
+          {}
+          {}
           <div
             className="hidden lg:block card-3d-container"
             onMouseMove={handleMouseMove}
@@ -109,9 +109,9 @@ const HeroSection = () => {
               className="card-3d relative w-full max-w-md mx-auto"
               style={{ transform: `rotateX(${rotate.x}deg) rotateY(${rotate.y}deg)` }}
             >
-              {/* Main Glass Card */}
+              {}
               <div className="glass-panel p-8 rounded-3xl relative overflow-hidden border border-white/10 shadow-2xl">
-                {/* Card Header */}
+                {}
                 <div className="flex justify-between items-start mb-8 card-3d-content">
                   <div>
                     <h3 className="text-2xl font-bold text-white mb-1">
@@ -124,7 +124,7 @@ const HeroSection = () => {
                   <QrcodeOutlined className="text-4xl text-white opacity-80" />
                 </div>
 
-                {/* Card Body */}
+                {}
                 <div className="space-y-6 card-3d-content">
                   <div className="flex items-center gap-4">
                     <div className="h-12 w-12 rounded-full bg-gradient-to-tr from-blue-500 to-purple-500 p-[2px]">
@@ -170,12 +170,12 @@ const HeroSection = () => {
                   </div>
                 </div>
 
-                {/* Decorative Elements */}
+                {}
                 <div className="absolute -top-20 -right-20 w-40 h-40 bg-blue-500 rounded-full blur-3xl opacity-20 pointer-events-none"></div>
                 <div className="absolute -bottom-20 -left-20 w-40 h-40 bg-purple-500 rounded-full blur-3xl opacity-20 pointer-events-none"></div>
               </div>
 
-              {/* Floating Badge Behind */}
+              {}
               <div
                 className="absolute -right-10 top-1/2 -translate-y-1/2 glass-panel p-4 rounded-2xl floating-element card-3d-content"
                 style={{ animationDelay: '1s' }}

@@ -11,9 +11,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-/**
- * API for user email notification preferences
- */
+
 @RestController
 @RequestMapping("/api/notification-settings")
 @RequiredArgsConstructor
@@ -23,12 +21,7 @@ public class NotificationSettingController {
     private final NotificationLogService notificationLogService;
     private final AuthService authService;
 
-    /**
-     * Get current user's notification settings
-     * GET /api/notification-settings
-     * 
-     * @throws AppException
-     */
+    
     @GetMapping
     @ApiMessage("Get notification settings")
     public ResponseEntity<UserNotificationSetting> getSettings() throws AppException {
@@ -37,12 +30,7 @@ public class NotificationSettingController {
         return ResponseEntity.ok(settings);
     }
 
-    /**
-     * Update notification settings
-     * PUT /api/notification-settings
-     * 
-     * @throws AppException
-     */
+    
     @PutMapping
     @ApiMessage("Update notification settings")
     public ResponseEntity<UserNotificationSetting> updateSettings(

@@ -2,7 +2,6 @@ import { create } from 'zustand';
 import { callAllBookings } from '../services/appointment.service';
 
 const useBookingStore = create((set) => ({
-  // State
   isFetching: true,
   meta: {
     page: 1,
@@ -12,7 +11,6 @@ const useBookingStore = create((set) => ({
   },
   result: [],
 
-  // Actions
   fetchBooking: async (query) => {
     set({ isFetching: true });
     try {

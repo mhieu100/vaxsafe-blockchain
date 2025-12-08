@@ -10,20 +10,20 @@ import java.time.LocalDate;
 @Data
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class CompleteAppointmentRequest {
-    // Vaccine Info
+
     String lotNumber;
     LocalDate expiryDate;
     VaccinationSite site;
     String notes;
 
-    // Vitals
-    Double height; // cm
-    Double weight; // kg
-    Double temperature; // Celsius
-    Integer pulse; // bpm
-    Integer systolic; // mmHg
-    Integer diastolic; // mmHg
 
-    // Adverse reactions (if immediately observed)
+    Double height;
+    Double weight;
+    Double temperature;
+    Integer pulse;
+    Integer systolic;
+    Integer diastolic;
+
+
     String adverseReactions;
 }

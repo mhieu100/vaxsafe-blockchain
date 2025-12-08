@@ -37,9 +37,7 @@ public class VnpayService {
     @Value("${vnpay.order-type}")
     private String orderType;
 
-    /**
-     * Create VNPay payment URL
-     */
+    
     public String createPaymentUrl(long amount, Long referenceId, Long paymentId, TypeTransactionEnum type, String ipAddress, String userAgent) throws UnsupportedEncodingException {
         String customReturnUrl = returnUrl;
 
@@ -49,7 +47,7 @@ public class VnpayService {
         String encodedType = URLEncoder.encode(type.toString(), StandardCharsets.UTF_8);
         String encodedReferenceId = URLEncoder.encode(referenceId.toString(), StandardCharsets.UTF_8);
         
-        // Detect platform from User-Agent
+
         String platform = detectPlatform(userAgent);
         String encodedPlatform = URLEncoder.encode(platform, StandardCharsets.UTF_8);
 
@@ -58,12 +56,12 @@ public class VnpayService {
         customReturnUrl += "&referenceId=" + encodedReferenceId;
         customReturnUrl += "&platform=" + encodedPlatform;
 
-        // VNPay parameters
+
         Map<String, String> vnpParams = new HashMap<>();
         vnpParams.put("vnp_Version", version);
         vnpParams.put("vnp_Command", command);
         vnpParams.put("vnp_TmnCode", tmnCode);
-        vnpParams.put("vnp_Amount", String.valueOf(amount * 100)); // Amount in VND (multiply by 100)
+        vnpParams.put("vnp_Amount", String.valueOf(amount * 100));
         vnpParams.put("vnp_CurrCode", "VND");
         vnpParams.put("vnp_TxnRef", String.valueOf(System.currentTimeMillis()));
         vnpParams.put("vnp_OrderInfo", String.valueOf(referenceId));
@@ -73,11 +71,11 @@ public class VnpayService {
         vnpParams.put("vnp_IpAddr", ipAddress);
         vnpParams.put("vnp_CreateDate", new SimpleDateFormat("yyyyMMddHHmmss").format(new Date()));
 
-        // Sort parameters alphabetically
+
         List<String> fieldNames = new ArrayList<>(vnpParams.keySet());
         Collections.sort(fieldNames);
 
-        // Build hash data
+
         StringBuilder hashData = new StringBuilder();
         StringBuilder query = new StringBuilder();
         for (String fieldName : fieldNames) {
@@ -92,23 +90,21 @@ public class VnpayService {
             }
         }
 
-        // Generate secure hash
+
         String vnpSecureHash = CryptoUtils.hmacSHA512(hashSecret, hashData.toString());
         query.append("&vnp_SecureHashType=SHA256&vnp_SecureHash=").append(vnpSecureHash);
 
         return vnpayUrl + "?" + query.toString();
     }
     
-    /**
-     * Detect platform from User-Agent header
-     */
+    
     private String detectPlatform(String userAgent) {
         if (userAgent == null) {
             return "web";
         }
         userAgent = userAgent.toLowerCase();
         
-        // Check for mobile app indicators
+
         if (userAgent.contains("android") || userAgent.contains("okhttp") || userAgent.contains("retrofit")) {
             return "mobile";
         }

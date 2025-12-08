@@ -139,11 +139,10 @@ const PermissionPage = () => {
   const buildQuery = (params, sort) => {
     const clone = { ...params };
     const q = {
-      page: clone.current, // Backend configured for one-indexed pages
+      page: clone.current,
       size: clone.pageSize,
     };
 
-    // Build filter
     const filters = [];
     if (clone.apiPath) {
       filters.push(sfLike('apiPath', clone.apiPath));
@@ -159,7 +158,6 @@ const PermissionPage = () => {
       q.filter = filters.join(' and ');
     }
 
-    // Build sort
     if (sort?.apiPath) {
       q.sort = `apiPath,${sort.apiPath === 'ascend' ? 'asc' : 'desc'}`;
     }

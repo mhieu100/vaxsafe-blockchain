@@ -25,15 +25,15 @@ public class DoctorWithScheduleResponse {
     Long centerId;
     String centerName;
     
-    // Today's schedule statistics
+
     Integer totalSlotsToday;
     Integer availableSlotsToday;
     Integer bookedSlotsToday;
     Integer blockedSlotsToday;
     
-    // Today's schedule details
+
     List<DoctorAvailableSlotResponse> todaySchedule;
     
-    // Working hours for today
+
     String workingHoursToday;
 }

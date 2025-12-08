@@ -34,7 +34,7 @@ const ProfileTabs = ({ activeTab, onTabChange, editMode, setEditMode }) => {
 
   return (
     <div className="profile-tab-content">
-      {/* Tab Content */}
+      {}
       <div className="animate-fade-in">{currentTab.content}</div>
     </div>
   );

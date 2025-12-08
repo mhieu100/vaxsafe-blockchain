@@ -10,7 +10,7 @@ import java.time.LocalTime;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class ProcessAppointmentRequest {
     Long appointmentId;
-    Long doctorId; // This is actually doctorId from Doctor entity, not userId
-    Long slotId; // ID of the selected DoctorAvailableSlot
-    LocalTime actualScheduledTime; // The actual scheduled time
+    Long doctorId;
+    Long slotId;
+    LocalTime actualScheduledTime;
 }

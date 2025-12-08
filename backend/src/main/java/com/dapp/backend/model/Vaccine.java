@@ -44,5 +44,5 @@ public class Vaccine extends BaseEntity {
     int dosesRequired;
     int duration;
     
-    Integer daysForNextDose; // Days interval to next dose
+    Integer daysForNextDose;
 }

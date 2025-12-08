@@ -7,7 +7,7 @@ import ProtectedUserRoute from '@/components/common/guards/protected-user-route'
 import PublicRoute from '@/components/common/guards/public-route';
 import LayoutAdmin from '@/layouts/AdminLayout';
 import LayoutClient from '@/layouts/ClientLayout';
-// Staff pages
+
 import LayoutStaff from '@/layouts/StaffLayout';
 import AiKnowledgePage from '@/pages/admin/ai-knowledge/AiKnowledgePage';
 import CashierPage from '@/pages/admin/cashier';
@@ -177,7 +177,6 @@ const router = createBrowserRouter([
     ],
   },
 
-  // Staff route - only accessible by DOCTOR and CASHIER roles
   {
     path: '/staff',
     element: (

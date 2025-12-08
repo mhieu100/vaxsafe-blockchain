@@ -9,9 +9,7 @@ import lombok.experimental.FieldDefaults;
 
 import java.time.LocalDateTime;
 
-/**
- * Log of all notifications sent to prevent spam and duplicate sends
- */
+
 @Entity
 @Table(name = "notification_logs", indexes = {
     @Index(name = "idx_user_type_sent", columnList = "user_id,reminder_type,sent_at"),
@@ -35,7 +33,7 @@ public class NotificationLog extends BaseEntity {
 
     @ManyToOne
     @JoinColumn(name = "appointment_id")
-    Appointment appointment; // Null nếu là Next Dose Reminder
+    Appointment appointment;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
@@ -52,7 +50,7 @@ public class NotificationLog extends BaseEntity {
     @Column(nullable = false)
     LocalDateTime sentAt;
 
-    String recipient; // Email address, phone number, or Zalo ID
+    String recipient;
 
     @Column(columnDefinition = "TEXT")
     String content;
@@ -60,7 +58,7 @@ public class NotificationLog extends BaseEntity {
     @Column(columnDefinition = "TEXT")
     String errorMessage;
 
-    Integer doseNumber; // For Next Dose Reminder
+    Integer doseNumber;
 
-    Long vaccineId; // For Next Dose Reminder
+    Long vaccineId;
 }

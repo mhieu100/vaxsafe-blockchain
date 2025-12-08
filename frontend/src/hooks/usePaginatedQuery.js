@@ -1,13 +1,6 @@
 import { keepPreviousData, useQuery } from '@tanstack/react-query';
 import apiClient from '../services/apiClient';
 
-/**
- * Custom hook for paginated API queries with React Query
- * @param {string} key - Query key for caching
- * @param {string} url - API endpoint URL
- * @param {string} queryString - Query string parameters
- * @returns {object} React Query result with data, isLoading, error, etc.
- */
 export const usePaginatedQuery = (key, url, queryString) => {
   return useQuery({
     queryKey: [key, queryString],
@@ -21,6 +14,6 @@ export const usePaginatedQuery = (key, url, queryString) => {
       return res.data;
     },
     placeholderData: keepPreviousData,
-    staleTime: 1000 * 60, // 1 minute
+    staleTime: 1000 * 60,
   });
 };

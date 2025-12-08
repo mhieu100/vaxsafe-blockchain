@@ -3,7 +3,6 @@ export const MAX_PRICE = 3000000;
 export const DEFAULT_PAGE = 1;
 export const DEFAULT_PAGE_SIZE = 10;
 
-// Time slot display labels
 export const TIME_SLOT_LABELS = {
   SLOT_07_00: '7:00 - 9:00',
   SLOT_09_00: '9:00 - 11:00',
@@ -12,7 +11,6 @@ export const TIME_SLOT_LABELS = {
   SLOT_15_00: '15:00 - 17:00',
 };
 
-// Get time range from time slot enum (for validation)
 export const getTimeSlotRange = (timeSlot) => {
   const ranges = {
     SLOT_07_00: ['07:00', '08:59'],
@@ -24,7 +22,6 @@ export const getTimeSlotRange = (timeSlot) => {
   return ranges[timeSlot] || ['00:00', '23:59'];
 };
 
-// Format time slot for display
 export const formatTimeSlot = (timeSlot) => {
   return TIME_SLOT_LABELS[timeSlot] || timeSlot;
 };

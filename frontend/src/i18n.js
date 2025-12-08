@@ -2,7 +2,7 @@ import i18n from 'i18next';
 import { initReactI18next } from 'react-i18next';
 import enAdmin from './locales/en/admin.json';
 import enClient from './locales/en/client.json';
-// Import translation files from src folder
+
 import enCommon from './locales/en/common.json';
 import enStaff from './locales/en/staff.json';
 import viAdmin from './locales/vi/admin.json';
@@ -12,7 +12,6 @@ import viStaff from './locales/vi/staff.json';
 
 const LANGUAGE_KEY = 'lang';
 
-// Initialize i18next
 i18n.use(initReactI18next).init({
   resources: {
     en: {
@@ -33,11 +32,10 @@ i18n.use(initReactI18next).init({
   ns: ['common', 'admin', 'staff', 'client'],
   defaultNS: 'common',
   interpolation: {
-    escapeValue: false, // React already escapes values
+    escapeValue: false,
   },
 });
 
-// Helper function to change language
 export const changeLanguage = (lang) => {
   i18n.changeLanguage(lang);
   if (typeof window !== 'undefined') {

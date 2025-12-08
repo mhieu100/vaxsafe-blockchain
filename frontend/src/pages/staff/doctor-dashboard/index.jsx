@@ -50,7 +50,7 @@ const { Title, Text } = Typography;
 
 const DoctorDashboard = () => {
   const user = useAccountStore((state) => state.user);
-  const [viewMode, setViewMode] = useState('timeline'); // 'timeline' or 'grid'
+  const [viewMode, setViewMode] = useState('timeline');
   const [detailModalOpen, setDetailModalOpen] = useState(false);
   const [selectedAppointment, setSelectedAppointment] = useState(null);
   const [completionModalOpen, setCompletionModalOpen] = useState(false);
@@ -67,7 +67,6 @@ const DoctorDashboard = () => {
       ]);
 
       if (appointmentsRes?.data) {
-        // Sort appointments by time
         const sorted = [...appointmentsRes.data].sort((a, b) => {
           const timeA = a.scheduledTimeSlot || '00:00';
           const timeB = b.scheduledTimeSlot || '00:00';
@@ -91,10 +90,8 @@ const DoctorDashboard = () => {
     return () => clearInterval(interval);
   }, []);
 
-  // Calculate statistics
   const completedCount = todayAppointments.filter((a) => a.status === 'COMPLETED').length;
 
-  // Weekly statistics
   const weeklyStats = {
     completed: {
       value: stats?.weekCompleted || 0,
@@ -184,7 +181,6 @@ const DoctorDashboard = () => {
     setCompletionModalOpen(true);
   };
 
-  // Render Timeline Item
   const renderTimelineItem = (apt) => {
     const appointment = mapAppointment(apt);
     const statusConfig = getStatusConfig(appointment.status);
@@ -259,7 +255,7 @@ const DoctorDashboard = () => {
 
   return (
     <div style={{ padding: '24px', minHeight: '100vh', background: '#f5f7fa' }}>
-      {/* Modern Header */}
+      {}
       <div style={{ marginBottom: 24 }}>
         <Row justify="space-between" align="middle">
           <Col>
@@ -286,7 +282,7 @@ const DoctorDashboard = () => {
         </Row>
       </div>
 
-      {/* Statistics Cards */}
+      {}
       <Row gutter={[16, 16]} style={{ marginBottom: 24 }}>
         <Col xs={24} sm={12} lg={6}>
           <Card hoverable style={{ borderRadius: 12 }}>
@@ -375,7 +371,7 @@ const DoctorDashboard = () => {
       </Row>
 
       <Row gutter={[24, 24]}>
-        {/* Main Schedule Column */}
+        {}
         <Col xs={24} lg={16}>
           <Card
             title={
@@ -490,9 +486,9 @@ const DoctorDashboard = () => {
           </Card>
         </Col>
 
-        {/* Sidebar Column */}
+        {}
         <Col xs={24} lg={8}>
-          {/* Weekly Stats */}
+          {}
           <Card
             title={
               <Space>
@@ -533,7 +529,7 @@ const DoctorDashboard = () => {
             </Space>
           </Card>
 
-          {/* Quick Actions or Notes */}
+          {}
           <Card
             title={
               <Space>
@@ -551,7 +547,7 @@ const DoctorDashboard = () => {
         </Col>
       </Row>
 
-      {/* Detail Modal */}
+      {}
       <CompletionModal
         open={completionModalOpen}
         onCancel={() => setCompletionModalOpen(false)}

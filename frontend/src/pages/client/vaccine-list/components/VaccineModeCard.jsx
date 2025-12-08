@@ -13,12 +13,6 @@ import { getImageProps } from '@/utils/imageUtils';
 
 const { Title, Text } = Typography;
 
-/**
- * VaccineModeCard component displays a vaccine in horizontal card format for list view
- * @param {Object} props - Component props
- * @param {Object} props.vaccine - Vaccine data object
- * @returns {JSX.Element}
- */
 const VaccineModeCard = ({ vaccine }) => {
   const { t } = useTranslation();
   const navigate = useNavigate();

@@ -2,7 +2,6 @@ import { create } from 'zustand';
 import { callFetchRole } from '../services/role.service';
 
 const useRoleStore = create((set) => ({
-  // State
   isFetching: true,
   meta: {
     page: 1,
@@ -12,7 +11,6 @@ const useRoleStore = create((set) => ({
   },
   result: [],
 
-  // Actions
   fetchRole: async (query) => {
     set({ isFetching: true });
     try {
