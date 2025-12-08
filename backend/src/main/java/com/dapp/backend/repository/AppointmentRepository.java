@@ -60,4 +60,12 @@ public interface AppointmentRepository extends JpaRepository<Appointment, Long>,
                         "AND a.status != 'CANCELLED' " +
                         "GROUP BY a.scheduledTimeSlot")
         List<Object[]> countAppointmentsBySlot(@Param("centerId") Long centerId, @Param("date") LocalDate date);
+
+        @Query("SELECT MAX(a.doseNumber) FROM Appointment a WHERE a.booking.patient.id = :patientId AND a.booking.vaccine.id = :vaccineId AND "
+                        +
+                        "((:familyMemberId IS NULL AND a.booking.familyMember IS NULL) OR (:familyMemberId IS NOT NULL AND a.booking.familyMember.id = :familyMemberId)) "
+                        +
+                        "AND a.status != 'CANCELLED'")
+        Integer findMaxDose(@Param("patientId") Long patientId, @Param("vaccineId") Long vaccineId,
+                        @Param("familyMemberId") Long familyMemberId);
 }

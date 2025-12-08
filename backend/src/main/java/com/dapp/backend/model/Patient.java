@@ -36,8 +36,4 @@ public class Patient extends BaseEntity {
     @EqualsAndHashCode.Exclude
     private User user;
 
-    @OneToMany(mappedBy = "patient", cascade = CascadeType.ALL, orphanRemoval = true)
-    @EqualsAndHashCode.Exclude
-    private java.util.List<Observation> observations;
-
 }

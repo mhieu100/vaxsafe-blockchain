@@ -65,8 +65,8 @@ export const callCancelAppointment = (appointmentId) => {
   return apiClient.put(`/api/appointments/${appointmentId}/cancel`);
 };
 
-export const callCompleteAppointment = (appointmentId) => {
-  return apiClient.put(`/api/appointments/${appointmentId}/complete`);
+export const callCompleteAppointment = (appointmentId, data) => {
+  return apiClient.put(`/api/appointments/${appointmentId}/complete`, data);
 };
 
 export const callFetchAppointment = () => {

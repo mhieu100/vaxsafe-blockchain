@@ -87,34 +87,30 @@ public class BookingService {
         booking.setVaccine(vaccine);
         booking.setTotalAmount(bookingRequest.getAmount());
         booking.setStatus(BookingEnum.PENDING_PAYMENT);
-        booking.setTotalDoses(vaccine.getDosesRequired()); // Use vaccine's required doses
+        // Calculate dose number
+        Integer maxDose = appointmentRepository.findMaxDose(user.getId(), vaccine.getId(),
+                bookingRequest.getFamilyMemberId());
+        int currentDose = (maxDose == null) ? 1 : maxDose + 1;
 
-        // Create all appointment records based on vaccine's dosesRequired
+        // Optional: specific check if fully vaccinated
+        // if (currentDose > vaccine.getDosesRequired()) { ... }
+
+        booking.setTotalDoses(1); // This booking covers 1 dose
+
+        // Create single appointment
         List<Appointment> appointments = new ArrayList<>();
+        Appointment appointment = new Appointment();
+        appointment.setBooking(booking);
+        appointment.setDoseNumber(currentDose);
 
-        for (int i = 1; i <= vaccine.getDosesRequired(); i++) {
-            Appointment appointment = new Appointment();
-            appointment.setBooking(booking);
-            appointment.setDoseNumber(i);
-
-            // Only first appointment has date/time/center
-            if (i == 1) {
-                appointment.setScheduledDate(bookingRequest.getAppointmentDate());
-                if (bookingRequest.getAppointmentTime() != null) {
-                    appointment.setScheduledTimeSlot(TimeSlotEnum.fromTime(bookingRequest.getAppointmentTime()));
-                }
-                appointment.setCenter(center);
-                appointment.setStatus(AppointmentStatus.PENDING);
-            } else {
-                // Subsequent appointments: leave date/time/center null
-                appointment.setScheduledDate(null);
-                appointment.setScheduledTimeSlot(null);
-                appointment.setCenter(null);
-                appointment.setStatus(AppointmentStatus.PENDING);
-            }
-
-            appointments.add(appointment);
+        appointment.setScheduledDate(bookingRequest.getAppointmentDate());
+        if (bookingRequest.getAppointmentTime() != null) {
+            appointment.setScheduledTimeSlot(TimeSlotEnum.fromTime(bookingRequest.getAppointmentTime()));
         }
+        appointment.setCenter(center);
+        appointment.setStatus(AppointmentStatus.PENDING);
+
+        appointments.add(appointment);
 
         booking.setAppointments(appointments);
         bookingRepository.save(booking);
@@ -308,40 +304,35 @@ public class BookingService {
         booking.setVaccine(vaccine);
         booking.setTotalAmount((double) vaccine.getPrice());
         booking.setStatus(BookingEnum.CONFIRMED); // Walk-in is confirmed immediately
-        booking.setTotalDoses(vaccine.getDosesRequired());
+        // Calculate dose number
+        Integer maxDose = appointmentRepository.findMaxDose(patient.getId(), vaccine.getId(),
+                request.getFamilyMemberId());
+        int currentDose = (maxDose == null) ? 1 : maxDose + 1;
+
+        booking.setTotalDoses(1);
 
         // Create appointments
         List<Appointment> appointments = new ArrayList<>();
 
-        for (int i = 1; i <= vaccine.getDosesRequired(); i++) {
-            Appointment appointment = new Appointment();
-            appointment.setBooking(booking);
-            appointment.setDoseNumber(i);
+        Appointment appointment = new Appointment();
+        appointment.setBooking(booking);
+        appointment.setDoseNumber(currentDose);
 
-            if (i == 1) {
-                // First dose - assign immediately
-                appointment.setScheduledDate(request.getAppointmentDate());
-                appointment.setScheduledTimeSlot(TimeSlotEnum.fromTime(request.getAppointmentTime()));
-                appointment.setActualScheduledTime(request.getActualScheduledTime());
-                appointment.setCenter(center);
-                appointment.setDoctor(doctor.getUser()); // Use User entity here
-                appointment.setCashier(cashier); // Set cashier who created the walk-in booking
-                appointment.setSlot(slot);
-                appointment.setStatus(AppointmentStatus.SCHEDULED); // Skip PENDING
+        // First dose - assign immediately
+        appointment.setScheduledDate(request.getAppointmentDate());
+        appointment.setScheduledTimeSlot(TimeSlotEnum.fromTime(request.getAppointmentTime()));
+        appointment.setActualScheduledTime(request.getActualScheduledTime());
+        appointment.setCenter(center);
+        appointment.setDoctor(doctor.getUser()); // Use User entity here
+        appointment.setCashier(cashier); // Set cashier who created the walk-in booking
+        appointment.setSlot(slot);
+        appointment.setStatus(AppointmentStatus.SCHEDULED); // Skip PENDING
 
-                // Mark slot as booked
-                slot.setStatus(SlotStatus.BOOKED);
-                slotRepository.save(slot);
-            } else {
-                // Subsequent doses - leave unscheduled
-                appointment.setScheduledDate(null);
-                appointment.setScheduledTimeSlot(null);
-                appointment.setCenter(null);
-                appointment.setStatus(AppointmentStatus.PENDING);
-            }
+        // Mark slot as booked
+        slot.setStatus(SlotStatus.BOOKED);
+        slotRepository.save(slot);
 
-            appointments.add(appointment);
-        }
+        appointments.add(appointment);
 
         booking.setAppointments(appointments);
         Booking savedBooking = bookingRepository.save(booking);

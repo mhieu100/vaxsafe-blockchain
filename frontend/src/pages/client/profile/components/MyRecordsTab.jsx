@@ -1,12 +1,24 @@
 import { Tabs } from 'antd';
 import { useTranslation } from 'react-i18next';
+import EditProfileTab from './EditProfileTab';
 import VaccinationHistoryTab from './VaccinationHistoryTab';
+import VaccinationProgressTab from './VaccinationProgressTab';
 import VaccinePassportTab from './VaccinePassportTab';
 import VaccineRecordTab from './VaccineRecordTab';
 
-const MyRecordsTab = () => {
+const MyRecordsTab = ({ editMode, setEditMode }) => {
   const { t } = useTranslation(['client']);
   const items = [
+    {
+      key: 'info',
+      label: t('client:settings.profileInfo'), // Reuse existing translation key or add new one
+      children: <EditProfileTab editMode={editMode} setEditMode={setEditMode} />,
+    },
+    {
+      key: 'progress',
+      label: 'Tiến độ', // Add translation key later
+      children: <VaccinationProgressTab />,
+    },
     {
       key: 'history',
       label: t('client:myRecords.vaccinationHistory'),
@@ -26,7 +38,7 @@ const MyRecordsTab = () => {
 
   return (
     <div className="bg-white p-6 rounded-3xl shadow-sm border border-slate-100">
-      <Tabs defaultActiveKey="history" items={items} type="card" />
+      <Tabs defaultActiveKey="info" items={items} type="card" />
     </div>
   );
 };

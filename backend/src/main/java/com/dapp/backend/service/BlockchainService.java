@@ -173,7 +173,6 @@ public class BlockchainService {
                     .vaccineName(record.getVaccine().getName())
                     .doseNumber(record.getDoseNumber())
                     .vaccinationDate(record.getVaccinationDate().toString())
-                    .lotNumber(record.getLotNumber() != null ? record.getLotNumber() : "")
                     .expiryDate(record.getExpiryDate() != null
                             ? record.getExpiryDate().toString()
                             : "")

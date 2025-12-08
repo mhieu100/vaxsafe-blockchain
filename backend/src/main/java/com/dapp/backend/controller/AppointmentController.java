@@ -52,9 +52,12 @@ public class AppointmentController {
 
     @PutMapping("/{id}/complete")
     @ApiMessage("Complete a appointment")
-    public ResponseEntity<String> completeAppointment(HttpServletRequest request, @PathVariable long id)
+    public ResponseEntity<String> completeAppointment(
+            HttpServletRequest request,
+            @PathVariable long id,
+            @RequestBody @Valid com.dapp.backend.dto.request.CompleteAppointmentRequest completeRequest)
             throws Exception {
-        return ResponseEntity.ok().body(appointmentService.complete(request, id));
+        return ResponseEntity.ok().body(appointmentService.complete(request, id, completeRequest));
     }
 
     @PutMapping("/reschedule")

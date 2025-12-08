@@ -21,9 +21,8 @@ import {
   Steps,
   Typography,
 } from 'antd';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { callCompleteAppointment } from '@/services/appointment.service';
-import { createObservationForPatient } from '@/services/observation.service';
 
 const { Title, Text } = Typography;
 const { Step } = Steps;
@@ -35,61 +34,31 @@ const CompletionModal = ({ open, onCancel, appointment, onSuccess }) => {
   const [loading, setLoading] = useState(false);
   const [form] = Form.useForm();
 
-  // Helper to submit a single observation
-  const submitObservation = async (type, value, unit, note) => {
-    if (!value) return;
-
-    // Ensure we have a valid patient ID
-    if (!appointment?.patientId) {
-      console.error('Missing patient ID for observation', appointment);
-      return;
+  useEffect(() => {
+    if (open) {
+      setCurrentStep(0);
+      form.resetFields();
     }
-
-    try {
-      await createObservationForPatient(appointment.patientId, {
-        type,
-        value: value.toString(),
-        unit,
-        note,
-        appointmentId: appointment.id,
-      });
-    } catch (error) {
-      console.error(`Failed to save ${type}:`, error);
-      // Don't throw here to allow other observations to proceed,
-      // but we might want to track failures
-    }
-  };
+  }, [open, form]);
 
   const handleFinish = async () => {
     try {
       setLoading(true);
-      const values = await form.validateFields();
+      const values = form.getFieldsValue(true);
 
-      // 1. Submit VITALS (Parallel)
-      const observationPromises = [
-        submitObservation('BODY_WEIGHT', values.weight, 'kg', 'Ghi nhận tại thời điểm tiêm'),
-        submitObservation('BODY_HEIGHT', values.height, 'cm', 'Ghi nhận tại thời điểm tiêm'),
-        submitObservation('BODY_TEMPERATURE', values.temperature, '°C', values.temperatureNote),
-        submitObservation('BLOOD_PRESSURE', values.bloodPressure, 'mmHg', ''),
-        submitObservation('HEART_RATE', values.heartRate, 'bpm', ''),
-      ];
+      const payload = {
+        height: values.height,
+        weight: values.weight,
+        temperature: values.temperature,
+        pulse: values.heartRate,
 
-      // 2. Submit REACTION if any
-      if (values.reaction) {
-        observationPromises.push(
-          submitObservation(
-            'REMOVE_REACTION',
-            values.reactionType || 'Phản ứng khác',
-            '',
-            values.reaction
-          )
-        );
-      }
+        site: values.site || 'LEFT_ARM',
+        notes: values.temperatureNote,
 
-      await Promise.all(observationPromises);
+        adverseReactions: values.reaction ? `${values.reactionType}: ${values.reaction}` : null,
+      };
 
-      // 3. Mark appointment as COMPLETED
-      await callCompleteAppointment(appointment.id);
+      await callCompleteAppointment(appointment.id, payload);
 
       message.success('Đã hoàn thành tiêm chủng và ghi nhận chỉ số!');
       onSuccess();
@@ -159,10 +128,30 @@ const CompletionModal = ({ open, onCancel, appointment, onSuccess }) => {
       ),
     },
     {
-      title: 'Phản ứng & Ghi chú',
+      title: 'Thông tin & Phản ứng',
       icon: <ExperimentOutlined />,
       content: (
         <>
+          <Row gutter={16}>
+            <Col span={12}>
+              <Form.Item name="heartRate" label="Nhịp tim (bpm)">
+                <InputNumber style={{ width: '100%' }} placeholder="VD: 80" />
+              </Form.Item>
+            </Col>
+            <Col span={12}>
+              <Form.Item name="site" label="Vị trí tiêm" initialValue="LEFT_ARM">
+                <Select>
+                  <Option value="LEFT_ARM">Bắp tay trái</Option>
+                  <Option value="RIGHT_ARM">Bắp tay phải</Option>
+                  <Option value="LEFT_THIGH">Đùi trái</Option>
+                  <Option value="RIGHT_THIGH">Đùi phải</Option>
+                </Select>
+              </Form.Item>
+            </Col>
+          </Row>
+
+          <Divider orientation="left">Theo dõi sau tiêm</Divider>
+
           <Form.Item name="reactionType" label="Loại phản ứng (nếu có)">
             <Select placeholder="Chọn loại phản ứng">
               <Option value="Không có">Không có</Option>

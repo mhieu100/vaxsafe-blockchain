@@ -37,10 +37,7 @@ public class VaccineRecordService {
     @Transactional
     public VaccineRecord createFromAppointment(
             Appointment appointment,
-            String lotNumber,
-            LocalDate expiryDate,
-            VaccinationSite site,
-            String notes) throws AppException {
+            com.dapp.backend.dto.request.CompleteAppointmentRequest request) throws AppException {
 
         // Check if record already exists
         if (vaccineRecordRepository.findByAppointmentId(appointment.getId()).isPresent()) {
@@ -80,15 +77,19 @@ public class VaccineRecordService {
                 .patientIdentityHash(identityHash)
                 .vaccine(booking.getVaccine())
                 .doseNumber(appointment.getDoseNumber())
-                .lotNumber(lotNumber)
-                .expiryDate(expiryDate)
+                .expiryDate(request.getExpiryDate())
                 .manufacturer(booking.getVaccine().getManufacturer())
                 .vaccinationDate(appointment.getVaccinationDate())
-                .site(site)
+                .site(request.getSite())
                 .doctor(appointment.getDoctor())
                 .center(appointment.getCenter())
                 .appointment(appointment)
-                .notes(notes)
+                .notes(request.getNotes())
+                .height(request.getHeight())
+                .weight(request.getWeight())
+                .temperature(request.getTemperature())
+                .pulse(request.getPulse())
+                .adverseReactions(request.getAdverseReactions())
                 .isVerified(false)
                 .nextDoseDate(nextDoseDate)
                 .nextDoseNumber(appointment.getDoseNumber() + 1)
@@ -100,68 +101,61 @@ public class VaccineRecordService {
 
         // =================================================================================
         // BLOCKCHAIN + FHIR + IPFS INTEGRATION (The "Killer Feature")
-        // Step 1: Create blockchain record first (without IPFS hash)
-        // Step 2: Upload FHIR to IPFS after blockchain success
-        // Step 3: Update both DB and blockchain with IPFS hash
+        // Optimized: Upload to IPFS first, then create single transaction on blockchain
         // =================================================================================
-        
-        // Step 1: Push to blockchain first (without IPFS hash)
+
+        String ipfsHash = null;
+
+        // Step 1: Upload to IPFS
         try {
             if (blockchainService.isBlockchainServiceAvailable()) {
+                // 1. Convert to FHIR Standard
+                org.hl7.fhir.r4.model.Immunization fhirImmunization = fhirImmunizationMapper.toFhirImmunization(saved);
+
+                // 2. Serialize to JSON
+                String fhirJson = fhirContext.newJsonParser().setPrettyPrint(true)
+                        .encodeResourceToString(fhirImmunization);
+
+                // 3. Upload to IPFS
+                ipfsHash = blockchainService.uploadToIpfs(fhirJson);
+
+                if (ipfsHash != null) {
+                    saved.setIpfsHash(ipfsHash);
+                    saved = vaccineRecordRepository.save(saved);
+                    log.info("✅ FHIR Immunization JSON uploaded to IPFS. Hash: {}", ipfsHash);
+                } else {
+                    log.warn("⚠️ Failed to upload FHIR JSON to IPFS (Hash is null)");
+                }
+            } else {
+                log.warn("⚠️ Blockchain service unavailable, skipping IPFS and Blockchain sync");
+            }
+        } catch (Exception e) {
+            log.error("⚠️ Failed to generate FHIR JSON or upload to IPFS", e);
+            // Continue - we will still try to create the blockchain record (without IPFS
+            // hash if failed)
+        }
+
+        // Step 2: Push to blockchain (Single Transaction)
+        try {
+            if (blockchainService.isBlockchainServiceAvailable()) {
+                // createVaccineRecord will now include the ipfsHash if it was set in 'saved'
                 var blockchainResponse = blockchainService.createVaccineRecord(saved);
+
                 if (blockchainResponse != null && blockchainResponse.isSuccess()) {
                     saved.setBlockchainRecordId(blockchainResponse.getData().getRecordId());
                     saved.setTransactionHash(blockchainResponse.getData().getTransactionHash());
                     saved.setBlockNumber(blockchainResponse.getData().getBlockNumber());
                     vaccineRecordRepository.save(saved);
+
                     log.info("✅ Vaccine record synced to blockchain: recordId={}, txHash={}",
                             blockchainResponse.getData().getRecordId(),
                             blockchainResponse.getData().getTransactionHash());
-                    
-                    // Step 2: Now upload to IPFS (only after blockchain success)
-                    try {
-                        // 1. Convert to FHIR Standard
-                        org.hl7.fhir.r4.model.Immunization fhirImmunization = fhirImmunizationMapper.toFhirImmunization(saved);
-
-                        // 2. Serialize to JSON
-                        String fhirJson = fhirContext.newJsonParser().setPrettyPrint(true).encodeResourceToString(fhirImmunization);
-
-                        // 3. Upload to IPFS
-                        String ipfsHash = blockchainService.uploadToIpfs(fhirJson);
-
-                        if (ipfsHash != null) {
-                            // Step 3: Update both DB and blockchain with IPFS hash
-                            saved.setIpfsHash(ipfsHash);
-                            saved = vaccineRecordRepository.save(saved);
-                            log.info("✅ FHIR Immunization JSON uploaded to IPFS. Hash: {}", ipfsHash);
-                            
-                            // Update blockchain record with IPFS hash
-                            try {
-                                blockchainService.updateVaccineRecordIpfs(
-                                    blockchainResponse.getData().getRecordId(), 
-                                    ipfsHash
-                                );
-                                log.info("✅ Blockchain record updated with IPFS hash");
-                            } catch (Exception e) {
-                                log.warn("⚠️ Failed to update blockchain with IPFS hash (DB still updated): {}", e.getMessage());
-                            }
-                        } else {
-                            log.warn("⚠️ Failed to upload FHIR JSON to IPFS (Hash is null)");
-                        }
-
-                    } catch (Exception e) {
-                        log.error("⚠️ Failed to generate FHIR JSON or upload to IPFS", e);
-                        // Continue - blockchain record already created successfully
-                    }
                 } else {
-                    log.warn("⚠️ Blockchain record creation failed, skipping IPFS upload");
+                    log.warn("⚠️ Blockchain record creation failed");
                 }
-            } else {
-                log.warn("⚠️ Blockchain service not available, record saved to database only");
             }
         } catch (Exception e) {
             log.error("❌ Failed to sync vaccine record to blockchain", e);
-            // Record is still saved in database but not on blockchain
         }
 
         return saved;
@@ -331,8 +325,8 @@ public class VaccineRecordService {
                 .patientIdentityHash(record.getPatientIdentityHash())
                 .vaccineId(record.getVaccine() != null ? record.getVaccine().getId() : null)
                 .vaccineName(record.getVaccine() != null ? record.getVaccine().getName() : "Unknown")
+                .vaccineSlug(record.getVaccine() != null ? record.getVaccine().getSlug() : null)
                 .doseNumber(record.getDoseNumber())
-                .lotNumber(record.getLotNumber())
                 .expiryDate(record.getExpiryDate())
                 .manufacturer(record.getManufacturer())
                 .vaccinationDate(record.getVaccinationDate())
@@ -345,6 +339,10 @@ public class VaccineRecordService {
                 .notes(record.getNotes())
                 .adverseReactions(record.getAdverseReactions())
                 .followUpDate(record.getFollowUpDate())
+                .height(record.getHeight())
+                .weight(record.getWeight())
+                .temperature(record.getTemperature())
+                .pulse(record.getPulse())
                 .blockchainRecordId(record.getBlockchainRecordId())
                 .transactionHash(record.getTransactionHash())
                 .blockNumber(record.getBlockNumber())

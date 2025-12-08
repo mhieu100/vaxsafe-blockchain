@@ -12,7 +12,6 @@ import {
 } from '@ant-design/icons';
 import {
   Alert,
-  Avatar,
   Badge,
   Button,
   Card,
@@ -278,14 +277,17 @@ const StaffDashboard = () => {
         <Col xs={24} lg={16}>
           <Card
             title={
-              <Space>
-                <Badge count={urgentAppointments.length} offset={[10, 0]}>
-                  <ThunderboltOutlined style={{ fontSize: 20, color: '#faad14' }} />
-                </Badge>
-                <Text strong style={{ fontSize: 16 }}>
+              <div style={{ display: 'flex', alignItems: 'center' }}>
+                <ThunderboltOutlined style={{ fontSize: 24, color: '#faad14' }} />
+                <Text strong style={{ fontSize: 18 }}>
                   Danh Sách Cần Xử Lý
                 </Text>
-              </Space>
+                <Text
+                  style={{ textAlign: 'center', marginLeft: 8, fontSize: 12, color: '#faad14' }}
+                >
+                  ({urgentAppointments.length} trường hợp)
+                </Text>
+              </div>
             }
             extra={
               <Button type="link" onClick={() => navigate('/staff/pending-appointments')}>
@@ -322,84 +324,159 @@ const StaffDashboard = () => {
                   <Card
                     hoverable
                     style={{
-                      marginBottom: 16,
+                      marginBottom: 12, // Reduced margin
                       borderLeft: `4px solid ${getUrgencyColor(item.priorityLevel)}`,
-                      background: item.priorityLevel <= 2 ? '#fffcf0' : '#fff',
+                      borderRadius: 8,
+                      boxShadow: '0 1px 4px rgba(0,0,0,0.05)',
                     }}
+                    bodyStyle={{ padding: '12px 16px' }} // Compact padding
                     actions={[
                       <Button
                         key="process"
                         type="primary"
-                        icon={<CalendarOutlined />}
+                        size="small" // Small button
+                        icon={<ThunderboltOutlined />}
+                        style={{ minWidth: 100, borderRadius: 4 }}
                         onClick={() => handleAssignAppointment(item)}
                       >
-                        Xử Lý Ngay
+                        Xử Lý
                       </Button>,
-                      <Button key="view" onClick={() => navigate(`/staff/appointments/${item.id}`)}>
-                        Xem Chi Tiết
+                      <Button
+                        key="view"
+                        size="small" // Small button
+                        style={{ minWidth: 100, borderRadius: 4 }}
+                        onClick={() => navigate(`/staff/appointments/${item.id}`)}
+                      >
+                        Chi Tiết
                       </Button>,
                     ]}
                   >
-                    <List.Item.Meta
-                      avatar={
+                    <div style={{ display: 'flex', alignItems: 'flex-start' }}>
+                      {/* Compact Icon Block */}
+                      <div style={{ marginRight: 12, marginTop: 2 }}>
                         <Badge
                           count={item.priorityLevel}
-                          style={{ backgroundColor: getUrgencyColor(item.priorityLevel) }}
+                          offset={[-2, 4]}
+                          style={{ backgroundColor: '#ff4d4f', boxShadow: '0 0 0 1px #fff' }}
                         >
-                          <Avatar
-                            size={54}
-                            icon={getUrgencyIcon(item.urgencyType)}
+                          <div
                             style={{
-                              backgroundColor: '#f0f2f5',
-                              color: getUrgencyColor(item.priorityLevel),
+                              width: 40,
+                              height: 40, // Smaller size
+                              borderRadius: '50%',
+                              background: '#fff1f0',
+                              border: '1px solid #ffccc7',
+                              display: 'flex',
+                              alignItems: 'center',
+                              justifyContent: 'center',
                             }}
-                          />
+                          >
+                            {getUrgencyIcon(item.urgencyType)}
+                          </div>
                         </Badge>
-                      }
-                      title={
-                        <Row justify="space-between">
-                          <Space>
-                            <Text strong style={{ fontSize: 16 }}>
-                              #{item.id} - {item.patientName}
+                      </div>
+
+                      {/* Content Block */}
+                      <div style={{ flex: 1, minWidth: 0 }}>
+                        {/* Line 1: Header & Date */}
+                        <div
+                          style={{
+                            display: 'flex',
+                            justifyContent: 'space-between',
+                            alignItems: 'center',
+                            marginBottom: 4,
+                          }}
+                        >
+                          <Space size={6} wrap style={{ flex: 1, minWidth: 0 }}>
+                            <Text
+                              strong
+                              style={{
+                                fontSize: 15,
+                                color: '#262626',
+                                whiteSpace: 'nowrap',
+                                overflow: 'hidden',
+                                textOverflow: 'ellipsis',
+                              }}
+                            >
+                              #{item.id} – {item.patientName}
                             </Text>
-                            <Tag color={getUrgencyColor(item.priorityLevel)}>
+                            <Tag
+                              color={getUrgencyColor(item.priorityLevel)}
+                              style={{ margin: 0, padding: '0 4px', fontSize: 10, fontWeight: 700 }}
+                            >
                               {getPriorityText(item.priorityLevel)}
                             </Tag>
                             {item.urgencyType === 'RESCHEDULE_PENDING' && (
-                              <Tag color="purple">ĐỔI LỊCH</Tag>
+                              <Tag
+                                color="purple"
+                                style={{ margin: 0, padding: '0 4px', fontSize: 10 }}
+                              >
+                                ĐỔI LỊCH
+                              </Tag>
                             )}
                           </Space>
-                          <Text type="secondary" style={{ fontSize: 12 }}>
+                          <Text
+                            type="secondary"
+                            style={{ fontSize: 12, marginLeft: 8, whiteSpace: 'nowrap' }}
+                          >
                             {dayjs(item.scheduledDate).format('DD/MM/YYYY')}
                           </Text>
-                        </Row>
-                      }
-                      description={
-                        <Space direction="vertical" style={{ width: '100%', marginTop: 8 }}>
-                          <Space wrap>
-                            <Tag icon={<PhoneOutlined />}>{item.patientPhone}</Tag>
-                            <Tag color="blue">{item.vaccineName}</Tag>
-                            <Tag>Mũi {item.doseNumber}</Tag>
-                          </Space>
+                        </div>
 
-                          <Alert
-                            message={item.urgencyMessage}
-                            type={item.priorityLevel === 1 ? 'error' : 'warning'}
-                            showIcon
-                            style={{ marginTop: 8 }}
-                          />
+                        {/* Line 2: Tags & Alert mixed inline */}
+                        <div
+                          style={{
+                            display: 'flex',
+                            flexWrap: 'wrap',
+                            alignItems: 'center',
+                            gap: 6,
+                            marginBottom: 4,
+                          }}
+                        >
+                          <Tag
+                            style={{
+                              margin: 0,
+                              padding: '0 6px',
+                              fontSize: 11,
+                              border: 'none',
+                              background: '#f0f0f0',
+                            }}
+                          >
+                            <PhoneOutlined /> {item.patientPhone}
+                          </Tag>
+                          <Tag color="blue" style={{ margin: 0, padding: '0 6px', fontSize: 11 }}>
+                            {item.vaccineName}
+                          </Tag>
+                          <Tag style={{ margin: 0, padding: '0 6px', fontSize: 11 }}>
+                            Mũi {item.doseNumber || 1}
+                          </Tag>
 
-                          {item.desiredDate && (
-                            <div style={{ marginTop: 8 }}>
-                              <Text strong type="danger">
-                                <ClockCircleOutlined /> Mong muốn đổi sang:{' '}
-                                {dayjs(item.desiredDate).format('DD/MM/YYYY')} {item.desiredTime}
-                              </Text>
-                            </div>
-                          )}
-                        </Space>
-                      }
-                    />
+                          {/* Inline Alert Message */}
+                          <div
+                            style={{
+                              display: 'flex',
+                              alignItems: 'center',
+                              color: '#ff4d4f',
+                              fontSize: 12,
+                            }}
+                          >
+                            <ExclamationCircleOutlined style={{ marginRight: 4 }} />
+                            <Text type="danger" style={{ fontSize: 12 }} ellipsis>
+                              {item.urgencyMessage || 'Cần xử lý'}
+                            </Text>
+                          </div>
+                        </div>
+
+                        {/* Line 3: Desired Date (Only if exists) */}
+                        {item.desiredDate && (
+                          <div style={{ fontSize: 12, color: '#cf1322', marginTop: 2 }}>
+                            <ClockCircleOutlined style={{ marginRight: 4 }} />
+                            <strong>Đổi sang:</strong>{' '}
+                            {dayjs(item.desiredDate).format('DD/MM/YYYY')} {item.desiredTime}
+                          </div>
+                        )}
+                      </div>
+                    </div>
                   </Card>
                 )}
               />

@@ -303,7 +303,8 @@ public class AppointmentService {
         return response;
     }
 
-    public String complete(HttpServletRequest request, long id) throws AppException {
+    public String complete(HttpServletRequest request, long id,
+            com.dapp.backend.dto.request.CompleteAppointmentRequest completeRequest) throws AppException {
         Appointment appointment = appointmentRepository.findById(id)
                 .orElseThrow(() -> new AppException("Appointment not found " + id));
 
@@ -318,13 +319,7 @@ public class AppointmentService {
 
         // Create vaccine record automatically
         try {
-            vaccineRecordService.createFromAppointment(
-                    appointment,
-                    null, // lotNumber - TODO: add to UI
-                    null, // expiryDate - TODO: add to UI
-                    null, // site - TODO: add to UI
-                    "Vaccination completed successfully" // default notes
-            );
+            vaccineRecordService.createFromAppointment(appointment, completeRequest);
             log.info("Vaccine record created for appointment {}", id);
         } catch (Exception e) {
             log.error("Failed to create vaccine record for appointment {}", id, e);

@@ -14,7 +14,7 @@ const ProfileTabs = ({ activeTab, onTabChange, editMode, setEditMode }) => {
     },
     2: {
       title: t('client:sidebar.myRecords'),
-      content: <MyRecordsTab />,
+      content: <MyRecordsTab editMode={editMode} setEditMode={setEditMode} />,
     },
     3: {
       title: t('client:sidebar.appointments'),
@@ -26,7 +26,7 @@ const ProfileTabs = ({ activeTab, onTabChange, editMode, setEditMode }) => {
     },
     5: {
       title: t('client:sidebar.settings'),
-      content: <SettingsTab editMode={editMode} setEditMode={setEditMode} />,
+      content: <SettingsTab />,
     },
   };
 

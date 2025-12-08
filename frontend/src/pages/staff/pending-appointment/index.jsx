@@ -44,8 +44,7 @@ import {
   PaymentStatus,
 } from '@/constants/enums';
 import { useAppointmentStore } from '@/stores/useAppointmentStore';
-import ApproveRescheduleModal from './components/ApproveRescheduleModal';
-import AssignAppointmentModal from './components/AssignAppointmentModal';
+import ProcessUrgentAppointmentModal from '../dashboard/components/ProcessUrgentAppointmentModal';
 
 const { Title, Text } = Typography;
 const { Option } = Select;
@@ -575,22 +574,21 @@ const PendingAppointmentPage = () => {
         />
       </Card>
 
-      {/* Conditional Modal Rendering */}
-      {selectedAppointment?.status === 'RESCHEDULE' ? (
-        <ApproveRescheduleModal
-          open={openAssignModal}
-          onClose={() => setOpenAssignModal(false)}
-          appointment={selectedAppointment}
-          onSuccess={reloadTable}
-        />
-      ) : (
-        <AssignAppointmentModal
-          open={openAssignModal}
-          onClose={() => setOpenAssignModal(false)}
-          appointment={selectedAppointment}
-          onSuccess={reloadTable}
-        />
-      )}
+      {/* Conditional Modal Rendering - Replaced with ProcessUrgentAppointmentModal */}
+      <ProcessUrgentAppointmentModal
+        open={openAssignModal}
+        onClose={() => setOpenAssignModal(false)}
+        appointment={
+          selectedAppointment
+            ? {
+                ...selectedAppointment,
+                urgencyType:
+                  selectedAppointment.status === 'RESCHEDULE' ? 'RESCHEDULE_PENDING' : 'NO_DOCTOR',
+              }
+            : null
+        }
+        onSuccess={reloadTable}
+      />
     </div>
   );
 };

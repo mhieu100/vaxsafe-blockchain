@@ -34,38 +34,28 @@ public class FhirImmunizationMapper {
         if (record.getVaccine() != null) {
             CodeableConcept vaccineCode = new CodeableConcept();
             vaccineCode.setText(record.getVaccine().getName());
-            // In a real system, you would map this to a standard system like CVX
-            // vaccineCode.addCoding().setSystem("http://hl7.org/fhir/sid/cvx").setCode("...");
+          
             immunization.setVaccineCode(vaccineCode);
         }
 
-        // 4. Patient Reference
         if (record.getUser() != null) {
             immunization.setPatient(new Reference("Patient/" + record.getUser().getId()));
         } else if (record.getFamilyMember() != null) {
-            // Assuming FamilyMember is also mapped to Patient resource with a prefix or
-            // separate ID space
             immunization.setPatient(new Reference("Patient/FM-" + record.getFamilyMember().getId()));
         }
 
-        // 5. Occurrence Date
         if (record.getVaccinationDate() != null) {
             Date date = Date.from(record.getVaccinationDate().atStartOfDay(ZoneId.systemDefault()).toInstant());
             immunization.setOccurrence(new DateTimeType(date));
         }
 
-        // 6. Lot Number
-        if (record.getLotNumber() != null) {
-            immunization.setLotNumber(record.getLotNumber());
-        }
+        
 
-        // 7. Expiration Date
         if (record.getExpiryDate() != null) {
             Date date = Date.from(record.getExpiryDate().atStartOfDay(ZoneId.systemDefault()).toInstant());
             immunization.setExpirationDate(date);
         }
 
-        // 8. Site (Body Site)
         if (record.getSite() != null) {
             CodeableConcept site = new CodeableConcept();
             site.setText(record.getSite().name());
@@ -120,6 +110,28 @@ public class FhirImmunizationMapper {
             ext.setUrl("http://vaxsafe.com/fhir/StructureDefinition/ipfs-hash");
             ext.setValue(new StringType(record.getIpfsHash()));
             immunization.addExtension(ext);
+        }
+
+        // Extension for Vitals
+        if (record.getHeight() != null) {
+            immunization.addExtension(new Extension("http://vaxsafe.com/fhir/StructureDefinition/vital-height",
+                    new DecimalType(record.getHeight())));
+        }
+        if (record.getWeight() != null) {
+            immunization.addExtension(new Extension("http://vaxsafe.com/fhir/StructureDefinition/vital-weight",
+                    new DecimalType(record.getWeight())));
+        }
+        if (record.getTemperature() != null) {
+            immunization.addExtension(new Extension("http://vaxsafe.com/fhir/StructureDefinition/vital-temperature",
+                    new DecimalType(record.getTemperature())));
+        }
+        if (record.getPulse() != null) {
+            immunization.addExtension(new Extension("http://vaxsafe.com/fhir/StructureDefinition/vital-pulse",
+                    new IntegerType(record.getPulse())));
+        }
+        if (record.getAdverseReactions() != null) {
+            immunization.addExtension(new Extension("http://vaxsafe.com/fhir/StructureDefinition/adverse-reactions",
+                    new StringType(record.getAdverseReactions())));
         }
 
         return immunization;

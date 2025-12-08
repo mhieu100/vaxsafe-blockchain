@@ -22,8 +22,10 @@ public class BookingResponse {
     Long familyMemberId;
     String familyMemberName;
     String vaccineName;
+    String vaccineSlug;
     Double totalAmount;
     Integer totalDoses;
+    Integer vaccineTotalDoses;
     BookingEnum bookingStatus;
     LocalDateTime createdAt;
     List<AppointmentResponse> appointments;
