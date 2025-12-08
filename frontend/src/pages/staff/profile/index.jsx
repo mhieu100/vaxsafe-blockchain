@@ -12,8 +12,9 @@ import {
   Typography,
 } from 'antd';
 import { useState } from 'react';
-import { ModalUpdateAvatar, ModalUpdatePassword } from '@/components/modal/profile';
 import { useAccountStore } from '@/stores/useAccountStore';
+import ModalUpdateAvatar from './components/ModalUpdateAvatar';
+import ModalUpdatePassword from './components/ModalUpdatePassword';
 
 const { Title, Text } = Typography;
 

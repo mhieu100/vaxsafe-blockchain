@@ -22,10 +22,10 @@ import {
 import dayjs from 'dayjs';
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { RescheduleAppointmentModal } from '@/components/modal/appointment';
 import { callCancelAppointment } from '@/services/appointment.service';
 import { getMyBookings } from '@/services/booking.service';
 import { formatAppointmentTime } from '@/utils/appointment';
+import RescheduleAppointmentModal from './RescheduleAppointmentModal';
 
 const { Title, Text } = Typography;
 

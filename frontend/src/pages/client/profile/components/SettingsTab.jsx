@@ -2,8 +2,8 @@ import { LockOutlined, UserOutlined } from '@ant-design/icons';
 import { Button, Tabs } from 'antd';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { ModalUpdatePassword } from '@/components/modal/profile';
 import TabEditUser from '@/components/tab/TabEditUser';
+import ModalUpdatePassword from './ModalUpdatePassword';
 
 const SettingsTab = ({ editMode, setEditMode }) => {
   const { t } = useTranslation(['client']);

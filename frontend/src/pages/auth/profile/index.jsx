@@ -13,7 +13,7 @@ import {
 import { Avatar, Badge, Button, Card, Col, Row, Skeleton, Statistic, Typography } from 'antd';
 import { useState } from 'react';
 import TabEditUser from '@/components/tab/tab.edit-user';
-import useAccountStore from '../../stores/useAccountStore';
+import useAccountStore from '@/stores/useAccountStore';
 
 const { Title, Text } = Typography;
 

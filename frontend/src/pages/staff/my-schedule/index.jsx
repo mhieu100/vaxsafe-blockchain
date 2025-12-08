@@ -9,10 +9,10 @@ import {
   getAppointmentStatusColor,
   getAppointmentStatusDisplay,
 } from '@/constants/enums';
-import { callCancelAppointment } from '../../services/appointment.service';
-import { useAppointmentStore } from '../../stores/useAppointmentStore';
-import { formatAppointmentTime } from '../../utils/appointment';
-import CompletionModal from './dashboard/components/CompletionModal';
+import { callCancelAppointment } from '@/services/appointment.service';
+import { useAppointmentStore } from '@/stores/useAppointmentStore';
+import { formatAppointmentTime } from '@/utils/appointment';
+import CompletionModal from '../dashboard/components/CompletionModal';
 
 const MySchedulePage = () => {
   const tableRef = useRef();

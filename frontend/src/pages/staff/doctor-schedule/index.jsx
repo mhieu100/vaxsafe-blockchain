@@ -30,7 +30,7 @@ import {
 } from 'antd';
 import dayjs from 'dayjs';
 import { useEffect, useState } from 'react';
-import { getDoctorsWithScheduleAPI } from '../../services/doctor.service';
+import { getDoctorsWithScheduleAPI } from '@/services/doctor.service';
 
 const { Title, Text } = Typography;
 

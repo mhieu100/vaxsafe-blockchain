@@ -1,8 +1,9 @@
 import { CalendarOutlined, LockOutlined, SettingOutlined, UserOutlined } from '@ant-design/icons';
 import { Avatar, Button, Card, Col, Descriptions, Row, Space, Tabs, Typography } from 'antd';
 import { useState } from 'react';
-import { ModalUpdateAvatar, ModalUpdatePassword } from '@/components/modal/profile';
 import { useAccountStore } from '@/stores/useAccountStore';
+import ModalUpdateAvatar from './components/ModalUpdateAvatar';
+import ModalUpdatePassword from './components/ModalUpdatePassword';
 
 const { Title, Text } = Typography;
 

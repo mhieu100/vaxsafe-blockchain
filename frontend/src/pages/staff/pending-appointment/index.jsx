@@ -33,7 +33,6 @@ import queryString from 'query-string';
 import { useRef, useState } from 'react';
 import { sfLike } from 'spring-filter-query-builder';
 import DataTable from '@/components/data-table';
-import { ApproveRescheduleModal, AssignAppointmentModal } from '@/components/modal/appointment';
 import { TIME_SLOT_LABELS } from '@/constants';
 import {
   AppointmentStatus,
@@ -44,7 +43,9 @@ import {
   getPaymentStatusColor,
   PaymentStatus,
 } from '@/constants/enums';
-import { useAppointmentStore } from '../../stores/useAppointmentStore';
+import { useAppointmentStore } from '@/stores/useAppointmentStore';
+import ApproveRescheduleModal from './components/ApproveRescheduleModal';
+import AssignAppointmentModal from './components/AssignAppointmentModal';
 
 const { Title, Text } = Typography;
 const { Option } = Select;

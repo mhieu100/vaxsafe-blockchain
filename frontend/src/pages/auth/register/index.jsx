@@ -11,9 +11,9 @@ import { Button, Dropdown, Form, Input, message, Typography } from 'antd';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link, useNavigate } from 'react-router-dom';
-import { changeLanguage } from '../../i18n';
-import { callRegister } from '../../services/auth.service';
-import useAccountStore from '../../stores/useAccountStore';
+import { callRegister } from '@/services/auth.service';
+import useAccountStore from '@/stores/useAccountStore';
+import { changeLanguage } from '../../../i18n';
 
 const BACKEND_URL = import.meta.env.VITE_BACKEND_URL || 'http://localhost:8080';
 

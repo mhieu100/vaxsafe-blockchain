@@ -1,7 +1,7 @@
 import { Col, Row } from 'antd';
 import { useState } from 'react';
-import { ModalUpdateAvatar } from '@/components/modal/profile';
 import CardInfoUser from './components/CardInfoUser';
+import ModalUpdateAvatar from './components/ModalUpdateAvatar';
 import ProfileSidebar from './components/ProfileSidebar';
 import ProfileTabs from './components/ProfileTabs';
 

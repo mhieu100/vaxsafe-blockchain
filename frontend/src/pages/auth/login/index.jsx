@@ -11,8 +11,8 @@ import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link, useNavigate } from 'react-router-dom';
 import { callLogin } from '@/services/auth.service';
-import { changeLanguage } from '../../i18n';
-import useAccountStore from '../../stores/useAccountStore';
+import useAccountStore from '@/stores/useAccountStore';
+import { changeLanguage } from '../../../i18n';
 
 const BACKEND_URL = import.meta.env.VITE_BACKEND_URL || 'http://localhost:8080';
 

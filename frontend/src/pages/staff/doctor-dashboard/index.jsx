@@ -40,11 +40,11 @@ import {
 } from 'antd';
 import dayjs from 'dayjs';
 import { useEffect, useState } from 'react';
-import { callGetTodayAppointments } from '../../services/appointment.service';
-import dashboardService from '../../services/dashboard.service';
-import { useAccountStore } from '../../stores/useAccountStore';
-import { formatAppointmentTime } from '../../utils/appointment';
-import CompletionModal from './dashboard/components/CompletionModal';
+import { callGetTodayAppointments } from '@/services/appointment.service';
+import dashboardService from '@/services/dashboard.service';
+import { useAccountStore } from '@/stores/useAccountStore';
+import { formatAppointmentTime } from '@/utils/appointment';
+import CompletionModal from '../dashboard/components/CompletionModal';
 
 const { Title, Text } = Typography;
 

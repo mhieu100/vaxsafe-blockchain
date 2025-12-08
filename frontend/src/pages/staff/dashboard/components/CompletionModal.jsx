@@ -22,8 +22,8 @@ import {
   Typography,
 } from 'antd';
 import { useState } from 'react';
-import { callCompleteAppointment } from '../../../../services/appointment.service';
-import { createObservationForPatient } from '../../../../services/observation.service';
+import { callCompleteAppointment } from '@/services/appointment.service';
+import { createObservationForPatient } from '@/services/observation.service';
 
 const { Title, Text } = Typography;
 const { Step } = Steps;

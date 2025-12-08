@@ -1,7 +1,7 @@
 import { message, Spin } from 'antd';
 import { useEffect } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
-import useAccountStore from '../../stores/useAccountStore';
+import useAccountStore from '@/stores/useAccountStore';
 
 const OAuth2Callback = () => {
   const [searchParams] = useSearchParams();

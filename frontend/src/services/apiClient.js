@@ -9,7 +9,7 @@ const NO_RETRY_HEADER = 'x-no-retry';
  * Main API client instance with token refresh interceptor
  */
 const apiClient = axios.create({
-  baseURL: import.meta.env.VITE_API_BASE_URL || 'http://52.197.232.53:8080',
+  baseURL: import.meta.env.VITE_API_BASE_URL,
   withCredentials: true,
 });
 

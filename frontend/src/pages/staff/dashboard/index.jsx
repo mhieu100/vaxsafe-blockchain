@@ -31,13 +31,13 @@ import {
 import dayjs from 'dayjs';
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { ProcessUrgentAppointmentModal } from '@/components/modal/appointment';
 import {
   callGetTodayAppointments,
   callGetUrgentAppointments,
 } from '@/services/appointment.service';
 import dashboardService from '@/services/dashboard.service';
 import { useAccountStore } from '@/stores/useAccountStore';
+import ProcessUrgentAppointmentModal from './components/ProcessUrgentAppointmentModal';
 import UrgencyGuide from './components/UrgencyGuide';
 
 const { Title, Text } = Typography;

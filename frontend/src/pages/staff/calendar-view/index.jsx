@@ -28,8 +28,8 @@ import isoWeek from 'dayjs/plugin/isoWeek';
 import weekOfYear from 'dayjs/plugin/weekOfYear';
 import { useEffect, useState } from 'react';
 import { getAppointmentStatusColor, getAppointmentStatusDisplay } from '@/constants/enums';
-import { callFetchAppointmentOfCenter } from '../../services/appointment.service';
-import { formatAppointmentTime } from '../../utils/appointment';
+import { callFetchAppointmentOfCenter } from '@/services/appointment.service';
+import { formatAppointmentTime } from '@/utils/appointment';
 
 dayjs.extend(isoWeek);
 dayjs.extend(weekOfYear);

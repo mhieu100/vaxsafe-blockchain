@@ -5,7 +5,7 @@ import { useRef, useState } from 'react';
 import { sfLike } from 'spring-filter-query-builder';
 import DataTable from '@/components/data-table';
 import { callFetchPatients } from '@/services/user.service';
-import WalkInBookingModal from './walk-in-booking/components/WalkInBookingModal';
+import WalkInBookingModal from './components/WalkInBookingModal';
 
 const WalkInBookingPage = () => {
   const tableRef = useRef();

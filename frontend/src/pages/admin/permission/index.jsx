@@ -5,10 +5,10 @@ import queryString from 'query-string';
 import { useRef, useState } from 'react';
 import { sfLike } from 'spring-filter-query-builder';
 import DataTable from '@/components/data-table';
-import { ViewPermission as ViewDetailPermission } from '@/components/modal/admin';
 import { callDeletePermission } from '@/services/permission.service';
 import { usePermissionStore } from '@/stores/usePermissionStore';
 import ModalPermission from './components/PermissionModal';
+import ViewDetailPermission from './components/ViewPermission';
 
 const PermissionPage = () => {
   const tableRef = useRef();
