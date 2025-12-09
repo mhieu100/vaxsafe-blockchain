@@ -18,14 +18,17 @@ public class AppointmentMapper {
         response.setRescheduleReason(appointment.getRescheduleReason());
         response.setRescheduledAt(appointment.getRescheduledAt());
         response.setStatus(appointment.getStatus());
-        response.setBookingId(appointment.getId());
         response.setVaccineName(appointment.getVaccine().getName());
+        response.setVaccineSlug(appointment.getVaccine().getSlug());
+        response.setVaccineTotalDoses(appointment.getVaccine().getDosesRequired());
+        response.setCreatedAt(appointment.getCreatedAt());
         response.setCenterId(appointment.getCenter() != null ? appointment.getCenter().getCenterId() : null);
         response.setCenterName(appointment.getCenter() != null ? appointment.getCenter().getName() : null);
 
         if (appointment.getFamilyMember() != null) {
             response.setPatientName(appointment.getFamilyMember().getFullName());
             response.setPatientPhone(appointment.getFamilyMember().getPhone());
+            response.setFamilyMemberId(appointment.getFamilyMember().getId());
         } else {
             response.setPatientName(appointment.getPatient().getFullName());
             response.setPatientPhone(appointment.getPatient() != null

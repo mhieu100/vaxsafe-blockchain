@@ -70,12 +70,12 @@ const Navbar = () => {
     {
       key: '/',
       icon: <HomeOutlined />,
-      label: t('header.home'),
+      label: 'Home',
     },
     {
       key: '/vaccine',
       icon: <ShoppingOutlined />,
-      label: t('header.vaccines'),
+      label: 'Vaccines',
     },
     {
       key: '/news',
@@ -116,7 +116,7 @@ const Navbar = () => {
 
   return (
     <>
-      <AntHeader className="sticky top-0 z-[2000] glass-panel-light px-4 md:px-6 transition-all duration-300">
+      <AntHeader className="sticky top-0 z-[999] glass-panel-light px-4 md:px-6 transition-all duration-300">
         <div className="mx-auto flex h-full max-w-[1220px] items-center justify-between">
           {}
           <div className="flex items-center flex-1">

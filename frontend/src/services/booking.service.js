@@ -16,6 +16,10 @@ export async function getMyBookingHistory() {
   return apiClient.get('/api/bookings/history');
 }
 
+export async function getGroupedBookingHistory() {
+  return apiClient.get('/api/bookings/history/grouped');
+}
+
 export async function rescheduleAppointment(payload) {
   return apiClient.put('/api/appointments/reschedule', payload);
 }

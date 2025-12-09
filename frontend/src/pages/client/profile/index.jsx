@@ -1,6 +1,5 @@
 import { Col, Row } from 'antd';
 import { useState } from 'react';
-import CardInfoUser from './components/CardInfoUser';
 import ModalUpdateAvatar from './components/ModalUpdateAvatar';
 import ProfileSidebar from './components/ProfileSidebar';
 import ProfileTabs from './components/ProfileTabs';
@@ -15,13 +14,15 @@ const ProfilePage = () => {
   };
 
   return (
-    <div className="min-h-screen bg-slate-50 py-8">
+    <div className="min-h-[calc(100vh-64px)] bg-slate-50 py-8">
       <div className="max-w-7xl mx-auto px-4 sm:px-6">
-        <CardInfoUser setOpen={setAvatarModalVisible} />
-
         <Row gutter={[24, 24]}>
           <Col xs={24} lg={6}>
-            <ProfileSidebar activeTab={activeTab} onTabChange={handleTabChange} />
+            <ProfileSidebar
+              activeTab={activeTab}
+              onTabChange={handleTabChange}
+              setAvatarModalVisible={setAvatarModalVisible}
+            />
           </Col>
 
           <Col xs={24} lg={18}>

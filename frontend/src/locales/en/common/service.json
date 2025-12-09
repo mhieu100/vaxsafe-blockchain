@@ -1,0 +1,18 @@
+{
+  "title": "Secure Information with Blockchain",
+  "subtitle": "Our decentralized system ensures your vaccination data remains private while still being verifiable by authorized parties.",
+  "features": {
+    "immutableData": {
+      "title": "Immutable Data",
+      "description": "Once recorded on the blockchain, your vaccination data cannot be altered or deleted, preventing fraud."
+    },
+    "instantVerification": {
+      "title": "Instant Verification",
+      "description": "Authorized parties can verify your vaccination status within seconds without compromising privacy."
+    },
+    "globalAccess": {
+      "title": "Global Access",
+      "description": "Your digital vaccine passport works everywhere, recognized across borders and healthcare systems."
+    }
+  }
+}

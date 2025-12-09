@@ -1,0 +1,74 @@
+{
+  "hero": {
+    "badge": "Y tế Bảo mật bằng Blockchain",
+    "titlePrefix": "Tương lai của",
+    "titleSuffix": "Y tế Kỹ thuật số",
+    "description": "Hồ sơ vắc-xin an toàn, minh bạch và bất biến được hỗ trợ bởi công nghệ blockchain. Dữ liệu sức khỏe của bạn, do bạn sở hữu.",
+    "viewVaccines": "Xem Vắc-xin",
+    "learnMore": "Tìm hiểu thêm",
+    "security": "Bảo mật cấp ngân hàng",
+    "verifiedRecords": "Hồ sơ đã xác minh",
+    "passportCard": {
+      "title": "Hộ chiếu Vắc-xin",
+      "subtitle": "HỒ SƠ TIÊM CHỦNG",
+      "nameLabel": "Tên",
+      "vaccineType": "Loại Vắc-xin",
+      "doseStatus": "Trạng thái liều",
+      "fullyVaccinated": "Đã tiêm đầy đủ",
+      "blockchainHash": "Mã băm Blockchain",
+      "verified": "Đã xác minh"
+    }
+  },
+  "steps": {
+    "subtitle": "Cách thức hoạt động",
+    "title": "Các bước đơn giản để miễn dịch",
+    "description": "Chúng tôi đã hợp lý hóa quy trình tiêm chủng để giúp bạn và gia đình dễ dàng và an toàn nhất có thể.",
+    "step1": {
+      "title": "1. Tìm Vắc-xin",
+      "desc": "Tìm kiếm vắc-xin có sẵn và chọn trung tâm tốt nhất gần bạn."
+    },
+    "step2": {
+      "title": "2. Đặt lịch hẹn",
+      "desc": "Chọn ngày và khung giờ thuận tiện cho cuộc hẹn của bạn."
+    },
+    "step3": {
+      "title": "3. Tiêm chủng",
+      "desc": "Đến trung tâm, tiêm phòng an toàn từ các chuyên gia được chứng nhận."
+    },
+    "step4": {
+      "title": "4. Hộ chiếu số",
+      "desc": "Nhận chứng chỉ đã xác minh blockchain của bạn ngay lập tức."
+    }
+  },
+  "service": {
+    "subtitle": "Tại sao chọn VaxSafe?",
+    "titlePrefix": "Y tế được hỗ trợ bởi",
+    "titleSuffix": "Blockchain",
+    "description": "Trải nghiệm thế hệ quản lý y tế tiếp theo với nền tảng an toàn, minh bạch và hiệu quả của chúng tôi.",
+    "learnMore": "Tìm hiểu thêm",
+    "features": {
+      "immutableData": {
+        "title": "Dữ liệu bất biến",
+        "description": "Hồ sơ y tế của bạn được lưu trữ trên blockchain, đảm bảo chúng không bao giờ bị giả mạo hoặc mất mát."
+      },
+      "instantVerification": {
+        "title": "Xác minh tức thì",
+        "description": "Xác minh tình trạng tiêm chủng ngay lập tức ở bất cứ đâu trên thế giới với hệ thống mã QR của chúng tôi."
+      },
+      "globalAccess": {
+        "title": "Truy cập toàn cầu",
+        "description": "Truy cập hồ sơ sức khỏe của bạn một cách an toàn từ mọi thiết bị, mọi lúc, mọi nơi."
+      }
+    }
+  },
+  "news": {
+    "subtitle": "Cập nhật mới nhất",
+    "titlePrefix": "Tin tức &",
+    "titleSuffix": "Thông tin chi tiết",
+    "description": "Cập nhật các hướng dẫn tiêm chủng mới nhất, lời khuyên sức khỏe và thông báo y tế từ các chuyên gia của chúng tôi.",
+    "viewAll": "Xem tất cả bài viết",
+    "readArticle": "Đọc bài viết",
+    "views": "lượt xem",
+    "clickToRead": "Nhấn để đọc thêm về bài viết này..."
+  }
+}

@@ -16,6 +16,8 @@ export const buildQuery = ({ current = 1, pageSize = 10, filters = {}, sort = {}
     } else if (Array.isArray(value) && value.length > 0) {
       const orFilters = value.map((v) => sfLike(field, v)).join(' or ');
       filterStrings.push(`(${orFilters})`);
+    } else if (field === 'search' && value) {
+      filterStrings.push(`(${sfLike('name', value)} or ${sfLike('country', value)})`);
     } else if (value !== undefined && value !== null && value !== '') {
       filterStrings.push(sfLike(field, value).toString());
     }

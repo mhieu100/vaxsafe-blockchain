@@ -1,0 +1,30 @@
+{
+  "booking": {
+    "title": "Book Appointment",
+    "selectVaccine": "Select Vaccine",
+    "selectCenter": "Select Center",
+    "selectDoctor": "Select Doctor",
+    "selectDate": "Select Date",
+    "selectTime": "Select Time",
+    "patientInfo": "Patient Information",
+    "appointmentInfo": "Appointment Information",
+    "review": "Review",
+    "confirmBooking": "Confirm Booking",
+    "bookingSuccess": "Booking successful!",
+    "bookingFailed": "Booking failed. Please try again.",
+    "noSlotsAvailable": "No time slots available",
+    "selectMember": "Select Family Member",
+    "addMember": "Add Family Member"
+  },
+  "checkout": {
+    "title": "Checkout",
+    "orderSummary": "Order Summary",
+    "paymentMethod": "Payment Method",
+    "creditCard": "Credit Card",
+    "vnpay": "VNPay",
+    "paypal": "PayPal",
+    "proceedPayment": "Proceed to Payment",
+    "paymentSuccess": "Payment successful!",
+    "paymentFailed": "Payment failed. Please try again."
+  }
+}

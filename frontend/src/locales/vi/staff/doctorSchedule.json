@@ -1,0 +1,14 @@
+{
+  "title": "Lịch làm việc Bác sĩ",
+  "mySchedule": "Lịch của tôi",
+  "availableSlots": "Khung giờ trống",
+  "bookedSlots": "Khung giờ đã đặt",
+  "selectDoctor": "Chọn bác sĩ",
+  "selectDate": "Chọn ngày",
+  "updateSchedule": "Cập nhật lịch",
+  "addSchedule": "Thêm lịch",
+  "deleteSchedule": "Xóa lịch",
+  "updateSuccess": "Cập nhật lịch thành công",
+  "addSuccess": "Thêm lịch thành công",
+  "deleteSuccess": "Xóa lịch thành công"
+}

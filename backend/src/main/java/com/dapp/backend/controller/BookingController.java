@@ -3,10 +3,7 @@ package com.dapp.backend.controller;
 import com.dapp.backend.annotation.ApiMessage;
 import com.dapp.backend.dto.request.BookingRequest;
 import com.dapp.backend.dto.request.WalkInBookingRequest;
-import com.dapp.backend.dto.response.BookingResponse;
-import com.dapp.backend.dto.response.CenterAvailabilityResponse;
-import com.dapp.backend.dto.response.Pagination;
-import com.dapp.backend.dto.response.PaymentResponse;
+import com.dapp.backend.dto.response.*;
 import com.dapp.backend.model.Appointment;
 import com.dapp.backend.service.AppointmentService;
 import com.turkraft.springfilter.boot.Filter;
@@ -44,14 +41,20 @@ public class BookingController {
 
         @GetMapping("/my-bookings")
         @ApiMessage("Get booking of user")
-        public ResponseEntity<List<BookingResponse>> getMyBookings() throws Exception {
+        public ResponseEntity<List<AppointmentResponse>> getMyBookings() throws Exception {
                 return ResponseEntity.ok(appointmentService.getBooking());
         }
 
         @GetMapping("/history")
         @ApiMessage("Get history booking of user")
-        public ResponseEntity<List<BookingResponse>> getHistoryBookings() throws Exception {
+        public ResponseEntity<List<AppointmentResponse>> getHistoryBookings() throws Exception {
                 return ResponseEntity.ok(appointmentService.getHistoryBooking());
+        }
+
+        @GetMapping("/history/grouped")
+        @ApiMessage("Get grouped vaccination history (routes)")
+        public ResponseEntity<List<VaccinationRouteResponse>> getGroupedHistoryBookings() throws Exception {
+                return ResponseEntity.ok(appointmentService.getGroupedHistoryBooking());
         }
 
         @PostMapping("/walk-in")

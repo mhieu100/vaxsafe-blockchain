@@ -1,0 +1,8 @@
+{
+  "title": "Staff Dashboard",
+  "welcome": "Welcome to Staff Panel",
+  "todayAppointments": "Today's Appointments",
+  "pendingAppointments": "Pending Appointments",
+  "completedAppointments": "Completed Appointments",
+  "statistics": "Statistics"
+}

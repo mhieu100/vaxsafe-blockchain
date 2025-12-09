@@ -20,12 +20,12 @@ public class AppointmentResponse {
     String rescheduleReason;
     LocalDateTime rescheduledAt;
     AppointmentStatus status;
-    Long bookingId;
     String patientName;
     String patientPhone;
     String cashierName;
     String doctorName;
     String vaccineName;
+    String vaccineSlug;
     Long centerId;
     String centerName;
 
@@ -33,4 +33,7 @@ public class AppointmentResponse {
     String paymentStatus;
     String paymentMethod;
     Double paymentAmount;
+    Long familyMemberId;
+    Integer vaccineTotalDoses;
+    LocalDateTime createdAt;
 }

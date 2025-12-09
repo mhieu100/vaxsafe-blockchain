@@ -1,0 +1,6 @@
+{
+  "admin": "Administrator",
+  "patient": "Patient",
+  "doctor": "Doctor",
+  "cashier": "Cashier"
+}

@@ -16,7 +16,6 @@ import java.util.List;
 @AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class BookingResponse {
-    Long bookingId;
     Long patientId;
     String patientName;
     Long familyMemberId;

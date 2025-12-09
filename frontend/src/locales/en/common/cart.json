@@ -1,0 +1,22 @@
+{
+  "empty": "Your cart is empty",
+  "emptyDesc": "Discover amazing products and start shopping today!",
+  "startShopping": "Start Shopping",
+  "title": "Shopping Cart",
+  "items": "items",
+  "continueShopping": "Continue Shopping",
+  "back": "Back",
+  "cartItems": "Cart Items",
+  "clearCart": "Clear Cart",
+  "remove": "Remove",
+  "qty": "Qty",
+  "orderSummary": "Order Summary",
+  "subtotal": "Subtotal",
+  "shipping": "Shipping",
+  "free": "Free",
+  "tax": "Tax",
+  "savedShipping": "You saved on shipping!",
+  "total": "Total",
+  "proceedCheckout": "Proceed to Checkout",
+  "secureCheckout": "Secure checkout with SSL encryption"
+}

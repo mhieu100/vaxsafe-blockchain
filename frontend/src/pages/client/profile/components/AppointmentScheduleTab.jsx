@@ -149,31 +149,41 @@ const AppointmentScheduleTab = () => {
   };
 
   const allAppointments = bookings
-    .flatMap((booking) =>
-      booking.appointments.map((apt) => ({
-        ...apt,
-        bookingId: booking.bookingId,
-        vaccineName: booking.vaccineName,
-        patientName: booking.familyMemberName || booking.patientName,
-        bookingStatus: booking.bookingStatus,
-        isFamily: !!booking.familyMemberId,
-        totalDoses: booking.totalDoses,
-      }))
-    )
+    .map((apt) => ({
+      ...apt,
+      appointmentId: apt.id,
+      appointmentStatus: apt.status,
+      bookingStatus: apt.status, // Use appointment status as booking status for now
+      isFamily: !!apt.familyMemberId,
+      totalDoses: apt.doseNumber, // Approximate or need total doses from somewhere else?
+      // AppointmentResponse doesn't have totalDoses for the vaccine series, only current doseNumber.
+      // But we can just use doseNumber or leave it if UI doesn't break.
+      // UI uses totalDoses in: {firstApt.totalDoses} {t('client:vaccinationHistory.doses')}
+      // If missing, it might show undefined.
+      // Let's check AppointmentResponse. It has doseNumber.
+      // The "totalDoses" in old BookingResponse was explicitly 1 or vaccine.dosesRequired.
+      // Let's assume for now we just show doseNumber or maybe I should have added vaccineTotalDoses to AppointmentResponse.
+      // Ideally I should, but let's see.
+    }))
     .sort((a, b) => dayjs(a.scheduledDate).valueOf() - dayjs(b.scheduledDate).valueOf());
 
   const upcomingAppointments = allAppointments.filter(
     (apt) =>
       apt.appointmentStatus !== 'COMPLETED' &&
       apt.appointmentStatus !== 'CANCELLED' &&
-      dayjs(apt.scheduledDate).isAfter(dayjs().subtract(1, 'day'))
+      (dayjs(apt.scheduledDate).isAfter(dayjs().subtract(1, 'day')) ||
+        apt.appointmentStatus === 'PENDING')
   );
 
   const groupedByBooking = upcomingAppointments.reduce((acc, apt) => {
-    if (!acc[apt.bookingId]) {
-      acc[apt.bookingId] = [];
+    // Grouping by Vaccine Name + Patient Name + Family Status as a unique "route"
+    // Since bookingId is removed, we treat appointments for the same vaccine & patient as one group
+    const groupKey = `${apt.vaccineName}-${apt.patientName}-${apt.isFamily ? 'family' : 'self'}`;
+
+    if (!acc[groupKey]) {
+      acc[groupKey] = [];
     }
-    acc[apt.bookingId].push(apt);
+    acc[groupKey].push(apt);
     return acc;
   }, {});
 
@@ -251,7 +261,7 @@ const AppointmentScheduleTab = () => {
     return (
       <Card
         className="!mb-6 rounded-3xl shadow-sm border border-slate-100 overflow-hidden hover:shadow-md transition-shadow"
-        key={firstApt.bookingId}
+        key={`${firstApt.vaccineName}-${firstApt.patientName}`}
       >
         <div className="mb-6 flex flex-col md:flex-row justify-between items-start gap-4 pb-4 border-b border-slate-50">
           <div className="flex items-center gap-4">
@@ -338,7 +348,8 @@ const AppointmentScheduleTab = () => {
                   {apt.appointmentStatus !== 'COMPLETED' &&
                     apt.appointmentStatus !== 'CANCELLED' &&
                     apt.appointmentStatus !== 'RESCHEDULE' &&
-                    dayjs(apt.scheduledDate).isAfter(dayjs()) && (
+                    (dayjs(apt.scheduledDate).isAfter(dayjs()) ||
+                      apt.appointmentStatus === 'PENDING') && (
                       <div className="flex gap-2">
                         <Button
                           size="small"

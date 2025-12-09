@@ -1,13 +1,25 @@
-import { LockOutlined } from '@ant-design/icons';
+import { LockOutlined, UserOutlined } from '@ant-design/icons';
 import { Button, Tabs } from 'antd';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import EditProfileTab from './EditProfileTab';
+import ModalUpdatePassword from './ModalUpdatePassword';
 
-const SettingsTab = () => {
+const SettingsTab = ({ editMode, setEditMode }) => {
   const { t } = useTranslation(['client']);
   const [passwordModalVisible, setPasswordModalVisible] = useState(false);
 
   const items = [
+    {
+      key: 'profile',
+      label: (
+        <span>
+          <UserOutlined />
+          {t('client:settings.profileInfo')}
+        </span>
+      ),
+      children: <EditProfileTab editMode={editMode} setEditMode={setEditMode} />,
+    },
     {
       key: 'security',
       label: (

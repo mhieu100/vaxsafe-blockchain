@@ -171,7 +171,7 @@ const FamilyManagerTab = () => {
               {text}
             </Title>
             <Text type="secondary" className="text-xs">
-              {t(`client:relationships.${record.relationship}`) || record.relationship} • ID:{' '}
+              {t(`client:family.relationships.${record.relationship}`) || record.relationship} • ID:{' '}
               {record.id}
             </Text>
             <br />
@@ -416,14 +416,16 @@ const FamilyManagerTab = () => {
               rules={[{ required: true, message: t('client:family.selectRelationship') }]}
             >
               <Select placeholder={t('client:family.selectRelationship')} className="rounded-lg">
-                <Option value="WIFE_HUSBAND">{t('client:relationships.WIFE_HUSBAND')}</Option>
-                <Option value="SON">{t('client:relationships.SON')}</Option>
-                <Option value="DAUGHTER">{t('client:relationships.DAUGHTER')}</Option>
-                <Option value="FATHER">{t('client:relationships.FATHER')}</Option>
-                <Option value="MOTHER">{t('client:relationships.MOTHER')}</Option>
-                <Option value="BROTHER">{t('client:relationships.BROTHER')}</Option>
-                <Option value="SISTER">{t('client:relationships.SISTER')}</Option>
-                <Option value="OTHER">{t('client:relationships.OTHER')}</Option>
+                <Option value="WIFE_HUSBAND">
+                  {t('client:family.relationships.WIFE_HUSBAND')}
+                </Option>
+                <Option value="SON">{t('client:family.relationships.SON')}</Option>
+                <Option value="DAUGHTER">{t('client:family.relationships.DAUGHTER')}</Option>
+                <Option value="FATHER">{t('client:family.relationships.FATHER')}</Option>
+                <Option value="MOTHER">{t('client:family.relationships.MOTHER')}</Option>
+                <Option value="BROTHER">{t('client:family.relationships.BROTHER')}</Option>
+                <Option value="SISTER">{t('client:family.relationships.SISTER')}</Option>
+                <Option value="OTHER">{t('client:family.relationships.OTHER')}</Option>
               </Select>
             </Form.Item>
 

@@ -1,0 +1,27 @@
+{
+  "totalVaccines": "Total Vaccines",
+  "coverage": "Coverage",
+  "goodStatus": "Good Status",
+  "checkTimeInListing": "Check time in listing",
+  "nextAppointment": "Next Appointment",
+  "recentActivity": "Recent Activity",
+  "viewAll": "View All",
+  "plusThisYear": "+2 this year",
+  "nextDate": "Next: Oct 15",
+  "healthReminders": {
+    "title": "Health Reminders & Alerts",
+    "fluVaccineDue": "Influenza Vaccine Due",
+    "fluVaccineDueDesc": "Your annual flu shot is due in 2 weeks",
+    "healthCheckupReminder": "Health Checkup Reminder",
+    "healthCheckupDesc": "Annual health screening recommended",
+    "vaccinationRecordComplete": "Vaccination Record Complete",
+    "vaccinationRecordCompleteDesc": "All required vaccinations are up to date",
+    "healthTips": "Health Tips",
+    "healthTip1": "Stay hydrated and maintain a balanced diet",
+    "healthTip2": "Regular exercise boosts immune system",
+    "healthTip3": "Get adequate sleep (7-9 hours daily)",
+    "healthTip4": "Keep vaccination records up to date"
+  },
+  "noData": "No data available",
+  "bookingNow": "Book Now"
+}

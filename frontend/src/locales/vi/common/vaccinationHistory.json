@@ -1,0 +1,9 @@
+{
+  "title": "Lịch sử tiêm chủng",
+  "filterDate": "Lọc theo ngày",
+  "all": "Tất cả",
+  "scheduled": "Đã lên lịch",
+  "notScheduled": "Chưa lên lịch",
+  "completed": "Đã tiêm",
+  "cancelled": "Đã hủy"
+}

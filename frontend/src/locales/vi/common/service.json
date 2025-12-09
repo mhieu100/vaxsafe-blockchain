@@ -1,0 +1,18 @@
+{
+  "title": "Thông tin an toàn với Blockchain",
+  "subtitle": "Hệ thống phi tập trung của chúng tôi đảm bảo dữ liệu tiêm chủng của bạn vẫn riêng tư nhưng vẫn có thể xác minh bởi các bên được phép.",
+  "features": {
+    "immutableData": {
+      "title": "Dữ liệu không thể thay đổi",
+      "description": "Khi đã ghi trên blockchain, dữ liệu tiêm chủng của bạn không thể thay đổi hoặc xóa, ngăn chặn gian lận."
+    },
+    "instantVerification": {
+      "title": "Xác minh ngay lập tức",
+      "description": "Các bên được phép có thể xác minh trạng thái tiêm chủng của bạn trong vài giây mà không làm lộ thông tin riêng tư."
+    },
+    "globalAccess": {
+      "title": "Truy cập toàn cầu",
+      "description": "Hộ chiếu vắc-xin kỹ thuật số của bạn hoạt động ở mọi nơi, được công nhận trên toàn cầu và các hệ thống y tế."
+    }
+  }
+}

@@ -15,7 +15,6 @@ import java.time.LocalDateTime;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class UrgentAppointmentDto {
     Long id;
-    Long bookingId;
     String patientName;
     String patientPhone;
     String patientEmail;

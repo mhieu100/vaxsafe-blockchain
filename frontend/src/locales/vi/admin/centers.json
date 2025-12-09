@@ -1,0 +1,16 @@
+{
+  "title": "Quản lý Trung tâm",
+  "addCenter": "Thêm trung tâm",
+  "editCenter": "Sửa trung tâm",
+  "deleteCenter": "Xóa trung tâm",
+  "centerList": "Danh sách trung tâm",
+  "centerName": "Tên trung tâm",
+  "address": "Địa chỉ",
+  "phone": "Số điện thoại",
+  "actions": "Thao tác",
+  "searchCenter": "Tìm trung tâm...",
+  "confirmDelete": "Bạn có chắc chắn muốn xóa trung tâm này?",
+  "deleteSuccess": "Xóa trung tâm thành công",
+  "createSuccess": "Tạo trung tâm thành công",
+  "updateSuccess": "Cập nhật trung tâm thành công"
+}

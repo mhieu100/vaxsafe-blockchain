@@ -1,0 +1,9 @@
+{
+  "title": "Vaccination History",
+  "filterDate": "Filter by Date",
+  "all": "All",
+  "scheduled": "Scheduled",
+  "notScheduled": "Not Scheduled",
+  "completed": "Completed",
+  "cancelled": "Cancelled"
+}

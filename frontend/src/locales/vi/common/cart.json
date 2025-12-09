@@ -1,0 +1,22 @@
+{
+  "empty": "Giỏ hàng của bạn đang trống",
+  "emptyDesc": "Khám phá các sản phẩm tuyệt vời và bắt đầu mua sắm ngay hôm nay!",
+  "startShopping": "Bắt đầu mua sắm",
+  "title": "Giỏ hàng",
+  "items": "sản phẩm",
+  "continueShopping": "Tiếp tục mua sắm",
+  "back": "Quay lại",
+  "cartItems": "Sản phẩm trong giỏ",
+  "clearCart": "Xóa giỏ hàng",
+  "remove": "Xóa",
+  "qty": "SL",
+  "orderSummary": "Tổng quan đơn hàng",
+  "subtotal": "Tạm tính",
+  "shipping": "Phí vận chuyển",
+  "free": "Miễn phí",
+  "tax": "Thuế",
+  "savedShipping": "Bạn đã tiết kiệm phí vận chuyển!",
+  "total": "Tổng cộng",
+  "proceedCheckout": "Tiến hành thanh toán",
+  "secureCheckout": "Thanh toán an toàn với mã hóa SSL"
+}

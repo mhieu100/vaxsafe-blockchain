@@ -8,7 +8,7 @@ import { Breadcrumb, Button, Col, message, Row, Skeleton, Tag, Typography } from
 import dayjs from 'dayjs';
 import DOMPurify from 'dompurify';
 import { useEffect, useState } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
+import { Link, useNavigate, useParams } from 'react-router-dom';
 import { callFetchNewsBySlug, callFetchPublishedNews } from '@/services/news.service';
 
 const { Title, Text } = Typography;
@@ -105,7 +105,10 @@ const ClientNewsDetailPage = () => {
                     <Skeleton
                       active
                       paragraph={{ rows: 1 }}
-                      title={{ width: '90%', style: { height: 40, marginBottom: 16 } }}
+                      title={{
+                        width: '90%',
+                        style: { height: 40, marginBottom: 16 },
+                      }}
                     />
 
                     {}
@@ -236,7 +239,11 @@ const ClientNewsDetailPage = () => {
                         {news.shortDescription}
                       </p>
                     )}
-                    <div dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(news.content) }} />
+                    <div
+                      dangerouslySetInnerHTML={{
+                        __html: DOMPurify.sanitize(news.content),
+                      }}
+                    />
                   </div>
 
                   {}

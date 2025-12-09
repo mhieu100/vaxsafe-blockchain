@@ -13,6 +13,30 @@ const { Title, Paragraph, Text } = Typography;
 const DescriptionVaccineSection = ({ vaccine }) => {
   const { t } = useTranslation('common');
 
+  const parseArrayField = (field) => {
+    if (!field) return [];
+    if (Array.isArray(field)) return field;
+    if (typeof field === 'string') {
+      // Check for Postgres array format { "item1", "item2" }
+      if (field.trim().startsWith('{') && field.trim().endsWith('}')) {
+        try {
+          // Replace curly braces with square brackets to make it JSON compatible
+          const jsonStr = field.trim().replace(/^{/, '[').replace(/}$/, ']');
+          return JSON.parse(jsonStr);
+        } catch (e) {
+          console.warn('Failed to parse array string:', field, e);
+          // Fallback to newline split if parsing fails
+        }
+      }
+      return field.split('\n').filter((item) => item.trim());
+    }
+    return [];
+  };
+
+  const injections = parseArrayField(vaccine.injection);
+  const preserves = parseArrayField(vaccine.preserve);
+  const contraindications = parseArrayField(vaccine.contraindications);
+
   const items = [
     {
       key: '1',
@@ -52,12 +76,16 @@ const DescriptionVaccineSection = ({ vaccine }) => {
       children: (
         <div className="py-6">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            {vaccine.injection?.map((item, index) => (
-              <div key={index} className="flex items-start gap-3 p-3 bg-slate-50 rounded-lg">
-                <CheckCircleOutlined className="text-blue-500 mt-1" />
-                <Text className="flex-1">{item}</Text>
-              </div>
-            ))}
+            {injections.length > 0 ? (
+              injections.map((item, index) => (
+                <div key={index} className="flex items-start gap-3 p-3 bg-slate-50 rounded-lg">
+                  <CheckCircleOutlined className="text-blue-500 mt-1" />
+                  <Text className="flex-1">{item}</Text>
+                </div>
+              ))
+            ) : (
+              <Text type="secondary">{t('vaccine.noDataAvailable')}</Text>
+            )}
           </div>
         </div>
       ),
@@ -76,14 +104,18 @@ const DescriptionVaccineSection = ({ vaccine }) => {
             <Title level={5} className="text-amber-800 mb-4 flex items-center gap-2">
               <span className="text-xl">❄️</span> {t('vaccine.storageRequirements')}
             </Title>
-            <ul className="space-y-3">
-              {vaccine.preserve?.map((item, index) => (
-                <li key={index} className="flex items-center gap-3 text-amber-900">
-                  <div className="w-1.5 h-1.5 rounded-full bg-amber-400" />
-                  {item}
-                </li>
-              ))}
-            </ul>
+            {preserves.length > 0 ? (
+              <ul className="space-y-3">
+                {preserves.map((item, index) => (
+                  <li key={index} className="flex items-center gap-3 text-amber-900">
+                    <div className="w-1.5 h-1.5 rounded-full bg-amber-400" />
+                    {item}
+                  </li>
+                ))}
+              </ul>
+            ) : (
+              <Text type="secondary">{t('vaccine.noDataAvailable')}</Text>
+            )}
           </div>
         </div>
       ),
@@ -98,24 +130,28 @@ const DescriptionVaccineSection = ({ vaccine }) => {
       ),
       children: (
         <div className="py-6">
-          <div className="space-y-3">
-            {vaccine.contraindications?.map((item, index) => (
-              <div
-                key={index}
-                className="flex gap-4 p-4 rounded-xl border border-red-100 bg-red-50/50"
-              >
-                <div className="bg-red-100 text-red-500 p-2 rounded-full h-fit">
-                  <WarningOutlined />
+          {contraindications.length > 0 ? (
+            <div className="space-y-3">
+              {contraindications.map((item, index) => (
+                <div
+                  key={index}
+                  className="flex gap-4 p-4 rounded-xl border border-red-100 bg-red-50/50"
+                >
+                  <div className="bg-red-100 text-red-500 p-2 rounded-full h-fit">
+                    <WarningOutlined />
+                  </div>
+                  <div>
+                    <Text strong className="text-red-700 block mb-1">
+                      {t('vaccine.contraindication')} {index + 1}
+                    </Text>
+                    <Text className="text-slate-600">{item}</Text>
+                  </div>
                 </div>
-                <div>
-                  <Text strong className="text-red-700 block mb-1">
-                    {t('vaccine.contraindication')} {index + 1}
-                  </Text>
-                  <Text className="text-slate-600">{item}</Text>
-                </div>
-              </div>
-            ))}
-          </div>
+              ))}
+            </div>
+          ) : (
+            <Text type="secondary">{t('vaccine.noDataAvailable')}</Text>
+          )}
         </div>
       ),
     },

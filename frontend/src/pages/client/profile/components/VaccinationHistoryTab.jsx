@@ -3,7 +3,7 @@ import { Alert, Card, Skeleton, Table, Tag, Typography } from 'antd';
 import dayjs from 'dayjs';
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { getMyBookingHistory } from '@/services/booking.service';
+import { getGroupedBookingHistory } from '@/services/booking.service';
 import { formatAppointmentTime } from '@/utils/appointment';
 
 const { Title, Text } = Typography;
@@ -19,101 +19,8 @@ const VaccinationHistoryTab = () => {
     try {
       setLoading(true);
       setError(null);
-      const response = await getMyBookingHistory();
-      const bookings = response.data || [];
-
-      // Group appointments into routes
-      const routes = {};
-
-      bookings.forEach((booking) => {
-        if (!booking.appointments) return;
-
-        const required = booking.vaccineTotalDoses || 3;
-        const patientName = booking.familyMemberName || booking.patientName;
-
-        booking.appointments.forEach((apt) => {
-          // Skip cancelled appointments if you don't want them in the route logic?
-          // Or keep them for history. Let's keep them but handle status.
-
-          const cycleIndex = Math.ceil(apt.doseNumber / required) - 1;
-          const key = `${booking.vaccineName}-${patientName}-${cycleIndex}`;
-
-          if (!routes[key]) {
-            routes[key] = {
-              routeId: key,
-              vaccineName: booking.vaccineName,
-              patientName: patientName,
-              isFamily: !!booking.familyMemberName,
-              requiredDoses: required,
-              cycleIndex: cycleIndex,
-              createdAt: booking.createdAt, // use first booking date
-              appointments: [],
-              totalAmount: 0,
-            };
-          }
-
-          // Check if this appointment is already added (unlikely but safe)
-          const existingApt = routes[key].appointments.find(
-            (a) => a.appointmentId === apt.appointmentId
-          );
-          if (!existingApt) {
-            routes[key].appointments.push({
-              ...apt,
-              bookingId: booking.bookingId,
-              centerName: booking.centerName, // booking level center might differ from apt? usually apt has center info?
-              // The API response for booking.appointments usually contains simplified apt object.
-              // Check previous view: bookingColumns accessed nesting.
-              // Let's assume apt doesn't have centerName, booking does.
-              // Wait, Appointment entity has Center.
-              // Let's use booking context for missing fields.
-            });
-
-            if (apt.appointmentStatus !== 'CANCELLED') {
-              // Roughly add amount?
-              // Issue: booking.totalAmount is for the whole booking.
-              // If booking has multiple appointments (unlikely), we divide?
-              // Usually 1 booking = 1 shot.
-              routes[key].totalAmount += booking.totalAmount;
-            }
-          }
-          // update latest date
-          if (dayjs(booking.createdAt).isAfter(routes[key].createdAt)) {
-            routes[key].createdAt = booking.createdAt;
-          }
-        });
-      });
-
-      const routeList = Object.values(routes).map((route) => {
-        // Sort appointments
-        route.appointments.sort((a, b) => a.doseNumber - b.doseNumber);
-
-        // Determine status
-        const completedCount = route.appointments.filter(
-          (a) => a.appointmentStatus === 'COMPLETED'
-        ).length;
-        const activeCount = route.appointments.filter(
-          (a) => a.appointmentStatus !== 'CANCELLED'
-        ).length;
-        // Status logic:
-        // If completedCount >= requiredDoses -> COMPLETED
-        // Else IN_PROGRESS
-
-        let status = 'IN_PROGRESS';
-        if (completedCount >= route.requiredDoses) {
-          status = 'COMPLETED';
-        } else if (activeCount === 0) {
-          status = 'CANCELLED'; // All cancelled
-        }
-
-        return {
-          ...route,
-          completedCount,
-          status,
-        };
-      });
-
-      // Sort by date desc
-      routeList.sort((a, b) => dayjs(b.createdAt).unix() - dayjs(a.createdAt).unix());
+      const response = await getGroupedBookingHistory();
+      const routeList = response.data || [];
 
       setGroupedHistory(routeList);
 

@@ -1,0 +1,30 @@
+{
+  "booking": {
+    "title": "Đặt lịch hẹn",
+    "selectVaccine": "Chọn vắc-xin",
+    "selectCenter": "Chọn trung tâm",
+    "selectDoctor": "Chọn bác sĩ",
+    "selectDate": "Chọn ngày",
+    "selectTime": "Chọn giờ",
+    "patientInfo": "Thông tin bệnh nhân",
+    "appointmentInfo": "Thông tin lịch hẹn",
+    "review": "Xem lại",
+    "confirmBooking": "Xác nhận đặt lịch",
+    "bookingSuccess": "Đặt lịch thành công!",
+    "bookingFailed": "Đặt lịch thất bại. Vui lòng thử lại.",
+    "noSlotsAvailable": "Không có khung giờ nào khả dụng",
+    "selectMember": "Chọn thành viên gia đình",
+    "addMember": "Thêm thành viên gia đình"
+  },
+  "checkout": {
+    "title": "Thanh toán",
+    "orderSummary": "Tổng quan đơn hàng",
+    "paymentMethod": "Phương thức thanh toán",
+    "creditCard": "Thẻ tín dụng",
+    "vnpay": "VNPay",
+    "paypal": "PayPal",
+    "proceedPayment": "Tiến hành thanh toán",
+    "paymentSuccess": "Thanh toán thành công!",
+    "paymentFailed": "Thanh toán thất bại. Vui lòng thử lại."
+  }
+}

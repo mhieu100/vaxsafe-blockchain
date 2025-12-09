@@ -1,0 +1,26 @@
+{
+  "totalVaccines": "Tổng số vắc-xin",
+  "coverage": "Độ bao phủ",
+  "goodStatus": "Trạng thái tốt",
+  "nextAppointment": "Lịch hẹn tiếp theo",
+  "recentActivity": "Hoạt động gần đây",
+  "viewAll": "Xem tất cả",
+  "plusThisYear": "+2 trong năm nay",
+  "nextDate": "Tiếp theo: 15/10",
+  "healthReminders": {
+    "title": "Nhắc nhở & Cảnh báo Sức khỏe",
+    "fluVaccineDue": "Đến hạn tiêm vắc-xin Cúm",
+    "fluVaccineDueDesc": "Mũi tiêm cúm hàng năm của bạn đến hạn trong 2 tuần tới",
+    "healthCheckupReminder": "Nhắc nhở khám sức khỏe",
+    "healthCheckupDesc": "Khuyến nghị khám sức khỏe định kỳ hàng năm",
+    "vaccinationRecordComplete": "Hồ sơ tiêm chủng hoàn tất",
+    "vaccinationRecordCompleteDesc": "Tất cả các mũi tiêm bắt buộc đã được cập nhật",
+    "healthTips": "Lời khuyên sức khỏe",
+    "healthTip1": "Uống đủ nước và duy trì chế độ ăn uống cân bằng",
+    "healthTip2": "Tập thể dục thường xuyên giúp tăng cường hệ miễn dịch",
+    "healthTip3": "Ngủ đủ giấc (7-9 giờ mỗi ngày)",
+    "healthTip4": "Cập nhật hồ sơ tiêm chủng thường xuyên"
+  },
+  "noData": "Không có dữ liệu",
+  "bookingNow": "Đặt lịch ngay"
+}

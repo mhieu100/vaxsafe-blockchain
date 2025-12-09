@@ -2,9 +2,10 @@ import {
   DollarOutlined,
   FilterOutlined,
   GlobalOutlined,
+  SearchOutlined,
   SortAscendingOutlined,
 } from '@ant-design/icons';
-import { Button, Select, Slider } from 'antd';
+import { Button, Input, Select, Slider } from 'antd';
 
 import debounce from 'lodash/debounce';
 import { useEffect, useMemo, useState } from 'react';
@@ -15,10 +16,11 @@ import { formatPrice } from '@/utils/formatPrice';
 
 const { Option } = Select;
 
-const LeftFilterSection = ({ setPriceRange, country, setCountry, sortBy, setSortBy }) => {
+const LeftFilterSection = ({ setPriceRange, country, setCountry, sortBy, setSortBy, onSearch }) => {
   const { t } = useTranslation();
   const [countries, setCountries] = useState([]);
   const [sliderRange, setSliderRange] = useState([MIN_PRICE, MAX_PRICE]);
+  const [searchValue, setSearchValue] = useState('');
 
   const handleCountryChange = (value) => {
     setCountry(value);
@@ -46,6 +48,12 @@ const LeftFilterSection = ({ setPriceRange, country, setCountry, sortBy, setSort
     [setPriceRange]
   );
 
+  const handleSearchChange = (e) => {
+    const value = e.target.value;
+    setSearchValue(value);
+    onSearch(value);
+  };
+
   const handlePriceRangeChange = (value) => {
     setSliderRange([value[0] ?? MIN_PRICE, value[1] ?? MAX_PRICE]);
     debouncedSetPriceRange(value);
@@ -62,10 +70,12 @@ const LeftFilterSection = ({ setPriceRange, country, setCountry, sortBy, setSort
     setCountry([]);
     setPriceRange([MIN_PRICE, MAX_PRICE]);
     setSliderRange([MIN_PRICE, MAX_PRICE]);
+    setSearchValue('');
+    onSearch('');
   };
 
   return (
-    <div className="hidden md:block sticky top-24 w-64 flex-shrink-0">
+    <div className="hidden md:block sticky w-64 flex-shrink-0">
       <div className="bg-white p-6 rounded-2xl border border-slate-100 shadow-sm">
         <div className="flex items-center justify-between mb-6">
           <h3 className="text-lg font-bold text-slate-800 flex items-center gap-2">
@@ -86,7 +96,20 @@ const LeftFilterSection = ({ setPriceRange, country, setCountry, sortBy, setSort
           )}
         </div>
 
-        {}
+        {/* Search */}
+        <div className="mb-8">
+          <Input
+            placeholder={t('vaccine.searchPlaceholder', 'Search...')}
+            prefix={<SearchOutlined className="text-slate-400" />}
+            onChange={handleSearchChange}
+            value={searchValue}
+            className="w-full rounded-xl"
+            allowClear
+            size="large"
+          />
+        </div>
+
+        {/* Sort By */}
         <div className="mb-8">
           <label className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-3 block">
             Sort By

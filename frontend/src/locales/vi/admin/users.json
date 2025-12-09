@@ -1,0 +1,19 @@
+{
+  "title": "Quản lý Người dùng",
+  "addUser": "Thêm người dùng",
+  "editUser": "Sửa người dùng",
+  "deleteUser": "Xóa người dùng",
+  "userList": "Danh sách người dùng",
+  "username": "Tên đăng nhập",
+  "email": "Email",
+  "role": "Vai trò",
+  "status": "Trạng thái",
+  "actions": "Thao tác",
+  "active": "Hoạt động",
+  "inactive": "Không hoạt động",
+  "searchUser": "Tìm người dùng...",
+  "confirmDelete": "Bạn có chắc chắn muốn xóa người dùng này?",
+  "deleteSuccess": "Xóa người dùng thành công",
+  "createSuccess": "Tạo người dùng thành công",
+  "updateSuccess": "Cập nhật người dùng thành công"
+}

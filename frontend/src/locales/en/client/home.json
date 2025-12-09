@@ -1,0 +1,74 @@
+{
+  "hero": {
+    "badge": "Blockchain Secured Healthcare",
+    "titlePrefix": "The Future of",
+    "titleSuffix": "Digital Health",
+    "description": "Secure, transparent, and immutable vaccine records powered by blockchain technology. Your health data, owned by you.",
+    "viewVaccines": "View Vaccines",
+    "learnMore": "Learn More",
+    "security": "Bank-grade Security",
+    "verifiedRecords": "Verified Records",
+    "passportCard": {
+      "title": "Vaccine Passport",
+      "subtitle": "IMMUNIZATION RECORD",
+      "nameLabel": "Name",
+      "vaccineType": "Vaccine Type",
+      "doseStatus": "Dose Status",
+      "fullyVaccinated": "Fully Vaccinated",
+      "blockchainHash": "Blockchain Hash",
+      "verified": "Verified"
+    }
+  },
+  "steps": {
+    "subtitle": "How It Works",
+    "title": "Simple Steps to Immunity",
+    "description": "We've streamlined the vaccination process to make it as easy and secure as possible for you and your family.",
+    "step1": {
+      "title": "1. Find Vaccine",
+      "desc": "Search for available vaccines and choose the best center near you."
+    },
+    "step2": {
+      "title": "2. Book Schedule",
+      "desc": "Select a convenient date and time slot for your appointment."
+    },
+    "step3": {
+      "title": "3. Get Vaccinated",
+      "desc": "Visit the center, get your shot safely from certified professionals."
+    },
+    "step4": {
+      "title": "4. Digital Passport",
+      "desc": "Receive your blockchain-verified certificate instantly."
+    }
+  },
+  "service": {
+    "subtitle": "Why Choose VaxSafe?",
+    "titlePrefix": "Blockchain Powered",
+    "titleSuffix": "Healthcare",
+    "description": "Experience the next generation of healthcare management with our secure, transparent, and efficient platform.",
+    "learnMore": "Learn more",
+    "features": {
+      "immutableData": {
+        "title": "Immutable Data",
+        "description": "Your medical records are stored on blockchain, ensuring they can never be tampered with or lost."
+      },
+      "instantVerification": {
+        "title": "Instant Verification",
+        "description": "Verify vaccination status instantly anywhere in the world with our QR code system."
+      },
+      "globalAccess": {
+        "title": "Global Access",
+        "description": "Access your health records securely from any device, anywhere, anytime."
+      }
+    }
+  },
+  "news": {
+    "subtitle": "Latest Updates",
+    "titlePrefix": "News &",
+    "titleSuffix": "Insights",
+    "description": "Stay informed with the latest vaccination guidelines, health tips, and medical announcements from our experts.",
+    "viewAll": "View All Articles",
+    "readArticle": "Read Article",
+    "views": "views",
+    "clickToRead": "Click to read more about this article..."
+  }
+}

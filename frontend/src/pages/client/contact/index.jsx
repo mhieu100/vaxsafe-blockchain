@@ -1,15 +1,16 @@
 import {
+  ClockCircleOutlined,
   EnvironmentFilled,
   GlobalOutlined,
   PhoneOutlined,
   SearchOutlined,
 } from '@ant-design/icons';
-import { Button, Card, Col, Empty, Input, List, Row, Select, Skeleton, Typography } from 'antd';
+import { Button, Card, Col, Empty, Input, Row, Skeleton, Tag, Typography } from 'antd';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 import { useEffect, useState } from 'react';
 import { renderToStaticMarkup } from 'react-dom/server';
-import { MapContainer, Marker, Popup, TileLayer, useMap } from 'react-leaflet';
+import { MapContainer, Marker, TileLayer, useMap } from 'react-leaflet';
 import { callFetchCenter } from '@/services/center.service';
 
 const createCustomIcon = () => {
@@ -17,7 +18,7 @@ const createCustomIcon = () => {
     <div
       style={{
         color: '#1890ff',
-        fontSize: '24px',
+        fontSize: '32px',
         filter: 'drop-shadow(0 2px 4px rgba(0,0,0,0.2))',
       }}
     >
@@ -28,22 +29,23 @@ const createCustomIcon = () => {
   return L.divIcon({
     html: iconMarkup,
     className: 'custom-marker-icon',
-    iconSize: [24, 24],
-    iconAnchor: [12, 24],
-    popupAnchor: [0, -24],
+    iconSize: [32, 32],
+    iconAnchor: [16, 32],
+    popupAnchor: [0, -32],
   });
 };
 
 const customIcon = createCustomIcon();
 
-const { Title, Text, Paragraph } = Typography;
-const { Option } = Select;
+const { Title, Text } = Typography;
 
 const MapUpdater = ({ center }) => {
   const map = useMap();
   useEffect(() => {
     if (center?.latitude && center.longitude) {
-      map.setView([center.latitude, center.longitude], 15);
+      map.setView([center.latitude, center.longitude], 15, {
+        animate: true,
+      });
     }
   }, [center, map]);
   return null;
@@ -53,10 +55,10 @@ const ContactPage = () => {
   const [centers, setCenters] = useState([]);
   const [loading, setLoading] = useState(true);
   const [selectedCenter, setSelectedCenter] = useState(null);
-  const [filterCity, setFilterCity] = useState('all');
   const [searchTerm, setSearchTerm] = useState('');
 
-  const defaultPosition = [21.0285, 105.8542];
+  // Default to Da Nang coordinates
+  const defaultPosition = [16.0544, 108.2022];
 
   useEffect(() => {
     fetchCenters();
@@ -67,15 +69,9 @@ const ContactPage = () => {
       setLoading(true);
       const res = await callFetchCenter('size=100');
       if (res?.data?.result) {
-        const centersWithCoords = res.data.result.map((c, index) => ({
-          ...c,
-          latitude: c.latitude || 21.0285 + (Math.random() - 0.5) * 0.1,
-          longitude: c.longitude || 105.8542 + (Math.random() - 0.5) * 0.1,
-          city: index % 2 === 0 ? 'Hanoi' : 'Ho Chi Minh',
-        }));
-        setCenters(centersWithCoords);
-        if (centersWithCoords.length > 0) {
-          setSelectedCenter(centersWithCoords[0]);
+        setCenters(res.data.result);
+        if (res.data.result.length > 0) {
+          setSelectedCenter(res.data.result[0]);
         }
       }
     } catch (error) {
@@ -86,182 +82,239 @@ const ContactPage = () => {
   };
 
   const filteredCenters = centers.filter((center) => {
-    const matchCity = filterCity === 'all' || center.city === filterCity;
-    const matchSearch =
-      center.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      center.address.toLowerCase().includes(searchTerm.toLowerCase());
-    return matchCity && matchSearch;
+    const term = searchTerm.toLowerCase();
+    return (
+      center.name?.toLowerCase().includes(term) || center.address?.toLowerCase().includes(term)
+    );
   });
 
   return (
-    <div className="flex flex-col min-h-screen bg-white">
-      <section className="bg-blue-50 flex-1">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          {}
-          <div className="bg-white border-b border-gray-200 py-8 mb-8 rounded-xl mt-6 shadow-sm">
-            <div className="container mx-auto px-4 text-center">
-              <Title level={2} className="text-blue-700 uppercase mb-2">
-                Tra cứu trung tâm tiêm chủng VaxSafe gần nhất!
-              </Title>
-              <Text type="secondary">
-                Tìm kiếm địa điểm tiêm chủng thuận tiện nhất cho bạn và gia đình.
-              </Text>
-            </div>
-          </div>
-
-          <div className="container mx-auto px-4 pb-12">
-            <Row gutter={[24, 24]}>
-              {}
-              <Col xs={24} lg={8}>
-                <Card className="shadow-sm rounded-xl border-0 h-full flex flex-col">
-                  <div className="mb-4 space-y-3">
-                    <Select
-                      defaultValue="all"
-                      style={{ width: '100%' }}
-                      onChange={(value) => setFilterCity(value)}
-                      size="large"
-                    >
-                      <Option value="all">Tất cả tỉnh thành</Option>
-                      <Option value="Hanoi">Hà Nội</Option>
-                      <Option value="Ho Chi Minh">TP. Hồ Chí Minh</Option>
-                    </Select>
-                    <Input
-                      placeholder="Tìm theo tên, địa chỉ..."
-                      prefix={<SearchOutlined />}
-                      size="large"
-                      onChange={(e) => setSearchTerm(e.target.value)}
-                    />
-                  </div>
-
-                  <div className="flex-1 overflow-y-auto max-h-[600px] pr-2 custom-scrollbar">
-                    {loading ? (
-                      <Skeleton active paragraph={{ rows: 5 }} />
-                    ) : filteredCenters.length > 0 ? (
-                      <List
-                        dataSource={filteredCenters}
-                        renderItem={(item) => (
-                          <button
-                            type="button"
-                            tabIndex={0}
-                            className={`p-4 mb-3 rounded-lg border cursor-pointer transition-all ${
-                              selectedCenter?.centerId === item.centerId
-                                ? 'border-blue-500 bg-blue-50 shadow-sm'
-                                : 'border-gray-100 hover:border-blue-200 hover:bg-gray-50'
-                            }`}
-                            onClick={() => setSelectedCenter(item)}
-                            onKeyDown={(e) => e.key === 'Enter' && setSelectedCenter(item)}
-                          >
-                            <Text strong className="text-blue-700 block text-lg mb-1">
-                              {item.name}
-                            </Text>
-                            <Paragraph className="text-gray-600 text-sm mb-2">
-                              {item.address}
-                            </Paragraph>
-                            <div className="flex items-center justify-between mt-2">
-                              <a
-                                href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(
-                                  item.address
-                                )}`}
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                className="text-blue-500 text-xs hover:underline flex items-center gap-1"
-                                onClick={(e) => e.stopPropagation()}
-                              >
-                                <GlobalOutlined /> Xem trên Google Maps
-                              </a>
-                              <Button
-                                size="small"
-                                type="primary"
-                                ghost
-                                icon={<EnvironmentFilled />}
-                                onClick={() => setSelectedCenter(item)}
-                              >
-                                Tìm trên bản đồ
-                              </Button>
-                            </div>
-                          </button>
-                        )}
-                      />
-                    ) : (
-                      <Empty description="Không tìm thấy trung tâm nào" />
-                    )}
-                  </div>
-                </Card>
-              </Col>
-
-              {}
-              <Col xs={24} lg={16}>
-                <Card
-                  className="shadow-sm rounded-xl border-0 h-[700px] overflow-hidden relative"
-                  styles={{ body: { height: '100%', padding: 0 } }}
-                >
-                  <MapContainer
-                    center={defaultPosition}
-                    zoom={13}
-                    style={{ height: '100%', width: '100%' }}
-                    scrollWheelZoom={false}
-                  >
-                    <TileLayer
-                      attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-                      url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-                    />
-
-                    {selectedCenter && <MapUpdater center={selectedCenter} />}
-
-                    {filteredCenters.map((center) => (
-                      <Marker
-                        key={center.centerId}
-                        position={[
-                          center.latitude || defaultPosition[0],
-                          center.longitude || defaultPosition[1],
-                        ]}
-                        icon={customIcon}
-                        eventHandlers={{
-                          click: () => {
-                            setSelectedCenter(center);
-                          },
-                        }}
-                      >
-                        <Popup>
-                          <div className="p-2">
-                            <h3 className="font-bold text-blue-700 mb-1">{center.name}</h3>
-                            <p className="text-sm text-gray-600 mb-2">{center.address}</p>
-                            <div className="flex items-center gap-2 text-xs text-gray-500">
-                              <PhoneOutlined /> {center.phoneNumber}
-                            </div>
-                          </div>
-                        </Popup>
-                      </Marker>
-                    ))}
-                  </MapContainer>
-
-                  {}
-                  {selectedCenter && (
-                    <div className="absolute bottom-4 left-4 right-4 md:left-auto md:right-4 md:w-80 bg-white p-4 rounded-xl shadow-lg z-[1000] border border-gray-100 animate-fade-in-up">
-                      <h3 className="font-bold text-blue-700 text-lg mb-1">
-                        {selectedCenter.name}
-                      </h3>
-                      <p className="text-gray-600 text-sm mb-3">{selectedCenter.address}</p>
-                      <div className="space-y-2 text-sm">
-                        <div className="flex items-center gap-2">
-                          <PhoneOutlined className="text-blue-500" />
-                          <span className="font-medium">{selectedCenter.phoneNumber}</span>
-                        </div>
-                        <div className="flex items-center gap-2">
-                          <span className="w-2 h-2 rounded-full bg-green-500"></span>
-                          <span className="text-green-600 font-medium">
-                            {selectedCenter.workingHours}
-                          </span>
-                        </div>
-                      </div>
-                    </div>
-                  )}
-                </Card>
-              </Col>
-            </Row>
+    <div className="flex flex-col min-h-screen bg-gray-50">
+      <section className="bg-white shadow-sm border-b border-gray-200">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+          <div className="text-center">
+            <Title level={2} className="text-blue-700 uppercase mb-2">
+              Hệ thống trung tâm tiêm chủng
+            </Title>
+            <Text className="text-gray-500 text-lg">
+              Tra cứu địa điểm, số điện thoại và giờ làm việc của các trung tâm gần bạn
+            </Text>
           </div>
         </div>
       </section>
+
+      <div className="flex-1 max-w-7xl mx-auto w-full px-4 sm:px-6 lg:px-8 py-8">
+        <Row gutter={[24, 24]} className="h-[calc(100vh-250px)] min-h-[600px]">
+          {/* Sidebar List */}
+          <Col xs={24} lg={8} className="h-full flex flex-col">
+            <Card
+              className="shadow-md rounded-xl border-0 h-full flex flex-col overflow-hidden"
+              bodyStyle={{ padding: 0, height: '100%', display: 'flex', flexDirection: 'column' }}
+            >
+              <div className="p-4 border-b border-gray-100 bg-white z-10">
+                <Input
+                  placeholder="Tìm kiếm theo tên hoặc địa chỉ..."
+                  prefix={<SearchOutlined className="text-gray-400" />}
+                  size="large"
+                  className="rounded-lg"
+                  allowClear
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                />
+                <div className="mt-2 text-xs text-gray-400">
+                  Tìm thấy {filteredCenters.length} trung tâm
+                </div>
+              </div>
+
+              <div className="flex-1 overflow-y-auto custom-scrollbar p-2 bg-gray-50">
+                {loading ? (
+                  <div className="p-4">
+                    <Skeleton active avatar paragraph={{ rows: 3 }} />
+                    <Skeleton active avatar paragraph={{ rows: 3 }} className="mt-4" />
+                    <Skeleton active avatar paragraph={{ rows: 3 }} className="mt-4" />
+                  </div>
+                ) : filteredCenters.length > 0 ? (
+                  <div className="space-y-3">
+                    {filteredCenters.map((item) => (
+                      <div
+                        key={item.centerId}
+                        className={`bg-white p-4 rounded-lg border transition-all cursor-pointer hover:shadow-md ${
+                          selectedCenter?.centerId === item.centerId
+                            ? 'border-blue-500 ring-1 ring-blue-500 shadow-sm'
+                            : 'border-gray-100'
+                        }`}
+                        onClick={() => setSelectedCenter(item)}
+                      >
+                        <div className="flex gap-3">
+                          <div className="w-16 h-16 rounded-md overflow-hidden flex-shrink-0 bg-gray-100 border border-gray-100">
+                            {item.image ? (
+                              <img
+                                src={item.image}
+                                alt={item.name}
+                                className="w-full h-full object-cover"
+                                onError={(e) => {
+                                  e.target.onerror = null;
+                                  e.target.src = 'https://via.placeholder.com/64?text=Center';
+                                }}
+                              />
+                            ) : (
+                              <div className="w-full h-full flex items-center justify-center text-gray-300">
+                                <EnvironmentFilled style={{ fontSize: '24px' }} />
+                              </div>
+                            )}
+                          </div>
+                          <div className="flex-1 min-w-0">
+                            <h4
+                              className={`font-bold text-base truncate mb-1 ${selectedCenter?.centerId === item.centerId ? 'text-blue-600' : 'text-gray-800'}`}
+                            >
+                              {item.name}
+                            </h4>
+                            <p className="text-gray-500 text-sm line-clamp-2 mb-2">
+                              {item.address}
+                            </p>
+                            <div className="flex flex-wrap gap-2">
+                              {item.workingHours && (
+                                <Tag
+                                  icon={<ClockCircleOutlined />}
+                                  color="default"
+                                  className="text-xs m-0 border-0 bg-gray-100 text-gray-600"
+                                >
+                                  {item.workingHours}
+                                </Tag>
+                              )}
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                ) : (
+                  <div className="h-full flex flex-col items-center justify-center text-gray-400 p-8">
+                    <Empty description="Không tìm thấy trung tâm nào phù hợp" />
+                  </div>
+                )}
+              </div>
+            </Card>
+          </Col>
+
+          {/* Map Section */}
+          <Col xs={24} lg={16} className="h-full">
+            <Card
+              className="shadow-md rounded-xl border-0 h-full overflow-hidden relative"
+              bodyStyle={{ height: '100%', padding: 0 }}
+            >
+              <div className="absolute inset-0 z-0">
+                <MapContainer
+                  center={defaultPosition}
+                  zoom={13}
+                  style={{ height: '100%', width: '100%' }}
+                  scrollWheelZoom={true}
+                  zoomControl={false}
+                >
+                  <TileLayer
+                    attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+                    url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+                  />
+
+                  {selectedCenter && <MapUpdater center={selectedCenter} />}
+
+                  {filteredCenters.map(
+                    (center) =>
+                      center.latitude &&
+                      center.longitude && (
+                        <Marker
+                          key={center.centerId}
+                          position={[center.latitude, center.longitude]}
+                          icon={customIcon}
+                          eventHandlers={{
+                            click: () => {
+                              setSelectedCenter(center);
+                            },
+                          }}
+                        >
+                          {/* Removing Popup here to avoid clutter, using the overlay card instead */}
+                        </Marker>
+                      )
+                  )}
+                </MapContainer>
+              </div>
+
+              {/* Overlay Selected Center Info */}
+              {selectedCenter && (
+                <div className="absolute bottom-6 left-6 right-6 md:left-auto md:right-6 md:w-96 bg-white rounded-xl shadow-2xl z-[1000] border border-gray-100 overflow-hidden animate-fade-in-up">
+                  <div className="relative h-32 bg-gray-100">
+                    {selectedCenter.image ? (
+                      <img
+                        src={selectedCenter.image}
+                        alt={selectedCenter.name}
+                        className="w-full h-full object-cover"
+                      />
+                    ) : (
+                      <div className="w-full h-full flex items-center justify-center bg-blue-50 text-blue-200">
+                        <EnvironmentFilled style={{ fontSize: '48px' }} />
+                      </div>
+                    )}
+                    <div className="absolute top-2 right-2">
+                      <Tag color="blue" className="m-0 shadow-sm border-0 font-semibold">
+                        Đang hoạt động
+                      </Tag>
+                    </div>
+                  </div>
+                  <div className="p-5">
+                    <h3 className="font-bold text-blue-800 text-xl mb-2">{selectedCenter.name}</h3>
+
+                    <div className="space-y-3 mb-4">
+                      <div className="flex items-start gap-3">
+                        <EnvironmentFilled className="text-red-500 mt-1 flex-shrink-0" />
+                        <span className="text-gray-600 font-medium text-sm leading-tight">
+                          {selectedCenter.address}
+                        </span>
+                      </div>
+
+                      {selectedCenter.phoneNumber && (
+                        <div className="flex items-center gap-3">
+                          <PhoneOutlined className="text-green-500 flex-shrink-0" />
+                          <span className="text-gray-700 font-semibold">
+                            {selectedCenter.phoneNumber}
+                          </span>
+                        </div>
+                      )}
+
+                      {selectedCenter.workingHours && (
+                        <div className="flex items-center gap-3">
+                          <ClockCircleOutlined className="text-orange-500 flex-shrink-0" />
+                          <span className="text-gray-600 text-sm">
+                            {selectedCenter.workingHours}
+                          </span>
+                        </div>
+                      )}
+                    </div>
+
+                    <div className="grid grid-cols-2 gap-3 mt-4 pt-4 border-t border-gray-100">
+                      <Button
+                        type="primary"
+                        href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(`${selectedCenter.name} ${selectedCenter.address}`)}`}
+                        target="_blank"
+                        icon={<GlobalOutlined />}
+                        block
+                      >
+                        Chỉ đường
+                      </Button>
+                      <Button
+                        block
+                        onClick={() =>
+                          window.open(`tel:${selectedCenter.phoneNumber?.replace(/\s/g, '')}`)
+                        }
+                      >
+                        Gọi điện
+                      </Button>
+                    </div>
+                  </div>
+                </div>
+              )}
+            </Card>
+          </Col>
+        </Row>
+      </div>
     </div>
   );
 };

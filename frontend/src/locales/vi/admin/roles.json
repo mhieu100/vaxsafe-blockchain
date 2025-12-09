@@ -1,0 +1,15 @@
+{
+  "title": "Quản lý Vai trò",
+  "addRole": "Thêm vai trò",
+  "editRole": "Sửa vai trò",
+  "deleteRole": "Xóa vai trò",
+  "roleList": "Danh sách vai trò",
+  "roleName": "Tên vai trò",
+  "permissions": "Quyền hạn",
+  "actions": "Thao tác",
+  "searchRole": "Tìm vai trò...",
+  "confirmDelete": "Bạn có chắc chắn muốn xóa vai trò này?",
+  "deleteSuccess": "Xóa vai trò thành công",
+  "createSuccess": "Tạo vai trò thành công",
+  "updateSuccess": "Cập nhật vai trò thành công"
+}

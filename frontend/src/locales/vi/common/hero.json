@@ -1,0 +1,16 @@
+{
+  "title": "Nền tảng Quản lý Tiêm chủng Thông minh",
+  "subtitle": "Sử dụng công nghệ Blockchain để đảm bảo minh bạch và an toàn trong quá trình tiêm chủng",
+  "viewVaccines": "Xem Vắc-xin",
+  "learnMore": "Tìm hiểu thêm",
+  "certificate": {
+    "title": "Giấy chứng nhận Tiêm chủng",
+    "id": "Mã",
+    "fullName": "Họ và tên",
+    "dob": "Ngày sinh",
+    "vaccine": "Vắc-xin",
+    "doses": "Liều",
+    "blockchainHash": "Mã Blockchain",
+    "verification": "Xác thực Blockchain"
+  }
+}

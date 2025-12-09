@@ -14,7 +14,7 @@ import java.util.List;
 
 public interface AppointmentRepository extends JpaRepository<Appointment, Long>, JpaSpecificationExecutor<Appointment> {
 
-        List<Appointment> findByPatientAndStatus(User patient, AppointmentStatus status);
+        List<Appointment> findByPatientAndStatusIn(User patient, List<AppointmentStatus> statuses);
 
         List<Appointment> findByPatient(User patient);
 

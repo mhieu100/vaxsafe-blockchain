@@ -1,0 +1,14 @@
+{
+  "title": "Doctor Schedule",
+  "mySchedule": "My Schedule",
+  "availableSlots": "Available Slots",
+  "bookedSlots": "Booked Slots",
+  "selectDoctor": "Select Doctor",
+  "selectDate": "Select Date",
+  "updateSchedule": "Update Schedule",
+  "addSchedule": "Add Schedule",
+  "deleteSchedule": "Delete Schedule",
+  "updateSuccess": "Schedule updated successfully",
+  "addSuccess": "Schedule added successfully",
+  "deleteSuccess": "Schedule deleted successfully"
+}

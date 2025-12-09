@@ -1,0 +1,19 @@
+{
+  "title": "Quản lý Tin tức",
+  "addNews": "Thêm tin tức",
+  "editNews": "Sửa tin tức",
+  "deleteNews": "Xóa tin tức",
+  "newsList": "Danh sách tin tức",
+  "newsTitle": "Tiêu đề",
+  "author": "Tác giả",
+  "publishDate": "Ngày xuất bản",
+  "status": "Trạng thái",
+  "actions": "Thao tác",
+  "published": "Đã xuất bản",
+  "draft": "Bản nháp",
+  "searchNews": "Tìm tin tức...",
+  "confirmDelete": "Bạn có chắc chắn muốn xóa tin tức này?",
+  "deleteSuccess": "Xóa tin tức thành công",
+  "createSuccess": "Tạo tin tức thành công",
+  "updateSuccess": "Cập nhật tin tức thành công"
+}

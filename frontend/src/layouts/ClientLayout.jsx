@@ -23,7 +23,7 @@ const LayoutClient = () => {
     <>
       <Navbar />
       <Outlet />
-      {location.pathname !== '/success' && <Footer />}
+      {location.pathname !== '/success' && location.pathname !== '/profile' && <Footer />}
       <ChatBot />
     </>
   );

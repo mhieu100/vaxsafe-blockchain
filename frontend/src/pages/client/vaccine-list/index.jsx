@@ -1,5 +1,6 @@
 import { Card, Col, Row, Skeleton } from 'antd';
-import { useState } from 'react';
+import debounce from 'lodash/debounce';
+import { useEffect, useMemo, useState } from 'react';
 import { MAX_PRICE, MIN_PRICE } from '@/constants';
 import { useVaccine } from '@/hooks/useVaccine';
 import LeftFilterSection from './components/LeftFilterSection';
@@ -13,6 +14,22 @@ const VaccineListPage = () => {
   const [country, setCountry] = useState([]);
   const [sortBy, setSortBy] = useState(null);
   const [priceRange, setPriceRange] = useState([MIN_PRICE, MAX_PRICE]);
+  const [searchTerm, setSearchTerm] = useState('');
+
+  const debouncedSearch = useMemo(
+    () =>
+      debounce((value) => {
+        setSearchTerm(value);
+        setCurrentPage(1); // Reset to page 1 on search
+      }, 500),
+    []
+  );
+
+  useEffect(() => {
+    return () => {
+      debouncedSearch.cancel();
+    };
+  }, [debouncedSearch]);
 
   const sort = {};
   if (sortBy) {
@@ -23,7 +40,7 @@ const VaccineListPage = () => {
   const filter = {
     current: currentPage,
     pageSize: pageSize,
-    filters: { price: priceRange, country: country },
+    filters: { price: priceRange, country: country, search: searchTerm },
     sort,
   };
 
@@ -46,6 +63,7 @@ const VaccineListPage = () => {
                 sortBy={sortBy}
                 setSortBy={setSortBy}
                 setPriceRange={setPriceRange}
+                onSearch={debouncedSearch}
               />
             )}
           </aside>

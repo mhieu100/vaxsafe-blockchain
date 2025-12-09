@@ -56,7 +56,6 @@ public class BookingMapper {
         }
 
         return BookingResponse.builder()
-                .bookingId(appointment.getId())
                 .patientId(appointment.getPatient().getId())
                 .patientName(appointment.getPatient().getFullName())
                 .familyMemberId(familyMember != null ? familyMember.getId() : null)

@@ -25,8 +25,8 @@ const ProfileTabs = ({ activeTab, onTabChange, editMode, setEditMode }) => {
       content: <FamilyManagerTab />,
     },
     5: {
-      title: t('client:sidebar.settings'),
-      content: <SettingsTab />,
+      title: t('client:sidebar.accountSettings', 'Account & Settings'),
+      content: <SettingsTab editMode={editMode} setEditMode={setEditMode} />,
     },
   };
 

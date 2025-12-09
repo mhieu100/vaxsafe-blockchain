@@ -1,0 +1,22 @@
+{
+  "sidebar": {
+    "dashboard": "Dashboard",
+    "myRecords": "My Records",
+    "appointments": "Appointments",
+    "familyMembers": "Family Members",
+    "settings": "Settings",
+    "accountSettings": "Account & Settings",
+    "menu": "Menu"
+  },
+  "cardInfo": {
+    "patient": "PATIENT",
+    "identityVerified": "Identity Verified",
+    "scanId": "Scan ID"
+  },
+  "common": {
+    "save": "Save",
+    "cancel": "Cancel",
+    "confirm": "Confirm",
+    "note": "Note"
+  }
+}

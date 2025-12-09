@@ -1,0 +1,15 @@
+{
+  "title": "Quản lý Quyền",
+  "addPermission": "Thêm quyền",
+  "editPermission": "Sửa quyền",
+  "deletePermission": "Xóa quyền",
+  "permissionList": "Danh sách quyền",
+  "permissionName": "Tên quyền",
+  "module": "Mô-đun",
+  "actions": "Thao tác",
+  "searchPermission": "Tìm quyền...",
+  "confirmDelete": "Bạn có chắc chắn muốn xóa quyền này?",
+  "deleteSuccess": "Xóa quyền thành công",
+  "createSuccess": "Tạo quyền thành công",
+  "updateSuccess": "Cập nhật quyền thành công"
+}

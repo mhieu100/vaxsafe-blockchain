@@ -9,7 +9,7 @@ const HealthRemindersTab = () => {
   return (
     <div>
       <Title level={4} className="mb-4">
-        {t('client:healthReminders.title')}
+        {t('client:profile.healthReminders.title')}
       </Title>
 
       <div className="space-y-4">
@@ -17,10 +17,10 @@ const HealthRemindersTab = () => {
           <div className="flex items-center gap-3">
             <WarningOutlined className="text-orange-500" />
             <div>
-              <Text strong>{t('client:healthReminders.fluVaccineDue')}</Text>
+              <Text strong>{t('client:profile.healthReminders.fluVaccineDue')}</Text>
               <br />
               <Text type="secondary" className="text-sm">
-                {t('client:healthReminders.fluVaccineDueDesc')}
+                {t('client:profile.healthReminders.fluVaccineDueDesc')}
               </Text>
             </div>
           </div>
@@ -30,10 +30,10 @@ const HealthRemindersTab = () => {
           <div className="flex items-center gap-3">
             <ExperimentOutlined className="text-blue-500" />
             <div>
-              <Text strong>{t('client:healthReminders.healthCheckupReminder')}</Text>
+              <Text strong>{t('client:profile.healthReminders.healthCheckupReminder')}</Text>
               <br />
               <Text type="secondary" className="text-sm">
-                {t('client:healthReminders.healthCheckupDesc')}
+                {t('client:profile.healthReminders.healthCheckupDesc')}
               </Text>
             </div>
           </div>
@@ -43,10 +43,10 @@ const HealthRemindersTab = () => {
           <div className="flex items-center gap-3">
             <CheckCircleOutlined className="text-green-500" />
             <div>
-              <Text strong>{t('client:healthReminders.vaccinationRecordComplete')}</Text>
+              <Text strong>{t('client:profile.healthReminders.vaccinationRecordComplete')}</Text>
               <br />
               <Text type="secondary" className="text-sm">
-                {t('client:healthReminders.vaccinationRecordCompleteDesc')}
+                {t('client:profile.healthReminders.vaccinationRecordCompleteDesc')}
               </Text>
             </div>
           </div>
@@ -54,12 +54,12 @@ const HealthRemindersTab = () => {
       </div>
 
       <Card className="mt-4 bg-green-50">
-        <Title level={5}>🏥 {t('client:healthReminders.healthTips')}</Title>
+        <Title level={5}>🏥 {t('client:profile.healthReminders.healthTips')}</Title>
         <ul className="text-sm text-gray-600 mt-2 space-y-1">
-          <li>• {t('client:healthReminders.healthTip1')}</li>
-          <li>• {t('client:healthReminders.healthTip2')}</li>
-          <li>• {t('client:healthReminders.healthTip3')}</li>
-          <li>• {t('client:healthReminders.healthTip4')}</li>
+          <li>• {t('client:profile.healthReminders.healthTip1')}</li>
+          <li>• {t('client:profile.healthReminders.healthTip2')}</li>
+          <li>• {t('client:profile.healthReminders.healthTip3')}</li>
+          <li>• {t('client:profile.healthReminders.healthTip4')}</li>
         </ul>
       </Card>
     </div>

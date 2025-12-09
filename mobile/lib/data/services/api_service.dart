@@ -9,9 +9,9 @@ class ApiService {
   // Use localhost for iOS simulator
   static String get baseUrl {
     if (Platform.isAndroid) {
-      return dotenv.env['API_BASE_URL_ANDROID'];
+      return dotenv.env['API_BASE_URL_ANDROID'] ?? 'http://10.0.2.2:8080';
     }
-    return dotenv.env['API_BASE_URL_IOS'];
+    return dotenv.env['API_BASE_URL_IOS'] ?? 'http://localhost:8080';
   }
 
   String? _accessToken;

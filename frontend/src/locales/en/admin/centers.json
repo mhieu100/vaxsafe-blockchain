@@ -1,0 +1,16 @@
+{
+  "title": "Center Management",
+  "addCenter": "Add Center",
+  "editCenter": "Edit Center",
+  "deleteCenter": "Delete Center",
+  "centerList": "Center List",
+  "centerName": "Center Name",
+  "address": "Address",
+  "phone": "Phone",
+  "actions": "Actions",
+  "searchCenter": "Search center...",
+  "confirmDelete": "Are you sure you want to delete this center?",
+  "deleteSuccess": "Center deleted successfully",
+  "createSuccess": "Center created successfully",
+  "updateSuccess": "Center updated successfully"
+}

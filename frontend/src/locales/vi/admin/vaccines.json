@@ -1,0 +1,18 @@
+{
+  "title": "Quản lý Vắc-xin",
+  "addVaccine": "Thêm vắc-xin",
+  "editVaccine": "Sửa vắc-xin",
+  "deleteVaccine": "Xóa vắc-xin",
+  "vaccineList": "Danh sách vắc-xin",
+  "vaccineName": "Tên vắc-xin",
+  "manufacturer": "Nhà sản xuất",
+  "price": "Giá",
+  "stock": "Tồn kho",
+  "description": "Mô tả",
+  "actions": "Thao tác",
+  "searchVaccine": "Tìm vắc-xin...",
+  "confirmDelete": "Bạn có chắc chắn muốn xóa vắc-xin này?",
+  "deleteSuccess": "Xóa vắc-xin thành công",
+  "createSuccess": "Tạo vắc-xin thành công",
+  "updateSuccess": "Cập nhật vắc-xin thành công"
+}

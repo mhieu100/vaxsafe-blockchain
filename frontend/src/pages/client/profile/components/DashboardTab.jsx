@@ -23,6 +23,7 @@ import { useTranslation } from 'react-i18next';
 import apiClient from '@/services/apiClient';
 import { getMyBookingHistory } from '@/services/booking.service';
 import useAccountStore from '@/stores/useAccountStore';
+import VaccinationProgressTab from './VaccinationProgressTab';
 
 const { Title, Text } = Typography;
 
@@ -113,8 +114,10 @@ const DashboardTab = ({ onTabChange }) => {
 
   return (
     <div className="space-y-6 animate-fade-in">
-      {}
+      {/* <HealthRemindersTab /> */}
+
       <Row gutter={[24, 24]}>
+        {/* Stats Cards ... */}
         <Col xs={24} md={8}>
           <Card className="rounded-2xl shadow-sm border border-emerald-100 bg-gradient-to-br from-emerald-50 to-white h-full">
             <Statistic
@@ -167,7 +170,9 @@ const DashboardTab = ({ onTabChange }) => {
         </Col>
       </Row>
 
-      {}
+      <VaccinationProgressTab />
+
+      {/* Next Appointment Card (Existing) */}
       <Card className="rounded-3xl shadow-sm border border-slate-100 overflow-hidden">
         {nextAppointment ? (
           <div className="flex flex-col md:flex-row items-center justify-between gap-6">
@@ -203,7 +208,7 @@ const DashboardTab = ({ onTabChange }) => {
             <Text type="secondary">{t('client:appointments.noUpcoming')}</Text>
             <div className="mt-4">
               <Button type="primary" onClick={() => onTabChange('2')}>
-                {t('client:vaccine.bookingNow')}
+                {t('client:dashboard.bookingNow')}
               </Button>
             </div>
           </div>

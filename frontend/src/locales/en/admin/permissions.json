@@ -1,0 +1,15 @@
+{
+  "title": "Permission Management",
+  "addPermission": "Add Permission",
+  "editPermission": "Edit Permission",
+  "deletePermission": "Delete Permission",
+  "permissionList": "Permission List",
+  "permissionName": "Permission Name",
+  "module": "Module",
+  "actions": "Actions",
+  "searchPermission": "Search permission...",
+  "confirmDelete": "Are you sure you want to delete this permission?",
+  "deleteSuccess": "Permission deleted successfully",
+  "createSuccess": "Permission created successfully",
+  "updateSuccess": "Permission updated successfully"
+}

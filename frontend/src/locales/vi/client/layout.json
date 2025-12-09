@@ -1,0 +1,22 @@
+{
+  "sidebar": {
+    "dashboard": "Tổng quan",
+    "myRecords": "Hồ sơ của tôi",
+    "appointments": "Lịch hẹn",
+    "familyMembers": "Thành viên gia đình",
+    "settings": "Cài đặt",
+    "accountSettings": "Tài khoản & Cài đặt",
+    "menu": "Danh mục"
+  },
+  "cardInfo": {
+    "patient": "BỆNH NHÂN",
+    "identityVerified": "Đã xác minh danh tính",
+    "scanId": "Quét mã"
+  },
+  "common": {
+    "save": "Lưu",
+    "cancel": "Hủy",
+    "confirm": "Xác nhận",
+    "note": "Ghi chú"
+  }
+}

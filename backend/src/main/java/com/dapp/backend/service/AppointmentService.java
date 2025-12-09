@@ -1,17 +1,13 @@
 package com.dapp.backend.service;
 
 import com.dapp.backend.dto.mapper.AppointmentMapper;
+import com.dapp.backend.dto.mapper.BookingMapper;
 import com.dapp.backend.dto.mapper.UserMapper;
+import com.dapp.backend.dto.request.BookingRequest;
 import com.dapp.backend.dto.request.ProcessAppointmentRequest;
 import com.dapp.backend.dto.request.RescheduleAppointmentRequest;
-import com.dapp.backend.dto.response.AppointmentResponse;
-import com.dapp.backend.dto.response.Pagination;
-import com.dapp.backend.dto.response.RescheduleAppointmentResponse;
-import com.dapp.backend.dto.response.UrgentAppointmentDto;
-import com.dapp.backend.dto.request.BookingRequest;
 import com.dapp.backend.dto.request.WalkInBookingRequest;
 import com.dapp.backend.dto.response.*;
-import com.dapp.backend.dto.mapper.BookingMapper;
 import com.dapp.backend.enums.*;
 import com.dapp.backend.exception.AppException;
 import com.dapp.backend.model.*;
@@ -34,6 +30,7 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
+
 import static com.dapp.backend.service.PaypalService.EXCHANGE_RATE_TO_USD;
 
 @Service
@@ -467,7 +464,6 @@ public class AppointmentService {
 
         return UrgentAppointmentDto.builder()
                 .id(appointment.getId())
-                .bookingId(appointment.getId())
                 .patientName(patient != null ? patient.getFullName() : "N/A")
                 .patientPhone(patient != null ? patient.getPhone() : "N/A")
                 .patientEmail(patient != null ? patient.getEmail() : "N/A")
@@ -805,17 +801,25 @@ public class AppointmentService {
                 .build();
     }
 
-    public List<BookingResponse> getBooking() throws AppException {
+    public List<AppointmentResponse> getBooking() throws AppException {
         User user = authService.getCurrentUserLogin();
-        // Return appointments that are confirmed (SCHEDULED or COMPLETED, not
-        // PENDING/CANCELLED logic might vary)
-        // For "My Bookings", typically we want everything or specific statuses.
-        // Original code: findAllByPatientAndStatus(user, BookingEnum.CONFIRMED)
-        // Mapped to AppointmentStatus.SCHEDULED and AppointmentStatus.COMPLETED?
-        // Let's assume SCHEDULED for now to match "Checking for upcoming bookings".
-        // Actually best to return all relevant ones.
-        return appointmentRepository.findByPatientAndStatus(user, AppointmentStatus.SCHEDULED).stream()
-                .map(BookingMapper::toResponse)
+        List<Appointment> appointments = appointmentRepository
+                .findByPatientAndStatusIn(user,
+                        List.of(AppointmentStatus.PENDING, AppointmentStatus.SCHEDULED, AppointmentStatus.RESCHEDULE));
+        return appointments.stream()
+                .map(apt -> {
+                    AppointmentResponse response = AppointmentMapper.toResponse(apt);
+                    paymentRepository.findByAppointmentId(apt.getId(), TypeTransactionEnum.APPOINTMENT)
+                            .ifPresent(payment -> {
+                                response.setPaymentId(payment.getId());
+                                response.setPaymentStatus(
+                                        payment.getStatus() != null ? payment.getStatus().name() : null);
+                                response.setPaymentMethod(
+                                        payment.getMethod() != null ? payment.getMethod().name() : null);
+                                response.setPaymentAmount(payment.getAmount());
+                            });
+                    return response;
+                })
                 .toList();
     }
 
@@ -838,11 +842,141 @@ public class AppointmentService {
         return pagination;
     }
 
-    public List<BookingResponse> getHistoryBooking() throws AppException {
+    public List<AppointmentResponse> getHistoryBooking() throws AppException {
         User user = authService.getCurrentUserLogin();
-        // Original: findAllByPatient(user) -> all bookings
         return appointmentRepository.findByPatient(user).stream()
-                .map(BookingMapper::toResponse)
+                .map(apt -> {
+                    AppointmentResponse response = AppointmentMapper.toResponse(apt);
+                    paymentRepository.findByAppointmentId(apt.getId(), TypeTransactionEnum.APPOINTMENT)
+                            .ifPresent(payment -> {
+                                response.setPaymentId(payment.getId());
+                                response.setPaymentStatus(
+                                        payment.getStatus() != null ? payment.getStatus().name() : null);
+                                response.setPaymentMethod(
+                                        payment.getMethod() != null ? payment.getMethod().name() : null);
+                                response.setPaymentAmount(payment.getAmount());
+                            });
+                    return response;
+                })
                 .toList();
+    }
+
+    public List<VaccinationRouteResponse> getGroupedHistoryBooking() throws AppException {
+        List<AppointmentResponse> flatList = getHistoryBooking();
+        java.util.Map<String, VaccinationRouteResponse> routes = new java.util.HashMap<>();
+
+        // Helper maps to track mutable data before building final response
+        // Using a custom inner class or just map manipulation
+        class RouteTracker {
+            String routeId;
+            String vaccineName;
+            String vaccineSlug;
+            String patientName;
+            boolean isFamily;
+            int requiredDoses;
+            int cycleIndex;
+            LocalDateTime createdAt;
+            Double totalAmount = 0.0;
+            List<AppointmentResponse> appointments = new java.util.ArrayList<>();
+        }
+
+        java.util.Map<String, RouteTracker> userRouteMap = new java.util.HashMap<>();
+
+        for (AppointmentResponse apt : flatList) {
+            int required = apt.getVaccineTotalDoses() != null ? apt.getVaccineTotalDoses() : 3;
+            // Prevent division by zero
+            if (required <= 0)
+                required = 3;
+
+            String patientName = apt.getPatientName();
+            int doseNum = apt.getDoseNumber() != null ? apt.getDoseNumber() : 1;
+
+            // Logic: cycleIndex = ceil(doseNumber / required) - 1
+            int cycleIndex = (int) Math.ceil((double) doseNum / required) - 1;
+            if (cycleIndex < 0)
+                cycleIndex = 0;
+
+            String key = apt.getVaccineName() + "-" + patientName + "-" + cycleIndex;
+
+            RouteTracker tracker = userRouteMap.get(key);
+            if (tracker == null) {
+                tracker = new RouteTracker();
+                tracker.routeId = key;
+                tracker.vaccineName = apt.getVaccineName();
+                tracker.vaccineSlug = apt.getVaccineSlug();
+                tracker.patientName = patientName;
+                tracker.isFamily = apt.getFamilyMemberId() != null;
+                tracker.requiredDoses = required;
+                tracker.cycleIndex = cycleIndex;
+                tracker.createdAt = apt.getCreatedAt();
+                userRouteMap.put(key, tracker);
+            }
+
+            // Deduplicate logic if needed, but assuming unique IDs in flatList
+            tracker.appointments.add(apt);
+
+            if (!"CANCELLED".equals(apt.getStatus().name())) {
+                Double amount = apt.getPaymentAmount();
+                if (amount == null)
+                    amount = 0.0;
+                tracker.totalAmount += amount;
+            }
+
+            // Update createdAt to latest
+            if (apt.getCreatedAt() != null
+                    && (tracker.createdAt == null || apt.getCreatedAt().isAfter(tracker.createdAt))) {
+                tracker.createdAt = apt.getCreatedAt();
+            }
+        }
+
+        List<VaccinationRouteResponse> result = new java.util.ArrayList<>();
+
+        for (RouteTracker tracker : userRouteMap.values()) {
+            // Sort appointments by dose number
+            tracker.appointments
+                    .sort(java.util.Comparator.comparingInt(a -> a.getDoseNumber() != null ? a.getDoseNumber() : 0));
+
+            // Determine status
+            long completedCount = tracker.appointments.stream()
+                    .filter(a -> "COMPLETED".equals(a.getStatus().name()))
+                    .count();
+
+            long activeCount = tracker.appointments.stream()
+                    .filter(a -> !"CANCELLED".equals(a.getStatus().name()))
+                    .count();
+
+            String status = "IN_PROGRESS";
+            if (completedCount >= tracker.requiredDoses) {
+                status = "COMPLETED";
+            } else if (activeCount == 0) {
+                status = "CANCELLED";
+            }
+
+            result.add(VaccinationRouteResponse.builder()
+                    .routeId(tracker.routeId)
+                    .vaccineName(tracker.vaccineName)
+                    .vaccineSlug(tracker.vaccineSlug)
+                    .patientName(tracker.patientName)
+                    .isFamily(tracker.isFamily)
+                    .requiredDoses(tracker.requiredDoses)
+                    .cycleIndex(tracker.cycleIndex)
+                    .createdAt(tracker.createdAt)
+                    .totalAmount(tracker.totalAmount)
+                    .appointments(tracker.appointments)
+                    .completedCount((int) completedCount)
+                    .status(status)
+                    .build());
+        }
+
+        // Sort routes by createdAt desc
+        result.sort((r1, r2) -> {
+            if (r1.getCreatedAt() == null)
+                return 1;
+            if (r2.getCreatedAt() == null)
+                return -1;
+            return r2.getCreatedAt().compareTo(r1.getCreatedAt());
+        });
+
+        return result;
     }
 }

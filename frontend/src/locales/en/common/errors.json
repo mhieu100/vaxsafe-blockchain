@@ -1,0 +1,17 @@
+{
+  "403": {
+    "title": "403",
+    "subtitle": "Sorry, you are not authorized to access this page.",
+    "backHome": "Back Home"
+  },
+  "404": {
+    "title": "404",
+    "subtitle": "Sorry, the page you visited does not exist.",
+    "backHome": "Back Home"
+  },
+  "401": {
+    "title": "401",
+    "subtitle": "Your session has expired. Please login again.",
+    "backHome": "Back Home"
+  }
+}

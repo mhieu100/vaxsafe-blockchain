@@ -1,0 +1,17 @@
+{
+  "403": {
+    "title": "403",
+    "subtitle": "Xin lỗi, bạn không có quyền truy cập trang này.",
+    "backHome": "Về trang chủ"
+  },
+  "404": {
+    "title": "404",
+    "subtitle": "Xin lỗi, trang bạn truy cập không tồn tại.",
+    "backHome": "Về trang chủ"
+  },
+  "401": {
+    "title": "401",
+    "subtitle": "Phiên đăng nhập đã hết hạn. Vui lòng đăng nhập lại.",
+    "backHome": "Về trang chủ"
+  }
+}
