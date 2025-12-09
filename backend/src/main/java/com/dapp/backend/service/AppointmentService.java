@@ -53,6 +53,7 @@ public class AppointmentService {
     private final CenterRepository centerRepository;
     private final FamilyMemberRepository familyMemberRepository;
     private final UserRepository userRepository;
+    private final VaccinationCourseRepository vaccinationCourseRepository;
 
     public Pagination getAllAppointmentOfCenter(Specification<Appointment> specification, Pageable pageable)
             throws AppException {
@@ -287,7 +288,17 @@ public class AppointmentService {
 
         appointment.setStatus(AppointmentStatus.COMPLETED);
         appointmentRepository.save(appointment);
-        // checkAndUpdateBookingStatus(appointment.getBooking());
+
+        if (appointment.getVaccinationCourse() != null) {
+            VaccinationCourse course = appointment.getVaccinationCourse();
+            course.setCurrentDoseIndex(appointment.getDoseNumber());
+
+            if (appointment.getDoseNumber() >= appointment.getVaccine().getDosesRequired()) {
+                course.setStatus(VaccinationCourseStatus.COMPLETED);
+                course.setEndDate(LocalDateTime.now());
+            }
+            vaccinationCourseRepository.save(course);
+        }
 
         try {
             vaccineRecordService.createFromAppointment(appointment, completeRequest);
@@ -371,7 +382,6 @@ public class AppointmentService {
         Appointment appointment = appointmentRepository.findById(request.getAppointmentId())
                 .orElseThrow(() -> new AppException("Appointment not found"));
 
-        // Booking booking = appointment.getBooking();
         boolean isOwner = false;
 
         if (appointment.getPatient() != null && appointment.getPatient().getId().equals(currentUser.getId())) {
@@ -399,7 +409,6 @@ public class AppointmentService {
         appointment.setDesiredDate(request.getDesiredDate());
         appointment.setDesiredTimeSlot(request.getDesiredTimeSlot());
 
-        appointment.setRescheduleReason(request.getReason());
         appointment.setRescheduledAt(LocalDateTime.now());
 
         appointment.setStatus(AppointmentStatus.RESCHEDULE);
@@ -459,7 +468,6 @@ public class AppointmentService {
     private UrgentAppointmentDto buildUrgentDto(
             Appointment appointment, String urgencyType, String urgencyMessage, int priorityLevel) {
 
-        // Booking booking = appointment.getBooking();
         User patient = appointment.getPatient();
 
         return UrgentAppointmentDto.builder()
@@ -474,7 +482,7 @@ public class AppointmentService {
                 .actualScheduledTime(appointment.getActualScheduledTime())
                 .desiredDate(appointment.getDesiredDate())
                 .desiredTimeSlot(appointment.getDesiredTimeSlot())
-                .rescheduleReason(appointment.getRescheduleReason())
+
                 .rescheduledAt(appointment.getRescheduledAt())
                 .doctorName(appointment.getDoctor() != null ? appointment.getDoctor().getFullName() : null)
                 .cashierName(appointment.getCashier() != null ? appointment.getCashier().getFullName() : null)
@@ -543,8 +551,9 @@ public class AppointmentService {
         }
 
         Appointment appointment = new Appointment();
+        FamilyMember familyMember = null;
         if (bookingRequest.getFamilyMemberId() != null) {
-            FamilyMember familyMember = familyMemberRepository.findById(bookingRequest.getFamilyMemberId())
+            familyMember = familyMemberRepository.findById(bookingRequest.getFamilyMemberId())
                     .orElseThrow(() -> new AppException("Family member not found!"));
             appointment.setFamilyMember(familyMember);
             appointment.setPatient(user);
@@ -555,11 +564,10 @@ public class AppointmentService {
         appointment.setTotalAmount(bookingRequest.getAmount());
         appointment.setStatus(AppointmentStatus.PENDING);
 
-        Integer maxDose = appointmentRepository.findMaxDose(user.getId(), vaccine.getId(),
-                bookingRequest.getFamilyMemberId());
-        int currentDose = (maxDose == null) ? 1 : maxDose + 1;
-
-        appointment.setDoseNumber(currentDose);
+        VaccinationCourse course = handleVaccinationCourse(user, familyMember, vaccine,
+                bookingRequest.getAppointmentDate());
+        appointment.setVaccinationCourse(course);
+        appointment.setDoseNumber(course.getCurrentDoseIndex() + 1);
 
         appointment.setScheduledDate(bookingRequest.getAppointmentDate());
         if (bookingRequest.getAppointmentTime() != null) {
@@ -697,8 +705,9 @@ public class AppointmentService {
         }
 
         Appointment appointment = new Appointment();
+        FamilyMember familyMember = null;
         if (request.getFamilyMemberId() != null) {
-            FamilyMember familyMember = familyMemberRepository.findById(request.getFamilyMemberId())
+            familyMember = familyMemberRepository.findById(request.getFamilyMemberId())
                     .orElseThrow(() -> new AppException("Family member not found!"));
 
             if (!familyMember.getUser().getId().equals(patient.getId())) {
@@ -711,11 +720,10 @@ public class AppointmentService {
         appointment.setTotalAmount((double) vaccine.getPrice());
         appointment.setStatus(AppointmentStatus.SCHEDULED);
 
-        Integer maxDose = appointmentRepository.findMaxDose(patient.getId(), vaccine.getId(),
-                request.getFamilyMemberId());
-        int currentDose = (maxDose == null) ? 1 : maxDose + 1;
-
-        appointment.setDoseNumber(currentDose);
+        VaccinationCourse course = handleVaccinationCourse(patient, familyMember, vaccine,
+                request.getAppointmentDate());
+        appointment.setVaccinationCourse(course);
+        appointment.setDoseNumber(course.getCurrentDoseIndex() + 1);
 
         appointment.setScheduledDate(request.getAppointmentDate());
         appointment.setScheduledTimeSlot(TimeSlotEnum.fromTime(request.getAppointmentTime()));
@@ -801,6 +809,44 @@ public class AppointmentService {
                 .build();
     }
 
+    private VaccinationCourse handleVaccinationCourse(User patient, FamilyMember familyMember, Vaccine vaccine,
+            LocalDate date) {
+        java.util.Optional<VaccinationCourse> existingCourseOpt;
+        if (familyMember != null) {
+            existingCourseOpt = vaccinationCourseRepository.findByFamilyMemberAndVaccineAndStatus(
+                    familyMember, vaccine, VaccinationCourseStatus.ONGOING);
+        } else {
+            existingCourseOpt = vaccinationCourseRepository.findByPatientAndFamilyMemberIsNullAndVaccineAndStatus(
+                    patient, vaccine, VaccinationCourseStatus.ONGOING);
+        }
+
+        if (existingCourseOpt.isPresent()) {
+            VaccinationCourse course = existingCourseOpt.get();
+            // Check if course is actually full but not marked
+            if (course.getCurrentDoseIndex() >= vaccine.getDosesRequired()) {
+                course.setStatus(VaccinationCourseStatus.COMPLETED);
+                vaccinationCourseRepository.save(course);
+                // Create new course for re-vaccination
+                return createNewCourse(patient, familyMember, vaccine, date);
+            }
+            return course;
+        } else {
+            return createNewCourse(patient, familyMember, vaccine, date);
+        }
+    }
+
+    private VaccinationCourse createNewCourse(User patient, FamilyMember familyMember, Vaccine vaccine,
+            LocalDate date) {
+        return vaccinationCourseRepository.save(VaccinationCourse.builder()
+                .patient(patient)
+                .familyMember(familyMember)
+                .vaccine(vaccine)
+                .status(VaccinationCourseStatus.ONGOING)
+                .currentDoseIndex(0)
+                .startDate(date != null ? date.atStartOfDay() : LocalDateTime.now())
+                .build());
+    }
+
     public List<AppointmentResponse> getBooking() throws AppException {
         User user = authService.getCurrentUserLogin();
         List<Appointment> appointments = appointmentRepository
@@ -845,6 +891,7 @@ public class AppointmentService {
     public List<AppointmentResponse> getHistoryBooking() throws AppException {
         User user = authService.getCurrentUserLogin();
         return appointmentRepository.findByPatient(user).stream()
+                .filter(apt -> apt.getFamilyMember() == null) // Filter out family members
                 .map(apt -> {
                     AppointmentResponse response = AppointmentMapper.toResponse(apt);
                     paymentRepository.findByAppointmentId(apt.getId(), TypeTransactionEnum.APPOINTMENT)
@@ -861,8 +908,35 @@ public class AppointmentService {
                 .toList();
     }
 
-    public List<VaccinationRouteResponse> getGroupedHistoryBooking() throws AppException {
-        List<AppointmentResponse> flatList = getHistoryBooking();
+    public List<VaccinationRouteResponse> getGroupedHistoryBookingForFamilyMember(Long familyMemberId)
+            throws AppException {
+        User user = authService.getCurrentUserLogin();
+        // Verify family member belongs to user
+        familyMemberRepository.findById(familyMemberId)
+                .filter(fm -> fm.getUser().getId().equals(user.getId()))
+                .orElseThrow(() -> new AppException("Family member not found or does not belong to user"));
+
+        List<AppointmentResponse> flatList = appointmentRepository.findByPatient(user).stream()
+                .filter(apt -> apt.getFamilyMember() != null && apt.getFamilyMember().getId().equals(familyMemberId))
+                .map(apt -> {
+                    AppointmentResponse response = AppointmentMapper.toResponse(apt);
+                    paymentRepository.findByAppointmentId(apt.getId(), TypeTransactionEnum.APPOINTMENT)
+                            .ifPresent(payment -> {
+                                response.setPaymentId(payment.getId());
+                                response.setPaymentStatus(
+                                        payment.getStatus() != null ? payment.getStatus().name() : null);
+                                response.setPaymentMethod(
+                                        payment.getMethod() != null ? payment.getMethod().name() : null);
+                                response.setPaymentAmount(payment.getAmount());
+                            });
+                    return response;
+                })
+                .toList();
+
+        return groupAppointmentsToRoutes(flatList);
+    }
+
+    private List<VaccinationRouteResponse> groupAppointmentsToRoutes(List<AppointmentResponse> flatList) {
         java.util.Map<String, VaccinationRouteResponse> routes = new java.util.HashMap<>();
 
         // Helper maps to track mutable data before building final response
@@ -903,7 +977,6 @@ public class AppointmentService {
                 tracker = new RouteTracker();
                 tracker.routeId = key;
                 tracker.vaccineName = apt.getVaccineName();
-                tracker.vaccineSlug = apt.getVaccineSlug();
                 tracker.patientName = patientName;
                 tracker.isFamily = apt.getFamilyMemberId() != null;
                 tracker.requiredDoses = required;
@@ -915,7 +988,7 @@ public class AppointmentService {
             // Deduplicate logic if needed, but assuming unique IDs in flatList
             tracker.appointments.add(apt);
 
-            if (!"CANCELLED".equals(apt.getStatus().name())) {
+            if (!"CANCELLED".equals(apt.getAppointmentStatus().name())) {
                 Double amount = apt.getPaymentAmount();
                 if (amount == null)
                     amount = 0.0;
@@ -938,18 +1011,17 @@ public class AppointmentService {
 
             // Determine status
             long completedCount = tracker.appointments.stream()
-                    .filter(a -> "COMPLETED".equals(a.getStatus().name()))
-                    .count();
-
-            long activeCount = tracker.appointments.stream()
-                    .filter(a -> !"CANCELLED".equals(a.getStatus().name()))
+                    .filter(a -> "COMPLETED".equals(a.getAppointmentStatus().name()))
                     .count();
 
             String status = "IN_PROGRESS";
             if (completedCount >= tracker.requiredDoses) {
                 status = "COMPLETED";
-            } else if (activeCount == 0) {
-                status = "CANCELLED";
+            } else if (tracker.appointments.stream().anyMatch(a -> "CANCELLED".equals(a.getAppointmentStatus().name()))
+                    && tracker.appointments.size() == 1) {
+                // If only one appointment and it's cancelled, maybe whole route is cancelled?
+                // But usually we just say In Progress until completed.
+                // Let's keep specific logic simple for now.
             }
 
             result.add(VaccinationRouteResponse.builder()
@@ -962,21 +1034,19 @@ public class AppointmentService {
                     .cycleIndex(tracker.cycleIndex)
                     .createdAt(tracker.createdAt)
                     .totalAmount(tracker.totalAmount)
-                    .appointments(tracker.appointments)
-                    .completedCount((int) completedCount)
                     .status(status)
+                    .completedCount((int) completedCount)
+                    .appointments(tracker.appointments)
                     .build());
         }
 
-        // Sort routes by createdAt desc
-        result.sort((r1, r2) -> {
-            if (r1.getCreatedAt() == null)
-                return 1;
-            if (r2.getCreatedAt() == null)
-                return -1;
-            return r2.getCreatedAt().compareTo(r1.getCreatedAt());
-        });
+        result.sort((a, b) -> b.getCreatedAt().compareTo(a.getCreatedAt()));
 
         return result;
+    }
+
+    public List<VaccinationRouteResponse> getGroupedHistoryBooking() throws AppException {
+        List<AppointmentResponse> flatList = getHistoryBooking();
+        return groupAppointmentsToRoutes(flatList);
     }
 }

@@ -8,17 +8,17 @@ export const callGetOrder = () => {
   return apiClient.get('/api/orders');
 };
 
-export const updatePaymentPaypal = (bookingId, paymentId) => {
+export const updatePaymentPaypal = (referenceId, paymentId) => {
   return apiClient.post('/api/payments/paypal', {
-    bookingId,
+    referenceId,
     paymentId,
   });
 };
 
-export const updatePaymentMetaMask = (paymentId, bookingId) => {
+export const updatePaymentMetaMask = (paymentId, referenceId) => {
   return apiClient.post('/api/payments/meta-mask', {
     paymentId,
-    referenceId: bookingId,
+    referenceId,
   });
 };
 

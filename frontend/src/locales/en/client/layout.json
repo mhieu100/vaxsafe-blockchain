@@ -6,7 +6,8 @@
     "familyMembers": "Family Members",
     "settings": "Settings",
     "accountSettings": "Account & Settings",
-    "menu": "Menu"
+    "menu": "Menu",
+    "vaccineRecord": "Vaccine Record"
   },
   "cardInfo": {
     "patient": "PATIENT",

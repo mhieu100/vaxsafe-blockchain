@@ -10,22 +10,20 @@ import java.time.LocalDateTime;
 @Data
 public class AppointmentResponse {
     Long id;
-    Long patientId;
     Integer doseNumber;
     LocalDate scheduledDate;
     TimeSlotEnum scheduledTimeSlot;
     java.time.LocalTime actualScheduledTime;
     LocalDate desiredDate;
     TimeSlotEnum desiredTimeSlot;
-    String rescheduleReason;
     LocalDateTime rescheduledAt;
-    AppointmentStatus status;
+    AppointmentStatus appointmentStatus;
+    Long patientId;
     String patientName;
     String patientPhone;
     String cashierName;
     String doctorName;
     String vaccineName;
-    String vaccineSlug;
     Long centerId;
     String centerName;
 

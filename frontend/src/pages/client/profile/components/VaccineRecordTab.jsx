@@ -12,11 +12,12 @@ import { useTranslation } from 'react-i18next';
 import BlockchainBadge from '@/components/common/BlockchainBadge';
 import BlockchainVerificationModal from '@/components/common/BlockchainVerificationModal';
 import apiClient from '@/services/apiClient';
+import { callGetFamilyMemberRecords } from '@/services/family.service';
 import useAccountStore from '@/stores/useAccountStore';
 
 const { Title, Text } = Typography;
 
-const VaccineRecordTab = () => {
+const VaccineRecordTab = ({ familyMemberId }) => {
   const { t, i18n } = useTranslation(['client']);
   const { user } = useAccountStore();
   const [records, setRecords] = useState([]);
@@ -27,13 +28,18 @@ const VaccineRecordTab = () => {
 
   useEffect(() => {
     const fetchVaccineRecords = async () => {
-      if (!user?.id) return;
+      if (!user?.id && !familyMemberId) return;
 
       try {
         setLoading(true);
         setError(null);
 
-        const response = await apiClient.get(`/api/vaccine-records/patient/${user.id}`);
+        let response;
+        if (familyMemberId) {
+          response = await callGetFamilyMemberRecords(familyMemberId);
+        } else {
+          response = await apiClient.post('/api/vaccine-records/my-records');
+        }
 
         if (response.data) {
           setRecords(response.data);
@@ -47,7 +53,7 @@ const VaccineRecordTab = () => {
     };
 
     fetchVaccineRecords();
-  }, [user?.id]);
+  }, [user?.id, familyMemberId]);
 
   const columns = [
     {

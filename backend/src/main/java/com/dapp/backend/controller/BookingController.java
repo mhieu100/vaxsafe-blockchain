@@ -16,7 +16,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
-import java.util.List;
 
 @RestController
 @RequestMapping("/api/bookings")
@@ -37,24 +36,6 @@ public class BookingController {
                         Pageable pageable) throws Exception {
                 return ResponseEntity.ok()
                                 .body(appointmentService.getAllAppointmentsAsBookings(specification, pageable));
-        }
-
-        @GetMapping("/my-bookings")
-        @ApiMessage("Get booking of user")
-        public ResponseEntity<List<AppointmentResponse>> getMyBookings() throws Exception {
-                return ResponseEntity.ok(appointmentService.getBooking());
-        }
-
-        @GetMapping("/history")
-        @ApiMessage("Get history booking of user")
-        public ResponseEntity<List<AppointmentResponse>> getHistoryBookings() throws Exception {
-                return ResponseEntity.ok(appointmentService.getHistoryBooking());
-        }
-
-        @GetMapping("/history/grouped")
-        @ApiMessage("Get grouped vaccination history (routes)")
-        public ResponseEntity<List<VaccinationRouteResponse>> getGroupedHistoryBookings() throws Exception {
-                return ResponseEntity.ok(appointmentService.getGroupedHistoryBooking());
         }
 
         @PostMapping("/walk-in")

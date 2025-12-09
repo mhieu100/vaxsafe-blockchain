@@ -1,8 +1,10 @@
-import { LogoutOutlined, UserOutlined } from '@ant-design/icons';
+import { LogoutOutlined, TeamOutlined, UserOutlined } from '@ant-design/icons';
 import { Avatar, Dropdown, message } from 'antd';
+import { useEffect, useState } from 'react'; // Added imports
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { callLogout } from '@/services/auth.service';
+import { callGetMyFamilyMembers } from '@/services/family.service'; // Added import
 import { useAccountStore } from '@/stores/useAccountStore';
 
 const DropdownUser = () => {
@@ -10,6 +12,23 @@ const DropdownUser = () => {
   const { t } = useTranslation('common');
   const logout = useAccountStore((state) => state.logout);
   const user = useAccountStore((state) => state.user);
+  const [familyMembers, setFamilyMembers] = useState([]);
+
+  useEffect(() => {
+    const fetchFamilyMembers = async () => {
+      try {
+        const res = await callGetMyFamilyMembers();
+        if (res?.data) {
+          setFamilyMembers(res.data);
+        }
+      } catch (_error) {
+        // Silent error
+      }
+    };
+    if (user?.id) {
+      fetchFamilyMembers();
+    }
+  }, [user?.id]);
 
   const handleLogout = async () => {
     const response = await callLogout();
@@ -27,7 +46,12 @@ const DropdownUser = () => {
       icon: <UserOutlined />,
       onClick: () => navigate('/profile'),
     },
-
+    ...familyMembers.map((member) => ({
+      key: `family-${member.id}`,
+      label: member.fullName, // Or include relationship: `${member.fullName} (${member.relationship})`
+      icon: <TeamOutlined />,
+      onClick: () => navigate('/family-member', { state: { familyMemberId: member.id } }),
+    })),
     {
       type: 'divider',
     },

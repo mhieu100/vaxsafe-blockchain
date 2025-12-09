@@ -19,6 +19,4 @@ public class RescheduleAppointmentRequest {
     @NotNull(message = "Desired time is required")
     private TimeSlotEnum desiredTimeSlot;
 
-    private String reason;
 }
-

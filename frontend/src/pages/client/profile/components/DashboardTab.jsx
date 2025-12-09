@@ -18,12 +18,17 @@ import {
   Typography,
 } from 'antd';
 import dayjs from 'dayjs';
+import isSameOrAfter from 'dayjs/plugin/isSameOrAfter';
+import isSameOrBefore from 'dayjs/plugin/isSameOrBefore';
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import apiClient from '@/services/apiClient';
-import { getMyBookingHistory } from '@/services/booking.service';
+import { getGroupedBookingHistory } from '@/services/booking.service';
 import useAccountStore from '@/stores/useAccountStore';
 import VaccinationProgressTab from './VaccinationProgressTab';
+
+dayjs.extend(isSameOrAfter);
+dayjs.extend(isSameOrBefore);
 
 const { Title, Text } = Typography;
 
@@ -46,8 +51,8 @@ const DashboardTab = ({ onTabChange }) => {
         setLoading(true);
 
         const [recordsRes, bookingsRes] = await Promise.all([
-          apiClient.get(`/api/vaccine-records/patient/${user.id}`),
-          getMyBookingHistory(),
+          apiClient.post('/api/vaccine-records/my-records'),
+          getGroupedBookingHistory(),
         ]);
 
         const records = recordsRes.data || [];
@@ -62,7 +67,7 @@ const DashboardTab = ({ onTabChange }) => {
               (apt) =>
                 apt.appointmentStatus !== 'CANCELLED' &&
                 apt.appointmentStatus !== 'COMPLETED' &&
-                dayjs(apt.scheduledDate).isAfter(dayjs())
+                dayjs(apt.scheduledDate).isSameOrAfter(dayjs(), 'day')
             )
           );
         });
@@ -73,8 +78,8 @@ const DashboardTab = ({ onTabChange }) => {
             b.appointments.forEach((apt) => {
               if (apt.appointmentStatus !== 'CANCELLED' && apt.appointmentStatus !== 'COMPLETED') {
                 const aptDate = dayjs(apt.scheduledDate);
-                if (aptDate.isAfter(dayjs())) {
-                  if (!nearestApt || aptDate.isBefore(dayjs(nearestApt.scheduledDate))) {
+                if (aptDate.isSameOrAfter(dayjs(), 'day')) {
+                  if (!nearestApt || aptDate.isBefore(dayjs(nearestApt.displayDate))) {
                     nearestApt = {
                       ...apt,
                       vaccineName: b.vaccineName,
@@ -114,10 +119,7 @@ const DashboardTab = ({ onTabChange }) => {
 
   return (
     <div className="space-y-6 animate-fade-in">
-      {/* <HealthRemindersTab /> */}
-
       <Row gutter={[24, 24]}>
-        {/* Stats Cards ... */}
         <Col xs={24} md={8}>
           <Card className="rounded-2xl shadow-sm border border-emerald-100 bg-gradient-to-br from-emerald-50 to-white h-full">
             <Statistic
@@ -172,7 +174,6 @@ const DashboardTab = ({ onTabChange }) => {
 
       <VaccinationProgressTab />
 
-      {/* Next Appointment Card (Existing) */}
       <Card className="rounded-3xl shadow-sm border border-slate-100 overflow-hidden">
         {nextAppointment ? (
           <div className="flex flex-col md:flex-row items-center justify-between gap-6">
@@ -215,7 +216,6 @@ const DashboardTab = ({ onTabChange }) => {
         )}
       </Card>
 
-      {/* Recent Activity */}
       <Card
         title={t('client:dashboard.recentActivity')}
         className="rounded-3xl shadow-sm border border-slate-100"

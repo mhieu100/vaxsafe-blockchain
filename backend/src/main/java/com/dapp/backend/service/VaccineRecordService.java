@@ -258,6 +258,20 @@ public class VaccineRecordService {
                 .collect(Collectors.toList());
     }
 
+    public List<VaccineRecordResponse> getFamilyMemberVaccineRecords(Long familyMemberId, Long ownerUserId)
+            throws AppException {
+        // Verify family member belongs to user
+        familyMemberRepository.findById(familyMemberId)
+                .filter(fm -> fm.getUser().getId().equals(ownerUserId))
+                .orElseThrow(() -> new AppException("Family member not found or does not belong to user"));
+
+        List<VaccineRecord> records = vaccineRecordRepository
+                .findByFamilyMemberIdOrderByVaccinationDateDesc(familyMemberId);
+        return records.stream()
+                .map(this::mapToResponse)
+                .collect(Collectors.toList());
+    }
+
     private VaccineRecordResponse mapToResponse(VaccineRecord record) {
         return VaccineRecordResponse.builder()
                 .id(record.getId())

@@ -25,9 +25,24 @@ public class AuthController {
 
     private final AuthService authService;
     private final JwtUtil jwtUtil;
+    private final com.dapp.backend.service.AppointmentService appointmentService;
 
     @Value("${jwt.refresh-token-validity-in-seconds}")
     private long refreshTokenExpiration;
+
+    @GetMapping("/my-bookings")
+    @ApiMessage("Get booking of user")
+    public ResponseEntity<java.util.List<com.dapp.backend.dto.response.AppointmentResponse>> getMyBookings()
+            throws Exception {
+        return ResponseEntity.ok(appointmentService.getBooking());
+    }
+
+    @GetMapping("/booking-history-grouped")
+    @ApiMessage("Get grouped vaccination history (routes)")
+    public ResponseEntity<java.util.List<com.dapp.backend.dto.response.VaccinationRouteResponse>> getGroupedHistoryBookings()
+            throws Exception {
+        return ResponseEntity.ok(appointmentService.getGroupedHistoryBooking());
+    }
 
     @PostMapping("/login/password")
     @ApiMessage("Login patient")
@@ -64,11 +79,9 @@ public class AuthController {
             throws AppException {
         RegisterPatientResponse registerResponse = authService.register(request);
 
-
         String accessToken = jwtUtil.createAccessToken(registerResponse.getEmail(), registerResponse.getRole());
         String refreshToken = jwtUtil.createRefreshToken(registerResponse.getEmail());
         authService.updateUserToken(refreshToken, registerResponse.getEmail());
-
 
         LoginResponse.UserLogin userLogin = LoginResponse.UserLogin.builder()
                 .id(registerResponse.getId())

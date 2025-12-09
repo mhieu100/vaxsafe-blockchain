@@ -21,18 +21,14 @@ public class UrgentAppointmentDto {
     String vaccineName;
     Integer doseNumber;
 
-
     LocalDate scheduledDate;
     TimeSlotEnum scheduledTimeSlot;
     java.time.LocalTime actualScheduledTime;
 
-
     LocalDate desiredDate;
     TimeSlotEnum desiredTimeSlot;
     java.time.LocalTime actualDesiredTime;
-    String rescheduleReason;
     LocalDateTime rescheduledAt;
-
 
     String doctorName;
     String cashierName;

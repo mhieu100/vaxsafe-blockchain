@@ -67,7 +67,6 @@ public class FamilyMemberService {
     public FamilyMemberResponse addFamilyMember(FamilyMemberRequest request) throws AppException {
         User user = authService.getCurrentUserLogin();
 
-
         if (request.getIdentityNumber() == null || request.getIdentityNumber().trim().isEmpty()) {
             throw new AppException("Identity number is required for family member");
         }
@@ -75,14 +74,12 @@ public class FamilyMemberService {
             throw new AppException("Identity number must be 9-12 digits");
         }
 
-
         if (familyMemberRepository.existsByIdentityNumber(request.getIdentityNumber())) {
             throw new AppException("Identity number already exists");
         }
 
         FamilyMember familyMember = toEntity(request);
         familyMember.setUser(user);
-
 
         try {
 
@@ -102,9 +99,7 @@ public class FamilyMemberService {
             throw new AppException("Failed to generate blockchain identity for family member: " + e.getMessage());
         }
 
-
         FamilyMember savedMember = familyMemberRepository.save(familyMember);
-
 
         try {
             if (blockchainService.isBlockchainServiceAvailable()) {
@@ -191,5 +186,10 @@ public class FamilyMemberService {
         return familyMemberRepository.findByUserId(userId).stream()
                 .map(this::toResponse)
                 .collect(Collectors.toList());
+    }
+
+    public List<FamilyMemberResponse> getMyFamilyMembers() throws AppException {
+        User user = authService.getCurrentUserLogin();
+        return getFamilyMembersByUserId(user.getId());
     }
 }

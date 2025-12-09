@@ -8,9 +8,9 @@ import { formatAppointmentTime } from '@/utils/appointment';
 
 const { Title, Text } = Typography;
 
-const VaccinationHistoryTab = () => {
+const VaccinationHistoryTab = ({ customData }) => {
   const { t } = useTranslation(['client']);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [groupedHistory, setGroupedHistory] = useState([]);
   const [stats, setStats] = useState({ total: 0, completed: 0, inProgress: 0 });
@@ -38,8 +38,17 @@ const VaccinationHistoryTab = () => {
   };
 
   useEffect(() => {
-    fetchHistory();
-  }, []);
+    if (customData) {
+      setGroupedHistory(customData);
+      setStats({
+        total: customData.length,
+        completed: customData.filter((r) => r.status === 'COMPLETED').length,
+        inProgress: customData.filter((r) => r.status === 'IN_PROGRESS').length,
+      });
+    } else {
+      fetchHistory();
+    }
+  }, [customData]);
 
   const getStatusColor = (status) => {
     switch (status) {
@@ -177,7 +186,7 @@ const VaccinationHistoryTab = () => {
       {
         title: t('client:vaccinationHistory.status'),
         dataIndex: 'appointmentStatus',
-        key: 'status',
+        key: 'appointmentStatus',
         render: (s) => (
           <Tag color={s === 'COMPLETED' ? 'success' : s === 'CANCELLED' ? 'error' : 'warning'}>
             {s}
@@ -196,7 +205,7 @@ const VaccinationHistoryTab = () => {
           dataSource={route.appointments}
           pagination={false}
           size="small"
-          rowKey="appointmentId"
+          rowKey="id"
         />
       </div>
     );

@@ -15,11 +15,11 @@ public class AppointmentMapper {
         response.setScheduledDate(appointment.getScheduledDate());
         response.setDesiredDate(appointment.getDesiredDate());
         response.setDesiredTimeSlot(appointment.getDesiredTimeSlot());
-        response.setRescheduleReason(appointment.getRescheduleReason());
+
         response.setRescheduledAt(appointment.getRescheduledAt());
-        response.setStatus(appointment.getStatus());
+        response.setAppointmentStatus(appointment.getStatus());
         response.setVaccineName(appointment.getVaccine().getName());
-        response.setVaccineSlug(appointment.getVaccine().getSlug());
+
         response.setVaccineTotalDoses(appointment.getVaccine().getDosesRequired());
         response.setCreatedAt(appointment.getCreatedAt());
         response.setCenterId(appointment.getCenter() != null ? appointment.getCenter().getCenterId() : null);

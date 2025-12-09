@@ -34,11 +34,11 @@ public class Appointment extends BaseEntity {
     @JoinColumn(name = "vaccine_id")
     Vaccine vaccine;
 
-    Double totalAmount;
+    @ManyToOne
+    @JoinColumn(name = "course_id")
+    VaccinationCourse vaccinationCourse;
 
-    // @ManyToOne
-    // @JoinColumn(name = "booking_id", nullable = false)
-    // Booking booking;
+    Double totalAmount;
 
     @ManyToOne
     @JoinColumn(name = "cashier_id")
@@ -72,7 +72,6 @@ public class Appointment extends BaseEntity {
     @Column(name = "desired_time_slot")
     TimeSlotEnum desiredTimeSlot;
 
-    String rescheduleReason;
     LocalDateTime rescheduledAt;
 
     @Enumerated(EnumType.STRING)

@@ -152,8 +152,7 @@ const AppointmentScheduleTab = () => {
     .map((apt) => ({
       ...apt,
       appointmentId: apt.id,
-      appointmentStatus: apt.status,
-      bookingStatus: apt.status, // Use appointment status as booking status for now
+      appointmentStatus: apt.appointmentStatus,
       isFamily: !!apt.familyMemberId,
       totalDoses: apt.doseNumber, // Approximate or need total doses from somewhere else?
       // AppointmentResponse doesn't have totalDoses for the vaccine series, only current doseNumber.
@@ -279,12 +278,6 @@ const AppointmentScheduleTab = () => {
               </Text>
             </div>
           </div>
-          <Tag
-            color={getStatusColor(firstApt.bookingStatus)}
-            className="rounded-full px-3 py-1 text-xs font-bold uppercase border-0"
-          >
-            {getStatusText(firstApt.bookingStatus)}
-          </Tag>
         </div>
 
         <Timeline
@@ -345,32 +338,30 @@ const AppointmentScheduleTab = () => {
                   </div>
 
                   {}
-                  {apt.appointmentStatus !== 'COMPLETED' &&
-                    apt.appointmentStatus !== 'CANCELLED' &&
-                    apt.appointmentStatus !== 'RESCHEDULE' &&
-                    (dayjs(apt.scheduledDate).isAfter(dayjs()) ||
-                      apt.appointmentStatus === 'PENDING') && (
-                      <div className="flex gap-2">
-                        <Button
-                          size="small"
-                          className="rounded-lg border-slate-200 text-slate-600 hover:text-blue-600 hover:border-blue-200"
-                          icon={<SyncOutlined />}
-                          onClick={() => handleReschedule(apt)}
-                        >
-                          {t('client:appointments.reschedule')}
-                        </Button>
-                        <Button
-                          danger
-                          size="small"
-                          type="text"
-                          className="rounded-lg hover:bg-red-50"
-                          icon={<CloseCircleOutlined />}
-                          onClick={() => handleCancelAppointment(apt)}
-                        >
-                          {t('client:profile.cancel')}
-                        </Button>
-                      </div>
-                    )}
+                  {['PENDING', 'SCHEDULED', 'CONFIRMED', 'RESCHEDULE'].includes(
+                    apt.appointmentStatus
+                  ) && (
+                    <div className="flex gap-2">
+                      <Button
+                        size="small"
+                        className="rounded-lg border-slate-200 text-slate-600 hover:text-blue-600 hover:border-blue-200"
+                        icon={<SyncOutlined />}
+                        onClick={() => handleReschedule(apt)}
+                      >
+                        {t('client:appointments.reschedule')}
+                      </Button>
+                      <Button
+                        danger
+                        size="small"
+                        type="text"
+                        className="rounded-lg hover:bg-red-50"
+                        icon={<CloseCircleOutlined />}
+                        onClick={() => handleCancelAppointment(apt)}
+                      >
+                        {t('client:profile.cancel')}
+                      </Button>
+                    </div>
+                  )}
                 </div>
               </div>
             ),

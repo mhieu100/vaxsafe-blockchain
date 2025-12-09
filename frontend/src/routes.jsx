@@ -34,6 +34,7 @@ import CancelPage from '@/pages/client/cancel';
 import CartPage from '@/pages/client/cart';
 import CheckoutPage from '@/pages/client/checkout';
 import ContactPage from '@/pages/client/contact';
+import FamilyMemberPage from '@/pages/client/family-member';
 import HomePage from '@/pages/client/home';
 import ClientNewsPage from '@/pages/client/news';
 import ClientNewsDetailPage from '@/pages/client/news/detail';
@@ -98,6 +99,14 @@ const router = createBrowserRouter([
         element: (
           <ProtectedUserRoute>
             <SuccessPage />
+          </ProtectedUserRoute>
+        ),
+      },
+      {
+        path: 'family-member',
+        element: (
+          <ProtectedUserRoute>
+            <FamilyMemberPage />
           </ProtectedUserRoute>
         ),
       },

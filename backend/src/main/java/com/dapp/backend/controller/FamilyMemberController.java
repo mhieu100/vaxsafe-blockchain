@@ -1,6 +1,7 @@
 package com.dapp.backend.controller;
 
 import com.dapp.backend.annotation.ApiMessage;
+import com.dapp.backend.dto.request.FamilyMemberDetailRequest;
 import com.dapp.backend.dto.request.FamilyMemberRequest;
 import com.dapp.backend.dto.response.FamilyMemberResponse;
 import com.dapp.backend.dto.response.Pagination;
@@ -20,6 +21,7 @@ import org.springframework.web.bind.annotation.*;
 public class FamilyMemberController {
 
     private final FamilyMemberService familyMemberService;
+    private final com.dapp.backend.service.AppointmentService appointmentService;
 
     @PostMapping
     @ApiMessage("Add a new family member")
@@ -49,17 +51,33 @@ public class FamilyMemberController {
         return ResponseEntity.ok(familyMemberService.getAllFamilyMembers(specification, pageable));
     }
 
-    @GetMapping("/{id}")
-    @ApiMessage("Get family member by id")
-    public ResponseEntity<FamilyMemberResponse> getFamilyMemberById(@PathVariable Long id) throws AppException {
-        return familyMemberService.getFamilyMemberById(id)
+    @PostMapping("/detail")
+    @ApiMessage("Get family member detail")
+    public ResponseEntity<FamilyMemberResponse> getFamilyMemberDetail(
+            @RequestBody FamilyMemberDetailRequest request) throws AppException {
+        return familyMemberService.getFamilyMemberById(request.getId())
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
     }
 
-    @GetMapping("/user/{userId}")
-    @ApiMessage("Get family members by user id")
-    public ResponseEntity<java.util.List<FamilyMemberResponse>> getFamilyMembersByUserId(@PathVariable Long userId) {
-        return ResponseEntity.ok(familyMemberService.getFamilyMembersByUserId(userId));
+    @PostMapping("/my-members")
+    @ApiMessage("Get my family members")
+    public ResponseEntity<java.util.List<FamilyMemberResponse>> getMyFamilyMembers() throws AppException {
+        return ResponseEntity.ok(familyMemberService.getMyFamilyMembers());
+    }
+
+    @PostMapping("/patient-members")
+    @org.springframework.security.access.prepost.PreAuthorize("hasAnyAuthority('ADMIN', 'STAFF', 'DOCTOR')")
+    @ApiMessage("Get patient family members for staff")
+    public ResponseEntity<java.util.List<FamilyMemberResponse>> getPatientFamilyMembers(
+            @RequestBody FamilyMemberDetailRequest request) {
+        return ResponseEntity.ok(familyMemberService.getFamilyMembersByUserId(request.getId()));
+    }
+
+    @PostMapping("/booking-history-grouped")
+    @ApiMessage("Get family member booking history grouped")
+    public ResponseEntity<java.util.List<com.dapp.backend.dto.response.VaccinationRouteResponse>> getFamilyBookingHistoryGrouped(
+            @RequestBody FamilyMemberDetailRequest request) throws AppException {
+        return ResponseEntity.ok(appointmentService.getGroupedHistoryBookingForFamilyMember(request.getId()));
     }
 }

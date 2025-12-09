@@ -24,7 +24,7 @@ import { TimeSlotTime } from '@/constants/enums';
 import { callCreateWalkInBooking } from '@/services/booking.service';
 import { callFetchCenter } from '@/services/center.service';
 import { getAvailableSlotsByCenterAndTimeSlotAPI } from '@/services/doctor.service';
-import { callGetFamilyMembersByUserId } from '@/services/family.service';
+import { callGetPatientFamilyMembers } from '@/services/family.service';
 import { callFetchVaccine } from '@/services/vaccine.service';
 
 const { Text } = Typography;
@@ -66,7 +66,7 @@ const WalkInBookingModal = ({ open, setOpen, patient, onSuccess }) => {
 
   const fetchFamilyMembers = async (patientId) => {
     try {
-      const res = await callGetFamilyMembersByUserId(patientId);
+      const res = await callGetPatientFamilyMembers(patientId);
       if (res?.data) {
         setFamilyMembers(res.data);
       }

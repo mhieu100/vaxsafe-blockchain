@@ -256,24 +256,6 @@ const ProcessUrgentAppointmentModal = ({ open, onClose, appointment, onSuccess }
             </div>
           </Col>
         </Row>
-        {appointment.rescheduleReason && (
-          <div
-            style={{
-              marginTop: 12,
-              padding: 8,
-              background: '#fff',
-              borderRadius: 4,
-              border: '1px dashed #ffa39e',
-            }}
-          >
-            <Text type="secondary" style={{ fontSize: 12 }}>
-              Lý do:
-            </Text>
-            <div>
-              <Text italic>{appointment.rescheduleReason}</Text>
-            </div>
-          </div>
-        )}
       </Card>
     );
   };
@@ -301,6 +283,13 @@ const ProcessUrgentAppointmentModal = ({ open, onClose, appointment, onSuccess }
             return (
               <Col span={8} key={slot.uiId}>
                 <div
+                  role="button"
+                  tabIndex={0}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter' || e.key === ' ') {
+                      handleSlotSelect(slot.uiId);
+                    }
+                  }}
                   onClick={() => handleSlotSelect(slot.uiId)}
                   style={{
                     border: `1px solid ${isSelected ? '#1890ff' : '#d9d9d9'}`,

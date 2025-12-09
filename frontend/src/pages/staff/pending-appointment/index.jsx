@@ -2,32 +2,13 @@ import {
   CalendarOutlined,
   CheckCircleOutlined,
   CheckSquareOutlined,
-  ClearOutlined,
   ClockCircleOutlined,
   EditOutlined,
-  FilterOutlined,
-  InfoCircleOutlined,
   PhoneOutlined,
   ReloadOutlined,
-  SearchOutlined,
   UserOutlined,
 } from '@ant-design/icons';
-import {
-  Avatar,
-  Badge,
-  Button,
-  Card,
-  Col,
-  DatePicker,
-  Input,
-  Row,
-  Select,
-  Space,
-  Statistic,
-  Tag,
-  Tooltip,
-  Typography,
-} from 'antd';
+import { Avatar, Button, Card, Space, Tag, Tooltip, Typography } from 'antd';
 import dayjs from 'dayjs';
 import queryString from 'query-string';
 import { useRef, useState } from 'react';
@@ -46,8 +27,7 @@ import {
 import { useAppointmentStore } from '@/stores/useAppointmentStore';
 import ProcessUrgentAppointmentModal from '../dashboard/components/ProcessUrgentAppointmentModal';
 
-const { Title, Text } = Typography;
-const { Option } = Select;
+const { Text } = Typography;
 
 const PendingAppointmentPage = () => {
   const tableRef = useRef();
@@ -59,41 +39,15 @@ const PendingAppointmentPage = () => {
   const [openAssignModal, setOpenAssignModal] = useState(false);
   const [selectedAppointment, setSelectedAppointment] = useState(null);
 
-  const [searchText, setSearchText] = useState('');
-  const [vaccineFilter, setVaccineFilter] = useState('');
-  const [dateFilter, setDateFilter] = useState(null);
-  const [priorityFilter, setPriorityFilter] = useState('');
-
+  const [searchText] = useState('');
+  const [vaccineFilter] = useState('');
   const reloadTable = () => {
     tableRef?.current?.reload();
-  };
-
-  const statistics = {
-    pendingSchedule: appointments.filter((apt) => apt.status === AppointmentStatus.PENDING).length,
-    pendingApproval: appointments.filter((apt) => apt.status === AppointmentStatus.RESCHEDULE)
-      .length,
-    urgent: appointments.filter((apt) => {
-      const desiredDate = apt.desiredDate || apt.scheduledDate;
-      return desiredDate && dayjs(desiredDate).diff(dayjs(), 'day') <= 1;
-    }).length,
-    total: appointments.length,
   };
 
   const handleAssignAppointment = (record) => {
     setSelectedAppointment(record);
     setOpenAssignModal(true);
-  };
-
-  const handleApplyFilters = () => {
-    reloadTable();
-  };
-
-  const handleResetFilters = () => {
-    setSearchText('');
-    setVaccineFilter('');
-    setDateFilter(null);
-    setPriorityFilter('');
-    reloadTable();
   };
 
   const columns = [
@@ -377,158 +331,6 @@ const PendingAppointmentPage = () => {
 
   return (
     <div style={{ padding: '24px', background: '#f0f2f5', minHeight: '100vh' }}>
-      {}
-      <div style={{ marginBottom: 24 }}>
-        <Space align="center" size="middle">
-          <ClockCircleOutlined style={{ fontSize: 32, color: '#faad14' }} />
-          <div>
-            <Title level={2} style={{ margin: 0 }}>
-              Lịch Hẹn Chờ Xếp
-            </Title>
-            <Text type="secondary">Quản lý và phân công lịch hẹn chưa xếp lịch</Text>
-          </div>
-          <Badge
-            count={statistics.pendingSchedule + statistics.pendingApproval}
-            style={{ backgroundColor: '#faad14' }}
-            overflowCount={999}
-          />
-        </Space>
-      </div>
-
-      {}
-      <Row gutter={[16, 16]} style={{ marginBottom: 24 }}>
-        <Col xs={24} sm={12} lg={6}>
-          <Card hoverable bordered={false}>
-            <Statistic
-              title={
-                <Space>
-                  <ClockCircleOutlined style={{ color: '#1890ff' }} />
-                  <span>Chờ Xếp Lịch</span>
-                </Space>
-              }
-              value={statistics.pendingSchedule}
-              suffix="lịch hẹn"
-              valueStyle={{ color: '#1890ff' }}
-            />
-          </Card>
-        </Col>
-        <Col xs={24} sm={12} lg={6}>
-          <Card hoverable bordered={false}>
-            <Statistic
-              title={
-                <Space>
-                  <EditOutlined style={{ color: '#faad14' }} />
-                  <span>Chờ Duyệt Đổi Lịch</span>
-                </Space>
-              }
-              value={statistics.pendingApproval}
-              suffix="yêu cầu"
-              valueStyle={{ color: '#faad14' }}
-            />
-          </Card>
-        </Col>
-        <Col xs={24} sm={12} lg={6}>
-          <Card hoverable bordered={false}>
-            <Statistic
-              title={
-                <Space>
-                  <InfoCircleOutlined style={{ color: '#ff4d4f' }} />
-                  <span>Cần Xử Lý Gấp</span>
-                </Space>
-              }
-              value={statistics.urgent}
-              suffix="lịch hẹn"
-              valueStyle={{ color: '#ff4d4f' }}
-            />
-          </Card>
-        </Col>
-        <Col xs={24} sm={12} lg={6}>
-          <Card hoverable bordered={false}>
-            <Statistic
-              title={
-                <Space>
-                  <CheckSquareOutlined style={{ color: '#52c41a' }} />
-                  <span>Tổng Cần Xử Lý</span>
-                </Space>
-              }
-              value={statistics.total}
-              suffix="lịch hẹn"
-              valueStyle={{ color: '#52c41a' }}
-            />
-          </Card>
-        </Col>
-      </Row>
-
-      {}
-      <Card
-        style={{ marginBottom: 24 }}
-        title={
-          <Space>
-            <FilterOutlined /> Bộ Lọc
-          </Space>
-        }
-      >
-        <Row gutter={[16, 16]}>
-          <Col xs={24} md={6}>
-            <Input
-              placeholder="Tìm tên, SĐT, Mã LH..."
-              prefix={<SearchOutlined />}
-              value={searchText}
-              onChange={(e) => setSearchText(e.target.value)}
-              allowClear
-            />
-          </Col>
-          <Col xs={24} md={5}>
-            <Select
-              placeholder="Chọn vaccine"
-              style={{ width: '100%' }}
-              value={vaccineFilter}
-              onChange={setVaccineFilter}
-              allowClear
-            >
-              <Option value="">Tất cả</Option>
-              <Option value="COVID-19">COVID-19</Option>
-              <Option value="Cúm">Cúm</Option>
-              <Option value="Viêm Gan B">Viêm Gan B</Option>
-              <Option value="HPV">HPV</Option>
-              <Option value="Sởi">Sởi</Option>
-            </Select>
-          </Col>
-          <Col xs={24} md={5}>
-            <DatePicker
-              placeholder="Ngày mong muốn"
-              style={{ width: '100%' }}
-              value={dateFilter}
-              onChange={setDateFilter}
-              format="DD/MM/YYYY"
-            />
-          </Col>
-          <Col xs={24} md={4}>
-            <Select
-              placeholder="Ưu tiên"
-              style={{ width: '100%' }}
-              value={priorityFilter}
-              onChange={setPriorityFilter}
-              allowClear
-            >
-              <Option value="">Tất cả</Option>
-              <Option value="urgent">Gấp</Option>
-              <Option value="normal">Bình thường</Option>
-            </Select>
-          </Col>
-          <Col xs={24} md={4}>
-            <Space>
-              <Button type="primary" icon={<SearchOutlined />} onClick={handleApplyFilters}>
-                Áp dụng
-              </Button>
-              <Button icon={<ClearOutlined />} onClick={handleResetFilters}>
-                Xóa
-              </Button>
-            </Space>
-          </Col>
-        </Row>
-      </Card>
-
       {}
       <Card
         title={

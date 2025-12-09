@@ -9,15 +9,11 @@ export async function callCreateWalkInBooking(payload) {
 }
 
 export async function getMyBookings() {
-  return apiClient.get('/api/bookings/my-bookings');
-}
-
-export async function getMyBookingHistory() {
-  return apiClient.get('/api/bookings/history');
+  return apiClient.get('/api/auth/my-bookings');
 }
 
 export async function getGroupedBookingHistory() {
-  return apiClient.get('/api/bookings/history/grouped');
+  return apiClient.get('/api/auth/booking-history-grouped');
 }
 
 export async function rescheduleAppointment(payload) {

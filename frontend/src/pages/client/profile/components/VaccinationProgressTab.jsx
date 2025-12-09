@@ -27,24 +27,15 @@ const VaccinationProgressTab = () => {
       try {
         setLoading(true);
 
-        // Fetch grouped history directly from backend
-        // This returns List<VaccinationRouteResponse> which already groups appointments by vaccine+patient+cycle
         const response = await getGroupedBookingHistory();
         const routes = response.data || [];
-
-        // Filter only active routes (IN_PROGRESS) for progress tab
-        // Or maybe show completed ones too if desired? Usually Progress implies active.
-        // But the original code showed 'finish' status too.
-        // Let's keep logic: if completed count < required doses, it's active.
 
         const journeyList = routes.map((route) => {
           const steps = [];
 
-          // route.appointments is sorted by doseNumber in backend typically, but let's be safe
           const appointments = route.appointments || [];
 
           for (let i = 1; i <= route.requiredDoses; i++) {
-            // Find appointment for this dose
             const apt = appointments.find((a) => (a.doseNumber || 0) === i);
 
             let stepStatus = 'wait';
@@ -56,7 +47,7 @@ const VaccinationProgressTab = () => {
               if (apt.status === 'COMPLETED') {
                 stepStatus = 'finish';
                 description = t('client:vaccinationHistory.completed');
-                date = apt.vaccinationDate || apt.scheduledDate; // prefer vaccination date if available
+                date = apt.vaccinationDate || apt.scheduledDate;
               } else if (apt.status !== 'CANCELLED') {
                 // SCHEDULED, PENDING, CONFIRMED, etc.
                 stepStatus = 'process';
@@ -64,16 +55,12 @@ const VaccinationProgressTab = () => {
                 date = apt.scheduledDate;
               }
             } else {
-              // No appointment for this dose
-              // Check previous dose
               const prevApt = appointments.find((a) => (a.doseNumber || 0) === i - 1);
 
               if (i === 1 && !apt) {
-                // Dose 1 missing
                 stepStatus = 'wait';
                 description = t('client:progress.readyToBook');
               } else if (prevApt && prevApt.status === 'COMPLETED') {
-                // Previous completed, this one missing
                 stepStatus = 'wait';
                 description = t('client:progress.needToBook');
               }
@@ -100,8 +87,6 @@ const VaccinationProgressTab = () => {
           };
         });
 
-        // Filter to show only active journeys (not fully completed)
-        // Original logic: journey.steps.filter((s) => s.status === 'finish').length < journey.requiredDoses
         const activeJourneys = journeyList.filter(
           (journey) =>
             journey.steps.filter((s) => s.status === 'finish').length < journey.requiredDoses
@@ -122,10 +107,6 @@ const VaccinationProgressTab = () => {
     return <Skeleton active />;
   }
 
-  // if (journeyData.length === 0) {
-  //   return <Empty description={t('client:dashboard.noData')} />;
-  // }
-
   return (
     <div className="space-y-6">
       <div className="mb-4">
@@ -138,7 +119,6 @@ const VaccinationProgressTab = () => {
       ) : (
         journeyData.map((journey, index) => (
           <Card key={index} className="shadow-sm rounded-2xl border-slate-100">
-            {/* ... card content ... */}
             <div className="flex justify-between items-start mb-6">
               <div>
                 <h3 className="text-lg font-bold text-blue-800">{journey.vaccineName}</h3>
@@ -152,7 +132,7 @@ const VaccinationProgressTab = () => {
                   )}
                 </div>
               </div>
-              {/* Action Button */}
+
               {journey.steps.filter((s) => s.status === 'finish').length >=
               journey.requiredDoses ? (
                 <Tag color="green" icon={<CheckCircleFilled />}>

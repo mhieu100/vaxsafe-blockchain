@@ -78,6 +78,7 @@ const DescriptionVaccineSection = ({ vaccine }) => {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {injections.length > 0 ? (
               injections.map((item, index) => (
+                // biome-ignore lint/suspicious/noArrayIndexKey: Static list displayed
                 <div key={index} className="flex items-start gap-3 p-3 bg-slate-50 rounded-lg">
                   <CheckCircleOutlined className="text-blue-500 mt-1" />
                   <Text className="flex-1">{item}</Text>
@@ -107,6 +108,7 @@ const DescriptionVaccineSection = ({ vaccine }) => {
             {preserves.length > 0 ? (
               <ul className="space-y-3">
                 {preserves.map((item, index) => (
+                  // biome-ignore lint/suspicious/noArrayIndexKey: Static list displayed
                   <li key={index} className="flex items-center gap-3 text-amber-900">
                     <div className="w-1.5 h-1.5 rounded-full bg-amber-400" />
                     {item}
@@ -133,6 +135,7 @@ const DescriptionVaccineSection = ({ vaccine }) => {
           {contraindications.length > 0 ? (
             <div className="space-y-3">
               {contraindications.map((item, index) => (
+                // biome-ignore lint/suspicious/noArrayIndexKey: Static list displayed
                 <div
                   key={index}
                   className="flex gap-4 p-4 rounded-xl border border-red-100 bg-red-50/50"
