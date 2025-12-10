@@ -1,6 +1,13 @@
 import i18n from 'i18next';
 import { initReactI18next } from 'react-i18next';
 
+import enAdminCenters from './locales/en/admin/centers.json';
+import enAdminCommon from './locales/en/admin/common.json';
+import enAdminDashboard from './locales/en/admin/dashboard.json';
+import enAdminNews from './locales/en/admin/news.json';
+import enAdminPermissions from './locales/en/admin/permissions.json';
+import enAdminRoles from './locales/en/admin/roles.json';
+import enAdminUsers from './locales/en/admin/users.json';
 import enAdminVaccines from './locales/en/admin/vaccines.json';
 import enClientAppointments from './locales/en/client/appointments.json';
 import enClientBooking from './locales/en/client/booking.json';
