@@ -29,7 +29,10 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import static com.dapp.backend.service.PaypalService.EXCHANGE_RATE_TO_USD;
 
@@ -514,6 +517,157 @@ public class AppointmentService {
     }
 
     @Transactional(rollbackFor = Exception.class)
+    public PaymentResponse bookNextDose(HttpServletRequest request,
+            com.dapp.backend.dto.request.NextDoseBookingRequest bookingRequest) throws Exception {
+        User user = authService.getCurrentUserLogin();
+
+        VaccinationCourse course = vaccinationCourseRepository.findById(bookingRequest.getVaccinationCourseId())
+                .orElseThrow(() -> new AppException("Vaccination course not found!"));
+
+        // Authorization check
+        if (!course.getPatient().getId().equals(user.getId())) {
+            throw new AppException("You are not authorized to book for this course");
+        }
+
+        if (course.getStatus() != VaccinationCourseStatus.ONGOING) {
+            throw new AppException("Vaccination course is not ongoing (Status: " + course.getStatus() + ")");
+        }
+
+        Vaccine vaccine = course.getVaccine();
+        if (course.getCurrentDoseIndex() >= vaccine.getDosesRequired()) {
+            throw new AppException("This course is already completed.");
+        }
+
+        boolean hasActive = appointmentRepository.existsByVaccinationCourseAndStatusIn(
+                course,
+                List.of(AppointmentStatus.PENDING, AppointmentStatus.SCHEDULED, AppointmentStatus.RESCHEDULE));
+        if (hasActive) {
+            throw new AppException(
+                    "You already have an active appointment for this course. Please complete or cancel it first.");
+        }
+
+        if (vaccine.getStock() < 1) {
+            throw new AppException("Vaccine is out of stock!");
+        }
+        vaccine.setStock(vaccine.getStock() - 1);
+        vaccineRepository.save(vaccine);
+
+        Center center = null;
+        if (bookingRequest.getAppointmentCenter() != null) {
+            center = centerRepository.findById(bookingRequest.getAppointmentCenter())
+                    .orElseThrow(() -> new AppException("Center not found!"));
+
+            if (bookingRequest.getAppointmentDate() != null && bookingRequest.getAppointmentTime() != null) {
+                TimeSlotEnum requestedSlot = TimeSlotEnum.fromTime(bookingRequest.getAppointmentTime());
+                int slotCapacity = center.getCapacity() > 0 ? center.getCapacity() / 6 : 50;
+
+                List<Object[]> bookedCounts = appointmentRepository.countAppointmentsBySlot(center.getCenterId(),
+                        bookingRequest.getAppointmentDate());
+                int booked = 0;
+                for (Object[] row : bookedCounts) {
+                    if (row[0] == requestedSlot) {
+                        booked = ((Long) row[1]).intValue();
+                        break;
+                    }
+                }
+
+                if (booked >= slotCapacity) {
+                    throw new AppException("Selected time slot is full. Please choose another time.");
+                }
+            }
+        }
+
+        Appointment appointment = new Appointment();
+        appointment.setPatient(user);
+        if (course.getFamilyMember() != null) {
+            appointment.setFamilyMember(course.getFamilyMember());
+        }
+
+        appointment.setVaccine(vaccine);
+        appointment.setTotalAmount(bookingRequest.getAmount());
+        appointment.setStatus(AppointmentStatus.PENDING);
+
+        appointment.setVaccinationCourse(course);
+        appointment.setDoseNumber(course.getCurrentDoseIndex() + 1);
+
+        appointment.setScheduledDate(bookingRequest.getAppointmentDate());
+        if (bookingRequest.getAppointmentTime() != null) {
+            appointment.setScheduledTimeSlot(TimeSlotEnum.fromTime(bookingRequest.getAppointmentTime()));
+        }
+        appointment.setCenter(center);
+
+        appointmentRepository.save(appointment);
+
+        Payment payment = new Payment();
+        payment.setReferenceId(appointment.getId());
+        payment.setReferenceType(TypeTransactionEnum.APPOINTMENT);
+        payment.setAmount(bookingRequest.getAmount());
+        payment.setMethod(bookingRequest.getPaymentMethod());
+
+        switch (bookingRequest.getPaymentMethod().toString()) {
+            case "PAYPAL" -> payment.setAmount(bookingRequest.getAmount() * EXCHANGE_RATE_TO_USD);
+            case "METAMASK" -> payment.setAmount((double) Math.round(bookingRequest.getAmount() / 200000.0));
+            default -> payment.setAmount(bookingRequest.getAmount());
+        }
+        payment.setCurrency(bookingRequest.getPaymentMethod().getCurrency());
+        payment.setStatus(PaymentEnum.INITIATED);
+        paymentRepository.save(payment);
+
+        PaymentResponse paymentResponse = new PaymentResponse();
+        paymentResponse.setReferenceId(appointment.getId());
+        paymentResponse.setPaymentId(payment.getId());
+        paymentResponse.setMethod(payment.getMethod());
+
+        Center finalCenter = center;
+
+        switch (bookingRequest.getPaymentMethod()) {
+            case BANK:
+                String bankUrl = paymentService.createBankUrl(Math.round(bookingRequest.getAmount()),
+                        paymentResponse.getReferenceId(), paymentResponse.getPaymentId(),
+                        TypeTransactionEnum.APPOINTMENT, request.getRemoteAddr(), request.getHeader("User-Agent"));
+                paymentResponse.setPaymentURL(bankUrl);
+                break;
+            case PAYPAL:
+                String paypalUrl = paymentService.createPaypalUrl(bookingRequest.getAmount(),
+                        paymentResponse.getReferenceId(), paymentResponse.getPaymentId(),
+                        TypeTransactionEnum.APPOINTMENT, request.getHeader("User-Agent"));
+                paymentResponse.setPaymentURL(paypalUrl);
+                break;
+            case METAMASK:
+                paymentResponse.setAmount(bookingRequest.getAmount() / 200000.0);
+                break;
+            case CASH:
+                payment.setStatus(PaymentEnum.PROCESSING);
+                payment.setReferenceType(TypeTransactionEnum.APPOINTMENT);
+                paymentRepository.save(payment);
+                appointment.setStatus(AppointmentStatus.PENDING);
+                appointmentRepository.save(appointment);
+
+                try {
+                    if (user.getEmail() != null && !user.getEmail().isEmpty()
+                            && bookingRequest.getAppointmentDate() != null && finalCenter != null) {
+                        String timeSlot = bookingRequest.getAppointmentTime() != null
+                                ? bookingRequest.getAppointmentTime().toString()
+                                : "Chưa xác định";
+                        emailService.sendAppointmentConfirmation(
+                                user.getEmail(),
+                                user.getFullName(),
+                                vaccine.getName(),
+                                bookingRequest.getAppointmentDate(),
+                                timeSlot,
+                                finalCenter.getName(),
+                                appointment.getId());
+                    }
+                } catch (Exception e) {
+                    log.error("Failed to send confirmation email: " + e.getMessage());
+                }
+                break;
+        }
+
+        return paymentResponse;
+    }
+
+    @Transactional(rollbackFor = Exception.class)
     public PaymentResponse createBooking(HttpServletRequest request, BookingRequest bookingRequest) throws Exception {
         User user = authService.getCurrentUserLogin();
         Vaccine vaccine = vaccineRepository.findById(bookingRequest.getVaccineId())
@@ -810,7 +964,7 @@ public class AppointmentService {
     }
 
     private VaccinationCourse handleVaccinationCourse(User patient, FamilyMember familyMember, Vaccine vaccine,
-            LocalDate date) {
+            LocalDate date) throws AppException {
         java.util.Optional<VaccinationCourse> existingCourseOpt;
         if (familyMember != null) {
             existingCourseOpt = vaccinationCourseRepository.findByFamilyMemberAndVaccineAndStatus(
@@ -822,6 +976,14 @@ public class AppointmentService {
 
         if (existingCourseOpt.isPresent()) {
             VaccinationCourse course = existingCourseOpt.get();
+
+            boolean hasActive = appointmentRepository.existsByVaccinationCourseAndStatusIn(
+                    course,
+                    List.of(AppointmentStatus.PENDING, AppointmentStatus.SCHEDULED, AppointmentStatus.RESCHEDULE));
+            if (hasActive) {
+                throw new AppException("You already have an active appointment for this vaccination course.");
+            }
+
             // Check if course is actually full but not marked
             if (course.getCurrentDoseIndex() >= vaccine.getDosesRequired()) {
                 course.setStatus(VaccinationCourseStatus.COMPLETED);
@@ -891,18 +1053,11 @@ public class AppointmentService {
     public List<AppointmentResponse> getHistoryBooking() throws AppException {
         User user = authService.getCurrentUserLogin();
         return appointmentRepository.findByPatient(user).stream()
-                .filter(apt -> apt.getFamilyMember() == null) // Filter out family members
+                .filter(apt -> apt.getFamilyMember() == null)
                 .map(apt -> {
                     AppointmentResponse response = AppointmentMapper.toResponse(apt);
                     paymentRepository.findByAppointmentId(apt.getId(), TypeTransactionEnum.APPOINTMENT)
-                            .ifPresent(payment -> {
-                                response.setPaymentId(payment.getId());
-                                response.setPaymentStatus(
-                                        payment.getStatus() != null ? payment.getStatus().name() : null);
-                                response.setPaymentMethod(
-                                        payment.getMethod() != null ? payment.getMethod().name() : null);
-                                response.setPaymentAmount(payment.getAmount());
-                            });
+                            .ifPresent(payment -> AppointmentMapper.mapPaymentToResponse(response, payment));
                     return response;
                 })
                 .toList();
@@ -937,7 +1092,6 @@ public class AppointmentService {
     }
 
     private List<VaccinationRouteResponse> groupAppointmentsToRoutes(List<AppointmentResponse> flatList) {
-        java.util.Map<String, VaccinationRouteResponse> routes = new java.util.HashMap<>();
 
         // Helper maps to track mutable data before building final response
         // Using a custom inner class or just map manipulation
@@ -951,10 +1105,10 @@ public class AppointmentService {
             int cycleIndex;
             LocalDateTime createdAt;
             Double totalAmount = 0.0;
-            List<AppointmentResponse> appointments = new java.util.ArrayList<>();
+            List<AppointmentResponse> appointments = new ArrayList<>();
         }
 
-        java.util.Map<String, RouteTracker> userRouteMap = new java.util.HashMap<>();
+        Map<String, RouteTracker> userRouteMap = new HashMap<>();
 
         for (AppointmentResponse apt : flatList) {
             int required = apt.getVaccineTotalDoses() != null ? apt.getVaccineTotalDoses() : 3;
@@ -970,13 +1124,19 @@ public class AppointmentService {
             if (cycleIndex < 0)
                 cycleIndex = 0;
 
-            String key = apt.getVaccineName() + "-" + patientName + "-" + cycleIndex;
+            String key;
+            if (apt.getVaccinationCourseId() != null) {
+                key = String.valueOf(apt.getVaccinationCourseId());
+            } else {
+                key = apt.getVaccineName() + "-" + patientName + "-" + cycleIndex;
+            }
 
             RouteTracker tracker = userRouteMap.get(key);
             if (tracker == null) {
                 tracker = new RouteTracker();
                 tracker.routeId = key;
                 tracker.vaccineName = apt.getVaccineName();
+                tracker.vaccineSlug = apt.getVaccineSlug();
                 tracker.patientName = patientName;
                 tracker.isFamily = apt.getFamilyMemberId() != null;
                 tracker.requiredDoses = required;
@@ -1002,12 +1162,12 @@ public class AppointmentService {
             }
         }
 
-        List<VaccinationRouteResponse> result = new java.util.ArrayList<>();
+        List<VaccinationRouteResponse> result = new ArrayList<>();
 
         for (RouteTracker tracker : userRouteMap.values()) {
             // Sort appointments by dose number
             tracker.appointments
-                    .sort(java.util.Comparator.comparingInt(a -> a.getDoseNumber() != null ? a.getDoseNumber() : 0));
+                    .sort(Comparator.comparingInt(a -> a.getDoseNumber() != null ? a.getDoseNumber() : 0));
 
             // Determine status
             long completedCount = tracker.appointments.stream()

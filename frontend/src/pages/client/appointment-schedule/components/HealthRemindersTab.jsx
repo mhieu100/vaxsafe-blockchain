@@ -8,10 +8,9 @@ const HealthRemindersTab = () => {
   const { t } = useTranslation(['client']);
   return (
     <div>
-      <Title level={4} className="mb-4">
+      <Title level={4} className="my-4">
         {t('client:profile.healthReminders.title')}
       </Title>
-
       <div className="space-y-4">
         <Card size="small" className="border-l-4 border-l-orange-400">
           <div className="flex items-center gap-3">
@@ -53,7 +52,7 @@ const HealthRemindersTab = () => {
         </Card>
       </div>
 
-      <Card className="mt-4 bg-green-50">
+      <Card className="mt-4 bg-slate-50">
         <Title level={5}>🏥 {t('client:profile.healthReminders.healthTips')}</Title>
         <ul className="text-sm text-gray-600 mt-2 space-y-1">
           <li>• {t('client:profile.healthReminders.healthTip1')}</li>

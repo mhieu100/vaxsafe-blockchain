@@ -25,3 +25,7 @@ export async function checkAvailability(centerId, date) {
     params: { centerId, date },
   });
 }
+
+export async function callBookNextDose(payload) {
+  return apiClient.post('/api/bookings/next-dose', payload);
+}

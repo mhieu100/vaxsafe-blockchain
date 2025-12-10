@@ -30,6 +30,14 @@ public class BookingController {
                 return ResponseEntity.ok(appointmentService.createBooking(request, bookingRequest));
         }
 
+        @PostMapping("/next-dose")
+        @ApiMessage("Book next dose for a vaccination course")
+        public ResponseEntity<PaymentResponse> bookNextDose(HttpServletRequest request,
+                        @Valid @RequestBody com.dapp.backend.dto.request.NextDoseBookingRequest bookingRequest)
+                        throws Exception {
+                return ResponseEntity.ok(appointmentService.bookNextDose(request, bookingRequest));
+        }
+
         @GetMapping
         @ApiMessage("Get all bookings")
         public ResponseEntity<Pagination> getAllBookings(@Filter Specification<Appointment> specification,

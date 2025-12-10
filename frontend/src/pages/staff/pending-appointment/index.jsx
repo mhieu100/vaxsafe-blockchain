@@ -72,7 +72,7 @@ const PendingAppointmentPage = () => {
             <Avatar icon={<UserOutlined />} size="small" style={{ backgroundColor: '#1890ff' }} />
             <Text strong>{text}</Text>
           </Space>
-          {record.status === 'RESCHEDULE' && (
+          {record.appointmentStatus === 'RESCHEDULE' && (
             <Tag color="orange" icon={<EditOutlined />} style={{ fontSize: 11 }}>
               Đổi lịch
             </Tag>
@@ -127,8 +127,8 @@ const PendingAppointmentPage = () => {
       render: (_text, record) => {
         const scheduledDate = record.scheduledDate;
         const actualTime = record.actualScheduledTime || record.actualDesiredTime;
-        const isReschedule = record.status === 'RESCHEDULE';
-        const isPending = record.status === AppointmentStatus.PENDING;
+        const isReschedule = record.appointmentStatus === 'RESCHEDULE';
+        const isPending = record.appointmentStatus === AppointmentStatus.PENDING;
 
         if (!scheduledDate || isPending) {
           return (
@@ -194,17 +194,19 @@ const PendingAppointmentPage = () => {
     },
     {
       title: 'Trạng Thái',
-      dataIndex: 'status',
+      dataIndex: 'appointmentStatus',
       width: 150,
-      render: (status) => (
-        <Tag color={getAppointmentStatusColor(status)}>{getAppointmentStatusDisplay(status)}</Tag>
+      render: (appointmentStatus) => (
+        <Tag color={getAppointmentStatusColor(appointmentStatus)}>
+          {getAppointmentStatusDisplay(appointmentStatus)}
+        </Tag>
       ),
     },
     {
       title: 'Thanh Toán',
       dataIndex: 'paymentStatus',
       width: 180,
-      render: (status, record) => {
+      render: (paymentStatus, record) => {
         const statusLabels = {
           [PaymentStatus.SUCCESS]: 'Đã phản công',
           [PaymentStatus.PROCESSING]: 'Đang xử lý',
@@ -219,8 +221,8 @@ const PendingAppointmentPage = () => {
 
         return (
           <Space direction="vertical" size={4}>
-            <Tag color={getPaymentStatusColor(status)} style={{ marginBottom: 4 }}>
-              {statusLabels[status] || status || 'Chưa có'}
+            <Tag color={getPaymentStatusColor(paymentStatus)} style={{ marginBottom: 4 }}>
+              {statusLabels[paymentStatus] || paymentStatus || 'Chưa có'}
             </Tag>
             {paymentDisplay ? (
               <>
@@ -249,8 +251,8 @@ const PendingAppointmentPage = () => {
       width: 200,
       fixed: 'right',
       render: (_, record) => {
-        const isPendingSchedule = record.status === AppointmentStatus.PENDING;
-        const isPendingApproval = record.status === AppointmentStatus.RESCHEDULE;
+        const isPendingSchedule = record.appointmentStatus === AppointmentStatus.PENDING;
+        const isPendingApproval = record.appointmentStatus === AppointmentStatus.RESCHEDULE;
         const needsAction = isPendingSchedule || isPendingApproval;
 
         if (needsAction) {

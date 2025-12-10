@@ -13,6 +13,7 @@ import { Badge, Button, Col, Image, InputNumber, message, Row, Typography } from
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
+import { getGroupedBookingHistory } from '@/services/booking.service';
 import { useCartStore } from '@/stores/useCartStore';
 import { formatPrice } from '@/utils/formatPrice';
 
@@ -53,8 +54,28 @@ const VaccineInfoSection = ({ vaccine }) => {
     message.success(t('vaccine.addToCartSuccess'));
   };
 
-  const handleBuyNow = () => {
-    navigate(`/booking?slug=${vaccine.slug}`);
+  const handleBuyNow = async () => {
+    try {
+      const res = await getGroupedBookingHistory();
+      if (res?.data) {
+        const route = res.data.find((r) => r.vaccineSlug === vaccine.slug);
+        if (route) {
+          const hasActive = route.appointments.some((a) =>
+            ['PENDING', 'SCHEDULED', 'RESCHEDULE'].includes(a.appointmentStatus)
+          );
+          if (hasActive) {
+            message.warning(
+              t('vaccine.activeBookingWarning') || 'Bạn đang có lịch hẹn cho vắc xin này'
+            );
+            return;
+          }
+        }
+      }
+      navigate(`/booking?slug=${vaccine.slug}`);
+    } catch (error) {
+      console.error(error);
+      navigate(`/booking?slug=${vaccine.slug}`);
+    }
   };
 
   return (

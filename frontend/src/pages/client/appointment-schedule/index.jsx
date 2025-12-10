@@ -427,7 +427,6 @@ const AppointmentSchedulePage = () => {
           </div>
         </Card>
 
-        {}
         {selectedAppointment && (
           <RescheduleAppointmentModal
             open={rescheduleModalOpen}

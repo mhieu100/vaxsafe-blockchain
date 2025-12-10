@@ -6,6 +6,7 @@ import lombok.Data;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 
 @Data
 public class AppointmentResponse {
@@ -13,7 +14,7 @@ public class AppointmentResponse {
     Integer doseNumber;
     LocalDate scheduledDate;
     TimeSlotEnum scheduledTimeSlot;
-    java.time.LocalTime actualScheduledTime;
+    LocalTime actualScheduledTime;
     LocalDate desiredDate;
     TimeSlotEnum desiredTimeSlot;
     LocalDateTime rescheduledAt;
@@ -24,6 +25,7 @@ public class AppointmentResponse {
     String cashierName;
     String doctorName;
     String vaccineName;
+    String vaccineSlug;
     Long centerId;
     String centerName;
 
@@ -32,6 +34,7 @@ public class AppointmentResponse {
     String paymentMethod;
     Double paymentAmount;
     Long familyMemberId;
+    Long vaccinationCourseId;
     Integer vaccineTotalDoses;
     LocalDateTime createdAt;
 }

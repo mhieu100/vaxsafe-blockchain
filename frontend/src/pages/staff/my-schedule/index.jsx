@@ -100,17 +100,19 @@ const MySchedulePage = () => {
     },
     {
       title: 'Trạng thái',
-      dataIndex: 'status',
-      render: (status) => {
+      dataIndex: 'appointmentStatus',
+      render: (appointmentStatus) => {
         return (
-          <Tag color={getAppointmentStatusColor(status)}>{getAppointmentStatusDisplay(status)}</Tag>
+          <Tag color={getAppointmentStatusColor(appointmentStatus)}>
+            {getAppointmentStatusDisplay(appointmentStatus)}
+          </Tag>
         );
       },
     },
     {
       title: 'Thao tác',
       render: (_value, entity) =>
-        entity.status === AppointmentStatus.SCHEDULED ? (
+        entity.appointmentStatus === AppointmentStatus.SCHEDULED ? (
           <Space>
             <Button type="primary" onClick={() => handleComplete(entity)}>
               <CheckOutlined />

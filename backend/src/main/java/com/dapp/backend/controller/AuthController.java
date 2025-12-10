@@ -5,11 +5,15 @@ import com.dapp.backend.dto.request.*;
 import com.dapp.backend.dto.response.LoginResponse;
 import com.dapp.backend.dto.response.RefreshResponse;
 import com.dapp.backend.dto.response.RegisterPatientResponse;
+import com.dapp.backend.dto.response.VaccinationRouteResponse;
 import com.dapp.backend.exception.AppException;
 import com.dapp.backend.security.JwtUtil;
 import com.dapp.backend.service.AuthService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseCookie;
@@ -39,7 +43,7 @@ public class AuthController {
 
     @GetMapping("/booking-history-grouped")
     @ApiMessage("Get grouped vaccination history (routes)")
-    public ResponseEntity<java.util.List<com.dapp.backend.dto.response.VaccinationRouteResponse>> getGroupedHistoryBookings()
+    public ResponseEntity<List<VaccinationRouteResponse>> getGroupedHistoryBookings()
             throws Exception {
         return ResponseEntity.ok(appointmentService.getGroupedHistoryBooking());
     }

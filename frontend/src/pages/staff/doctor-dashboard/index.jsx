@@ -90,7 +90,9 @@ const DoctorDashboard = () => {
     return () => clearInterval(interval);
   }, []);
 
-  const completedCount = todayAppointments.filter((a) => a.status === 'COMPLETED').length;
+  const completedCount = todayAppointments.filter(
+    (a) => a.appointmentStatus === 'COMPLETED'
+  ).length;
 
   const weeklyStats = {
     completed: {
@@ -155,8 +157,8 @@ const DoctorDashboard = () => {
     vaccine: apt.vaccineName,
     vaccineColor: 'blue',
     notes: apt.notes || 'Không có ghi chú',
-    status: apt.status,
-    urgent: apt.status === 'RESCHEDULE' || false,
+    status: apt.appointmentStatus,
+    urgent: apt.appointmentStatus === 'RESCHEDULE' || false,
     doseNumber: apt.doseNumber,
     patientId: apt.patientId,
   });

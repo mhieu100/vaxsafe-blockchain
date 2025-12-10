@@ -29,8 +29,9 @@ const VaccineCard = ({ vaccine }) => {
   };
 
   return (
-    <button
-      type="button"
+    <div
+      role="button"
+      tabIndex={0}
       className="group relative bg-white rounded-3xl overflow-hidden border border-slate-100 shadow-sm hover:shadow-xl hover:shadow-blue-900/10 transition-all duration-300 hover:-translate-y-1 flex flex-col h-full cursor-pointer w-full text-left"
       onClick={() => navigate(`/vaccine/${vaccine.slug}`)}
       onKeyDown={(e) => e.key === 'Enter' && navigate(`/vaccine/${vaccine.slug}`)}
@@ -149,7 +150,7 @@ const VaccineCard = ({ vaccine }) => {
           </div>
         </div>
       </div>
-    </button>
+    </div>
   );
 };
 

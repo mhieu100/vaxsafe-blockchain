@@ -44,12 +44,11 @@ const VaccinationProgressTab = () => {
             let date = null;
 
             if (apt) {
-              if (apt.status === 'COMPLETED') {
+              if (apt.appointmentStatus === 'COMPLETED') {
                 stepStatus = 'finish';
                 description = t('client:vaccinationHistory.completed');
                 date = apt.vaccinationDate || apt.scheduledDate;
-              } else if (apt.status !== 'CANCELLED') {
-                // SCHEDULED, PENDING, CONFIRMED, etc.
+              } else if (apt.appointmentStatus !== 'CANCELLED') {
                 stepStatus = 'process';
                 description = t('client:vaccinationHistory.scheduled');
                 date = apt.scheduledDate;
@@ -60,7 +59,7 @@ const VaccinationProgressTab = () => {
               if (i === 1 && !apt) {
                 stepStatus = 'wait';
                 description = t('client:progress.readyToBook');
-              } else if (prevApt && prevApt.status === 'COMPLETED') {
+              } else if (prevApt && prevApt.appointmentStatus === 'COMPLETED') {
                 stepStatus = 'wait';
                 description = t('client:progress.needToBook');
               }
@@ -76,6 +75,7 @@ const VaccinationProgressTab = () => {
           }
 
           return {
+            vaccinationCourseId: route.routeId,
             vaccineName: route.vaccineName,
             vaccineSlug: route.vaccineSlug,
             patientName: route.patientName,
@@ -138,12 +138,22 @@ const VaccinationProgressTab = () => {
                 <Tag color="green" icon={<CheckCircleFilled />}>
                   {t('client:vaccinationHistory.completed')}
                 </Tag>
+              ) : journey.steps.some((s) => s.status === 'process') ? (
+                <Tag color="blue" icon={<ClockCircleFilled />}>
+                  {t('client:vaccinationHistory.scheduled')}
+                </Tag>
               ) : (
                 <Button
                   type="primary"
                   size="small"
                   icon={<RightOutlined />}
-                  onClick={() => navigate(`/booking?slug=${journey.vaccineSlug}`)}
+                  onClick={() =>
+                    navigate(
+                      `/booking?slug=${journey.vaccineSlug}&doseNumber=${
+                        journey.steps.filter((s) => s.status === 'finish').length + 1
+                      }&vaccinationCourseId=${journey.vaccinationCourseId}`
+                    )
+                  }
                 >
                   {t('client:progress.bookNext')}
                 </Button>

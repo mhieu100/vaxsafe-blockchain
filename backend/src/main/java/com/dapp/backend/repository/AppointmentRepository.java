@@ -65,4 +65,7 @@ public interface AppointmentRepository extends JpaRepository<Appointment, Long>,
                         "AND a.status != 'CANCELLED'")
         Integer findMaxDose(@Param("patientId") Long patientId, @Param("vaccineId") Long vaccineId,
                         @Param("familyMemberId") Long familyMemberId);
+
+        boolean existsByVaccinationCourseAndStatusIn(com.dapp.backend.model.VaccinationCourse course,
+                        List<AppointmentStatus> statuses);
 }

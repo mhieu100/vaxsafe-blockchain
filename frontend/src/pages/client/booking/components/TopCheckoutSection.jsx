@@ -8,7 +8,7 @@ import {
 import { Button, Steps } from 'antd';
 import { useNavigate } from 'react-router-dom';
 
-const TopCheckoutSection = ({ currentStep }) => {
+const TopCheckoutSection = ({ currentStep, doseNumber }) => {
   const navigate = useNavigate();
 
   return (
@@ -40,7 +40,7 @@ const TopCheckoutSection = ({ currentStep }) => {
           className="premium-steps"
           items={[
             {
-              title: 'Appointment',
+              title: doseNumber ? `Appointment (Dose ${doseNumber})` : 'Appointment',
               description: 'Choose date & center',
               icon: <CalendarOutlined className={currentStep >= 0 ? 'text-blue-600' : ''} />,
             },

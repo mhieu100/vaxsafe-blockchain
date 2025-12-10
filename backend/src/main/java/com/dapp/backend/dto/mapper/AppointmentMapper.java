@@ -19,6 +19,10 @@ public class AppointmentMapper {
         response.setRescheduledAt(appointment.getRescheduledAt());
         response.setAppointmentStatus(appointment.getStatus());
         response.setVaccineName(appointment.getVaccine().getName());
+        response.setVaccineSlug(appointment.getVaccine().getSlug());
+        if (appointment.getVaccinationCourse() != null) {
+            response.setVaccinationCourseId(appointment.getVaccinationCourse().getId());
+        }
 
         response.setVaccineTotalDoses(appointment.getVaccine().getDosesRequired());
         response.setCreatedAt(appointment.getCreatedAt());
@@ -52,5 +56,15 @@ public class AppointmentMapper {
         }
 
         return response;
+
+    }
+
+    public static void mapPaymentToResponse(AppointmentResponse response, com.dapp.backend.model.Payment payment) {
+        if (payment != null) {
+            response.setPaymentId(payment.getId());
+            response.setPaymentStatus(payment.getStatus() != null ? payment.getStatus().name() : null);
+            response.setPaymentMethod(payment.getMethod() != null ? payment.getMethod().name() : null);
+            response.setPaymentAmount(payment.getAmount());
+        }
     }
 }

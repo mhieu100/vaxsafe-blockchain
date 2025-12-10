@@ -1,4 +1,4 @@
-import { Form, message } from 'antd';
+import { Form, Modal, message } from 'antd';
 import { useEffect, useState } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { callCreateBooking } from '@/services/booking.service';
@@ -19,6 +19,8 @@ const BookingPage = () => {
   const [loading, setLoading] = useState(false);
   const [bookingData, setBookingData] = useState({
     vaccineId: null,
+    vaccinationCourseId: null,
+    doseNumber: null,
     bookingFor: 'self',
     familyMemberId: null,
     appointmentDate: null,
@@ -62,9 +64,19 @@ const BookingPage = () => {
 
   useEffect(() => {
     const slug = searchParams.get('slug');
+    const courseId = searchParams.get('vaccinationCourseId');
+    const doseNum = searchParams.get('doseNumber');
 
     if (slug) {
       fetchVaccineData(slug);
+    }
+
+    if (courseId) {
+      setBookingData((prev) => ({
+        ...prev,
+        vaccinationCourseId: courseId,
+        doseNumber: doseNum,
+      }));
     }
   }, [searchParams]);
 
@@ -92,18 +104,34 @@ const BookingPage = () => {
 
       const totalAmount = vaccine?.price || 0;
 
-      const bookingPayload = {
-        vaccineId: bookingData.vaccineId || vaccine?.id,
-        familyMemberId: bookingData.bookingFor === 'family' ? bookingData.familyMemberId : null,
-        appointmentDate:
-          bookingData.appointmentDate?.format?.('YYYY-MM-DD') || bookingData.appointmentDate,
-        appointmentTime: bookingData.appointmentTime,
-        appointmentCenter: bookingData.appointmentCenter,
-        amount: totalAmount,
-        paymentMethod: bookingData.paymentMethod || 'CASH',
-      };
+      let response;
 
-      const response = await callCreateBooking(bookingPayload);
+      if (bookingData.vaccinationCourseId) {
+        const { callBookNextDose } = await import('@/services/booking.service');
+        const nextDosePayload = {
+          vaccinationCourseId: bookingData.vaccinationCourseId,
+          appointmentDate:
+            bookingData.appointmentDate?.format?.('YYYY-MM-DD') || bookingData.appointmentDate,
+          appointmentTime: bookingData.appointmentTime,
+          appointmentCenter: bookingData.appointmentCenter,
+          amount: totalAmount,
+          paymentMethod: bookingData.paymentMethod || 'CASH',
+        };
+        response = await callBookNextDose(nextDosePayload);
+      } else {
+        const bookingPayload = {
+          vaccineId: bookingData.vaccineId || vaccine?.id,
+          familyMemberId: bookingData.bookingFor === 'family' ? bookingData.familyMemberId : null,
+          appointmentDate:
+            bookingData.appointmentDate?.format?.('YYYY-MM-DD') || bookingData.appointmentDate,
+          appointmentTime: bookingData.appointmentTime,
+          appointmentCenter: bookingData.appointmentCenter,
+          amount: totalAmount,
+          paymentMethod: bookingData.paymentMethod || 'CASH',
+        };
+
+        response = await callCreateBooking(bookingPayload);
+      }
 
       const paymentData = response?.result || response?.data;
 
@@ -118,10 +146,19 @@ const BookingPage = () => {
           navigate('/success');
         }
       } else {
-        message.error('Đặt lịch thất bại. Vui lòng thử lại!');
+        Modal.warning({
+          title: 'Trùng lặp lịch hẹn',
+          content:
+            'Bạn đã có lịch hẹn đang hoạt động cho loại vắc xin này. Vui lòng kiểm tra lại danh sách lịch hẹn của bạn.',
+          okText: 'Xem lịch hẹn',
+          cancelText: 'Đóng',
+          closable: true,
+          maskClosable: true,
+          onOk: () => navigate('/appointments'),
+        });
       }
     } catch (_error) {
-      message.error('Có lỗi xảy ra. Vui lòng thử lại!');
+      message.error('Đặt lịch thất bại. Vui lòng thử lại!');
     } finally {
       setLoading(false);
     }
@@ -164,7 +201,11 @@ const BookingPage = () => {
   return (
     <div className="min-h-screen bg-slate-50 py-12">
       <div className="container mx-auto px-4 max-w-7xl">
-        <TopCheckoutSection currentStep={currentStep} setCurrentStep={setCurrentStep} />
+        <TopCheckoutSection
+          currentStep={currentStep}
+          setCurrentStep={setCurrentStep}
+          doseNumber={bookingData.doseNumber}
+        />
         {renderStep()}
       </div>
     </div>
