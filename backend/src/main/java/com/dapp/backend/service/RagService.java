@@ -36,7 +36,6 @@ public class RagService {
                 .map(content -> new Document(content, Map.of()))
                 .collect(Collectors.toList());
 
-
         TokenTextSplitter splitter = new TokenTextSplitter();
         List<Document> splitDocuments = splitter.apply(documents);
 
@@ -102,7 +101,6 @@ public class RagService {
                     : "Chưa có thông tin";
             String condition = request.getHealthCondition() != null ? request.getHealthCondition() : "Bình thường";
 
-
             String searchContext = query + " lịch tiêm chủng " + age;
             List<Document> similarDocuments = vectorStore
                     .similaritySearch(SearchRequest.query(searchContext).withTopK(6));
@@ -110,7 +108,6 @@ public class RagService {
             String information = similarDocuments.stream()
                     .map(Document::getContent)
                     .collect(Collectors.joining("\n\n"));
-
 
             String systemPromptText = """
                     Bạn là Bác sĩ AI chuyên gia về tiêm chủng của hệ thống VaxSafe.
@@ -149,19 +146,50 @@ public class RagService {
                     "condition", condition,
                     "information", information));
 
-
             var userMessage = new UserMessage(query);
             var prompt = new Prompt(List.of(systemMessage, userMessage));
 
-            var response = chatModel.call(prompt);
-            if (response != null && response.getResult() != null && response.getResult().getOutput() != null) {
-                return response.getResult().getOutput().getContent();
+            // Retry logic
+            int maxRetries = 3;
+            int attempt = 0;
+            Exception lastException = null;
+
+            while (attempt < maxRetries) {
+                try {
+                    var response = chatModel.call(prompt);
+                    if (response != null && response.getResult() != null && response.getResult().getOutput() != null) {
+                        return response.getResult().getOutput().getContent();
+                    }
+                    return "Xin lỗi, tôi không thể tạo câu trả lời. Vui lòng thử lại.";
+                } catch (Exception e) {
+                    lastException = e;
+                    boolean isTransient = e.getMessage().contains("503") ||
+                            e.getMessage().contains("overloaded") ||
+                            e.getClass().getSimpleName().contains("TransientAiException");
+
+                    if (isTransient && attempt < maxRetries - 1) {
+                        attempt++;
+                        try {
+                            Thread.sleep(2000 * attempt); // Wait 2s, then 4s
+                        } catch (InterruptedException ie) {
+                            Thread.currentThread().interrupt();
+                            break;
+                        }
+                        continue;
+                    }
+                    throw e;
+                }
             }
-            return "Xin lỗi, tôi không thể tạo câu trả lời. Vui lòng thử lại.";
+            throw lastException;
+
         } catch (NullPointerException e) {
             return "Xin lỗi, có lỗi xảy ra khi xử lý yêu cầu. Có thể do vấn đề tương thích API. Vui lòng thử lại.";
         } catch (Exception e) {
-            return "Xin lỗi, đã xảy ra lỗi: " + e.getMessage();
+            if (e.getMessage().contains("503") || e.getMessage().contains("overloaded")) {
+                return "Hệ thống AI đang quá tải do nhiều yêu cầu. Tôi đã thử lại " +
+                        "nhưng vẫn chưa kết nối được. Vui lòng thử lại sau vài phút.";
+            }
+            return "Xin lỗi, đã xảy ra lỗi trong quá trình xử lý. Vui lòng thử lại sau. (" + e.getMessage() + ")";
         }
     }
 }

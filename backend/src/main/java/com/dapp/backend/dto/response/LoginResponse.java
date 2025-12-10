@@ -1,6 +1,8 @@
 package com.dapp.backend.dto.response;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
@@ -38,8 +40,12 @@ public class LoginResponse {
         boolean consentForAIAnalysis;
 
         String role;
-        @com.fasterxml.jackson.annotation.JsonProperty("isActive")
+        @JsonProperty("isActive")
         boolean isActive;
+        @JsonProperty("isNewUser")
+        boolean isNewUser;
+
+
         Long centerId;
         String centerName;
     }

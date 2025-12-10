@@ -19,16 +19,14 @@ public class UserResponse {
     String fullName;
     String email;
 
-
     RoleInfo role;
 
-
     PatientInfo patientProfile;
-
 
     CenterInfo center;
 
     boolean isDeleted;
+    boolean isNewUser;
 
     @Data
     @Builder

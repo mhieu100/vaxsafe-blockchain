@@ -30,13 +30,13 @@ public class User extends BaseEntity {
     String refreshToken;
 
     String phone;
-    
+
     @Enumerated(EnumType.STRING)
     Gender gender;
-    
+
     @JsonFormat(pattern = "yyyy-MM-dd")
     LocalDate birthday;
-    
+
     String address;
 
     @Column(unique = true)
@@ -72,4 +72,8 @@ public class User extends BaseEntity {
     @Column(nullable = false)
     @Builder.Default
     boolean isActive = false;
+
+    @Column(nullable = false, columnDefinition = "boolean default true")
+    @Builder.Default
+    boolean newUser = true;
 }

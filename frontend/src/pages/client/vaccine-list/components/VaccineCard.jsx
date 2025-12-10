@@ -137,6 +137,7 @@ const VaccineCard = ({ vaccine }) => {
               icon={<ClockCircleOutlined />}
               onClick={handleBooking}
               disabled={vaccine.stock === 0}
+              id="tour-vaccine-book-btn"
               className={`h-10 rounded-xl border-none font-medium shadow-lg shadow-blue-500/20 transition-all hover:-translate-y-0.5 ${
                 vaccine.stock === 0
                   ? 'bg-slate-300'

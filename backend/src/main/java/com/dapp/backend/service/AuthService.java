@@ -58,6 +58,7 @@ public class AuthService {
                 .email(user.getEmail())
                 .role(user.getRole() != null ? user.getRole().getName() : null)
                 .isActive(user.isActive())
+                .isNewUser(user.isNewUser())
                 .phone(user.getPhone())
                 .birthday(user.getBirthday())
                 .gender(user.getGender() != null ? user.getGender().name() : null)

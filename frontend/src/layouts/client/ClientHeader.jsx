@@ -1,4 +1,5 @@
 import {
+  CalendarOutlined,
   HeartOutlined,
   HomeOutlined,
   InfoCircleOutlined,
@@ -75,7 +76,7 @@ const Navbar = () => {
     {
       key: '/vaccine',
       icon: <ShoppingOutlined />,
-      label: 'Vaccines',
+      label: <span id="tour-menu-vaccine">Vaccines</span>,
     },
     {
       key: '/news',
@@ -121,6 +122,7 @@ const Navbar = () => {
           {}
           <div className="flex items-center flex-1">
             <Link
+              id="tour-logo"
               to="/"
               className="flex cursor-pointer items-center gap-2 text-xl font-bold text-blue-600 md:text-2xl"
             >
@@ -134,6 +136,7 @@ const Navbar = () => {
           {}
           <div className="hidden lg:flex flex-1 justify-center">
             <Menu
+              id="tour-menu"
               mode="horizontal"
               onClick={handleMenuClick}
               selectedKeys={[location.pathname?.split('?')?.[0] ?? '']}
@@ -150,13 +153,25 @@ const Navbar = () => {
             <Space className="hidden sm:flex" size="small">
               <LanguageSelect />
 
+              {isAuthenticated && (
+                <Button
+                  icon={<CalendarOutlined className="text-xl" />}
+                  size="large"
+                  onClick={() => navigate('/appointments')}
+                  type="text"
+                  className="flex items-center justify-center w-10 h-10 rounded-full hover:bg-slate-100 text-slate-600"
+                  title="Lịch hẹn"
+                />
+              )}
+
               <Badge count={itemCount} size="small">
                 <Button
-                  icon={<ShoppingCartOutlined />}
-                  size="middle"
+                  id="tour-cart"
+                  icon={<ShoppingCartOutlined className="text-xl" />}
+                  size="large"
                   onClick={() => navigate('/cart')}
                   type="text"
-                  className="hover:bg-slate-100"
+                  className="flex items-center justify-center w-10 h-10 rounded-full hover:bg-slate-100 text-slate-600"
                   title={t('header.cart')}
                 />
               </Badge>

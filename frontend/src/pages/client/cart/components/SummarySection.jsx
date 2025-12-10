@@ -24,7 +24,7 @@ const SummarySection = () => {
   const total = totalPrice() + shipping + tax;
 
   return (
-    <Col xs={24} lg={8}>
+    <Col id="tour-cart-summary" xs={24} lg={8}>
       <Card
         title={t('cart.orderSummary')}
         className="hidden sm:block rounded-xl sticky top-6 shadow-sm border-0"

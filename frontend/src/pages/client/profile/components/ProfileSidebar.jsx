@@ -1,6 +1,5 @@
 import {
   AppstoreOutlined,
-  CalendarOutlined,
   CameraOutlined,
   MedicineBoxOutlined,
   SettingOutlined,
@@ -27,11 +26,6 @@ const ProfileSidebar = ({ activeTab, onTabChange, setAvatarModalVisible }) => {
       key: '2',
       icon: <MedicineBoxOutlined className="text-lg" />,
       label: t('client:sidebar.myRecords'),
-    },
-    {
-      key: '3',
-      icon: <CalendarOutlined className="text-lg" />,
-      label: t('client:sidebar.appointments'),
     },
     {
       key: '4',

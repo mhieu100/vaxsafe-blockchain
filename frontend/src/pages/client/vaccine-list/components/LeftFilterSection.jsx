@@ -75,7 +75,7 @@ const LeftFilterSection = ({ setPriceRange, country, setCountry, sortBy, setSort
   };
 
   return (
-    <div className="hidden md:block sticky w-64 flex-shrink-0">
+    <div id="tour-vaccine-filter" className="hidden md:block sticky w-64 flex-shrink-0">
       <div className="bg-white p-6 rounded-2xl border border-slate-100 shadow-sm">
         <div className="flex items-center justify-between mb-6">
           <h3 className="text-lg font-bold text-slate-800 flex items-center gap-2">

@@ -20,7 +20,6 @@ public class ProfileService {
     private final UserRepository userRepository;
     private final PatientRepository patientRepository;
 
-    
     private User getCurrentUser() throws AppException {
         String email = JwtUtil.getCurrentEmailLogin()
                 .orElseThrow(() -> new AppException("User not authenticated"));
@@ -28,7 +27,6 @@ public class ProfileService {
                 .orElseThrow(() -> new AppException("User not found"));
     }
 
-    
     public ProfileResponse.PatientProfile getPatientProfile() throws AppException {
         User user = getCurrentUser();
 
@@ -60,7 +58,6 @@ public class ProfileService {
                 .build();
     }
 
-    
     @Transactional
     public ProfileResponse.PatientProfile updatePatientProfile(UpdateProfileRequest.PatientProfileUpdate request)
             throws AppException {
@@ -75,7 +72,6 @@ public class ProfileService {
 
         Patient patient = user.getPatientProfile();
 
-
         if (request.getFullName() != null && !request.getFullName().isBlank()) {
             user.setFullName(request.getFullName());
         }
@@ -85,7 +81,6 @@ public class ProfileService {
             user.setGender(request.getGender());
         if (request.getAddress() != null)
             user.setAddress(request.getAddress());
-
 
         if (request.getBloodType() != null)
             patient.setBloodType(request.getBloodType());
@@ -102,10 +97,8 @@ public class ProfileService {
         if (request.getConsentForAIAnalysis() != null)
             patient.setConsentForAIAnalysis(request.getConsentForAIAnalysis());
 
-
         Patient savedPatient = patientRepository.save(patient);
         log.debug("Patient saved: {}", savedPatient.getId());
-
 
         User savedUser = userRepository.save(user);
         log.info("User profile updated successfully for: {}", savedUser.getEmail());
@@ -113,7 +106,6 @@ public class ProfileService {
         return getPatientProfile();
     }
 
-    
     public ProfileResponse.DoctorProfile getDoctorProfile() throws AppException {
         User user = getCurrentUser();
 
@@ -146,7 +138,6 @@ public class ProfileService {
                 .build();
     }
 
-    
     @Transactional
     public ProfileResponse.DoctorProfile updateDoctorProfile(UpdateProfileRequest.DoctorProfileUpdate request)
             throws AppException {
@@ -158,7 +149,6 @@ public class ProfileService {
 
         Doctor doctor = user.getDoctor();
 
-
         user.setFullName(request.getFullName());
         if (request.getPhone() != null)
             user.setPhone(request.getPhone());
@@ -167,7 +157,6 @@ public class ProfileService {
 
         if (request.getAddress() != null)
             user.setAddress(request.getAddress());
-
 
         if (request.getSpecialization() != null)
             doctor.setSpecialization(request.getSpecialization());
@@ -181,7 +170,6 @@ public class ProfileService {
         return getDoctorProfile();
     }
 
-    
     public ProfileResponse.CashierProfile getCashierProfile() throws AppException {
         User user = getCurrentUser();
 
@@ -213,7 +201,6 @@ public class ProfileService {
                 .build();
     }
 
-    
     @Transactional
     public ProfileResponse.CashierProfile updateCashierProfile(UpdateProfileRequest.CashierProfileUpdate request)
             throws AppException {
@@ -225,7 +212,6 @@ public class ProfileService {
 
         Cashier cashier = user.getCashier();
 
-
         user.setFullName(request.getFullName());
         if (request.getPhone() != null)
             user.setPhone(request.getPhone());
@@ -234,7 +220,6 @@ public class ProfileService {
 
         if (request.getAddress() != null)
             user.setAddress(request.getAddress());
-
 
         if (request.getShiftStartTime() != null)
             cashier.setShiftStartTime(request.getShiftStartTime());
@@ -246,7 +231,6 @@ public class ProfileService {
         return getCashierProfile();
     }
 
-    
     public ProfileResponse.AdminProfile getAdminProfile() throws AppException {
         User user = getCurrentUser();
 
@@ -263,12 +247,10 @@ public class ProfileService {
                 .build();
     }
 
-    
     @Transactional
     public ProfileResponse.AdminProfile updateAdminProfile(UpdateProfileRequest.AdminProfileUpdate request)
             throws AppException {
         User user = getCurrentUser();
-
 
         user.setFullName(request.getFullName());
         if (request.getPhone() != null)
@@ -284,12 +266,18 @@ public class ProfileService {
         return getAdminProfile();
     }
 
-    
     @Transactional
     public String updateAvatar(String avatarUrl) throws AppException {
         User user = getCurrentUser();
         user.setAvatar(avatarUrl);
         userRepository.save(user);
         return user.getAvatar();
+    }
+
+    @Transactional
+    public void completeTour() throws AppException {
+        User user = getCurrentUser();
+        user.setNewUser(false);
+        userRepository.save(user);
     }
 }

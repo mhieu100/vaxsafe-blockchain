@@ -9,14 +9,14 @@ const MyRecordsTab = ({ editMode, setEditMode }) => {
   const { t } = useTranslation(['client']);
   const items = [
     {
-      key: 'history',
-      label: t('client:myRecords.vaccinationHistory'),
-      children: <VaccinationHistoryTab />,
-    },
-    {
       key: 'progress',
       label: t('client:myRecords.progress'),
       children: <VaccinationProgressTab />,
+    },
+    {
+      key: 'history',
+      label: t('client:myRecords.vaccinationHistory'),
+      children: <VaccinationHistoryTab />,
     },
     {
       key: 'passport',
@@ -32,7 +32,7 @@ const MyRecordsTab = ({ editMode, setEditMode }) => {
 
   return (
     <div className="bg-white p-6 rounded-3xl shadow-sm border border-slate-100">
-      <Tabs defaultActiveKey="history" items={items} type="card" />
+      <Tabs defaultActiveKey="progress" items={items} type="card" />
     </div>
   );
 };

@@ -27,6 +27,7 @@ const useAccountStore = create(
         lifestyleNotes: '',
         insuranceNumber: '',
         avatar: '',
+        isNewUser: false,
       },
 
       setUserLoginInfo: (userData) =>
@@ -53,6 +54,7 @@ const useAccountStore = create(
             lifestyleNotes: userData.lifestyleNotes || '',
             insuranceNumber: userData.insuranceNumber || '',
             avatar: userData.avatar || '',
+            isNewUser: userData.isNewUser,
           },
         }),
 
@@ -81,6 +83,7 @@ const useAccountStore = create(
             lifestyleNotes: '',
             insuranceNumber: '',
             avatar: '',
+            isNewUser: false,
           },
         });
       },
@@ -115,6 +118,7 @@ const useAccountStore = create(
                 lifestyleNotes: response.data.lifestyleNotes || '',
                 insuranceNumber: response.data.insuranceNumber || '',
                 avatar: response.data.avatar || '',
+                isNewUser: response.data.isNewUser,
               },
             });
           } else {
@@ -142,6 +146,7 @@ const useAccountStore = create(
           email: state.user.email,
           role: state.user.role,
           fullName: state.user.fullName,
+          isNewUser: state.user.isNewUser,
         },
       }),
     }

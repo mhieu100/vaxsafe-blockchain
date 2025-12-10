@@ -29,6 +29,7 @@ import OAuth2Callback from '@/pages/auth/oauth2-callback';
 import RegisterPage from '@/pages/auth/register';
 import ResetPasswordPage from '@/pages/auth/reset-password';
 import AboutPage from '@/pages/client/about';
+import AppointmentSchedulePage from '@/pages/client/appointment-schedule';
 import BookingPage from '@/pages/client/booking';
 import CancelPage from '@/pages/client/cancel';
 import CartPage from '@/pages/client/cart';
@@ -115,6 +116,14 @@ const router = createBrowserRouter([
         element: (
           <ProtectedUserRoute>
             <CancelPage />
+          </ProtectedUserRoute>
+        ),
+      },
+      {
+        path: 'appointments',
+        element: (
+          <ProtectedUserRoute>
+            <AppointmentSchedulePage />
           </ProtectedUserRoute>
         ),
       },

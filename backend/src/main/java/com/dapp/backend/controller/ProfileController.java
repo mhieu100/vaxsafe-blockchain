@@ -24,7 +24,6 @@ public class ProfileController {
 
     private final ProfileService profileService;
 
-    
     @PutMapping("/patient")
     @PreAuthorize("hasRole('PATIENT')")
     @ApiMessage("Update patient profile successfully")
@@ -34,7 +33,6 @@ public class ProfileController {
         return ResponseEntity.ok(profileService.updatePatientProfile(request));
     }
 
-    
     @PutMapping("/doctor")
     @PreAuthorize("hasRole('DOCTOR')")
     @ApiMessage("Update doctor profile successfully")
@@ -44,7 +42,6 @@ public class ProfileController {
         return ResponseEntity.ok(profileService.updateDoctorProfile(request));
     }
 
-    
     @PutMapping("/cashier")
     @PreAuthorize("hasRole('CASHIER')")
     @ApiMessage("Update cashier profile successfully")
@@ -54,7 +51,6 @@ public class ProfileController {
         return ResponseEntity.ok(profileService.updateCashierProfile(request));
     }
 
-    
     @PutMapping("/admin")
     @PreAuthorize("hasRole('ADMIN')")
     @ApiMessage("Update admin profile successfully")
@@ -69,5 +65,12 @@ public class ProfileController {
     public ResponseEntity<String> updateAvatar(@RequestBody AvatarRequest request)
             throws AppException {
         return ResponseEntity.ok(profileService.updateAvatar(request.getAvatarUrl()));
+    }
+
+    @PutMapping("/complete-tour")
+    @ApiMessage("Complete tour successfully")
+    public ResponseEntity<Void> completeTour() throws AppException {
+        profileService.completeTour();
+        return ResponseEntity.ok().build();
     }
 }

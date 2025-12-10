@@ -1,5 +1,4 @@
 import { useTranslation } from 'react-i18next';
-import AppointmentScheduleTab from './AppointmentScheduleTab';
 import DashboardTab from './DashboardTab';
 import FamilyManagerTab from './FamilyManagerTab';
 import MyRecordsTab from './MyRecordsTab';
@@ -16,10 +15,7 @@ const ProfileTabs = ({ activeTab, onTabChange, editMode, setEditMode }) => {
       title: t('client:sidebar.myRecords'),
       content: <MyRecordsTab editMode={editMode} setEditMode={setEditMode} />,
     },
-    3: {
-      title: t('client:sidebar.appointments'),
-      content: <AppointmentScheduleTab />,
-    },
+    // 3 used to be Appointments
     4: {
       title: t('client:sidebar.familyMembers'),
       content: <FamilyManagerTab />,

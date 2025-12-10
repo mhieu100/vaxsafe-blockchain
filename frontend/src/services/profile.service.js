@@ -34,6 +34,11 @@ export const updateAvatar = async (avatarUrl) => {
 
 export const callUpdateAvatar = updateAvatar;
 
+export const completeTour = async () => {
+  const response = await apiClient.put('/api/profile/complete-tour');
+  return response;
+};
+
 const profileService = {
   updateProfile,
   updatePatientProfile,
@@ -42,6 +47,7 @@ const profileService = {
   updateAdminProfile,
   updateAvatar,
   callUpdateAvatar,
+  completeTour,
 };
 
 export default profileService;

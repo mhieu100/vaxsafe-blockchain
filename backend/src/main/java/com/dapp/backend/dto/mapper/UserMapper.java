@@ -10,7 +10,6 @@ import java.util.stream.Collectors;
 
 public class UserMapper {
 
-    
     public static UserResponse toUserResponse(User user) {
         if (user == null) {
             return null;
@@ -25,10 +24,10 @@ public class UserMapper {
                 .patientProfile(mapPatientProfile(user.getPatientProfile()))
                 .center(getCenterInfo(user))
                 .isDeleted(user.isDeleted())
+                .isNewUser(user.isNewUser())
                 .build();
     }
 
-    
     public static UserResponse.CenterInfo getCenterInfo(User user) {
 
         if (user.getDoctor() != null && user.getDoctor().getCenter() != null) {
@@ -41,7 +40,6 @@ public class UserMapper {
         return null;
     }
 
-    
     public static Center getCenter(User user) {
 
         if (user.getDoctor() != null) {
@@ -54,7 +52,6 @@ public class UserMapper {
         return null;
     }
 
-    
     private static UserResponse.RoleInfo mapRole(Role role) {
         if (role == null) {
             return null;
@@ -73,7 +70,6 @@ public class UserMapper {
                 .build();
     }
 
-    
     private static UserResponse.PermissionInfo mapPermission(Permission permission) {
         if (permission == null) {
             return null;
@@ -88,7 +84,6 @@ public class UserMapper {
                 .build();
     }
 
-    
     private static UserResponse.PatientInfo mapPatientProfile(Patient patient) {
         if (patient == null) {
             return null;
@@ -111,7 +106,6 @@ public class UserMapper {
                 .build();
     }
 
-    
     private static UserResponse.CenterInfo mapCenter(Center center) {
         if (center == null) {
             return null;
@@ -128,7 +122,6 @@ public class UserMapper {
                 .build();
     }
 
-    
     public static DoctorResponse toResponse(User user) {
         return DoctorResponse.builder()
                 .doctorId(user.getId())

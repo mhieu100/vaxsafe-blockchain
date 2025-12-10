@@ -69,7 +69,7 @@ const VaccineListPage = () => {
           </aside>
 
           {}
-          <main className="flex-1 min-w-0">
+          <main id="tour-vaccine-list" className="flex-1 min-w-0">
             {isLoading ? (
               <div className="space-y-6">
                 {}
