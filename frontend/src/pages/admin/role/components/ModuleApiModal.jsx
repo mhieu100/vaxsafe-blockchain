@@ -137,7 +137,10 @@ const ModuleApi = (props) => {
       <Row gutter={[16, 16]}>
         {item.permissions?.map((value, i) => (
           <Col lg={12} md={12} sm={24} key={`${i}-child-${item.module}`}>
-            <Card size="small" bodyStyle={{ display: 'flex', flex: 1, flexDirection: 'row' }}>
+            <Card
+              size="small"
+              styles={{ body: { display: 'flex', flex: 1, flexDirection: 'row' } }}
+            >
               <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
                 <ProFormSwitch
                   name={['permissions', value.id]}

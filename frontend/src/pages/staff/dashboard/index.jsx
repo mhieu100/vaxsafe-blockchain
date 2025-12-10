@@ -324,7 +324,7 @@ const StaffDashboard = () => {
                       borderRadius: 8,
                       boxShadow: '0 1px 4px rgba(0,0,0,0.05)',
                     }}
-                    bodyStyle={{ padding: '12px 16px' }}
+                    styles={{ body: { padding: '12px 16px' } }}
                     actions={[
                       <Button
                         key="process"

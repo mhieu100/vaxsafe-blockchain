@@ -14,6 +14,7 @@ const BookingPage = () => {
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
 
+  const [modal, contextHolder] = Modal.useModal();
   const [currentStep, setCurrentStep] = useState(0);
   const [vaccine, setVaccine] = useState(null);
   const [loading, setLoading] = useState(false);
@@ -146,7 +147,7 @@ const BookingPage = () => {
           navigate('/success');
         }
       } else {
-        Modal.warning({
+        modal.warning({
           title: 'Trùng lặp lịch hẹn',
           content:
             'Bạn đã có lịch hẹn đang hoạt động cho loại vắc xin này. Vui lòng kiểm tra lại danh sách lịch hẹn của bạn.',
@@ -200,6 +201,7 @@ const BookingPage = () => {
 
   return (
     <div className="min-h-screen bg-slate-50 py-12">
+      {contextHolder}
       <div className="container mx-auto px-4 max-w-7xl">
         <TopCheckoutSection
           currentStep={currentStep}

@@ -109,7 +109,9 @@ const ContactPage = () => {
           <Col xs={24} lg={8} className="h-full flex flex-col">
             <Card
               className="shadow-md rounded-xl border-0 h-full flex flex-col overflow-hidden"
-              bodyStyle={{ padding: 0, height: '100%', display: 'flex', flexDirection: 'column' }}
+              styles={{
+                body: { padding: 0, height: '100%', display: 'flex', flexDirection: 'column' },
+              }}
             >
               <div className="p-4 border-b border-gray-100 bg-white z-10">
                 <Input
@@ -200,7 +202,7 @@ const ContactPage = () => {
           <Col xs={24} lg={16} className="h-full">
             <Card
               className="shadow-md rounded-xl border-0 h-full overflow-hidden relative"
-              bodyStyle={{ height: '100%', padding: 0 }}
+              styles={{ body: { height: '100%', padding: 0 } }}
             >
               <div className="absolute inset-0 z-0">
                 <MapContainer

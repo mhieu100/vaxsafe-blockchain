@@ -163,7 +163,7 @@ const DashboardTab = ({ onTabChange }) => {
                 </div>
                 <div className="text-2xl font-bold text-purple-700">{stats.coverage}%</div>
               </div>
-              <Progress type="circle" percent={stats.coverage} width={50} strokeColor="#9333ea" />
+              <Progress type="circle" percent={stats.coverage} size={50} strokeColor="#9333ea" />
             </div>
             <div className="mt-4 text-xs text-purple-600 font-medium bg-purple-100/50 px-2 py-1 rounded w-fit">
               {t('client:dashboard.goodStatus')}

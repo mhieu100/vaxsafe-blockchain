@@ -189,7 +189,7 @@ const DoctorSchedule = () => {
           marginBottom: '24px',
           borderRadius: '12px',
         }}
-        bodyStyle={{ padding: '30px' }}
+        styles={{ body: { padding: '30px' } }}
       >
         <Row justify="space-between" align="middle">
           <Col>
@@ -254,7 +254,7 @@ const DoctorSchedule = () => {
               background: '#e6f7ff',
               borderColor: '#91d5ff',
             }}
-            bodyStyle={{ padding: '12px 24px' }}
+            styles={{ body: { padding: '12px 24px' } }}
           >
             <Space>
               <CalendarOutlined style={{ color: '#1890ff', fontSize: '18px' }} />

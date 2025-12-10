@@ -506,7 +506,7 @@ const CalendarView = () => {
           marginBottom: '24px',
           borderRadius: '12px',
         }}
-        bodyStyle={{ padding: '30px' }}
+        styles={{ body: { padding: '30px' } }}
       >
         <Row justify="space-between" align="middle">
           <Col>
@@ -588,7 +588,7 @@ const CalendarView = () => {
         }
         loading={loading}
         style={{ marginBottom: '24px' }}
-        bodyStyle={{ padding: 0 }}
+        styles={{ body: { padding: 0 } }}
       >
         {viewMode === 'week' && renderWeekView()}
         {viewMode === 'day' && renderDayView()}

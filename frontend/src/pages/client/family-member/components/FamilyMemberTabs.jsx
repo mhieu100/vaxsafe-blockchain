@@ -79,7 +79,7 @@ const FamilyDashboard = ({ member, history, onTabChange }) => {
                 </div>
                 <div className="text-2xl font-bold text-purple-700">{coverage}%</div>
               </div>
-              <Progress type="circle" percent={coverage} width={50} strokeColor="#9333ea" />
+              <Progress type="circle" percent={coverage} size={50} strokeColor="#9333ea" />
             </div>
           </Card>
         </Col>
