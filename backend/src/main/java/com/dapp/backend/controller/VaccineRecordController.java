@@ -1,6 +1,7 @@
 package com.dapp.backend.controller;
 
 import com.dapp.backend.annotation.ApiMessage;
+import com.dapp.backend.dto.request.FamilyMemberDetailRequest;
 import com.dapp.backend.dto.response.VaccineRecordResponse;
 import com.dapp.backend.exception.AppException;
 import com.dapp.backend.model.User;
@@ -40,7 +41,7 @@ public class VaccineRecordController {
     @PostMapping("/family-records")
     @ApiMessage("Get family member vaccine records")
     public ResponseEntity<List<VaccineRecordResponse>> getFamilyMemberRecords(
-            @RequestBody com.dapp.backend.dto.request.FamilyMemberDetailRequest request) throws AppException {
+            @RequestBody FamilyMemberDetailRequest request) throws AppException {
         User user = authService.getCurrentUserLogin();
         return ResponseEntity.ok(vaccineRecordService.getFamilyMemberVaccineRecords(request.getId(), user.getId()));
     }

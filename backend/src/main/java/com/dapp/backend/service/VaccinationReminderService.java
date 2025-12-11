@@ -63,8 +63,8 @@ public class VaccinationReminderService {
             if (reminderDate.isAfter(LocalDate.now()) || reminderDate.isEqual(LocalDate.now())) {
                 for (ReminderChannel channel : channels) {
 
-                    if (!reminderRepository.existsByAppointmentAndChannelAndDaysBefore(
-                            appointment.getId(), channel, days)) {
+                    if (!reminderRepository.existsByAppointmentAndChannelAndDaysBeforeAndStatus(
+                            appointment.getId(), channel, days, ReminderStatus.PENDING)) {
 
                         VaccinationReminder reminder = VaccinationReminder.builder()
                                 .appointment(appointment)
@@ -181,18 +181,8 @@ public class VaccinationReminderService {
 
     @Transactional
     public void cancelRemindersForAppointment(Long appointmentId) {
-        log.info("Cancelling reminders for appointment ID: {}", appointmentId);
-
-        List<VaccinationReminder> reminders = reminderRepository.findByAppointmentId(appointmentId);
-
-        for (VaccinationReminder reminder : reminders) {
-            if (reminder.getStatus() == ReminderStatus.PENDING) {
-                reminder.setStatus(ReminderStatus.CANCELLED);
-                reminderRepository.save(reminder);
-            }
-        }
-
-        log.info("Cancelled {} reminders for appointment ID: {}", reminders.size(), appointmentId);
+        log.info("Deleting pending reminders for appointment ID: {}", appointmentId);
+        reminderRepository.deleteByAppointmentIdAndStatus(appointmentId, ReminderStatus.PENDING);
     }
 
     public List<VaccinationReminder> getUserReminders(Long userId) {

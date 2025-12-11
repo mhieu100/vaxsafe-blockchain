@@ -16,60 +16,66 @@ import java.util.List;
 @Repository
 public interface VaccinationReminderRepository extends JpaRepository<VaccinationReminder, Long> {
 
+        List<VaccinationReminder> findByAppointmentId(Long appointmentId);
 
-    List<VaccinationReminder> findByAppointmentId(Long appointmentId);
+        List<VaccinationReminder> findByUserIdOrderByScheduledDateDesc(Long userId);
 
+        @Query("""
+                        SELECT vr FROM VaccinationReminder vr
+                        WHERE vr.status = 'PENDING'
+                        AND vr.scheduledDate = :today
+                        AND vr.appointment.status IN ('SCHEDULED', 'CONFIRMED')
+                        """)
+        List<VaccinationReminder> findPendingRemindersForToday(@Param("today") LocalDate today);
 
-    List<VaccinationReminder> findByUserIdOrderByScheduledDateDesc(Long userId);
+        @Query("""
+                        SELECT vr FROM VaccinationReminder vr
+                        WHERE vr.status = 'FAILED'
+                        AND vr.nextRetryAt <= :now
+                        AND vr.retryCount < 3
+                        """)
+        List<VaccinationReminder> findFailedRemindersForRetry(@Param("now") LocalDateTime now);
 
+        List<VaccinationReminder> findByStatusOrderByScheduledDateDesc(ReminderStatus status);
 
-    @Query("""
-        SELECT vr FROM VaccinationReminder vr 
-        WHERE vr.status = 'PENDING' 
-        AND vr.scheduledDate = :today
-        AND vr.appointment.status IN ('SCHEDULED', 'CONFIRMED')
-        """)
-    List<VaccinationReminder> findPendingRemindersForToday(@Param("today") LocalDate today);
+        List<VaccinationReminder> findByReminderTypeAndScheduledDateAndStatus(
+                        ReminderType reminderType,
+                        LocalDate scheduledDate,
+                        ReminderStatus status);
 
+        @Query("""
+                        SELECT COUNT(vr) > 0 FROM VaccinationReminder vr
+                        WHERE vr.appointment.id = :appointmentId
+                        AND vr.channel = :channel
+                        AND vr.daysBefore = :daysBefore
+                        """)
+        boolean existsByAppointmentAndChannelAndDaysBefore(
+                        @Param("appointmentId") Long appointmentId,
+                        @Param("channel") ReminderChannel channel,
+                        @Param("daysBefore") Integer daysBefore);
 
-    @Query("""
-        SELECT vr FROM VaccinationReminder vr 
-        WHERE vr.status = 'FAILED' 
-        AND vr.nextRetryAt <= :now
-        AND vr.retryCount < 3
-        """)
-    List<VaccinationReminder> findFailedRemindersForRetry(@Param("now") LocalDateTime now);
+        void deleteByAppointmentIdAndStatus(Long appointmentId, ReminderStatus status);
 
+        @Query("""
+                        SELECT COUNT(vr) > 0 FROM VaccinationReminder vr
+                        WHERE vr.appointment.id = :appointmentId
+                        AND vr.channel = :channel
+                        AND vr.daysBefore = :daysBefore
+                        AND vr.status = :status
+                        """)
+        boolean existsByAppointmentAndChannelAndDaysBeforeAndStatus(
+                        @Param("appointmentId") Long appointmentId,
+                        @Param("channel") ReminderChannel channel,
+                        @Param("daysBefore") Integer daysBefore,
+                        @Param("status") ReminderStatus status);
 
-    List<VaccinationReminder> findByStatusOrderByScheduledDateDesc(ReminderStatus status);
-
-
-    List<VaccinationReminder> findByReminderTypeAndScheduledDateAndStatus(
-            ReminderType reminderType, 
-            LocalDate scheduledDate, 
-            ReminderStatus status);
-
-
-    @Query("""
-        SELECT COUNT(vr) > 0 FROM VaccinationReminder vr 
-        WHERE vr.appointment.id = :appointmentId 
-        AND vr.channel = :channel 
-        AND vr.daysBefore = :daysBefore
-        """)
-    boolean existsByAppointmentAndChannelAndDaysBefore(
-            @Param("appointmentId") Long appointmentId, 
-            @Param("channel") ReminderChannel channel, 
-            @Param("daysBefore") Integer daysBefore);
-
-
-    @Query("""
-        SELECT vr.channel, vr.status, COUNT(vr) 
-        FROM VaccinationReminder vr 
-        WHERE vr.scheduledDate BETWEEN :startDate AND :endDate
-        GROUP BY vr.channel, vr.status
-        """)
-    List<Object[]> getReminderStatistics(
-            @Param("startDate") LocalDate startDate,
-            @Param("endDate") LocalDate endDate
-    );
+        @Query("""
+                        SELECT vr.channel, vr.status, COUNT(vr)
+                        FROM VaccinationReminder vr
+                        WHERE vr.scheduledDate BETWEEN :startDate AND :endDate
+                        GROUP BY vr.channel, vr.status
+                        """)
+        List<Object[]> getReminderStatistics(
+                        @Param("startDate") LocalDate startDate,
+                        @Param("endDate") LocalDate endDate);
 }

@@ -1,5 +1,6 @@
 package com.dapp.backend.service;
 
+import com.dapp.backend.dto.request.CompleteAppointmentRequest;
 import com.dapp.backend.dto.mapper.fhir.FhirImmunizationMapper;
 import com.dapp.backend.dto.response.VaccineRecordResponse;
 import com.dapp.backend.exception.AppException;
@@ -32,7 +33,7 @@ public class VaccineRecordService {
     @Transactional
     public VaccineRecord createFromAppointment(
             Appointment appointment,
-            com.dapp.backend.dto.request.CompleteAppointmentRequest request) throws AppException {
+            CompleteAppointmentRequest request) throws AppException {
 
         if (vaccineRecordRepository.findByAppointmentId(appointment.getId()).isPresent()) {
             throw new AppException("Vaccine record already exists for this appointment");

@@ -2,6 +2,7 @@ package com.dapp.backend.controller;
 
 import com.dapp.backend.annotation.ApiMessage;
 import com.dapp.backend.dto.request.PaymentRequest;
+import com.dapp.backend.dto.response.TransactionResultResponse;
 import com.dapp.backend.enums.TypeTransactionEnum;
 import com.dapp.backend.exception.AppException;
 import com.dapp.backend.service.PaymentService;
@@ -74,10 +75,10 @@ public class PaymentController {
         String redirectUrl;
         Map<String, String> vnpParams = VnpayUtils.extractParams(request);
 
-        String paymentId = vnpParams.remove("payment");
-        String referenceId = vnpParams.remove("referenceId");
-        String type = vnpParams.remove("type");
-        String platform = vnpParams.remove("platform");
+        String paymentId = vnpParams.get("payment");
+        String referenceId = vnpParams.get("referenceId");
+        String type = vnpParams.get("type");
+        String platform = vnpParams.get("platform");
 
         PaymentRequest paymentRequest = new PaymentRequest();
         paymentRequest.setPaymentId(Long.parseLong(paymentId));
@@ -110,7 +111,7 @@ public class PaymentController {
 
     @GetMapping("/{paymentId}/result")
     @ApiMessage("Get payment transaction result details")
-    public com.dapp.backend.dto.response.TransactionResultResponse getTransactionResult(@PathVariable Long paymentId)
+    public TransactionResultResponse getTransactionResult(@PathVariable Long paymentId)
             throws AppException {
         return paymentService.getTransactionResult(paymentId);
     }

@@ -1,9 +1,10 @@
 package com.dapp.backend.service;
 
 import com.dapp.backend.dto.mapper.AppointmentMapper;
-import com.dapp.backend.dto.mapper.BookingMapper;
 import com.dapp.backend.dto.mapper.UserMapper;
 import com.dapp.backend.dto.request.BookingRequest;
+import com.dapp.backend.dto.request.CompleteAppointmentRequest;
+import com.dapp.backend.dto.request.NextDoseBookingRequest;
 import com.dapp.backend.dto.request.ProcessAppointmentRequest;
 import com.dapp.backend.dto.request.RescheduleAppointmentRequest;
 import com.dapp.backend.dto.request.WalkInBookingRequest;
@@ -57,6 +58,7 @@ public class AppointmentService {
     private final FamilyMemberRepository familyMemberRepository;
     private final UserRepository userRepository;
     private final VaccinationCourseRepository vaccinationCourseRepository;
+    private final PatientRepository patientRepository;
 
     public Pagination getAllAppointmentOfCenter(Specification<Appointment> specification, Pageable pageable)
             throws AppException {
@@ -227,6 +229,7 @@ public class AppointmentService {
         Appointment savedAppointment = appointmentRepository.save(appointment);
 
         try {
+            reminderService.cancelRemindersForAppointment(savedAppointment.getId());
             reminderService.createRemindersForAppointment(savedAppointment);
             log.info("Created reminders for appointment ID: {}", savedAppointment.getId());
         } catch (Exception e) {
@@ -281,7 +284,7 @@ public class AppointmentService {
     }
 
     public String complete(HttpServletRequest request, long id,
-            com.dapp.backend.dto.request.CompleteAppointmentRequest completeRequest) throws AppException {
+            CompleteAppointmentRequest completeRequest) throws AppException {
         Appointment appointment = appointmentRepository.findById(id)
                 .orElseThrow(() -> new AppException("Appointment not found " + id));
 
@@ -301,6 +304,42 @@ public class AppointmentService {
                 course.setEndDate(LocalDateTime.now());
             }
             vaccinationCourseRepository.save(course);
+        }
+
+        // Update patient health metrics if it's a self-appointment
+        if (appointment.getFamilyMember() == null && appointment.getPatient() != null) {
+            User user = appointment.getPatient();
+            Patient patientProfile = user.getPatientProfile();
+            if (patientProfile != null) {
+                boolean updated = false;
+                if (completeRequest.getHeight() != null) {
+                    patientProfile.setHeightCm(completeRequest.getHeight());
+                    updated = true;
+                }
+                if (completeRequest.getWeight() != null) {
+                    patientProfile.setWeightKg(completeRequest.getWeight());
+                    updated = true;
+                }
+                if (updated) {
+                    patientRepository.save(patientProfile);
+                    log.info("Updated health metrics for patient {}", user.getId());
+                }
+            }
+        } else if (appointment.getFamilyMember() != null) {
+            FamilyMember member = appointment.getFamilyMember();
+            boolean updated = false;
+            if (completeRequest.getHeight() != null) {
+                member.setHeightCm(completeRequest.getHeight());
+                updated = true;
+            }
+            if (completeRequest.getWeight() != null) {
+                member.setWeightKg(completeRequest.getWeight());
+                updated = true;
+            }
+            if (updated) {
+                familyMemberRepository.save(member);
+                log.info("Updated health metrics for family member {}", member.getId());
+            }
         }
 
         try {
@@ -430,7 +469,7 @@ public class AppointmentService {
                 .build();
     }
 
-    public List<com.dapp.backend.dto.response.UrgentAppointmentDto> getUrgentAppointments() throws AppException {
+    public List<UrgentAppointmentDto> getUrgentAppointments() throws AppException {
         User currentUser = authService.getCurrentUserLogin();
         Center center = UserMapper.getCenter(currentUser);
 
@@ -438,7 +477,7 @@ public class AppointmentService {
             throw new AppException("User is not associated with any center.");
         }
 
-        List<com.dapp.backend.dto.response.UrgentAppointmentDto> urgentAppointments = new java.util.ArrayList<>();
+        List<UrgentAppointmentDto> urgentAppointments = new java.util.ArrayList<>();
         LocalDate today = LocalDate.now();
 
         List<Appointment> rescheduleRequests = appointmentRepository
@@ -463,7 +502,7 @@ public class AppointmentService {
         }
 
         urgentAppointments.sort(java.util.Comparator.comparingInt(
-                com.dapp.backend.dto.response.UrgentAppointmentDto::getPriorityLevel));
+                UrgentAppointmentDto::getPriorityLevel));
 
         return urgentAppointments;
     }
@@ -518,7 +557,7 @@ public class AppointmentService {
 
     @Transactional(rollbackFor = Exception.class)
     public PaymentResponse bookNextDose(HttpServletRequest request,
-            com.dapp.backend.dto.request.NextDoseBookingRequest bookingRequest) throws Exception {
+            NextDoseBookingRequest bookingRequest) throws Exception {
         User user = authService.getCurrentUserLogin();
 
         VaccinationCourse course = vaccinationCourseRepository.findById(bookingRequest.getVaccinationCourseId())
@@ -801,7 +840,7 @@ public class AppointmentService {
     }
 
     @Transactional(rollbackFor = Exception.class)
-    public BookingResponse createWalkInBooking(WalkInBookingRequest request) throws Exception {
+    public AppointmentResponse createWalkInBooking(WalkInBookingRequest request) throws Exception {
         User cashier = authService.getCurrentUserLogin();
 
         User patient = userRepository.findById(request.getPatientId())
@@ -922,7 +961,7 @@ public class AppointmentService {
             log.error("Failed to send confirmation email: " + e.getMessage());
         }
 
-        return BookingMapper.toResponse(savedAppointment);
+        return AppointmentMapper.toResponse(savedAppointment);
     }
 
     public CenterAvailabilityResponse checkAvailability(Long centerId, LocalDate date) throws AppException {
@@ -1044,7 +1083,7 @@ public class AppointmentService {
         pagination.setMeta(meta);
         List<Appointment> list = page.getContent();
 
-        List<BookingResponse> result = list.stream().map(BookingMapper::toResponse).toList();
+        List<AppointmentResponse> result = list.stream().map(AppointmentMapper::toResponse).toList();
         pagination.setResult(result);
 
         return pagination;

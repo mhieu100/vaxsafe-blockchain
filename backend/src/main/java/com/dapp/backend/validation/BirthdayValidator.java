@@ -7,16 +7,17 @@ import lombok.extern.slf4j.Slf4j;
 import java.time.LocalDate;
 import java.time.Period;
 
-
 @Slf4j
 public class BirthdayValidator implements ConstraintValidator<ValidBirthday, LocalDate> {
 
     private int maxAge;
+    private int minAge;
     private boolean required;
 
     @Override
     public void initialize(ValidBirthday constraintAnnotation) {
         this.maxAge = constraintAnnotation.maxAge();
+        this.minAge = constraintAnnotation.minAge();
         this.required = constraintAnnotation.required();
     }
 
@@ -34,7 +35,6 @@ public class BirthdayValidator implements ConstraintValidator<ValidBirthday, Loc
         }
 
         LocalDate today = LocalDate.now();
-        
 
         if (birthday.isAfter(today)) {
             context.disableDefaultConstraintViolation();
@@ -43,10 +43,8 @@ public class BirthdayValidator implements ConstraintValidator<ValidBirthday, Loc
             return false;
         }
 
-
         Period age = Period.between(birthday, today);
         int years = age.getYears();
-
 
         if (years > maxAge) {
             context.disableDefaultConstraintViolation();
@@ -56,8 +54,14 @@ public class BirthdayValidator implements ConstraintValidator<ValidBirthday, Loc
             return false;
         }
 
+        if (years < minAge) {
+            context.disableDefaultConstraintViolation();
+            context.buildConstraintViolationWithTemplate(
+                    String.format("You must be at least %d years old", minAge))
+                    .addConstraintViolation();
+            return false;
+        }
 
-        
         log.debug("Valid birthday: {} (age: {} years)", birthday, years);
         return true;
     }

@@ -59,6 +59,8 @@ public class RagService {
                     - Bảo quản: %s
                     - Số mũi cần tiêm: %d
                     - Khoảng cách mũi tiếp theo: %d ngày
+                    - Slug: %s
+                    - Link chi tiết: https://safevax.mhieu100.space/vaccine/%s
                     """,
                     v.getName(),
                     v.getCountry(),
@@ -69,7 +71,9 @@ public class RagService {
                     v.getContraindications(),
                     v.getPreserve(),
                     v.getDosesRequired(),
-                    v.getDaysForNextDose() != null ? v.getDaysForNextDose() : 0);
+                    v.getDaysForNextDose() != null ? v.getDaysForNextDose() : 0,
+                    v.getSlug(),
+                    v.getSlug());
             documents.add(content);
         }
 
@@ -92,6 +96,68 @@ public class RagService {
         });
     }
 
+    public String summarize(String content) {
+        String systemPromptText = """
+                Bạn là một trợ lý AI thông minh chuyên tóm tắt tin tức y tế.
+                Nhiệm vụ của bạn là đọc nội dung bài viết được cung cấp và tạo ra một bản tóm tắt ngắn gọn, súc tích, dễ hiểu.
+
+                YÊU CẦU:
+                1. Tóm tắt nội dung chính của bài viết.
+                2. Làm nổi bật các ý quan trọng nhất.
+                3. Sử dụng ngôn ngữ tiếng Việt tự nhiên.
+                4. Độ dài khoảng 3-5 câu.
+                5. Định dạng (Dùng Markdown):
+                   ### 📰 Tóm tắt nội dung:
+                   [Nội dung tóm tắt ngắn gọn]
+
+                   ✨ **Điểm nổi bật:**
+                   - [Điểm 1]
+                   - [Điểm 2]
+                   - [Điểm 3] (nếu có)
+
+                Đây là nội dung bài viết cần tóm tắt:
+                """;
+
+        SystemPromptTemplate systemPromptTemplate = new SystemPromptTemplate(systemPromptText);
+        var systemMessage = systemPromptTemplate.createMessage();
+        var userMessage = new UserMessage(content);
+        var prompt = new Prompt(List.of(systemMessage, userMessage));
+
+        // Retry logic
+        int maxRetries = 3;
+        int attempt = 0;
+        Exception lastException = null;
+
+        while (attempt < maxRetries) {
+            try {
+                var response = chatModel.call(prompt);
+                if (response != null && response.getResult() != null && response.getResult().getOutput() != null) {
+                    return response.getResult().getOutput().getContent();
+                }
+                return "Xin lỗi, tôi không thể tạo bản tóm tắt. Vui lòng thử lại.";
+            } catch (Exception e) {
+                lastException = e;
+                boolean isTransient = e.getMessage().contains("503") ||
+                        e.getMessage().contains("overloaded") ||
+                        e.getClass().getSimpleName().contains("TransientAiException");
+
+                if (isTransient && attempt < maxRetries - 1) {
+                    attempt++;
+                    try {
+                        Thread.sleep(2000 * attempt);
+                    } catch (InterruptedException ie) {
+                        Thread.currentThread().interrupt();
+                        break;
+                    }
+                    continue;
+                }
+                break; // details of exception handling are simplified here compared to consult
+            }
+        }
+        return "Xin lỗi, đã xảy ra lỗi trong quá trình xử lý tóm tắt.";
+    }
+
+    // Existing consult method...
     public String consult(ConsultationRequest request) {
         try {
             String query = request.getQuery();
@@ -135,6 +201,7 @@ public class RagService {
                     3. PHONG CÁCH:
                        - Chuyên nghiệp, ân cần, dễ hiểu.
                        - Trả lời ngắn gọn, định dạng đẹp (dùng gạch đầu dòng).
+                       - Khi đề cập đến một loại vắc xin cụ thể, HÃY LUÔN cung cấp Link chi tiết (có sẵn trong dữ liệu) để người dùng có thể bấm vào xem thông tin và đặt lịch. Ví dụ: [Tên Vắc xin](Link chi tiết).
 
                     Hãy trả lời câu hỏi sau của người dùng:
                     """;

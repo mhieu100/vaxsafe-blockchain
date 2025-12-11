@@ -2,6 +2,7 @@ package com.dapp.backend.controller;
 
 import com.dapp.backend.annotation.ApiMessage;
 import com.dapp.backend.dto.request.*;
+import com.dapp.backend.dto.response.AppointmentResponse;
 import com.dapp.backend.dto.response.LoginResponse;
 import com.dapp.backend.dto.response.RefreshResponse;
 import com.dapp.backend.dto.response.RegisterPatientResponse;
@@ -36,7 +37,7 @@ public class AuthController {
 
     @GetMapping("/my-bookings")
     @ApiMessage("Get booking of user")
-    public ResponseEntity<java.util.List<com.dapp.backend.dto.response.AppointmentResponse>> getMyBookings()
+    public ResponseEntity<List<AppointmentResponse>> getMyBookings()
             throws Exception {
         return ResponseEntity.ok(appointmentService.getBooking());
     }

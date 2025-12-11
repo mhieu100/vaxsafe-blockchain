@@ -1,6 +1,7 @@
 package com.dapp.backend.controller;
 
 import com.dapp.backend.annotation.ApiMessage;
+import com.dapp.backend.dto.request.CompleteAppointmentRequest;
 import com.dapp.backend.dto.request.ProcessAppointmentRequest;
 import com.dapp.backend.dto.request.RescheduleAppointmentRequest;
 import com.dapp.backend.dto.response.AppointmentResponse;
@@ -55,7 +56,7 @@ public class AppointmentController {
     public ResponseEntity<String> completeAppointment(
             HttpServletRequest request,
             @PathVariable long id,
-            @RequestBody @Valid com.dapp.backend.dto.request.CompleteAppointmentRequest completeRequest)
+            @RequestBody @Valid CompleteAppointmentRequest completeRequest)
             throws Exception {
         return ResponseEntity.ok().body(appointmentService.complete(request, id, completeRequest));
     }

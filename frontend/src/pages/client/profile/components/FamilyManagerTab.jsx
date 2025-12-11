@@ -393,14 +393,10 @@ const FamilyManagerTab = () => {
 
             <Form.Item
               name="identityNumber"
-              label={
-                <span>
-                  {t('client:family.identityNumber')} <span className="text-red-500">*</span>
-                </span>
-              }
+              label={t('client:family.identityNumber')}
               tooltip={t('client:family.identityTooltip')}
               rules={[
-                { required: true, message: 'Please enter identity number' },
+                { required: false },
                 {
                   pattern: /^[0-9]{9,12}$/,
                   message: 'Please enter a valid identity number (9-12 digits)',

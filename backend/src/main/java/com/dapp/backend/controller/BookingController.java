@@ -2,6 +2,7 @@ package com.dapp.backend.controller;
 
 import com.dapp.backend.annotation.ApiMessage;
 import com.dapp.backend.dto.request.BookingRequest;
+import com.dapp.backend.dto.request.NextDoseBookingRequest;
 import com.dapp.backend.dto.request.WalkInBookingRequest;
 import com.dapp.backend.dto.response.*;
 import com.dapp.backend.model.Appointment;
@@ -33,7 +34,7 @@ public class BookingController {
         @PostMapping("/next-dose")
         @ApiMessage("Book next dose for a vaccination course")
         public ResponseEntity<PaymentResponse> bookNextDose(HttpServletRequest request,
-                        @Valid @RequestBody com.dapp.backend.dto.request.NextDoseBookingRequest bookingRequest)
+                        @Valid @RequestBody NextDoseBookingRequest bookingRequest)
                         throws Exception {
                 return ResponseEntity.ok(appointmentService.bookNextDose(request, bookingRequest));
         }
@@ -48,7 +49,7 @@ public class BookingController {
 
         @PostMapping("/walk-in")
         @ApiMessage("Create walk-in booking with direct doctor assignment")
-        public ResponseEntity<BookingResponse> createWalkInBooking(@Valid @RequestBody WalkInBookingRequest request)
+        public ResponseEntity<AppointmentResponse> createWalkInBooking(@Valid @RequestBody WalkInBookingRequest request)
                         throws Exception {
                 return ResponseEntity.ok(appointmentService.createWalkInBooking(request));
         }

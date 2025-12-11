@@ -13,6 +13,7 @@ import java.time.LocalDate;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
+@EqualsAndHashCode(callSuper = true)
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class FamilyMember extends BaseEntity {
 
@@ -24,22 +25,24 @@ public class FamilyMember extends BaseEntity {
     LocalDate dateOfBirth;
     String relationship;
     String phone;
+    Double heightCm;
+    Double weightKg;
 
     @Column(unique = true)
     String identityNumber;
-    
-    String birthCertificateNumber; 
+
+    String birthCertificateNumber;
 
     @Enumerated(EnumType.STRING)
     Gender gender;
-    
+
     @Column(unique = true, nullable = false)
     String blockchainIdentityHash;
-    
+
     @Column(unique = true)
-    String did; 
-    
-    String ipfsDataHash; 
+    String did;
+
+    String ipfsDataHash;
 
     @ManyToOne
     @JoinColumn(name = "user_id")

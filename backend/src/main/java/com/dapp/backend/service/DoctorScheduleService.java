@@ -31,7 +31,6 @@ public class DoctorScheduleService {
     DoctorRepository doctorRepository;
     DoctorAvailableSlotRepository slotRepository;
 
-    
     public List<DoctorResponse> getAvailableDoctorsByCenter(Long centerId) {
         return doctorRepository.findByCenter_CenterIdAndIsAvailableTrue(centerId)
                 .stream()
@@ -39,7 +38,6 @@ public class DoctorScheduleService {
                 .collect(Collectors.toList());
     }
 
-    
     public List<DoctorWithScheduleResponse> getDoctorsWithTodaySchedule(Long centerId, LocalDate date) {
         List<Doctor> doctors = doctorRepository.findByCenter_CenterIdAndIsAvailableTrue(centerId);
 
@@ -48,9 +46,6 @@ public class DoctorScheduleService {
                 .collect(Collectors.toList());
     }
 
-    
-    
-    
     public List<DoctorAvailableSlotResponse> getAvailableSlots(Long doctorId, LocalDate date) {
         try {
             return getDoctorSlotsInRange(doctorId, date, date).stream()
@@ -62,7 +57,6 @@ public class DoctorScheduleService {
         }
     }
 
-    
     public List<DoctorAvailableSlotResponse> getAvailableSlotsByCenter(Long centerId, LocalDate date) {
 
         List<Doctor> doctors = doctorRepository.findByCenter_CenterIdAndIsAvailableTrue(centerId);
@@ -72,11 +66,9 @@ public class DoctorScheduleService {
             return List.of();
         }
 
-
         List<Long> doctorIds = doctors.stream()
                 .map(Doctor::getDoctorId)
                 .collect(Collectors.toList());
-
 
         List<DoctorAvailableSlot> existingSlots = slotRepository.findSlotsByDoctorIdsAndDateRange(doctorIds, date,
                 date);
@@ -84,17 +76,14 @@ public class DoctorScheduleService {
         log.debug("Batch query found {} real slots for {} doctors in center {}",
                 existingSlots.size(), doctors.size(), centerId);
 
-
         java.util.Map<Long, List<DoctorAvailableSlot>> slotsByDoctor = existingSlots.stream()
                 .collect(Collectors.groupingBy(s -> s.getDoctor().getDoctorId()));
-
 
         return doctors.stream()
                 .flatMap(doctor -> {
 
                     List<DoctorAvailableSlot> doctorRealSlots = slotsByDoctor.getOrDefault(doctor.getDoctorId(),
                             List.of());
-
 
                     return generateSlotsForDate(doctor, date, doctorRealSlots).stream();
                 })
@@ -105,10 +94,8 @@ public class DoctorScheduleService {
                 .collect(Collectors.toList());
     }
 
-    
     private List<DoctorAvailableSlotResponse> generateSlotsForDate(
             Doctor doctor, LocalDate date, List<DoctorAvailableSlot> existingSlots) {
-
 
         java.util.Map<String, DoctorAvailableSlot> slotMap = existingSlots.stream()
                 .collect(Collectors.toMap(
@@ -117,7 +104,6 @@ public class DoctorScheduleService {
                         (existing, replacement) -> existing));
 
         List<DoctorAvailableSlotResponse> slots = new java.util.ArrayList<>();
-
 
         LocalTime startTime = LocalTime.of(7, 0);
         LocalTime endTime = LocalTime.of(17, 0);
@@ -153,7 +139,6 @@ public class DoctorScheduleService {
         return slots;
     }
 
-    
     public List<DoctorAvailableSlotResponse> getAvailableSlotsByCenterAndTimeSlot(
             Long centerId, LocalDate date, TimeSlotEnum timeSlot) {
         LocalTime startTime = getTimeSlotStartTime(timeSlot);
@@ -164,8 +149,7 @@ public class DoctorScheduleService {
                 .collect(Collectors.toList());
     }
 
-    
-    private LocalTime getTimeSlotStartTime(com.dapp.backend.enums.TimeSlotEnum timeSlot) {
+    private LocalTime getTimeSlotStartTime(TimeSlotEnum timeSlot) {
         return switch (timeSlot) {
             case SLOT_07_00 -> LocalTime.of(7, 0);
             case SLOT_09_00 -> LocalTime.of(9, 0);
@@ -175,12 +159,10 @@ public class DoctorScheduleService {
         };
     }
 
-    
-    private LocalTime getTimeSlotEndTime(com.dapp.backend.enums.TimeSlotEnum timeSlot) {
+    private LocalTime getTimeSlotEndTime(TimeSlotEnum timeSlot) {
         return getTimeSlotStartTime(timeSlot).plusHours(2);
     }
 
-    
     public List<DoctorAvailableSlotResponse> getDoctorSlotsInRange(
             Long doctorId, LocalDate startDate, LocalDate endDate) throws AppException {
         Doctor doctor = doctorRepository.findById(doctorId)
@@ -188,10 +170,8 @@ public class DoctorScheduleService {
         return getDoctorSlotsInRange(doctor, startDate, endDate);
     }
 
-    
     public List<DoctorAvailableSlotResponse> getDoctorSlotsInRange(
             Doctor doctor, LocalDate startDate, LocalDate endDate) {
-
 
         long daysBetween = java.time.temporal.ChronoUnit.DAYS.between(startDate, endDate);
         if (daysBetween > 90) {
@@ -200,13 +180,11 @@ public class DoctorScheduleService {
             endDate = startDate.plusDays(90);
         }
 
-
         List<DoctorAvailableSlot> existingSlots = slotRepository.findDoctorSlotsInRange(
                 doctor.getDoctorId(), startDate, endDate);
 
         log.debug("Found {} real slots in DB for doctor {} from {} to {}",
                 existingSlots.size(), doctor.getDoctorId(), startDate, endDate);
-
 
         java.util.Map<String, DoctorAvailableSlot> slotMap = existingSlots.stream()
                 .collect(Collectors.toMap(
@@ -218,19 +196,15 @@ public class DoctorScheduleService {
                             return existing;
                         }));
 
-
         int estimatedSlots = (int) (daysBetween * 16);
         List<DoctorAvailableSlotResponse> allSlots = new java.util.ArrayList<>(estimatedSlots);
-
 
         LocalTime defaultStartTime = LocalTime.of(7, 0);
         LocalTime defaultEndTime = LocalTime.of(17, 0);
 
-
         int duration = doctor.getConsultationDuration() != null
                 ? doctor.getConsultationDuration()
                 : 30;
-
 
         LocalDate currentDate = startDate;
         int virtualSlotCount = 0;
@@ -241,7 +215,6 @@ public class DoctorScheduleService {
 
             while (time.isBefore(defaultEndTime)) {
                 LocalTime endTime = time.plusMinutes(duration);
-
 
                 if (endTime.isAfter(defaultEndTime)) {
                     break;
@@ -269,7 +242,6 @@ public class DoctorScheduleService {
             currentDate = currentDate.plusDays(1);
         }
 
-
         allSlots.sort(java.util.Comparator
                 .comparing(DoctorAvailableSlotResponse::getSlotDate)
                 .thenComparing(DoctorAvailableSlotResponse::getStartTime));
@@ -280,13 +252,11 @@ public class DoctorScheduleService {
         return allSlots;
     }
 
-
     @Transactional
     public int generateDoctorSlots(Long doctorId, LocalDate startDate, LocalDate endDate) throws AppException {
         log.warn("generateDoctorSlots is deprecated. Using Virtual Time Slots.");
         return 0;
     }
-
 
     private DoctorResponse toDoctorResponse(Doctor doctor) {
         return DoctorResponse.builder()
@@ -309,7 +279,6 @@ public class DoctorScheduleService {
 
         List<DoctorAvailableSlotResponse> slots = getDoctorSlotsInRange(doctor, date, date);
 
-
         int totalSlots = slots.size();
         int availableSlots = (int) slots.stream()
                 .filter(s -> s.getStatus() == SlotStatus.AVAILABLE)
@@ -320,7 +289,6 @@ public class DoctorScheduleService {
         int blockedSlots = (int) slots.stream()
                 .filter(s -> s.getStatus() == SlotStatus.BLOCKED)
                 .count();
-
 
         String workingHours = getWorkingHoursForDate(doctor, date);
 

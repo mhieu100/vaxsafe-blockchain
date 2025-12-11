@@ -1,15 +1,19 @@
 import {
   ArrowRightOutlined,
   CalendarOutlined,
+  RobotOutlined,
   ShareAltOutlined,
   UserOutlined,
 } from '@ant-design/icons';
-import { Breadcrumb, Button, Col, message, Row, Skeleton, Tag, Typography } from 'antd';
+import { Breadcrumb, Button, Col, Modal, message, Row, Skeleton, Tag, Typography } from 'antd';
 import dayjs from 'dayjs';
 import DOMPurify from 'dompurify';
 import { useEffect, useState } from 'react';
+import ReactMarkdown from 'react-markdown';
 import { Link, useNavigate, useParams } from 'react-router-dom';
+import aiAvatar from '@/assets/model.png';
 import { callFetchNewsBySlug, callFetchPublishedNews } from '@/services/news.service';
+import ragService from '@/services/rag.service';
 
 const { Title, Text } = Typography;
 
@@ -19,6 +23,9 @@ const ClientNewsDetailPage = () => {
   const [news, setNews] = useState(null);
   const [loading, setLoading] = useState(true);
   const [trendingNews, setTrendingNews] = useState([]);
+  const [summary, setSummary] = useState(null);
+  const [summarizing, setSummarizing] = useState(false);
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   useEffect(() => {
     if (slug) {
@@ -63,6 +70,29 @@ const ClientNewsDetailPage = () => {
   const handleShare = () => {
     navigator.clipboard.writeText(window.location.href);
     message.success('Link copied to clipboard!');
+  };
+
+  const handleSummarize = async () => {
+    setIsModalOpen(true);
+    if (summary) return;
+    setSummarizing(true);
+    try {
+      // Remove HTML tags to get plain text
+      const div = document.createElement('div');
+      div.innerHTML = news.content;
+      const textContent = div.innerText || div.textContent || '';
+
+      const res = await ragService.summarize(textContent);
+      if (res && res.data) {
+        setSummary(res.data);
+      }
+    } catch (error) {
+      console.error('Failed to summarize:', error);
+      message.error('Không thể tóm tắt vào lúc này.');
+      setIsModalOpen(false);
+    } finally {
+      setSummarizing(false);
+    }
   };
 
   const getCategoryColor = (category) => {
@@ -219,6 +249,15 @@ const ClientNewsDetailPage = () => {
                         {formatCategory(news.category)}
                       </Tag>
                     </div>
+
+                    <Button
+                      icon={<RobotOutlined />}
+                      onClick={handleSummarize}
+                      className="bg-gradient-to-r from-violet-600 to-indigo-600 text-white border-0 hover:!text-white hover:opacity-90 shadow-md font-medium px-6 h-10 rounded-full"
+                      style={{ color: 'white' }}
+                    >
+                      {summary ? 'Xem tóm tắt AI' : 'Tóm tắt nội dung bằng AI'}
+                    </Button>
                   </div>
 
                   {}
@@ -319,6 +358,63 @@ const ClientNewsDetailPage = () => {
           </div>
         </div>
       </section>
+
+      <Modal
+        title={null}
+        footer={null}
+        open={isModalOpen}
+        onCancel={() => setIsModalOpen(false)}
+        width={700}
+        centered
+        className="ai-summary-modal"
+        styles={{
+          content: {
+            borderRadius: '24px',
+            padding: '0',
+            overflow: 'hidden',
+          },
+        }}
+      >
+        <div className="relative">
+          <div className="bg-gradient-to-r from-indigo-500 to-violet-500 p-8 text-center relative overflow-hidden">
+            <div className="absolute top-0 left-0 w-full h-full opacity-10 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')]"></div>
+            <div className="relative z-10 flex flex-col items-center">
+              <div className="w-24 h-24 bg-white rounded-full p-1 shadow-xl mb-4 flex items-center justify-center">
+                <img
+                  src={aiAvatar}
+                  alt="AI Assistant"
+                  className="w-full h-full object-contain rounded-full"
+                />
+              </div>
+              <h3 className="text-2xl font-bold text-white m-0">AI Summary Assistant</h3>
+              <p className="text-indigo-100 mt-2">Tóm tắt thông tin nhanh chóng & chính xác</p>
+            </div>
+          </div>
+
+          <div className="p-8">
+            {summarizing ? (
+              <div className="py-8">
+                <Skeleton active paragraph={{ rows: 4 }} />
+              </div>
+            ) : (
+              <div className="prose prose-indigo max-w-none prose-headings:text-indigo-700 prose-p:text-gray-600 text-base leading-relaxed">
+                <ReactMarkdown>{summary}</ReactMarkdown>
+              </div>
+            )}
+
+            <div className="mt-8 flex justify-center">
+              <Button
+                type="primary"
+                size="large"
+                onClick={() => setIsModalOpen(false)}
+                className="bg-indigo-600 hover:bg-indigo-700 rounded-full px-8"
+              >
+                Đóng
+              </Button>
+            </div>
+          </div>
+        </div>
+      </Modal>
     </div>
   );
 };

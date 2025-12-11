@@ -21,6 +21,14 @@ const ragService = {
     const response = await apiClient.post('/api/rag/sync');
     return response;
   },
+  summarize: async (content) => {
+    const response = await apiClient.post('/api/rag/summarize', content, {
+      headers: {
+        'Content-Type': 'text/plain',
+      },
+    });
+    return response;
+  },
 };
 
 export default ragService;

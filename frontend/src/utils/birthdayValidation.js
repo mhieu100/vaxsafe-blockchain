@@ -15,12 +15,12 @@ export const birthdayValidation = {
     if (!date) return false;
 
     const birthday = dayjs(date);
-    const today = dayjs();
+    const eighteenYearsAgo = dayjs().subtract(18, 'year');
     const minBirthday = birthdayValidation.getMinBirthday();
 
     if (!birthday.isValid()) return false;
 
-    if (birthday.isAfter(today)) return false;
+    if (birthday.isAfter(eighteenYearsAgo)) return false;
 
     if (birthday.isBefore(minBirthday)) return false;
 
@@ -35,10 +35,10 @@ export const birthdayValidation = {
   disabledDate: (current) => {
     if (!current) return false;
 
-    const today = dayjs().endOf('day');
+    const maxDate = dayjs().subtract(18, 'year').endOf('day');
     const minDate = birthdayValidation.getMinBirthday().startOf('day');
 
-    return current.isAfter(today) || current.isBefore(minDate);
+    return current.isAfter(maxDate) || current.isBefore(minDate);
   },
 
   getFormRules: (required = true) => {
@@ -62,8 +62,7 @@ export const birthdayValidation = {
         }
 
         if (!birthdayValidation.isValidBirthday(value)) {
-          const minDate = birthdayValidation.getMinBirthday().format('DD/MM/YYYY');
-          return Promise.reject(new Error(`Birthday must be between ${minDate} and today`));
+          return Promise.reject(new Error(`You must be at least 18 years old`));
         }
 
         return Promise.resolve();

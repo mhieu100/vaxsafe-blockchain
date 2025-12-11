@@ -14,7 +14,6 @@ import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
 
-
 @Data
 @Builder
 @NoArgsConstructor
@@ -28,7 +27,7 @@ public class CompleteProfileRequest {
     @Pattern(regexp = "^[0-9]{9,11}$", message = "Phone must be 9-11 digits")
     private String phone;
 
-    @ValidBirthday(required = true, maxAge = 150)
+    @ValidBirthday(required = true, maxAge = 150, minAge = 18)
     @com.fasterxml.jackson.annotation.JsonFormat(pattern = "yyyy-MM-dd")
     private LocalDate birthday;
 

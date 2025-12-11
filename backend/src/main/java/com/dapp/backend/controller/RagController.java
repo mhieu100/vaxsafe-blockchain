@@ -37,6 +37,12 @@ public class RagController {
         return ResponseEntity.ok(response);
     }
 
+    @PostMapping("/summarize")
+    public ResponseEntity<String> summarize(@RequestBody String content) {
+        String summary = ragService.summarize(content);
+        return ResponseEntity.ok(summary);
+    }
+
     @PostMapping("/consult")
     public ResponseEntity<String> consult(@RequestBody ConsultationRequest request) {
         String response = ragService.consult(request);

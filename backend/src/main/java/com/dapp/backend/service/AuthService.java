@@ -43,7 +43,6 @@ public class AuthService {
     private LoginResponse.UserLogin toUserLogin(User user) {
         Patient patient = user.getPatientProfile();
 
-
         Center center = null;
         if (user.getDoctor() != null) {
             center = user.getDoctor().getCenter();
@@ -88,6 +87,8 @@ public class AuthService {
 
         String accessToken = jwtUtil.createAccessToken(request.getUsername(), user.getRole().getName());
 
+        ensureBlockchainIdentity(user);
+
         return LoginResponse.builder()
                 .accessToken(accessToken)
                 .user(toUserLogin(user))
@@ -113,9 +114,7 @@ public class AuthService {
                 .orElseThrow(() -> new AppException("Role PATIENT not found"));
         user.setRole(role);
 
-
         User savedUser = userRepository.save(user);
-
 
         try {
             notificationLogService.createDefaultSettings(savedUser);
@@ -125,7 +124,6 @@ public class AuthService {
 
         }
 
-
         try {
             String identityHash = identityService.generateUserIdentityHash(savedUser);
             String did = identityService.generateDID(identityHash, IdentityType.ADULT);
@@ -134,7 +132,6 @@ public class AuthService {
             savedUser.setBlockchainIdentityHash(identityHash);
             savedUser.setDid(did);
             savedUser.setIpfsDataHash(ipfsDataHash);
-
 
             savedUser = userRepository.save(savedUser);
 
@@ -159,12 +156,10 @@ public class AuthService {
         User user = getCurrentUserLogin();
         user.setFullName(request.getUser().getFullName());
 
-
         user.setAddress(request.getPatientProfile().getAddress());
         user.setPhone(request.getPatientProfile().getPhone());
         user.setBirthday(request.getPatientProfile().getBirthday());
         user.setGender(request.getPatientProfile().getGender());
-
 
         Patient patient = user.getPatientProfile();
         patient.setIdentityNumber(request.getPatientProfile().getIdentityNumber());
@@ -194,6 +189,7 @@ public class AuthService {
             throw new AppException("Refresh token invalid!");
         }
         String newAccessToken = jwtUtil.createAccessToken(user.getEmail(), user.getRole().getName());
+        ensureBlockchainIdentity(user);
         return LoginResponse.builder().accessToken(newAccessToken).user(toUserLogin(user)).build();
     }
 
@@ -237,7 +233,6 @@ public class AuthService {
         return userRepository.findByEmail(email).orElseThrow(() -> new AppException("User not found"));
     }
 
-    
     public LoginResponse.UserLogin completeProfile(CompleteProfileRequest request) throws AppException {
         User user = getCurrentUserLogin();
 
@@ -249,12 +244,10 @@ public class AuthService {
             throw new AppException("Identity number already exists");
         }
 
-
         user.setAddress(request.getAddress());
         user.setPhone(request.getPhone());
         user.setBirthday(request.getBirthday());
         user.setGender(request.getGender());
-
 
         Patient patient = Patient.builder()
                 .identityNumber(request.getIdentityNumber())
@@ -270,7 +263,7 @@ public class AuthService {
 
         user.setPatientProfile(patient);
         user.setActive(true);
-
+        user.setNewUser(false);
 
         generateAndSyncBlockchainIdentity(user);
 
@@ -298,9 +291,7 @@ public class AuthService {
                     "╚═══════════════════════════════════════════════════════════════════╝",
                     user.getEmail(), identityHash, did);
 
-
             userRepository.save(user);
-
 
             if (blockchainService.isBlockchainServiceAvailable()) {
                 var response = blockchainService.createIdentity(
@@ -327,9 +318,39 @@ public class AuthService {
                 log.warn("Blockchain service not available, identity saved to database only");
             }
         } catch (Exception e) {
-            log.error("Error syncing blockchain identity for user: {}", user.getEmail(), e);
-
             userRepository.save(user);
+        }
+    }
+
+    // Self-healing: Check if user has profile but missing blockchain identity
+    private void ensureBlockchainIdentity(User user) {
+        try {
+            if ("PATIENT".equals(user.getRole().getName()) && user.getPatientProfile() != null) {
+                // If they have Identity Number (profile complete)
+                if (user.getPatientProfile().getIdentityNumber() != null &&
+                        !user.getPatientProfile().getIdentityNumber().isEmpty()) {
+
+                    boolean changed = false;
+
+                    // If active is false but they have profile, fix it
+                    if (!user.isActive()) {
+                        user.setActive(true);
+                        user.setNewUser(false);
+                        changed = true;
+                    }
+
+                    // If hash missing, generate it
+                    if (user.getBlockchainIdentityHash() == null || user.getBlockchainIdentityHash().isEmpty()) {
+                        log.info("Self-healing: Generating missing blockchain identity for user {}", user.getEmail());
+                        generateAndSyncBlockchainIdentity(user);
+                        changed = false; // saved inside generateAndSync
+                    } else if (changed) {
+                        userRepository.save(user);
+                    }
+                }
+            }
+        } catch (Exception e) {
+            log.error("Error in ensureBlockchainIdentity for user {}", user.getEmail(), e);
         }
     }
 
@@ -353,7 +374,6 @@ public class AuthService {
             String name = (String) payload.get("name");
             String pictureUrl = (String) payload.get("picture");
 
-
             User user = userRepository.findByEmail(email).orElse(null);
 
             if (user == null) {
@@ -373,17 +393,38 @@ public class AuthService {
 
                 user = userRepository.save(user);
 
-
                 try {
                     notificationLogService.createDefaultSettings(user);
                     log.info("Default notification settings created for Google user: {}", user.getEmail());
                 } catch (Exception e) {
                     log.error("Error creating notification settings for Google user: {}", user.getEmail(), e);
                 }
+            } else {
+                // SMART MERGE: User exists (registered via password or other)
+                if (user.isDeleted()) {
+                    throw new AppException("Account has been disabled/deleted.");
+                }
+
+                // Auto-update Avatar if using default and Google provided one
+                boolean changed = false;
+                String defaultAvatar = "https://res-console.cloudinary.com/dcwzhi4tp/thumbnails/v1/image/upload/v1763975729/dmgxY3h1aWtkYmh5aXFqeGJnaG0=/drilldown";
+                if (pictureUrl != null && (user.getAvatar() == null || user.getAvatar().equals(defaultAvatar))) {
+                    user.setAvatar(pictureUrl);
+                    changed = true;
+                }
+
+                // If they registered via Password, they might be 'Active' but missing
+                // 'isActive' flag in some legacy cases,
+                // but usually we trust existing state.
+
+                if (changed) {
+                    userRepository.save(user);
+                }
             }
 
-
             String accessToken = jwtUtil.createAccessToken(email, user.getRole().getName());
+
+            ensureBlockchainIdentity(user);
 
             return LoginResponse.builder()
                     .accessToken(accessToken)

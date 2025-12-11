@@ -5,6 +5,7 @@ import com.dapp.backend.dto.request.FamilyMemberDetailRequest;
 import com.dapp.backend.dto.request.FamilyMemberRequest;
 import com.dapp.backend.dto.response.FamilyMemberResponse;
 import com.dapp.backend.dto.response.Pagination;
+import com.dapp.backend.dto.response.VaccinationRouteResponse;
 import com.dapp.backend.exception.AppException;
 import com.dapp.backend.model.FamilyMember;
 import com.dapp.backend.service.FamilyMemberService;
@@ -76,7 +77,7 @@ public class FamilyMemberController {
 
     @PostMapping("/booking-history-grouped")
     @ApiMessage("Get family member booking history grouped")
-    public ResponseEntity<java.util.List<com.dapp.backend.dto.response.VaccinationRouteResponse>> getFamilyBookingHistoryGrouped(
+    public ResponseEntity<java.util.List<VaccinationRouteResponse>> getFamilyBookingHistoryGrouped(
             @RequestBody FamilyMemberDetailRequest request) throws AppException {
         return ResponseEntity.ok(appointmentService.getGroupedHistoryBookingForFamilyMember(request.getId()));
     }
