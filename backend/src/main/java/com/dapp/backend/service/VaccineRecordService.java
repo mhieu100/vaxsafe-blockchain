@@ -14,7 +14,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
+
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -46,14 +46,14 @@ public class VaccineRecordService {
         String patientName;
         String identityHash;
 
-        if (patient != null) {
-
-            patientName = patient.getFullName();
-            identityHash = patient.getBlockchainIdentityHash();
-        } else if (familyMember != null) {
-
+        if (familyMember != null) {
+            // It's a family member appointment
             patientName = familyMember.getFullName();
             identityHash = familyMember.getBlockchainIdentityHash();
+        } else if (patient != null) {
+            // It's a personal user appointment
+            patientName = patient.getFullName();
+            identityHash = patient.getBlockchainIdentityHash();
         } else {
             throw new AppException("No patient information found in booking");
         }
@@ -64,14 +64,18 @@ public class VaccineRecordService {
                 appointment.getDoseNumber());
 
         VaccineRecord record = VaccineRecord.builder()
-                .user(patient)
+                // If it's a family member record, do NOT set the 'user' field for ownership
+                // queries
+                // (or strictly set it to null) to avoid it appearing in 'findByUserId'.
+                // The relationship to the account holder is via familyMember -> user.
+                .user(familyMember != null ? null : patient)
                 .familyMember(familyMember)
                 .patientName(patientName)
                 .patientIdentityHash(identityHash)
                 .patientIdentityHash(identityHash)
                 .vaccine(appointment.getVaccine())
                 .doseNumber(appointment.getDoseNumber())
-                .expiryDate(request.getExpiryDate())
+
                 .manufacturer(appointment.getVaccine().getManufacturer())
                 .vaccinationDate(appointment.getVaccinationDate())
                 .site(request.getSite())
@@ -236,25 +240,11 @@ public class VaccineRecordService {
     public List<VaccineRecordResponse> getAllVaccineRecordsByPatient(Long userId) throws AppException {
         log.info("Fetching vaccine records for user ID: {}", userId);
 
-        List<VaccineRecord> records = new ArrayList<>();
-
         List<VaccineRecord> userRecords = vaccineRecordRepository.findByUserIdOrderByVaccinationDateDesc(userId);
-        records.addAll(userRecords);
         log.info("Found {} records for user ID: {}", userRecords.size(), userId);
 
-        List<FamilyMember> familyMembers = familyMemberRepository.findByUserId(userId);
-        log.info("Found {} family members for user ID: {}", familyMembers.size(), userId);
-
-        for (FamilyMember member : familyMembers) {
-            List<VaccineRecord> memberRecords = vaccineRecordRepository
-                    .findByFamilyMemberIdOrderByVaccinationDateDesc(member.getId());
-            records.addAll(memberRecords);
-            log.info("Found {} records for family member ID: {}", memberRecords.size(), member.getId());
-        }
-
-        log.info("Total vaccine records found: {}", records.size());
-
-        return records.stream()
+        // Return only user records as requested
+        return userRecords.stream()
                 .map(this::mapToResponse)
                 .collect(Collectors.toList());
     }
@@ -283,7 +273,7 @@ public class VaccineRecordService {
                 .vaccineSlug(record.getVaccine() != null ? record.getVaccine().getSlug() : null)
                 .dosesRequired(record.getVaccine() != null ? record.getVaccine().getDosesRequired() : null)
                 .doseNumber(record.getDoseNumber())
-                .expiryDate(record.getExpiryDate())
+
                 .manufacturer(record.getManufacturer())
                 .vaccinationDate(record.getVaccinationDate())
                 .site(record.getSite())

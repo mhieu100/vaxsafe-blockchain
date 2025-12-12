@@ -1,8 +1,9 @@
 import { CalendarOutlined, ClockCircleOutlined, MedicineBoxOutlined } from '@ant-design/icons';
-import { Card, Col, Progress, Row, Statistic, Tag, Typography } from 'antd';
+import { Button, Card, Col, Progress, Row, Statistic, Tag, Typography } from 'antd';
 import dayjs from 'dayjs';
 import isSameOrAfter from 'dayjs/plugin/isSameOrAfter';
 import { useTranslation } from 'react-i18next';
+import { useNavigate } from 'react-router-dom';
 import VaccinationHistoryTab from '../../profile/components/VaccinationHistoryTab';
 import VaccineRecordTab from '../../profile/components/VaccineRecordTab';
 import MemberVaccinationProgress from './MemberVaccinationProgress';
@@ -11,7 +12,8 @@ dayjs.extend(isSameOrAfter);
 
 const { Title, Text } = Typography;
 
-const FamilyDashboard = ({ member, history, onTabChange }) => {
+const FamilyDashboard = ({ member, history }) => {
+  const navigate = useNavigate();
   const { t } = useTranslation(['client']);
 
   const totalVaccines = new Set(history.map((r) => r.vaccineName)).size;
@@ -106,6 +108,14 @@ const FamilyDashboard = ({ member, history, onTabChange }) => {
                 </Text>
               </div>
             </div>
+            <Button
+              type="primary"
+              size="large"
+              className="rounded-xl shadow-lg shadow-blue-500/20"
+              onClick={() => navigate('/appointments')}
+            >
+              Xem chi tiết
+            </Button>
           </div>
         ) : (
           <div className="text-center py-6">

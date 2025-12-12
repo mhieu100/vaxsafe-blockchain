@@ -11,6 +11,7 @@ import { Button, Form, Input, Spin, Tooltip } from 'antd';
 import dayjs from 'dayjs';
 import { useEffect, useRef, useState } from 'react';
 import ReactMarkdown from 'react-markdown';
+import { useNavigate } from 'react-router-dom';
 import remarkGfm from 'remark-gfm';
 import modelImage from '@/assets/model.png';
 import ragService from '@/services/rag.service';
@@ -29,7 +30,8 @@ const ChatBot = () => {
   ]);
   const [inputValue, setInputValue] = useState('');
 
-  const { user, isAuthenticated } = useAccountStore();
+  const { user, isAuthenticated, updateUserInfo } = useAccountStore();
+  const navigate = useNavigate();
 
   const [profile, setProfile] = useState({
     age: '',
@@ -91,11 +93,18 @@ const ChatBot = () => {
     'Lịch tiêm chủng cho trẻ sơ sinh?',
     'Vắc xin cúm giá bao nhiêu?',
     'Tác dụng phụ của vắc xin 6 trong 1?',
-    'Đặt lịch tiêm chủng như thế nào?',
+    'Hướng dẫn đặt lịch',
   ];
 
   const handleSend = (text = inputValue) => {
     if (!text.trim()) return;
+
+    if (text === 'Hướng dẫn đặt lịch') {
+      setIsOpen(false);
+      updateUserInfo({ isNewUser: true });
+      navigate('/');
+      return;
+    }
 
     const userMessage = {
       id: Date.now(),

@@ -58,6 +58,8 @@ const FamilyManagerTab = () => {
       allergies: 'None', // Still mock
       emergencyContact: 'Emergency Contact', // Still mock
       insuranceNumber: 'INS123456789', // Still mock
+      heightCm: member.heightCm,
+      weightKg: member.weightKg,
       avatar: undefined,
       vaccinationStatus: member.vaccinationStatus || 'NOT_STARTED',
       totalVaccines: member.totalVaccinations || 0,
@@ -83,6 +85,8 @@ const FamilyManagerTab = () => {
       allergies: member.allergies,
       emergencyContact: member.emergencyContact,
       insuranceNumber: member.insuranceNumber,
+      heightCm: member.heightCm,
+      weightKg: member.weightKg,
     });
     setIsModalVisible(true);
   };
@@ -107,6 +111,8 @@ const FamilyManagerTab = () => {
         phone: values.phone,
         gender: values.gender,
         identityNumber: values.identityNumber,
+        heightCm: values.heightCm,
+        weightKg: values.weightKg,
       };
 
       if (editingMember) {
@@ -195,6 +201,12 @@ const FamilyManagerTab = () => {
             <HomeOutlined className="text-green-500" />
             <Text type="secondary" className="text-xs">
               {t('client:profile.bloodType')}: {record.bloodType}
+            </Text>
+          </div>
+          <div className="flex items-center gap-2 text-slate-600 mt-1">
+            <Text type="secondary" className="text-xs">
+              H: {record.heightCm ? `${record.heightCm}cm` : 'N/A'} • W:{' '}
+              {record.weightKg ? `${record.weightKg}kg` : 'N/A'}
             </Text>
           </div>
         </div>
@@ -471,6 +483,14 @@ const FamilyManagerTab = () => {
                 <Option value="AB">AB</Option>
                 <Option value="O">O</Option>
               </Select>
+            </Form.Item>
+
+            <Form.Item name="heightCm" label="Height (cm)">
+              <Input type="number" placeholder="Enter height" className="rounded-lg" />
+            </Form.Item>
+
+            <Form.Item name="weightKg" label="Weight (kg)">
+              <Input type="number" placeholder="Enter weight" className="rounded-lg" />
             </Form.Item>
           </div>
         </Form>

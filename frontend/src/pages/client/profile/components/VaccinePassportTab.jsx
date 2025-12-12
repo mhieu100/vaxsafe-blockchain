@@ -27,7 +27,7 @@ const VaccinePassportTab = () => {
       vaccine: 'COVID-19 (Pfizer-BioNTech)',
       date: '2024-03-15',
       dose: 2,
-      batch: 'PF2024-001-VN',
+
       provider: 'SafeVax Medical Center',
       verificationHash: '0x7f9fade1c0d57a7af66ab4ead79fade1c0d57a7af66ab4ead7c2c2eb7b11a91385',
       blockNumber: '#2847563',
@@ -37,7 +37,7 @@ const VaccinePassportTab = () => {
       vaccine: 'Hepatitis B',
       date: '2024-01-20',
       dose: 3,
-      batch: 'HB2024-003-VN',
+
       provider: 'National Vaccination Center',
       verificationHash: '0x3b9aca00c0d57a7af66ab4ead79fade1c0d57a7af66ab4ead7c2c2eb7b11a91234',
       blockNumber: '#2745891',
@@ -47,7 +47,7 @@ const VaccinePassportTab = () => {
       vaccine: 'Influenza (2024 Season)',
       date: '2023-12-10',
       dose: 1,
-      batch: 'FLU2023-012-VN',
+
       provider: 'City General Hospital',
       verificationHash: '0x9f2fade1c0d57a7af66ab4ead79fade1c0d57a7af66ab4ead7c2c2eb7b11a45678',
       blockNumber: '#2698234',
@@ -57,7 +57,7 @@ const VaccinePassportTab = () => {
   const passportData = {
     qrValue: `VACCINE_PASSPORT:${user?.accountId || 'VX123456789'}:${Date.now()}`,
     issuedDate: '2024-10-04',
-    expiryDate: '2025-10-04',
+
     blockchainNetwork: 'SafeVax Blockchain Network',
     consensusProtocol: 'Proof of Health',
   };
@@ -164,14 +164,6 @@ const VaccinePassportTab = () => {
                 </Text>
                 <Text strong>{passportData.issuedDate}</Text>
               </div>
-              <div>
-                <Text type="secondary" className="block mb-1">
-                  {t('client:vaccinePassport.validUntil')}
-                </Text>
-                <Text strong className="text-green-600">
-                  {passportData.expiryDate}
-                </Text>
-              </div>
             </div>
 
             <Divider />
@@ -251,10 +243,7 @@ const VaccinePassportTab = () => {
                         <Text type="secondary">{t('client:vaccinePassport.provider')}:</Text>
                         <Text className="font-medium">{record.provider}</Text>
                       </div>
-                      <div className="flex items-center justify-between text-xs">
-                        <Text type="secondary">{t('client:vaccinePassport.batch')}:</Text>
-                        <Text className="font-mono">{record.batch}</Text>
-                      </div>
+
                       <div className="flex items-center justify-between text-xs">
                         <Text type="secondary">{t('client:vaccinePassport.block')}:</Text>
                         <Tag color="purple" className="font-mono text-xs">

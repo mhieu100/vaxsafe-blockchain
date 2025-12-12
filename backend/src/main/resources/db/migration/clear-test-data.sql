@@ -36,6 +36,7 @@ DELETE FROM vaccine_records;
 -- Step 5: Delete appointments
 DELETE FROM appointments;
 
+DELETE FROM vaccination_courses;
 
 DELETE FROM doctor_available_slots;
 

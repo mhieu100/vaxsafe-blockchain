@@ -24,13 +24,25 @@ import { useCenter } from '@/hooks/useCenter';
 import { useFamilyMember } from '@/hooks/useFamilyMember';
 import { checkAvailability } from '@/services/booking.service';
 
-const AppointmentSection = ({ bookingForm, vaccine, setCurrentStep, setBookingData }) => {
+const AppointmentSection = ({
+  bookingForm,
+  vaccine,
+  setCurrentStep,
+  setBookingData,
+  bookingData,
+}) => {
   const [appointmentDate, setAppointmentDate] = useState(null);
   const [_appointmentTime, setAppointmentTime] = useState(null);
   const [appointmentCenterId, setAppointmentCenterId] = useState(null);
-  const [bookingFor, setBookingFor] = useState('self');
+  const [bookingFor, setBookingFor] = useState(bookingData?.bookingFor || 'self');
   const [availableSlots, setAvailableSlots] = useState([]);
   const [loadingSlots, setLoadingSlots] = useState(false);
+
+  useEffect(() => {
+    if (bookingData?.bookingFor) {
+      setBookingFor(bookingData.bookingFor);
+    }
+  }, [bookingData?.bookingFor]);
 
   const filter = {
     current: DEFAULT_PAGE,
@@ -130,18 +142,30 @@ const AppointmentSection = ({ bookingForm, vaccine, setCurrentStep, setBookingDa
     <div className="animate-fade-in">
       <Form form={bookingForm} layout="vertical">
         <Row gutter={32}>
-          {}
+          {/* Left Column */}
           <Col xs={24} lg={16}>
-            {}
+            {/* User Selection */}
             <div className="bg-white p-8 rounded-3xl shadow-sm border border-slate-100 mb-8">
-              <div className="flex items-center gap-3 mb-6">
-                <div className="w-10 h-10 rounded-full bg-blue-50 flex items-center justify-center text-blue-600">
-                  <UserOutlined className="text-xl" />
+              <div className="flex items-center justify-between mb-6">
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 rounded-full bg-blue-50 flex items-center justify-center text-blue-600">
+                    <UserOutlined className="text-xl" />
+                  </div>
+                  <h3 className="text-xl font-bold text-slate-800 m-0">
+                    Who is getting vaccinated?
+                  </h3>
                 </div>
-                <h3 className="text-xl font-bold text-slate-800 m-0">Who is getting vaccinated?</h3>
+                {bookingData?.doseNumber && (
+                  <Tag
+                    color="cyan"
+                    className="text-sm px-3 py-1 font-semibold rounded-full m-0 border-0 bg-cyan-50 text-cyan-700"
+                  >
+                    Booking for Dose {bookingData.doseNumber}
+                  </Tag>
+                )}
               </div>
 
-              <Form.Item name="bookingFor" initialValue="self" className="mb-0">
+              <Form.Item name="bookingFor" initialValue={bookingFor} className="mb-0">
                 <Radio.Group
                   onChange={(e) => {
                     const value = e.target.value;

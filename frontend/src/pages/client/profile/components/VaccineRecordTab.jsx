@@ -1,7 +1,6 @@
 import {
   CalendarOutlined,
   CheckCircleFilled,
-  ExperimentOutlined,
   MedicineBoxOutlined,
   SafetyCertificateOutlined,
   UserOutlined,
@@ -98,18 +97,7 @@ const VaccineRecordTab = ({ familyMemberId }) => {
         </Tag>
       ),
     },
-    {
-      title: t('client:vaccinePassport.lotNumber'),
-      dataIndex: 'lotNumber',
-      key: 'lotNumber',
-      width: 130,
-      render: (lot) => (
-        <div className="flex items-center gap-2">
-          <ExperimentOutlined className="text-purple-500" />
-          <Text className="font-mono text-sm text-slate-600">{lot || 'N/A'}</Text>
-        </div>
-      ),
-    },
+
     {
       title: t('client:vaccinePassport.doctor'),
       dataIndex: 'doctorName',
@@ -289,11 +277,6 @@ const VaccineRecordTab = ({ familyMemberId }) => {
                     </Descriptions.Item>
                     <Descriptions.Item label={t('client:vaccinePassport.appointmentId')}>
                       <span className="font-mono text-slate-700">{record.appointmentId}</span>
-                    </Descriptions.Item>
-                    <Descriptions.Item label={t('client:vaccinePassport.expiryDate')}>
-                      {record.expiryDate
-                        ? new Date(record.expiryDate).toLocaleDateString(i18n.language)
-                        : 'N/A'}
                     </Descriptions.Item>
 
                     {}

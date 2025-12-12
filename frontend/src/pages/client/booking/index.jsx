@@ -67,18 +67,31 @@ const BookingPage = () => {
     const slug = searchParams.get('slug');
     const courseId = searchParams.get('vaccinationCourseId');
     const doseNum = searchParams.get('doseNumber');
+    const familyMemberId = searchParams.get('familyMemberId');
 
     if (slug) {
       fetchVaccineData(slug);
     }
 
-    if (courseId) {
-      setBookingData((prev) => ({
+    setBookingData((prev) => {
+      const newData = {
         ...prev,
-        vaccinationCourseId: courseId,
-        doseNumber: doseNum,
-      }));
-    }
+        vaccinationCourseId: courseId || prev.vaccinationCourseId,
+        doseNumber: doseNum || prev.doseNumber,
+      };
+
+      if (familyMemberId) {
+        newData.bookingFor = 'family';
+        newData.familyMemberId = Number(familyMemberId);
+
+        bookingForm.setFieldsValue({
+          bookingFor: 'family',
+          familyMemberId: Number(familyMemberId),
+        });
+      }
+
+      return newData;
+    });
   }, [searchParams]);
 
   useEffect(() => {
@@ -177,6 +190,7 @@ const BookingPage = () => {
             vaccine={vaccine}
             setCurrentStep={setCurrentStep}
             setBookingData={setBookingData}
+            bookingData={bookingData} // Pass bookingData
           />
         );
       case 1:

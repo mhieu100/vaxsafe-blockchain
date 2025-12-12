@@ -41,6 +41,8 @@ public class FamilyMemberService {
         entity.setPhone(request.getPhone());
         entity.setGender(request.getGender());
         entity.setIdentityNumber(request.getIdentityNumber());
+        entity.setHeightCm(request.getHeightCm());
+        entity.setWeightKg(request.getWeightKg());
         return entity;
     }
 
@@ -53,6 +55,8 @@ public class FamilyMemberService {
         response.setPhone(entity.getPhone());
         response.setGender(entity.getGender());
         response.setIdentityNumber(entity.getIdentityNumber());
+        response.setHeightCm(entity.getHeightCm());
+        response.setWeightKg(entity.getWeightKg());
         response.setParentId(entity.getUser().getId());
 
         // Statistics
@@ -93,6 +97,8 @@ public class FamilyMemberService {
         entity.setRelationship(request.getRelationship());
         entity.setPhone(request.getPhone());
         entity.setGender(request.getGender());
+        entity.setHeightCm(request.getHeightCm());
+        entity.setWeightKg(request.getWeightKg());
     }
 
     public FamilyMemberResponse addFamilyMember(FamilyMemberRequest request) throws AppException {

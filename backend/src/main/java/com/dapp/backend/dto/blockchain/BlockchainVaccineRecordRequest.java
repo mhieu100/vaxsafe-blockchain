@@ -15,8 +15,7 @@ public class BlockchainVaccineRecordRequest {
     private String vaccineName;
     private Integer doseNumber;
     private String vaccinationDate;
-    private String lotNumber;
-    private String expiryDate;
+
     private String site;
     private String doctorId;
     private String doctorName;

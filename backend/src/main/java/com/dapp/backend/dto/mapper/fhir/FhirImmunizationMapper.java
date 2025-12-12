@@ -10,7 +10,6 @@ import java.util.Date;
 @Component
 public class FhirImmunizationMapper {
 
-    
     public Immunization toFhirImmunization(VaccineRecord record) {
         if (record == null) {
             return null;
@@ -18,17 +17,14 @@ public class FhirImmunizationMapper {
 
         Immunization immunization = new Immunization();
 
-
         immunization.setId(String.valueOf(record.getId()));
 
-
         immunization.setStatus(Immunization.ImmunizationStatus.COMPLETED);
-
 
         if (record.getVaccine() != null) {
             CodeableConcept vaccineCode = new CodeableConcept();
             vaccineCode.setText(record.getVaccine().getName());
-          
+
             immunization.setVaccineCode(vaccineCode);
         }
 
@@ -43,20 +39,12 @@ public class FhirImmunizationMapper {
             immunization.setOccurrence(new DateTimeType(date));
         }
 
-        
-
-        if (record.getExpiryDate() != null) {
-            Date date = Date.from(record.getExpiryDate().atStartOfDay(ZoneId.systemDefault()).toInstant());
-            immunization.setExpirationDate(date);
-        }
-
         if (record.getSite() != null) {
             CodeableConcept site = new CodeableConcept();
             site.setText(record.getSite().name());
 
             immunization.setSite(site);
         }
-
 
         if (record.getDoctor() != null) {
             Immunization.ImmunizationPerformerComponent performer = new Immunization.ImmunizationPerformerComponent();
@@ -65,12 +53,10 @@ public class FhirImmunizationMapper {
             immunization.addPerformer(performer);
         }
 
-
         if (record.getCenter() != null) {
             immunization.setLocation(new Reference("Location/" + record.getCenter().getCenterId())
                     .setDisplay(record.getCenter().getName()));
         }
-
 
         if (record.getDoseNumber() != null) {
             Immunization.ImmunizationProtocolAppliedComponent protocol = new Immunization.ImmunizationProtocolAppliedComponent();
@@ -81,11 +67,9 @@ public class FhirImmunizationMapper {
             immunization.addProtocolApplied(protocol);
         }
 
-
         if (record.getNotes() != null) {
             immunization.addNote(new Annotation().setText(record.getNotes()));
         }
-
 
         if (record.getTransactionHash() != null) {
             Extension ext = new Extension();
@@ -94,14 +78,12 @@ public class FhirImmunizationMapper {
             immunization.addExtension(ext);
         }
 
-
         if (record.getIpfsHash() != null) {
             Extension ext = new Extension();
             ext.setUrl("http://vaxsafe.com/fhir/StructureDefinition/ipfs-hash");
             ext.setValue(new StringType(record.getIpfsHash()));
             immunization.addExtension(ext);
         }
-
 
         if (record.getHeight() != null) {
             immunization.addExtension(new Extension("http://vaxsafe.com/fhir/StructureDefinition/vital-height",

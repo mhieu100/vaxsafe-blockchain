@@ -24,8 +24,7 @@ public class VaccineRecordResponse {
     String vaccineSlug;
     Integer dosesRequired;
     Integer doseNumber;
-    String lotNumber;
-    LocalDate expiryDate;
+
     String manufacturer;
 
     LocalDate vaccinationDate;

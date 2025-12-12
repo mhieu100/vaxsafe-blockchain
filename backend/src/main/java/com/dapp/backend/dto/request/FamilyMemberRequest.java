@@ -39,4 +39,7 @@ public class FamilyMemberRequest {
     @NotNull(message = "Gender is required.")
     private Gender gender;
 
+    private Double heightCm;
+    private Double weightKg;
+
 }

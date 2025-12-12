@@ -20,7 +20,6 @@ public class BlockchainService {
     @Value("${blockchain.service.url}")
     private String blockchainServiceUrl;
 
-    
     public BlockchainIdentityResponse createIdentity(
             String identityHash,
             String did,
@@ -72,7 +71,6 @@ public class BlockchainService {
         }
     }
 
-    
     public BlockchainDocumentResponse linkDocument(
             String identityHash,
             String documentType,
@@ -120,7 +118,6 @@ public class BlockchainService {
         }
     }
 
-    
     public BlockchainIdentityDetails getIdentity(String identityHash) {
         try {
             String url = blockchainServiceUrl + "/identity/" + identityHash;
@@ -141,7 +138,6 @@ public class BlockchainService {
         }
     }
 
-    
     public BlockchainVaccineRecordResponse createVaccineRecord(VaccineRecord record) {
         try {
             String url = blockchainServiceUrl + "/vaccine-records/create";
@@ -152,9 +148,7 @@ public class BlockchainService {
                     .vaccineName(record.getVaccine().getName())
                     .doseNumber(record.getDoseNumber())
                     .vaccinationDate(record.getVaccinationDate().toString())
-                    .expiryDate(record.getExpiryDate() != null
-                            ? record.getExpiryDate().toString()
-                            : "")
+
                     .site(record.getSite() != null ? record.getSite().name() : "LEFT_ARM")
                     .doctorId(record.getDoctor().getId().toString())
                     .doctorName(record.getDoctor().getFullName())
@@ -203,7 +197,6 @@ public class BlockchainService {
         }
     }
 
-    
     public BlockchainVaccineRecordDetails getVaccineRecord(Long recordId) {
         try {
             String url = blockchainServiceUrl + "/vaccine-records/" + recordId;
@@ -224,7 +217,6 @@ public class BlockchainService {
         }
     }
 
-    
     public BlockchainVaccineRecordList getVaccineRecordsByIdentity(String identityHash) {
         try {
             String url = blockchainServiceUrl + "/vaccine-records/identity/" + identityHash;
@@ -245,18 +237,16 @@ public class BlockchainService {
         }
     }
 
-    
     public boolean updateVaccineRecordIpfs(String recordId, String ipfsHash) {
         try {
             String url = blockchainServiceUrl + "/vaccine-records/" + recordId + "/ipfs";
 
             HttpHeaders headers = new HttpHeaders();
             headers.setContentType(MediaType.APPLICATION_JSON);
-            
 
             java.util.Map<String, String> requestBody = new java.util.HashMap<>();
             requestBody.put("ipfsHash", ipfsHash);
-            
+
             HttpEntity<java.util.Map<String, String>> entity = new HttpEntity<>(requestBody, headers);
 
             ResponseEntity<String> response = restTemplate.exchange(
@@ -278,7 +268,6 @@ public class BlockchainService {
         }
     }
 
-    
     public boolean isBlockchainServiceAvailable() {
         try {
             String url = blockchainServiceUrl + "/ganache/status";
@@ -290,7 +279,6 @@ public class BlockchainService {
         }
     }
 
-    
     public String uploadToIpfs(String jsonContent) {
         try {
             String url = blockchainServiceUrl + "/ipfs/upload";
@@ -306,7 +294,6 @@ public class BlockchainService {
                     String.class);
 
             if (response.getStatusCode() == HttpStatus.OK && response.getBody() != null) {
-
 
                 com.fasterxml.jackson.databind.JsonNode root = new com.fasterxml.jackson.databind.ObjectMapper()
                         .readTree(response.getBody());

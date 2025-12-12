@@ -22,6 +22,8 @@ public class FamilyMemberResponse {
     private Gender gender;
     private long parentId;
     private String identityNumber;
+    private Double heightCm;
+    private Double weightKg;
 
     // Statistics
     private int totalVaccinations;

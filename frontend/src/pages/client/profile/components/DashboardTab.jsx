@@ -22,6 +22,7 @@ import isSameOrAfter from 'dayjs/plugin/isSameOrAfter';
 import isSameOrBefore from 'dayjs/plugin/isSameOrBefore';
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { useNavigate } from 'react-router-dom';
 import apiClient from '@/services/apiClient';
 import { getGroupedBookingHistory } from '@/services/booking.service';
 import useAccountStore from '@/stores/useAccountStore';
@@ -33,6 +34,7 @@ dayjs.extend(isSameOrBefore);
 const { Title, Text } = Typography;
 
 const DashboardTab = ({ onTabChange }) => {
+  const navigate = useNavigate();
   const { t } = useTranslation(['client']);
   const { user } = useAccountStore();
   const [loading, setLoading] = useState(true);
@@ -199,7 +201,7 @@ const DashboardTab = ({ onTabChange }) => {
               type="primary"
               size="large"
               className="rounded-xl shadow-lg shadow-blue-500/20"
-              onClick={() => onTabChange('3')}
+              onClick={() => navigate('/appointments')}
             >
               {t('client:appointments.viewDetails')}
             </Button>

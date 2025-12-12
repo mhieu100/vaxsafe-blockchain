@@ -1,5 +1,7 @@
 import {
   ArrowLeftOutlined,
+  EyeInvisibleOutlined,
+  EyeTwoTone,
   GlobalOutlined,
   GoogleOutlined,
   LockOutlined,
@@ -7,7 +9,7 @@ import {
   SafetyCertificateFilled,
   UserOutlined,
 } from '@ant-design/icons';
-import { Button, Dropdown, Form, Input, message, Typography } from 'antd';
+import { Button, Dropdown, Form, Input, message, Progress, Typography } from 'antd';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link, useNavigate } from 'react-router-dom';
@@ -24,6 +26,7 @@ const Register = () => {
   const navigate = useNavigate();
   const [form] = Form.useForm();
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [passwordStrength, setPasswordStrength] = useState(0);
   const { setUserLoginInfo } = useAccountStore();
 
   const languageItems = [
@@ -38,6 +41,36 @@ const Register = () => {
       onClick: () => changeLanguage('en'),
     },
   ];
+
+  const calculatePasswordStrength = (password) => {
+    let strength = 0;
+    if (password.length >= 8) strength += 25;
+    if (/[a-z]/.test(password)) strength += 25;
+    if (/[A-Z]/.test(password)) strength += 25;
+    if (/[0-9]/.test(password)) strength += 12.5;
+    if (/[^A-Za-z0-9]/.test(password)) strength += 12.5;
+    return Math.min(strength, 100);
+  };
+
+  const getStrengthColor = (strength) => {
+    if (strength < 30) return '#ff4d4f';
+    if (strength < 60) return '#faad14';
+    if (strength < 80) return '#1890ff';
+    return '#52c41a';
+  };
+
+  const getStrengthText = (strength) => {
+    if (strength < 30) return t('common:auth.weak');
+    if (strength < 60) return t('common:auth.fair');
+    if (strength < 80) return t('common:auth.good');
+    return t('common:auth.strong');
+  };
+
+  const handlePasswordChange = (e) => {
+    const password = e.target.value;
+    const strength = calculatePasswordStrength(password);
+    setPasswordStrength(strength);
+  };
 
   const handleGoogleRegister = () => {
     window.location.href = `${BACKEND_URL}/oauth2/authorization/google`;
@@ -177,14 +210,45 @@ const Register = () => {
               rules={[
                 { required: true, message: t('auth.register.passwordRequired') },
                 { min: 8, message: t('auth.register.passwordMinLength') },
+                {
+                  validator: (_, value) => {
+                    if (!value || calculatePasswordStrength(value) >= 60) {
+                      return Promise.resolve();
+                    }
+                    return Promise.reject(new Error(t('common:auth.passwordTooWeak')));
+                  },
+                },
               ]}
             >
               <Input.Password
                 prefix={<LockOutlined className="text-slate-400 px-1" />}
                 placeholder={t('auth.register.passwordPlaceholder')}
                 className="rounded-xl py-2 bg-slate-50 border-slate-200 hover:bg-white focus:bg-white transition-all"
+                onChange={handlePasswordChange}
+                iconRender={(visible) => (visible ? <EyeTwoTone /> : <EyeInvisibleOutlined />)}
               />
             </Form.Item>
+
+            {passwordStrength > 0 && (
+              <div className="mb-4">
+                <div className="flex justify-between items-center mb-1">
+                  <Text className="text-xs text-gray-500">{t('common:auth.passwordStrength')}</Text>
+                  <Text
+                    className="text-xs font-semibold"
+                    style={{ color: getStrengthColor(passwordStrength) }}
+                  >
+                    {getStrengthText(passwordStrength)}
+                  </Text>
+                </div>
+                <Progress
+                  percent={passwordStrength}
+                  strokeColor={getStrengthColor(passwordStrength)}
+                  showInfo={false}
+                  size="small"
+                  className="mb-0"
+                />
+              </div>
+            )}
 
             <Form.Item
               name="confirmPassword"
@@ -211,6 +275,7 @@ const Register = () => {
                 prefix={<LockOutlined className="text-slate-400 px-1" />}
                 placeholder={t('auth.register.confirmPasswordPlaceholder')}
                 className="rounded-xl py-2 bg-slate-50 border-slate-200 hover:bg-white focus:bg-white transition-all"
+                iconRender={(visible) => (visible ? <EyeTwoTone /> : <EyeInvisibleOutlined />)}
               />
             </Form.Item>
 

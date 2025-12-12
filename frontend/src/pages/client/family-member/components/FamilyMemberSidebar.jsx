@@ -98,6 +98,18 @@ const FamilyMemberSidebar = ({ member, activeTab, onTabChange }) => {
               {member?.identityNumber || 'N/A'}
             </Text>
           </div>
+          <div className="flex items-start justify-between text-sm">
+            <Text type="secondary" className="flex items-center gap-2">
+              <span className="text-xs">Height</span>
+            </Text>
+            <Text strong>{member?.heightCm ? `${member.heightCm} cm` : 'N/A'}</Text>
+          </div>
+          <div className="flex items-start justify-between text-sm">
+            <Text type="secondary" className="flex items-center gap-2">
+              <span className="text-xs">Weight</span>
+            </Text>
+            <Text strong>{member?.weightKg ? `${member.weightKg} kg` : 'N/A'}</Text>
+          </div>
         </div>
       </div>
 

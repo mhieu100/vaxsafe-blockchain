@@ -22,7 +22,6 @@ public class VaccineRecord extends BaseEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     Long id;
 
-
     @ManyToOne
     @JoinColumn(name = "user_id")
     User user;
@@ -34,15 +33,11 @@ public class VaccineRecord extends BaseEntity {
     String patientName;
     String patientIdentityHash;
 
-
     @ManyToOne
     @JoinColumn(name = "vaccine_id", nullable = false)
     Vaccine vaccine;
 
     Integer doseNumber;
-
-
-    LocalDate expiryDate;
 
     String manufacturer;
 
@@ -59,11 +54,9 @@ public class VaccineRecord extends BaseEntity {
     @JoinColumn(name = "center_id", nullable = false)
     Center center;
 
-
     @OneToOne
     @JoinColumn(name = "appointment_id")
     Appointment appointment;
-
 
     Double height;
     Double weight;
@@ -77,7 +70,6 @@ public class VaccineRecord extends BaseEntity {
     String adverseReactions;
 
     LocalDateTime followUpDate;
-
 
     String blockchainRecordId;
 
@@ -94,7 +86,6 @@ public class VaccineRecord extends BaseEntity {
     boolean isVerified;
 
     LocalDateTime verifiedAt;
-
 
     LocalDate nextDoseDate;
 

@@ -55,7 +55,7 @@
     "lastUpdated": "Last Updated",
     "verifiedRecords": "Blockchain-Verified Records",
     "provider": "Provider",
-    "batch": "Batch",
+
     "block": "Block",
     "transactionHash": "Transaction Hash",
     "digitalVerification": "Digital Verification",
@@ -74,10 +74,10 @@
     "lastVaccination": "Last Vaccination",
     "recordsTitle": "Vaccination Records",
     "recordsSubtitle": "Official medical records stored on blockchain",
-    "lotNumber": "Lot Number",
+
     "patientIdentityHash": "Patient Identity Hash",
     "appointmentId": "Appointment ID",
-    "expiryDate": "Expiry Date",
+
     "ipfsHash": "IPFS Hash",
     "notes": "Notes",
     "noNotes": "No additional notes",

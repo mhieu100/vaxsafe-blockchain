@@ -55,7 +55,7 @@
     "lastUpdated": "Cập nhật lần cuối",
     "verifiedRecords": "Hồ sơ đã xác minh trên Blockchain",
     "provider": "Nhà cung cấp",
-    "batch": "Lô",
+
     "block": "Khối",
     "transactionHash": "Mã giao dịch",
     "digitalVerification": "Xác minh kỹ thuật số",
@@ -74,10 +74,10 @@
     "lastVaccination": "Lần tiêm cuối",
     "recordsTitle": "Hồ sơ tiêm chủng",
     "recordsSubtitle": "Hồ sơ y tế chính thức được lưu trữ trên blockchain",
-    "lotNumber": "Số lô",
+
     "patientIdentityHash": "Mã định danh bệnh nhân",
     "appointmentId": "Mã lịch hẹn",
-    "expiryDate": "Ngày hết hạn",
+
     "ipfsHash": "IPFS Hash",
     "notes": "Ghi chú",
     "noNotes": "Không có ghi chú thêm",
