@@ -459,7 +459,7 @@ public class AuthService {
         user.setResetPasswordExpiry(LocalDateTime.now().plusHours(24));
         userRepository.save(user);
 
-        String resetLink = frontendUrl + "/auth/reset-password?token=" + token;
+        String resetLink = frontendUrl + "/reset-password?token=" + token;
 
         try {
             emailService.sendPasswordResetEmail(user.getEmail(), user.getFullName(), resetLink);
