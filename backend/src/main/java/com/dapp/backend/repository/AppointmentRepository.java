@@ -68,4 +68,9 @@ public interface AppointmentRepository extends JpaRepository<Appointment, Long>,
 
         boolean existsByVaccinationCourseAndStatusIn(com.dapp.backend.model.VaccinationCourse course,
                         List<AppointmentStatus> statuses);
+
+        boolean existsByVaccinationCourseAndStatusInAndIdNot(com.dapp.backend.model.VaccinationCourse course,
+                        List<AppointmentStatus> statuses, Long id);
+
+        List<Appointment> findByVaccinationCourseIn(List<com.dapp.backend.model.VaccinationCourse> courses);
 }

@@ -28,6 +28,7 @@ public class AppointmentResponse {
     String vaccineSlug;
     Long centerId;
     String centerName;
+    String centerAddress;
 
     Long paymentId;
     String paymentStatus;
@@ -37,4 +38,5 @@ public class AppointmentResponse {
     Long vaccinationCourseId;
     Integer vaccineTotalDoses;
     LocalDateTime createdAt;
+    String patientEmail;
 }

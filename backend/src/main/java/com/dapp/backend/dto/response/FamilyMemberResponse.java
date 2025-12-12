@@ -22,4 +22,9 @@ public class FamilyMemberResponse {
     private Gender gender;
     private long parentId;
     private String identityNumber;
+
+    // Statistics
+    private int totalVaccinations;
+    private LocalDate lastVaccinationDate;
+    private String vaccinationStatus; // UP_TO_DATE, OVERDUE, PARTIAL, NOT_STARTED
 }

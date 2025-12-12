@@ -1,5 +1,8 @@
 package com.dapp.backend.service;
 
+import java.time.LocalDateTime;
+import java.util.UUID;
+
 import com.dapp.backend.dto.request.*;
 import com.dapp.backend.dto.response.LoginResponse;
 import com.dapp.backend.dto.response.RegisterPatientResponse;
@@ -40,6 +43,11 @@ public class AuthService {
     @org.springframework.beans.factory.annotation.Value("${google.mobile.client-id}")
     private String googleClientId;
 
+    @org.springframework.beans.factory.annotation.Value("${frontend.url:https://safevax.mhieu100.space}")
+    private String frontendUrl;
+
+    private final EmailService emailService;
+
     private LoginResponse.UserLogin toUserLogin(User user) {
         Patient patient = user.getPatientProfile();
 
@@ -76,6 +84,11 @@ public class AuthService {
     }
 
     public LoginResponse login(LoginRequest request) throws AppException {
+        if (request.getUsername() == null || request.getUsername().trim().isEmpty() ||
+                request.getPassword() == null || request.getPassword().trim().isEmpty()) {
+            throw new AppException("Invalid username or password");
+        }
+
         UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(
                 request.getUsername(), request.getPassword());
 
@@ -435,5 +448,38 @@ public class AuthService {
             log.error("Error verifying Google ID Token", e);
             throw new AppException("Google authentication failed: " + e.getMessage());
         }
+    }
+
+    public void forgotPassword(ForgotPasswordRequest request) throws AppException {
+        User user = userRepository.findByEmail(request.getEmail())
+                .orElseThrow(() -> new AppException("User not found"));
+
+        String token = UUID.randomUUID().toString();
+        user.setResetPasswordToken(token);
+        user.setResetPasswordExpiry(LocalDateTime.now().plusHours(24));
+        userRepository.save(user);
+
+        String resetLink = frontendUrl + "/auth/reset-password?token=" + token;
+
+        try {
+            emailService.sendPasswordResetEmail(user.getEmail(), user.getFullName(), resetLink);
+        } catch (Exception e) {
+            log.error("Failed to send password reset email", e);
+            throw new AppException("Failed to send email");
+        }
+    }
+
+    public void resetPassword(ResetPasswordRequest request) throws AppException {
+        User user = userRepository.findByResetPasswordToken(request.getToken())
+                .orElseThrow(() -> new AppException("Invalid or expired password reset token"));
+
+        if (user.getResetPasswordExpiry().isBefore(LocalDateTime.now())) {
+            throw new AppException("Token expired");
+        }
+
+        user.setPassword(passwordEncoder.encode(request.getNewPassword()));
+        user.setResetPasswordToken(null);
+        user.setResetPasswordExpiry(null);
+        userRepository.save(user);
     }
 }

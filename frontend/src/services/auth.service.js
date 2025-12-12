@@ -30,3 +30,11 @@ export async function callCompleteProfile(payload) {
 export async function callFetchAccount() {
   return await apiClient.get('/api/auth/account');
 }
+
+export async function callForgotPassword(email) {
+  return await apiClient.post('/api/auth/forgot-password', { email });
+}
+
+export async function callResetPassword(payload) {
+  return await apiClient.post('/api/auth/reset-password', payload);
+}

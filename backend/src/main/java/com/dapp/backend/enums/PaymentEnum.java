@@ -5,4 +5,7 @@ public enum PaymentEnum {
     PROCESSING,
     SUCCESS,
     FAILED,
+    CANCELLED,
+    REFUNDED,
+    REFUND_PENDING
 }

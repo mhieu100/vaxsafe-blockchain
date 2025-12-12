@@ -23,4 +23,6 @@ public interface UserRepository extends JpaRepository<User, Long>, JpaSpecificat
     void updateRefreshTokenByEmail(@Param("email") String email, @Param("refreshToken") String refreshToken);
 
     long countByRole_Name(String roleName);
+
+    Optional<User> findByResetPasswordToken(String resetPasswordToken);
 }

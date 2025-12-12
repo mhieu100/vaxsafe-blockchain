@@ -1,6 +1,7 @@
 import {
   BankOutlined,
   BellOutlined,
+  CalendarOutlined,
   DashboardOutlined,
   KeyOutlined,
   LogoutOutlined,
@@ -85,6 +86,11 @@ const LayoutAdmin = () => {
       key: '/admin',
       icon: <DashboardOutlined />,
       label: t('admin:dashboard.title'),
+    },
+    {
+      key: '/admin/appointments',
+      icon: <CalendarOutlined />,
+      label: 'Quản lý lịch hẹn',
     },
     {
       key: 'user-management',

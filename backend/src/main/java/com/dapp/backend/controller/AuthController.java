@@ -191,4 +191,18 @@ public class AuthController {
         return ResponseEntity.ok().header(HttpHeaders.SET_COOKIE, cookie.toString()).body(response);
     }
 
+    @PostMapping("/forgot-password")
+    @ApiMessage("Request password reset")
+    public ResponseEntity<Void> forgotPassword(@Valid @RequestBody ForgotPasswordRequest request) throws AppException {
+        authService.forgotPassword(request);
+        return ResponseEntity.ok().build();
+    }
+
+    @PostMapping("/reset-password")
+    @ApiMessage("Reset password")
+    public ResponseEntity<Void> resetPassword(@Valid @RequestBody ResetPasswordRequest request) throws AppException {
+        authService.resetPassword(request);
+        return ResponseEntity.ok().build();
+    }
+
 }

@@ -136,6 +136,54 @@ public class AppointmentService {
         return pagination;
     }
 
+    public Pagination getAllAppointments(Specification<Appointment> specification, Pageable pageable) {
+        Page<Appointment> page = appointmentRepository.findAll(specification, pageable);
+        Pagination pagination = new Pagination();
+        Pagination.Meta meta = new Pagination.Meta();
+        meta.setPage(pageable.getPageNumber() + 1);
+        meta.setPageSize(pageable.getPageSize());
+        meta.setPages(page.getTotalPages());
+        meta.setTotal(page.getTotalElements());
+
+        pagination.setMeta(meta);
+        List<Appointment> list = page.getContent();
+        List<AppointmentResponse> result = list.stream()
+                .map(apt -> {
+                    AppointmentResponse response = AppointmentMapper.toResponse(apt);
+
+                    paymentRepository.findByAppointmentId(apt.getId(), TypeTransactionEnum.APPOINTMENT)
+                            .ifPresent(payment -> {
+                                response.setPaymentId(payment.getId());
+                                response.setPaymentStatus(
+                                        payment.getStatus() != null ? payment.getStatus().name() : null);
+                                response.setPaymentMethod(
+                                        payment.getMethod() != null ? payment.getMethod().name() : null);
+                                response.setPaymentAmount(payment.getAmount());
+                            });
+                    return response;
+                })
+                .toList();
+        pagination.setResult(result);
+        return pagination;
+    }
+
+    public AppointmentResponse getAppointmentById(long id) throws AppException {
+        Appointment appointment = appointmentRepository.findById(id)
+                .orElseThrow(() -> new AppException("Appointment not found"));
+
+        AppointmentResponse response = AppointmentMapper.toResponse(appointment);
+
+        paymentRepository.findByAppointmentId(appointment.getId(), TypeTransactionEnum.APPOINTMENT)
+                .ifPresent(payment -> {
+                    response.setPaymentId(payment.getId());
+                    response.setPaymentStatus(payment.getStatus() != null ? payment.getStatus().name() : null);
+                    response.setPaymentMethod(payment.getMethod() != null ? payment.getMethod().name() : null);
+                    response.setPaymentAmount(payment.getAmount());
+                });
+
+        return response;
+    }
+
     public AppointmentResponse updateScheduledAppointment(HttpServletRequest request,
             ProcessAppointmentRequest processAppointmentRequest) throws Exception {
         User cashier = authService.getCurrentUserLogin();
@@ -393,6 +441,13 @@ public class AppointmentService {
         appointmentRepository.save(appointment);
 
         try {
+            reminderService.cancelRemindersForAppointment(appointment.getId());
+            log.info("Cancelled reminders for appointment ID: {}", appointment.getId());
+        } catch (Exception e) {
+            log.error("Failed to cancel reminders for appointment ID: {}", id, e);
+        }
+
+        try {
             User patient = appointment.getPatient();
             if (patient != null && patient.getEmail() != null) {
                 emailService.sendAppointmentCancellation(
@@ -407,10 +462,41 @@ public class AppointmentService {
             log.error("Failed to send cancellation email for appointment ID: {}", id, e);
         }
 
-        // String token = tokenExtractor.extractToken(request);
-        // HttpHeaders headers = new HttpHeaders();
-        // headers.setContentType(MediaType.APPLICATION_JSON);
-        // headers.set("Authorization", "Bearer " + token);
+        paymentRepository.findByAppointmentId(id, TypeTransactionEnum.APPOINTMENT)
+                .ifPresent(payment -> {
+                    if (payment.getStatus() == PaymentEnum.SUCCESS) {
+                        payment.setStatus(PaymentEnum.REFUND_PENDING);
+                    } else if (payment.getStatus() != PaymentEnum.REFUNDED
+                            && payment.getStatus() != PaymentEnum.FAILED) {
+                        payment.setStatus(PaymentEnum.CANCELLED);
+                    }
+                    paymentRepository.save(payment);
+                    log.info("Updated payment status to {} for appointment ID: {}", payment.getStatus(), id);
+                });
+
+        if (appointment.getVaccinationCourse() != null) {
+            VaccinationCourse course = appointment.getVaccinationCourse();
+            if (appointment.getDoseNumber() == 1
+                    && (course.getCurrentDoseIndex() == null || course.getCurrentDoseIndex() == 0)) {
+                boolean hasOtherActive = appointmentRepository.existsByVaccinationCourseAndStatusInAndIdNot(
+                        course,
+                        List.of(AppointmentStatus.PENDING, AppointmentStatus.SCHEDULED, AppointmentStatus.RESCHEDULE),
+                        appointment.getId());
+
+                if (!hasOtherActive) {
+                    // Unlink appointment from course before deleting course to avoid constraint
+                    // violation if Cascade is restricted?
+                    // Typically appointment has FK to course. If we delete course, we might need to
+                    // set apt.course = null IF NO Cascade Delete.
+                    // To be safe, let's nullify the FK on the cancelled appointment first.
+                    appointment.setVaccinationCourse(null);
+                    appointmentRepository.save(appointment);
+
+                    vaccinationCourseRepository.delete(course);
+                    log.info("Deleted empty vaccination course ID: {}", course.getId());
+                }
+            }
+        }
 
         return "Appointment update success";
     }
@@ -1102,150 +1188,76 @@ public class AppointmentService {
                 .toList();
     }
 
-    public List<VaccinationRouteResponse> getGroupedHistoryBookingForFamilyMember(Long familyMemberId)
-            throws AppException {
-        User user = authService.getCurrentUserLogin();
-        // Verify family member belongs to user
-        familyMemberRepository.findById(familyMemberId)
-                .filter(fm -> fm.getUser().getId().equals(user.getId()))
-                .orElseThrow(() -> new AppException("Family member not found or does not belong to user"));
+    private List<VaccinationRouteResponse> mapCoursesToRoutes(List<VaccinationCourse> courses) {
+        if (courses.isEmpty())
+            return new ArrayList<>();
 
-        List<AppointmentResponse> flatList = appointmentRepository.findByPatient(user).stream()
-                .filter(apt -> apt.getFamilyMember() != null && apt.getFamilyMember().getId().equals(familyMemberId))
-                .map(apt -> {
-                    AppointmentResponse response = AppointmentMapper.toResponse(apt);
-                    paymentRepository.findByAppointmentId(apt.getId(), TypeTransactionEnum.APPOINTMENT)
-                            .ifPresent(payment -> {
-                                response.setPaymentId(payment.getId());
-                                response.setPaymentStatus(
-                                        payment.getStatus() != null ? payment.getStatus().name() : null);
-                                response.setPaymentMethod(
-                                        payment.getMethod() != null ? payment.getMethod().name() : null);
-                                response.setPaymentAmount(payment.getAmount());
-                            });
-                    return response;
-                })
-                .toList();
+        List<Appointment> allAppointments = appointmentRepository.findByVaccinationCourseIn(courses);
 
-        return groupAppointmentsToRoutes(flatList);
-    }
+        // Group appointments by Course ID
+        Map<Long, List<Appointment>> appsByCourse = allAppointments.stream()
+                .collect(java.util.stream.Collectors.groupingBy(a -> a.getVaccinationCourse().getId()));
 
-    private List<VaccinationRouteResponse> groupAppointmentsToRoutes(List<AppointmentResponse> flatList) {
+        return courses.stream().map(course -> {
+            List<Appointment> courseApps = appsByCourse.getOrDefault(course.getId(), new ArrayList<>());
+            courseApps.sort(Comparator.comparingInt(a -> a.getDoseNumber() != null ? a.getDoseNumber() : 0));
 
-        // Helper maps to track mutable data before building final response
-        // Using a custom inner class or just map manipulation
-        class RouteTracker {
-            String routeId;
-            String vaccineName;
-            String vaccineSlug;
-            String patientName;
-            boolean isFamily;
-            int requiredDoses;
-            int cycleIndex;
-            LocalDateTime createdAt;
-            Double totalAmount = 0.0;
-            List<AppointmentResponse> appointments = new ArrayList<>();
-        }
+            long completedCount = courseApps.stream()
+                    .filter(a -> a.getStatus() == AppointmentStatus.COMPLETED).count();
 
-        Map<String, RouteTracker> userRouteMap = new HashMap<>();
+            List<AppointmentResponse> appResponses = courseApps.stream().map(apt -> {
+                AppointmentResponse res = AppointmentMapper.toResponse(apt);
+                paymentRepository.findByAppointmentId(apt.getId(), TypeTransactionEnum.APPOINTMENT)
+                        .ifPresent(p -> AppointmentMapper.mapPaymentToResponse(res, p));
+                return res;
+            }).toList();
 
-        for (AppointmentResponse apt : flatList) {
-            int required = apt.getVaccineTotalDoses() != null ? apt.getVaccineTotalDoses() : 3;
-            // Prevent division by zero
-            if (required <= 0)
-                required = 3;
+            Double totalAmount = appResponses.stream()
+                    .filter(r -> r.getAppointmentStatus() != AppointmentStatus.CANCELLED)
+                    .map(r -> r.getPaymentAmount() != null ? r.getPaymentAmount() : 0.0)
+                    .reduce(0.0, Double::sum);
 
-            String patientName = apt.getPatientName();
-            int doseNum = apt.getDoseNumber() != null ? apt.getDoseNumber() : 1;
+            String patientName = course.getFamilyMember() != null
+                    ? course.getFamilyMember().getFullName()
+                    : (course.getPatient() != null ? course.getPatient().getFullName() : "Unknown");
 
-            // Logic: cycleIndex = ceil(doseNumber / required) - 1
-            int cycleIndex = (int) Math.ceil((double) doseNum / required) - 1;
-            if (cycleIndex < 0)
-                cycleIndex = 0;
-
-            String key;
-            if (apt.getVaccinationCourseId() != null) {
-                key = String.valueOf(apt.getVaccinationCourseId());
-            } else {
-                key = apt.getVaccineName() + "-" + patientName + "-" + cycleIndex;
-            }
-
-            RouteTracker tracker = userRouteMap.get(key);
-            if (tracker == null) {
-                tracker = new RouteTracker();
-                tracker.routeId = key;
-                tracker.vaccineName = apt.getVaccineName();
-                tracker.vaccineSlug = apt.getVaccineSlug();
-                tracker.patientName = patientName;
-                tracker.isFamily = apt.getFamilyMemberId() != null;
-                tracker.requiredDoses = required;
-                tracker.cycleIndex = cycleIndex;
-                tracker.createdAt = apt.getCreatedAt();
-                userRouteMap.put(key, tracker);
-            }
-
-            // Deduplicate logic if needed, but assuming unique IDs in flatList
-            tracker.appointments.add(apt);
-
-            if (!"CANCELLED".equals(apt.getAppointmentStatus().name())) {
-                Double amount = apt.getPaymentAmount();
-                if (amount == null)
-                    amount = 0.0;
-                tracker.totalAmount += amount;
-            }
-
-            // Update createdAt to latest
-            if (apt.getCreatedAt() != null
-                    && (tracker.createdAt == null || apt.getCreatedAt().isAfter(tracker.createdAt))) {
-                tracker.createdAt = apt.getCreatedAt();
-            }
-        }
-
-        List<VaccinationRouteResponse> result = new ArrayList<>();
-
-        for (RouteTracker tracker : userRouteMap.values()) {
-            // Sort appointments by dose number
-            tracker.appointments
-                    .sort(Comparator.comparingInt(a -> a.getDoseNumber() != null ? a.getDoseNumber() : 0));
-
-            // Determine status
-            long completedCount = tracker.appointments.stream()
-                    .filter(a -> "COMPLETED".equals(a.getAppointmentStatus().name()))
-                    .count();
-
-            String status = "IN_PROGRESS";
-            if (completedCount >= tracker.requiredDoses) {
-                status = "COMPLETED";
-            } else if (tracker.appointments.stream().anyMatch(a -> "CANCELLED".equals(a.getAppointmentStatus().name()))
-                    && tracker.appointments.size() == 1) {
-                // If only one appointment and it's cancelled, maybe whole route is cancelled?
-                // But usually we just say In Progress until completed.
-                // Let's keep specific logic simple for now.
-            }
-
-            result.add(VaccinationRouteResponse.builder()
-                    .routeId(tracker.routeId)
-                    .vaccineName(tracker.vaccineName)
-                    .vaccineSlug(tracker.vaccineSlug)
-                    .patientName(tracker.patientName)
-                    .isFamily(tracker.isFamily)
-                    .requiredDoses(tracker.requiredDoses)
-                    .cycleIndex(tracker.cycleIndex)
-                    .createdAt(tracker.createdAt)
-                    .totalAmount(tracker.totalAmount)
-                    .status(status)
+            return VaccinationRouteResponse.builder()
+                    .routeId(String.valueOf(course.getId()))
+                    .vaccineName(course.getVaccine().getName())
+                    .vaccineSlug(course.getVaccine().getSlug())
+                    .patientName(patientName)
+                    .isFamily(course.getFamilyMember() != null)
+                    .requiredDoses(course.getVaccine().getDosesRequired())
+                    .cycleIndex(0)
+                    .createdAt(course.getCreatedAt())
+                    .totalAmount(totalAmount)
+                    .status(course.getStatus().name())
                     .completedCount((int) completedCount)
-                    .appointments(tracker.appointments)
-                    .build());
-        }
-
-        result.sort((a, b) -> b.getCreatedAt().compareTo(a.getCreatedAt()));
-
-        return result;
+                    .appointments(appResponses)
+                    .build();
+        }).sorted((a, b) -> {
+            if (b.getCreatedAt() == null)
+                return -1;
+            if (a.getCreatedAt() == null)
+                return 1;
+            return b.getCreatedAt().compareTo(a.getCreatedAt());
+        }).collect(java.util.stream.Collectors.toList());
     }
 
     public List<VaccinationRouteResponse> getGroupedHistoryBooking() throws AppException {
-        List<AppointmentResponse> flatList = getHistoryBooking();
-        return groupAppointmentsToRoutes(flatList);
+        User user = authService.getCurrentUserLogin();
+        List<VaccinationCourse> courses = vaccinationCourseRepository.findByPatientAndFamilyMemberIsNull(user);
+        return mapCoursesToRoutes(courses);
+    }
+
+    public List<VaccinationRouteResponse> getGroupedHistoryBookingForFamilyMember(Long familyMemberId)
+            throws AppException {
+        User user = authService.getCurrentUserLogin();
+        FamilyMember fm = familyMemberRepository.findById(familyMemberId)
+                .filter(f -> f.getUser().getId().equals(user.getId()))
+                .orElseThrow(() -> new AppException("Family member not found or does not belong to user"));
+
+        List<VaccinationCourse> courses = vaccinationCourseRepository.findByFamilyMember(fm);
+        return mapCoursesToRoutes(courses);
     }
 }

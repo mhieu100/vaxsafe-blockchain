@@ -4,22 +4,26 @@ import {
   EyeTwoTone,
   LockOutlined,
 } from '@ant-design/icons';
-import { Alert, Button, Card, Form, Input, Progress, Typography } from 'antd';
+import { Alert, Button, Card, Form, Input, notification, Progress, Typography } from 'antd';
 import { useState } from 'react';
-
 import { useTranslation } from 'react-i18next';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
+import { callResetPassword } from '../../../services/auth.service';
 
 const { Title, Text } = Typography;
 
 const ResetPasswordPage = () => {
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+  const token = searchParams.get('token');
   const { t } = useTranslation('common');
 
   const [form] = Form.useForm();
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
   const [passwordStrength, setPasswordStrength] = useState(0);
+
+  // ... (keep helper functions)
 
   const calculatePasswordStrength = (password) => {
     let strength = 0;
@@ -51,16 +55,22 @@ const ResetPasswordPage = () => {
     setPasswordStrength(strength);
   };
 
-  const handleSubmit = async () => {
+  const handleSubmit = async (values) => {
     setLoading(true);
     try {
-      await new Promise((resolve) => setTimeout(resolve, 2000));
+      if (!token) {
+        throw new Error(t('auth.invalidToken') || 'Invalid or missing token');
+      }
+      await callResetPassword({ token, newPassword: values.password });
       setSuccess(true);
       setTimeout(() => {
         navigate('/login');
       }, 3000);
-    } catch {
-      setLoading(false);
+    } catch (error) {
+      notification.error({
+        message: t('auth.error'),
+        description: error?.message || t('auth.somethingWentWrong'),
+      });
     } finally {
       setLoading(false);
     }

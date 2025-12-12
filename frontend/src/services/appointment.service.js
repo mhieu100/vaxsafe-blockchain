@@ -4,6 +4,10 @@ export const callGetAppointment = (hash) => {
   return apiClient.get(`/api/appointments/${hash}`);
 };
 
+export const callGetAppointmentById = (id) => {
+  return apiClient.get(`/api/appointments/${id}`);
+};
+
 export const callGetOrder = () => {
   return apiClient.get('/api/orders');
 };

@@ -10,6 +10,8 @@ import LayoutClient from '@/layouts/ClientLayout';
 
 import LayoutStaff from '@/layouts/StaffLayout';
 import AiKnowledgePage from '@/pages/admin/ai-knowledge/AiKnowledgePage';
+import AppointmentListPage from '@/pages/admin/appointment';
+import AppointmentDetailPage from '@/pages/admin/appointment/AppointmentDetail';
 import CashierPage from '@/pages/admin/cashier';
 import CenterPage from '@/pages/admin/center';
 import DashboardPage from '@/pages/admin/dashboard';
@@ -150,6 +152,14 @@ const router = createBrowserRouter([
       {
         path: 'news',
         element: <NewsPage />,
+      },
+      {
+        path: 'appointments',
+        element: <AppointmentListPage />,
+      },
+      {
+        path: 'appointments/:id',
+        element: <AppointmentDetailPage />,
       },
       {
         path: 'vaccines',

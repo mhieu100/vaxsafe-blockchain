@@ -28,16 +28,20 @@ public class AppointmentMapper {
         response.setCreatedAt(appointment.getCreatedAt());
         response.setCenterId(appointment.getCenter() != null ? appointment.getCenter().getCenterId() : null);
         response.setCenterName(appointment.getCenter() != null ? appointment.getCenter().getName() : null);
+        response.setCenterAddress(appointment.getCenter() != null ? appointment.getCenter().getAddress() : null);
 
         if (appointment.getFamilyMember() != null) {
             response.setPatientName(appointment.getFamilyMember().getFullName());
             response.setPatientPhone(appointment.getFamilyMember().getPhone());
             response.setFamilyMemberId(appointment.getFamilyMember().getId());
+            // Family member might not have email, fetch from main user (patient)
+            response.setPatientEmail(appointment.getPatient().getEmail());
         } else {
             response.setPatientName(appointment.getPatient().getFullName());
             response.setPatientPhone(appointment.getPatient() != null
                     ? appointment.getPatient().getPhone()
                     : null);
+            response.setPatientEmail(appointment.getPatient() != null ? appointment.getPatient().getEmail() : null);
 
             if (appointment.getPatient() != null
                     && appointment.getPatient().getPatientProfile() != null) {

@@ -7,6 +7,9 @@ import { useNavigate } from 'react-router-dom';
 
 const { Title, Text, Link } = Typography;
 
+import { notification } from 'antd';
+import { callForgotPassword } from '../../../services/auth.service';
+
 const ForgotPasswordPage = () => {
   const navigate = useNavigate();
   const { t } = useTranslation('common');
@@ -19,10 +22,14 @@ const ForgotPasswordPage = () => {
   const handleSubmit = async (values) => {
     setLoading(true);
     try {
-      await new Promise((resolve) => setTimeout(resolve, 1000));
+      await callForgotPassword(values.email);
       setEmail(values.email);
       setEmailSent(true);
-    } catch {
+    } catch (error) {
+      notification.error({
+        message: t('auth.error'),
+        description: error?.message || t('auth.somethingWentWrong'),
+      });
     } finally {
       setLoading(false);
     }
@@ -31,8 +38,16 @@ const ForgotPasswordPage = () => {
   const handleResendEmail = async () => {
     setLoading(true);
     try {
-      await new Promise((resolve) => setTimeout(resolve, 1000));
-    } catch {
+      await callForgotPassword(email);
+      notification.success({
+        message: t('auth.emailResent'),
+        description: t('auth.emailSentDesc'),
+      });
+    } catch (error) {
+      notification.error({
+        message: t('auth.error'),
+        description: error?.message || t('auth.somethingWentWrong'),
+      });
     } finally {
       setLoading(false);
     }

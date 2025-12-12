@@ -31,6 +31,7 @@ public class FamilyMemberService {
     private final FamilyMemberRepository familyMemberRepository;
     private final IdentityService identityService;
     private final BlockchainService blockchainService;
+    private final com.dapp.backend.repository.VaccineRecordRepository vaccineRecordRepository;
 
     public FamilyMember toEntity(FamilyMemberRequest request) {
         FamilyMember entity = new FamilyMember();
@@ -53,6 +54,36 @@ public class FamilyMemberService {
         response.setGender(entity.getGender());
         response.setIdentityNumber(entity.getIdentityNumber());
         response.setParentId(entity.getUser().getId());
+
+        // Statistics
+        try {
+            long count = vaccineRecordRepository.countByFamilyMemberId(entity.getId());
+            response.setTotalVaccinations((int) count);
+
+            if (count > 0) {
+                List<com.dapp.backend.model.VaccineRecord> records = vaccineRecordRepository
+                        .findByFamilyMemberIdOrderByVaccinationDateDesc(entity.getId());
+                if (!records.isEmpty()) {
+                    com.dapp.backend.model.VaccineRecord latest = records.get(0);
+                    response.setLastVaccinationDate(latest.getVaccinationDate());
+
+                    // Determine Status
+                    if (latest.getNextDoseDate() == null) {
+                        response.setVaccinationStatus("UP_TO_DATE");
+                    } else if (latest.getNextDoseDate().isBefore(java.time.LocalDate.now())) {
+                        response.setVaccinationStatus("OVERDUE");
+                    } else {
+                        response.setVaccinationStatus("PARTIAL");
+                    }
+                }
+            } else {
+                response.setVaccinationStatus("NOT_STARTED");
+            }
+        } catch (Exception e) {
+            log.warn("Error calculating vaccine stats for member {}: {}", entity.getId(), e.getMessage());
+            response.setVaccinationStatus("UNKNOWN");
+        }
+
         return response;
     }
 
@@ -67,15 +98,15 @@ public class FamilyMemberService {
     public FamilyMemberResponse addFamilyMember(FamilyMemberRequest request) throws AppException {
         User user = authService.getCurrentUserLogin();
 
-        if (request.getIdentityNumber() == null || request.getIdentityNumber().trim().isEmpty()) {
-            throw new AppException("Identity number is required for family member");
-        }
-        if (!request.getIdentityNumber().matches("^\\d{9,12}$")) {
-            throw new AppException("Identity number must be 9-12 digits");
-        }
-
-        if (familyMemberRepository.existsByIdentityNumber(request.getIdentityNumber())) {
-            throw new AppException("Identity number already exists");
+        if (request.getIdentityNumber() != null && !request.getIdentityNumber().trim().isEmpty()) {
+            if (!request.getIdentityNumber().matches("^\\d{9,12}$")) {
+                throw new AppException("Identity number must be 9-12 digits");
+            }
+            if (familyMemberRepository.existsByIdentityNumber(request.getIdentityNumber())) {
+                throw new AppException("Identity number already exists");
+            }
+        } else {
+            request.setIdentityNumber(null);
         }
 
         FamilyMember familyMember = toEntity(request);
@@ -155,7 +186,7 @@ public class FamilyMemberService {
 
         User user = authService.getCurrentUserLogin();
         specification = Specification.where(specification)
-                .and(FamilyMemberSpecifications.findByUser(user.getFullName()));
+                .and(FamilyMemberSpecifications.findByUserId(user.getId()));
 
         Page<FamilyMember> pageMember = familyMemberRepository.findAll(specification, pageable);
         Pagination pagination = new Pagination();

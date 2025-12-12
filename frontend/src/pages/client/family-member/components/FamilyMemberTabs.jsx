@@ -5,6 +5,7 @@ import isSameOrAfter from 'dayjs/plugin/isSameOrAfter';
 import { useTranslation } from 'react-i18next';
 import VaccinationHistoryTab from '../../profile/components/VaccinationHistoryTab';
 import VaccineRecordTab from '../../profile/components/VaccineRecordTab';
+import MemberVaccinationProgress from './MemberVaccinationProgress';
 
 dayjs.extend(isSameOrAfter);
 
@@ -112,6 +113,10 @@ const FamilyDashboard = ({ member, history, onTabChange }) => {
           </div>
         )}
       </Card>
+
+      <div className="mt-6">
+        <MemberVaccinationProgress memberId={member.id} customData={history} />
+      </div>
     </div>
   );
 };
@@ -131,6 +136,10 @@ const FamilyMemberTabs = ({ activeTab, onTabChange, member, history, familyMembe
     3: {
       title: t('client:sidebar.vaccineRecord'),
       content: <VaccineRecordTab familyMemberId={familyMemberId} />,
+    },
+    4: {
+      title: t('client:progress.title'),
+      content: <MemberVaccinationProgress memberId={familyMemberId} />,
     },
   };
 

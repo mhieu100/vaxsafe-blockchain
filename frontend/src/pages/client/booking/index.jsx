@@ -134,8 +134,8 @@ const BookingPage = () => {
         response = await callCreateBooking(bookingPayload);
       }
 
-      const paymentData = response?.result || response?.data;
-
+      const paymentData = response?.data;
+      const error = response?.error;
       if (paymentData) {
         message.success('Đặt lịch tiêm thành công!');
 
@@ -146,11 +146,14 @@ const BookingPage = () => {
         } else {
           navigate('/success');
         }
-      } else {
+      }
+      if (error) {
         modal.warning({
-          title: 'Trùng lặp lịch hẹn',
+          title: 'Đặt lịch hẹn thất bại',
           content:
-            'Bạn đã có lịch hẹn đang hoạt động cho loại vắc xin này. Vui lòng kiểm tra lại danh sách lịch hẹn của bạn.',
+            error?.message === 'Vaccine is out of stock!'
+              ? 'Bạn đã có lịch hẹn đang hoạt động cho loại vắc xin này. Vui lòng kiểm tra lại danh sách lịch hẹn của bạn.'
+              : 'Số lượng vắc xin không đủ',
           okText: 'Xem lịch hẹn',
           cancelText: 'Đóng',
           closable: true,

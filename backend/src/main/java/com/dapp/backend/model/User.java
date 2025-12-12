@@ -7,6 +7,7 @@ import lombok.*;
 import lombok.experimental.FieldDefaults;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Entity
@@ -76,4 +77,7 @@ public class User extends BaseEntity {
     @Column(nullable = false, columnDefinition = "boolean default true")
     @Builder.Default
     boolean newUser = true;
+
+    String resetPasswordToken;
+    LocalDateTime resetPasswordExpiry;
 }

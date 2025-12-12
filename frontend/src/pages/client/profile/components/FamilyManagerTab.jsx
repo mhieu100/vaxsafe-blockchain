@@ -9,7 +9,6 @@ import {
   PlusOutlined,
   UserOutlined,
 } from '@ant-design/icons';
-import { useQueryClient } from '@tanstack/react-query';
 import {
   Alert,
   Avatar,
@@ -33,6 +32,7 @@ import { useTranslation } from 'react-i18next';
 import { DEFAULT_PAGE, DEFAULT_PAGE_SIZE } from '@/constants/index';
 import { useFamilyMember } from '@/hooks/useFamilyMember';
 import { callCreateMember, callDeleteMember, callUpdateMember } from '@/services/family.service';
+import MemberVaccinationProgress from '../../family-member/components/MemberVaccinationProgress';
 
 const { Title, Text } = Typography;
 const { Option } = Select;
@@ -42,7 +42,6 @@ const FamilyManagerTab = () => {
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [editingMember, setEditingMember] = useState(null);
   const [form] = Form.useForm();
-  const _queryClient = useQueryClient();
 
   const filter = {
     current: DEFAULT_PAGE,
@@ -52,17 +51,17 @@ const FamilyManagerTab = () => {
   const { data, isPending: isLoading, error, refetch } = useFamilyMember(filter);
 
   const familyMembers =
-    data?.result?.map((member, index) => ({
+    data?.result?.map((member) => ({
       ...member,
       key: member.id.toString(),
-      bloodType: 'O+',
-      allergies: 'None',
-      emergencyContact: 'Emergency Contact',
-      insuranceNumber: 'INS123456789',
+      bloodType: 'O+', // Still mock
+      allergies: 'None', // Still mock
+      emergencyContact: 'Emergency Contact', // Still mock
+      insuranceNumber: 'INS123456789', // Still mock
       avatar: undefined,
-      vaccinationStatus: index % 3 === 0 ? 'UP_TO_DATE' : index % 3 === 1 ? 'OVERDUE' : 'PARTIAL',
-      totalVaccines: Math.floor(Math.random() * 10) + 5,
-      lastVaccination: '2024-03-15',
+      vaccinationStatus: member.vaccinationStatus || 'NOT_STARTED',
+      totalVaccines: member.totalVaccinations || 0,
+      lastVaccination: member.lastVaccinationDate || 'N/A',
     })) || [];
 
   const handleAddMember = () => {
@@ -352,7 +351,17 @@ const FamilyManagerTab = () => {
         <Table
           columns={columns}
           dataSource={familyMembers}
-          pagination={false}
+          loading={isLoading}
+          pagination={{
+            current: filter.current,
+            pageSize: filter.pageSize,
+            total: data?.meta?.total || 0,
+            onChange: (page, pageSize) => setFilter({ ...filter, current: page, pageSize }),
+          }}
+          expandable={{
+            expandedRowRender: (record) => <MemberVaccinationProgress memberId={record.id} />,
+            rowExpandable: (record) => true,
+          }}
           className="custom-table"
         />
       </Card>
