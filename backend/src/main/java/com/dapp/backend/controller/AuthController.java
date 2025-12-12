@@ -67,7 +67,7 @@ public class AuthController {
         } catch (BadCredentialsException e) {
             throw new AppException("Invalid username or password");
         } catch (AuthenticationException e) {
-            throw new AppException("Authentication failed: " + e.getMessage());
+            throw new AppException("Invalid username or password");
         }
     }
 

@@ -477,9 +477,11 @@ public class AuthService {
             throw new AppException("Token expired");
         }
 
+        log.info("Resetting password for user: {}", user.getEmail());
         user.setPassword(passwordEncoder.encode(request.getNewPassword()));
         user.setResetPasswordToken(null);
         user.setResetPasswordExpiry(null);
         userRepository.save(user);
+        log.info("Password reset successfully for user: {}", user.getEmail());
     }
 }

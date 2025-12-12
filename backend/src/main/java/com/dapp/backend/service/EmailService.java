@@ -162,16 +162,22 @@ public class EmailService {
 
         public void sendHtmlEmail(String toEmail, String subject, String htmlContent)
                         throws MessagingException, UnsupportedEncodingException {
-                MimeMessage message = mailSender.createMimeMessage();
-                MimeMessageHelper helper = new MimeMessageHelper(message, true, "UTF-8");
+                log.info("Preparing to send HTML email to: {}", toEmail);
+                try {
+                        MimeMessage message = mailSender.createMimeMessage();
+                        MimeMessageHelper helper = new MimeMessageHelper(message, true, "UTF-8");
 
-                helper.setFrom(fromEmail, fromName);
-                helper.setTo(toEmail);
-                helper.setSubject(subject);
-                helper.setText(htmlContent, true);
+                        helper.setFrom(fromEmail, fromName);
+                        helper.setTo(toEmail);
+                        helper.setSubject(subject);
+                        helper.setText(htmlContent, true);
 
-                mailSender.send(message);
-                log.info("Email sent successfully to: {}", toEmail);
+                        mailSender.send(message);
+                        log.info("Email sent successfully to: {}", toEmail);
+                } catch (Exception e) {
+                        log.error("Failed to send HTML email to: {}", toEmail, e);
+                        throw e;
+                }
         }
 
         @Async
@@ -211,9 +217,10 @@ public class EmailService {
                 log.info("Simple email sent successfully to: {}", toEmail);
         }
 
-        @Async
         public void sendPasswordResetEmail(String toEmail, String userName, String resetLink)
                         throws MessagingException, UnsupportedEncodingException {
+
+                log.info("Sending password reset email to: {}, Link: {}", toEmail, resetLink);
 
                 Context context = new Context();
                 context.setVariable("userName", userName);
