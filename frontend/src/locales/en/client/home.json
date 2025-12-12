@@ -58,6 +58,10 @@
       "globalAccess": {
         "title": "Global Access",
         "description": "Access your health records securely from any device, anywhere, anytime."
+      },
+      "trackHistory": {
+        "title": "Smart Tracking",
+        "description": "Easily monitor vaccination history for you and your family members in one place."
       }
     }
   },

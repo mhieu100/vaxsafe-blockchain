@@ -2,6 +2,7 @@ import {
   ArrowRightOutlined,
   CheckCircleOutlined,
   GlobalOutlined,
+  HistoryOutlined,
   SafetyCertificateOutlined,
 } from '@ant-design/icons';
 import { useTranslation } from 'react-i18next';
@@ -37,6 +38,15 @@ const ServiceSection = () => {
       description: t('client:home.service.features.globalAccess.description'),
       delay: '200ms',
     },
+    {
+      icon: (
+        <HistoryOutlined className="text-3xl text-orange-600 group-hover:text-white transition-colors duration-300" />
+      ),
+      iconBg: 'bg-orange-100 group-hover:bg-orange-600',
+      title: t('client:home.service.features.trackHistory.title'),
+      description: t('client:home.service.features.trackHistory.description'),
+      delay: '300ms',
+    },
   ];
 
   return (
@@ -63,7 +73,7 @@ const ServiceSection = () => {
           </p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
           {features.map((f, _index) => (
             <div
               key={f.title}

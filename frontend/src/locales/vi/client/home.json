@@ -58,6 +58,10 @@
       "globalAccess": {
         "title": "Truy cập toàn cầu",
         "description": "Truy cập hồ sơ sức khỏe của bạn một cách an toàn từ mọi thiết bị, mọi lúc, mọi nơi."
+      },
+      "trackHistory": {
+        "title": "Theo dõi thông minh",
+        "description": "Dễ dàng theo dõi lịch sử tiêm chủng của bạn và người thân trong cùng một nơi."
       }
     }
   },

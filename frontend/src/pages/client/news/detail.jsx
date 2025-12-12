@@ -83,8 +83,8 @@ const ClientNewsDetailPage = () => {
       const textContent = div.innerText || div.textContent || '';
 
       const res = await ragService.summarize(textContent);
-      if (res && res.data) {
-        setSummary(res.data);
+      if (res) {
+        setSummary(res);
       }
     } catch (error) {
       console.error('Failed to summarize:', error);
@@ -253,8 +253,7 @@ const ClientNewsDetailPage = () => {
                     <Button
                       icon={<RobotOutlined />}
                       onClick={handleSummarize}
-                      className="bg-gradient-to-r from-violet-600 to-indigo-600 text-white border-0 hover:!text-white hover:opacity-90 shadow-md font-medium px-6 h-10 rounded-full"
-                      style={{ color: 'white' }}
+                      className="!bg-gradient-to-r from-violet-600 to-indigo-600 !text-white !border-0 hover:!opacity-90 shadow-md font-medium px-6 h-10 rounded-full"
                     >
                       {summary ? 'Xem tóm tắt AI' : 'Tóm tắt nội dung bằng AI'}
                     </Button>
@@ -393,8 +392,14 @@ const ClientNewsDetailPage = () => {
 
           <div className="p-8">
             {summarizing ? (
-              <div className="py-8">
-                <Skeleton active paragraph={{ rows: 4 }} />
+              <div className="py-12 flex flex-col items-center justify-center space-y-4">
+                <div className="relative">
+                  <div className="w-16 h-16 border-4 border-indigo-100 border-t-indigo-500 rounded-full animate-spin"></div>
+                  <div className="absolute inset-0 flex items-center justify-center">
+                    <RobotOutlined className="text-xl text-indigo-500" />
+                  </div>
+                </div>
+                <p className="text-gray-500 animate-pulse">AI đang đọc và tóm tắt bài viết...</p>
               </div>
             ) : (
               <div className="prose prose-indigo max-w-none prose-headings:text-indigo-700 prose-p:text-gray-600 text-base leading-relaxed">
