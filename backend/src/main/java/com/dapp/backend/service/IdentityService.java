@@ -25,6 +25,8 @@ public class IdentityService {
 
     private final BlockchainService blockchainService;
     private final FamilyMemberRepository familyMemberRepository;
+    private final com.dapp.backend.dto.mapper.fhir.FhirPatientMapper fhirPatientMapper;
+    private static final ca.uhn.fhir.context.FhirContext fhirContext = ca.uhn.fhir.context.FhirContext.forR4();
 
     public String generateUserIdentityHash(User user) {
         try {
@@ -156,39 +158,98 @@ public class IdentityService {
     }
 
     public String generateIdentityDataJson(User user) {
+        try {
+            // 1. Convert User to FHIR Patient resource
+            org.hl7.fhir.r4.model.Patient fhirPatient = fhirPatientMapper.toFhirPatient(user, user.getPatientProfile());
 
-        return String.format("""
-                {
-                    "type": "USER_IDENTITY",
-                    "fullName": "%s",
-                    "email": "%s",
-                    "did": "%s",
-                    "createdAt": "%s"
+            // 2. Serialize FHIR resource to JSON string
+            String fhirJson = fhirContext.newJsonParser().setPrettyPrint(true).encodeResourceToString(fhirPatient);
+
+            // 3. Upload to IPFS
+            if (blockchainService.isBlockchainServiceAvailable()) {
+                String ipfsHash = blockchainService.uploadToIpfs(fhirJson);
+                if (ipfsHash != null) {
+                    log.info("✅ Identity Profile (FHIR) uploaded to IPFS: {}", ipfsHash);
+                    return ipfsHash;
                 }
-                """,
-                user.getFullName(),
-                user.getEmail(),
-                user.getDid(),
-                LocalDateTime.now().toString());
+            }
+
+            // Fallback for offline blockchain service: return empty or internal marker
+            log.warn("⚠️ Blockchain service unavailable, skipping IPFS upload for Identity.");
+            return "";
+
+        } catch (Exception e) {
+            log.error("Error generating/uploading FHIR Identity Data", e);
+            throw new RuntimeException("Failed to generate FHIR Identity Data", e);
+        }
     }
 
     public String generateFamilyMemberDataJson(FamilyMember member) {
+        try {
+            // 1. Convert FamilyMember to FHIR Patient resource (Manual or via Mapper)
+            org.hl7.fhir.r4.model.Patient fhirPatient = new org.hl7.fhir.r4.model.Patient();
 
-        return String.format("""
-                {
-                    "type": "CHILD_IDENTITY",
-                    "fullName": "%s",
-                    "dateOfBirth": "%s",
-                    "did": "%s",
-                    "guardian": "%s",
-                    "createdAt": "%s"
+            // Set ID as DID
+            if (member.getDid() != null) {
+                fhirPatient.setId(member.getDid());
+                fhirPatient.addIdentifier().setSystem("http://vaxsafe.com/did").setValue(member.getDid());
+            } else {
+                fhirPatient.setId("FM-" + member.getId());
+            }
+
+            // Set Name
+            org.hl7.fhir.r4.model.HumanName name = new org.hl7.fhir.r4.model.HumanName();
+            name.setText(member.getFullName());
+            fhirPatient.addName(name);
+
+            // Set DOB
+            if (member.getDateOfBirth() != null) {
+                java.util.Date date = java.util.Date
+                        .from(member.getDateOfBirth().atStartOfDay(java.time.ZoneId.systemDefault()).toInstant());
+                fhirPatient.setBirthDate(date);
+            }
+
+            // Set Gender
+            if (member.getGender() != null) {
+                switch (member.getGender()) {
+                    case MALE -> fhirPatient.setGender(org.hl7.fhir.r4.model.Enumerations.AdministrativeGender.MALE);
+                    case FEMALE ->
+                        fhirPatient.setGender(org.hl7.fhir.r4.model.Enumerations.AdministrativeGender.FEMALE);
+                    default -> fhirPatient.setGender(org.hl7.fhir.r4.model.Enumerations.AdministrativeGender.OTHER);
                 }
-                """,
-                member.getFullName(),
-                member.getDateOfBirth().toString(),
-                member.getDid(),
-                member.getUser().getFullName(),
-                LocalDateTime.now().toString());
+            }
+
+            // Set Guardian info as Extension
+            if (member.getUser() != null) {
+                org.hl7.fhir.r4.model.Extension guardianExt = new org.hl7.fhir.r4.model.Extension();
+                guardianExt.setUrl("http://vaxsafe.com/fhir/StructureDefinition/guardian-did");
+                // Assuming guardian has DID, else use ID
+                guardianExt.setValue(new org.hl7.fhir.r4.model.StringType(
+                        member.getUser().getDid() != null ? member.getUser().getDid()
+                                : String.valueOf(member.getUser().getId())));
+                fhirPatient.addExtension(guardianExt);
+            }
+
+            // 2. Serialize FHIR resource to JSON string
+            String fhirJson = fhirContext.newJsonParser().setPrettyPrint(true).encodeResourceToString(fhirPatient);
+
+            // 3. Upload to IPFS
+            if (blockchainService.isBlockchainServiceAvailable()) {
+                String ipfsHash = blockchainService.uploadToIpfs(fhirJson);
+                if (ipfsHash != null) {
+                    log.info("✅ Family Member Identity (FHIR) uploaded to IPFS: {}", ipfsHash);
+                    return ipfsHash;
+                }
+            }
+
+            // Fallback
+            log.warn("⚠️ Blockchain service unavailable, skipping IPFS upload for Family Member Identity.");
+            return "";
+
+        } catch (Exception e) {
+            log.error("Error generating/uploading FHIR Family Member Data", e);
+            throw new RuntimeException("Failed to generate FHIR Family Member Data", e);
+        }
     }
 
     public void linkBirthCertificate(FamilyMember member, String birthCertificateNumber) {
