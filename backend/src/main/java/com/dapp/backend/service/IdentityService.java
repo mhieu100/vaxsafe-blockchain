@@ -6,6 +6,7 @@ import com.dapp.backend.model.User;
 import com.dapp.backend.repository.FamilyMemberRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.nio.charset.StandardCharsets;
@@ -19,6 +20,9 @@ import java.util.HexFormat;
 @Slf4j
 public class IdentityService {
 
+    @Value("${identity.hashing.salt}")
+    private String identitySalt;
+
     private final BlockchainService blockchainService;
     private final FamilyMemberRepository familyMemberRepository;
 
@@ -30,10 +34,12 @@ public class IdentityService {
                 identityNum = user.getPatientProfile().getIdentityNumber().trim();
             }
 
-            String data = String.format("%s:%s:%s:VAXSAFE_IDENTITY",
+            // Append SALT to the data string
+            String data = String.format("%s:%s:%s:VAXSAFE_IDENTITY:%s",
                     identityNum,
                     user.getFullName().trim(),
-                    user.getBirthday() != null ? user.getBirthday().toString() : "0000-01-01");
+                    user.getBirthday() != null ? user.getBirthday().toString() : "0000-01-01",
+                    identitySalt);
 
             String hash = generateSha256Hash(data);
             log.debug("Generated identity hash for user: {} (birthday: {})",
@@ -65,15 +71,16 @@ public class IdentityService {
                 }
             }
 
-            // familyIdentity = patientIdentity + childName + childDob
+            // familyIdentity = patientIdentity + childName + childDob + SALT
             // patientIdentity = parentIdNum + parentName + parentDob
 
-            String data = String.format("%s:%s:%s:%s:%s:VAXSAFE_CHILD_IDENTITY",
+            String data = String.format("%s:%s:%s:%s:%s:VAXSAFE_CHILD_IDENTITY:%s",
                     parentIdNum,
                     parentName,
                     parentDob,
                     familyMember.getFullName().trim(),
-                    familyMember.getDateOfBirth().toString());
+                    familyMember.getDateOfBirth().toString(),
+                    identitySalt);
 
             String hash = generateSha256Hash(data);
             log.debug("Generated identity hash for family member: {} (guardian: {})",

@@ -11,7 +11,6 @@ import java.util.Date;
 @Component
 public class FhirPatientMapper {
 
-    
     public Patient toFhirPatient(User user, com.dapp.backend.model.Patient patientProfile) {
         if (user == null) {
             return null;
@@ -19,15 +18,22 @@ public class FhirPatientMapper {
 
         Patient fhirPatient = new Patient();
 
-
-        fhirPatient.setId(String.valueOf(user.getId()));
-
+        // Use DID as the primary FHIR ID if available, otherwise fallback to DB ID
+        if (user.getDid() != null) {
+            fhirPatient.setId(user.getDid());
+            // Also add DID as an Identifier
+            fhirPatient.addIdentifier()
+                    .setSystem("http://vaxsafe.com/did")
+                    .setValue(user.getDid())
+                    .setUse(Identifier.IdentifierUse.OFFICIAL);
+        } else {
+            fhirPatient.setId(String.valueOf(user.getId()));
+        }
 
         if (user.getFullName() != null) {
             HumanName name = new HumanName();
             name.setUse(HumanName.NameUse.OFFICIAL);
             name.setText(user.getFullName());
-
 
             String[] parts = user.getFullName().trim().split("\\s+");
             if (parts.length > 0) {
@@ -39,7 +45,6 @@ public class FhirPatientMapper {
             fhirPatient.addName(name);
         }
 
-
         if (user.getGender() != null) {
             if (user.getGender() == Gender.MALE) {
                 fhirPatient.setGender(Enumerations.AdministrativeGender.MALE);
@@ -50,13 +55,11 @@ public class FhirPatientMapper {
             }
         }
 
-
         if (user.getBirthday() != null) {
 
             Date date = Date.from(user.getBirthday().atStartOfDay(ZoneId.systemDefault()).toInstant());
             fhirPatient.setBirthDate(date);
         }
-
 
         if (user.getPhone() != null && !user.getPhone().isEmpty()) {
             ContactPoint phone = new ContactPoint();
@@ -73,14 +76,12 @@ public class FhirPatientMapper {
             fhirPatient.addTelecom(email);
         }
 
-
         if (user.getAddress() != null && !user.getAddress().isEmpty()) {
             Address address = new Address();
             address.setText(user.getAddress());
             address.setUse(Address.AddressUse.HOME);
             fhirPatient.addAddress(address);
         }
-
 
         if (patientProfile != null && patientProfile.getIdentityNumber() != null) {
             fhirPatient.addIdentifier()
@@ -89,7 +90,6 @@ public class FhirPatientMapper {
                     .setValue(patientProfile.getIdentityNumber())
                     .setUse(org.hl7.fhir.r4.model.Identifier.IdentifierUse.OFFICIAL);
         }
-
 
         fhirPatient.setActive(user.isActive());
 

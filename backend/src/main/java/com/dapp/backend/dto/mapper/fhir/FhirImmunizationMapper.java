@@ -29,9 +29,27 @@ public class FhirImmunizationMapper {
         }
 
         if (record.getUser() != null) {
-            immunization.setPatient(new Reference("Patient/" + record.getUser().getId()));
+            // Use DID as the primary reference if available
+            if (record.getUser().getDid() != null) {
+                immunization.setPatient(new Reference()
+                        .setReference("Patient/" + record.getUser().getDid())
+                        .setIdentifier(new Identifier()
+                                .setSystem("http://vaxsafe.com/did")
+                                .setValue(record.getUser().getDid())));
+            } else {
+                // Fallback to internal ID if DID is missing (should not happen in prod)
+                immunization.setPatient(new Reference("Patient/" + record.getUser().getId()));
+            }
         } else if (record.getFamilyMember() != null) {
-            immunization.setPatient(new Reference("Patient/FM-" + record.getFamilyMember().getId()));
+            if (record.getFamilyMember().getDid() != null) {
+                immunization.setPatient(new Reference()
+                        .setReference("Patient/" + record.getFamilyMember().getDid())
+                        .setIdentifier(new Identifier()
+                                .setSystem("http://vaxsafe.com/did")
+                                .setValue(record.getFamilyMember().getDid())));
+            } else {
+                immunization.setPatient(new Reference("Patient/FM-" + record.getFamilyMember().getId()));
+            }
         }
 
         if (record.getVaccinationDate() != null) {
