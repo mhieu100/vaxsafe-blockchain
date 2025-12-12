@@ -49,10 +49,3 @@ npm install
 npm run dev
 ```
 
-## 📂 Cấu trúc dự án
-*   `/frontend`: Giao diện người dùng (Web App).
-*   `/backend`: API Server & Business Logic.
-*   `/blockchain`: Service giao tiếp với Smart Contract & IPFS.
-
-## 📜 License
-MIT License
