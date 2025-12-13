@@ -9,10 +9,10 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
+import ca.uhn.fhir.parser.IParser;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.HexFormat;
 
 @Service
@@ -163,18 +163,37 @@ public class IdentityService {
             org.hl7.fhir.r4.model.Patient fhirPatient = fhirPatientMapper.toFhirPatient(user, user.getPatientProfile());
 
             // 2. Serialize FHIR resource to JSON string
-            String fhirJson = fhirContext.newJsonParser().setPrettyPrint(true).encodeResourceToString(fhirPatient);
+            IParser parser = fhirContext.newJsonParser();
+            parser.setPrettyPrint(true);
+            String fhirJson = parser.encodeResourceToString(fhirPatient);
 
             // 3. Upload to IPFS
             if (blockchainService.isBlockchainServiceAvailable()) {
-                String ipfsHash = blockchainService.uploadToIpfs(fhirJson);
+                String identityHash;
+                if (user.getBlockchainIdentityHash() != null && !user.getBlockchainIdentityHash().isEmpty()) {
+                    identityHash = user.getBlockchainIdentityHash();
+                } else {
+                    // Generate hash for filename (VaxSafe_Patient_{hash})
+                    String identityString = (user.getPatientProfile() != null
+                            && user.getPatientProfile().getIdentityNumber() != null
+                                    ? user.getPatientProfile().getIdentityNumber()
+                                    : "")
+                            + ":"
+                            + user.getFullName() + ":"
+                            + (user.getBirthday() != null ? user.getBirthday().toString() : "0000-01-01");
+                    identityHash = generateSha256Hash(identityString + ":" + identitySalt);
+                }
+
+                String filename = "VaxSafe_Patient_" + identityHash + ".json";
+
+                String ipfsHash = blockchainService.uploadToIpfs(fhirJson, filename);
                 if (ipfsHash != null) {
                     log.info("✅ Identity Profile (FHIR) uploaded to IPFS: {}", ipfsHash);
                     return ipfsHash;
                 }
             }
 
-            // Fallback for offline blockchain service: return empty or internal marker
+            // Fallback for offline blockchain service
             log.warn("⚠️ Blockchain service unavailable, skipping IPFS upload for Identity.");
             return "";
 
@@ -186,15 +205,18 @@ public class IdentityService {
 
     public String generateFamilyMemberDataJson(FamilyMember member) {
         try {
-            // 1. Convert FamilyMember to FHIR Patient resource (Manual or via Mapper)
+            // 1. Convert FamilyMember to FHIR Patient resource.
+            // Note: member.getDid() might be null if called before DID generation ?
+            // BUT we are refactoring to set DID before this call.
+
             org.hl7.fhir.r4.model.Patient fhirPatient = new org.hl7.fhir.r4.model.Patient();
 
-            // Set ID as DID
+            // Set ID as DID if available, else temporary
             if (member.getDid() != null) {
                 fhirPatient.setId(member.getDid());
                 fhirPatient.addIdentifier().setSystem("http://vaxsafe.com/did").setValue(member.getDid());
             } else {
-                fhirPatient.setId("FM-" + (member.getId() != null ? member.getId() : "PENDING"));
+                fhirPatient.setId("TEMP-ID");
             }
 
             // Set Name
@@ -251,28 +273,32 @@ public class IdentityService {
                 fhirPatient.addExtension(relExt);
             }
 
-            // Set Guardian info as Extension
+            // Guardian DID (Extension)
             if (member.getUser() != null) {
                 org.hl7.fhir.r4.model.Extension guardianExt = new org.hl7.fhir.r4.model.Extension();
                 guardianExt.setUrl("http://vaxsafe.com/fhir/StructureDefinition/guardian-did");
-                // Assuming guardian has DID, else use ID
                 String guardianDid = member.getUser().getDid() != null ? member.getUser().getDid()
-                        : String.valueOf(member.getUser().getId());
+                        : "user-" + member.getUser().getId();
                 guardianExt.setValue(new org.hl7.fhir.r4.model.StringType(guardianDid));
                 fhirPatient.addExtension(guardianExt);
             }
 
-            // 2. Serialize FHIR resource to JSON string
-            String fhirJson = fhirContext.newJsonParser().setPrettyPrint(true).encodeResourceToString(fhirPatient);
+            IParser parser = fhirContext.newJsonParser();
+            parser.setPrettyPrint(true);
+            String jsonContent = parser.encodeResourceToString(fhirPatient);
 
-            // 3. Upload to IPFS
+            // Use Identity Hash for filename (passed in member object)
+            String filename;
+            if (member.getBlockchainIdentityHash() != null) {
+                filename = "VaxSafe_Patient_" + member.getBlockchainIdentityHash() + ".json";
+            } else {
+                // Fallback if hash not set yet (should not happen with new logic)
+                filename = "VaxSafe_Patient_FM-TEMP-" + System.currentTimeMillis() + ".json";
+            }
+
+            // Upload using overloaded method with filename
             if (blockchainService.isBlockchainServiceAvailable()) {
-                // Use Identity Hash for filename to ensure uniqueness and privacy (no exposing
-                // DB ID)
-                String identityHash = member.getBlockchainIdentityHash(); // Assuming this is available
-                String filename = "VaxSafe_Patient_" + identityHash + ".json";
-
-                String ipfsHash = blockchainService.uploadToIpfs(fhirJson, filename);
+                String ipfsHash = blockchainService.uploadToIpfs(jsonContent, filename);
                 if (ipfsHash != null) {
                     log.info("✅ Family Member Identity (FHIR) uploaded to IPFS: {}", ipfsHash);
                     return ipfsHash;

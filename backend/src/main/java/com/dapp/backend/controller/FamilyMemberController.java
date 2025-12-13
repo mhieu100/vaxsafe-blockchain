@@ -68,7 +68,6 @@ public class FamilyMemberController {
     }
 
     @PostMapping("/patient-members")
-    @org.springframework.security.access.prepost.PreAuthorize("hasAnyAuthority('ADMIN', 'STAFF', 'DOCTOR')")
     @ApiMessage("Get patient family members for staff")
     public ResponseEntity<java.util.List<FamilyMemberResponse>> getPatientFamilyMembers(
             @RequestBody FamilyMemberDetailRequest request) {

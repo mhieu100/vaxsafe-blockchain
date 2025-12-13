@@ -118,27 +118,29 @@ public class FamilyMemberService {
         FamilyMember familyMember = toEntity(request);
         familyMember.setUser(user);
 
-        // 1. Save initially to get ID
-        FamilyMember savedMember = familyMemberRepository.save(familyMember);
+        // --- NEW LOGIC: Generate Identity BEFORE Save ---
 
         try {
-            // 2. Generate Identity content (now ID is not null)
-            IdentityType idType = identityService.determineIdentityType(savedMember.getDateOfBirth());
-            String identityHash = identityService.generateFamilyMemberIdentityHash(savedMember);
+            // 1. Generate Identity Hash & DID
+            IdentityType idType = identityService.determineIdentityType(familyMember.getDateOfBirth());
+            String identityHash = identityService.generateFamilyMemberIdentityHash(familyMember);
             String did = identityService.generateDID(identityHash, idType);
-            String ipfsDataHash = identityService.generateFamilyMemberDataJson(savedMember);
 
-            savedMember.setBlockchainIdentityHash(identityHash);
-            savedMember.setDid(did);
-            savedMember.setIpfsDataHash(ipfsDataHash);
+            // 2. Set Identity Info on Entity
+            familyMember.setBlockchainIdentityHash(identityHash);
+            familyMember.setDid(did);
 
-            // 3. Update entity with Identity Data
-            savedMember = familyMemberRepository.save(savedMember);
+            // 3. Generate & Upload FHIR Data to IPFS (uses identityHash for filename)
+            String ipfsDataHash = identityService.generateFamilyMemberDataJson(familyMember);
+            familyMember.setIpfsDataHash(ipfsDataHash);
 
-            log.debug("Generated identity for family member: {} (hash: {}, DID: {})",
-                    savedMember.getFullName(), identityHash, did);
+            log.debug("Presaved identity for family member: {} (hash: {}, DID: {})",
+                    familyMember.getFullName(), identityHash, did);
 
-            // 4. Blockchain Sync
+            // 4. Save to Database (Single Save)
+            FamilyMember savedMember = familyMemberRepository.save(familyMember);
+
+            // 5. Blockchain Sync (Async/Fire-and-forget logic if needed, but here sync)
             if (blockchainService.isBlockchainServiceAvailable()) {
                 var response = blockchainService.createIdentity(
                         savedMember.getBlockchainIdentityHash(),
@@ -146,6 +148,7 @@ public class FamilyMemberService {
                         idType,
                         savedMember.getIpfsDataHash(),
                         "family-member-" + savedMember.getFullName());
+
                 if (response != null && response.isSuccess()) {
                     log.info("Blockchain identity created for family member: {} (txHash: {})",
                             savedMember.getFullName(), response.getData().getTransactionHash());
@@ -155,17 +158,13 @@ public class FamilyMemberService {
             } else {
                 log.warn("Blockchain service not available, identity saved to database only");
             }
-        } catch (Exception e) {
-            log.error("Error generating/uploading blockchain identity for family member: {}", savedMember.getFullName(),
-                    e);
-            // Non-blocking error for main flow? Or throw?
-            // Better to throw if identity is critical, but we already saved.
-            // Let's propagate error but perhaps we should rollback?
-            // Since method is transactional, throwing exception triggers rollback.
-            throw new AppException("Failed to generate blockchain identity for family member: " + e.getMessage());
-        }
 
-        return toResponse(savedMember);
+            return toResponse(savedMember);
+
+        } catch (Exception e) {
+            log.error("Error creating family member with identity: {}", familyMember.getFullName(), e);
+            throw new AppException("Failed to create family member: " + e.getMessage());
+        }
     }
 
     public FamilyMemberResponse updateFamilyMember(FamilyMemberRequest request) throws AppException {

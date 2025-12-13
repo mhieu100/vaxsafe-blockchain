@@ -288,10 +288,11 @@ public class AuthService {
 
             String identityHash = identityService.generateUserIdentityHash(user);
             String did = identityService.generateDID(identityHash, IdentityType.ADULT);
-            String ipfsDataHash = identityService.generateIdentityDataJson(user);
 
             user.setBlockchainIdentityHash(identityHash);
             user.setDid(did);
+
+            String ipfsDataHash = identityService.generateIdentityDataJson(user);
             user.setIpfsDataHash(ipfsDataHash);
 
             log.info("\n" +

@@ -36,7 +36,7 @@ public class FamilyMember extends BaseEntity {
     @Enumerated(EnumType.STRING)
     Gender gender;
 
-    @Column(unique = true, nullable = false)
+    @Column(unique = true)
     String blockchainIdentityHash;
 
     @Column(unique = true)
