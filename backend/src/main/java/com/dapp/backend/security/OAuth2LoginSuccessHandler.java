@@ -30,7 +30,7 @@ public class OAuth2LoginSuccessHandler extends SimpleUrlAuthenticationSuccessHan
     private final NotificationLogService notificationLogService;
 
     @Value("${cors.allowed-origins}")
-    private String frontendUrl;
+    private String allowedOrigins;
 
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response,
@@ -39,17 +39,14 @@ public class OAuth2LoginSuccessHandler extends SimpleUrlAuthenticationSuccessHan
         OAuth2AuthenticationToken oauthToken = (OAuth2AuthenticationToken) authentication;
         OAuth2User oAuth2User = oauthToken.getPrincipal();
 
-
         String email = oAuth2User.getAttribute("email");
         String name = oAuth2User.getAttribute("name");
-
 
         User user = userRepository.findByEmail(email)
                 .orElseGet(() -> {
 
                     Role patientRole = roleRepository.findByName("PATIENT")
                             .orElseThrow(() -> new RuntimeException("Patient role not found"));
-
 
                     User newUser = User.builder()
                             .email(email)
@@ -61,7 +58,6 @@ public class OAuth2LoginSuccessHandler extends SimpleUrlAuthenticationSuccessHan
 
                     return userRepository.save(newUser);
                 });
-
 
         if (user.getId() != null) {
             try {
@@ -78,9 +74,7 @@ public class OAuth2LoginSuccessHandler extends SimpleUrlAuthenticationSuccessHan
         String accessToken = jwtUtil.createAccessToken(user.getEmail(), user.getRole().getName());
         String refreshToken = jwtUtil.createRefreshToken(user.getEmail());
 
-
         userRepository.updateRefreshTokenByEmail(user.getEmail(), refreshToken);
-
 
         Cookie refreshTokenCookie = new Cookie("refreshToken", refreshToken);
         refreshTokenCookie.setHttpOnly(true);
@@ -89,10 +83,9 @@ public class OAuth2LoginSuccessHandler extends SimpleUrlAuthenticationSuccessHan
         refreshTokenCookie.setMaxAge(7 * 24 * 60 * 60);
         response.addCookie(refreshTokenCookie);
 
-
         boolean isProfileComplete = user.isActive();
 
-
+        String frontendUrl = allowedOrigins.split(",")[0].trim();
         String redirectUrl = UriComponentsBuilder.fromUriString(frontendUrl + "/oauth2/callback")
                 .queryParam("token", accessToken)
                 .queryParam("email", user.getEmail())

@@ -135,7 +135,6 @@ const DescriptionVaccineSection = ({ vaccine }) => {
           {contraindications.length > 0 ? (
             <div className="space-y-3">
               {contraindications.map((item, index) => (
-                // biome-ignore lint/suspicious/noArrayIndexKey: Static list displayed
                 <div
                   key={index}
                   className="flex gap-4 p-4 rounded-xl border border-red-100 bg-red-50/50"

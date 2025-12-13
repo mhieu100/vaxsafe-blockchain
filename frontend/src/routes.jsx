@@ -45,6 +45,8 @@ import UserProfilePage from '@/pages/client/profile';
 import SuccessPage from '@/pages/client/success';
 import VaccineDetailPage from '@/pages/client/vaccine-detail';
 import VaccineListPage from '@/pages/client/vaccine-list';
+import VerifyLandingPage from '@/pages/public/verify/VerifyLandingPage';
+import VerifyResultPage from '@/pages/public/verify/VerifyResultPage';
 import CalendarView from '@/pages/staff/calendar-view';
 import StaffDashboard from '@/pages/staff/dashboard';
 import DoctorDashboard from '@/pages/staff/doctor-dashboard';
@@ -55,6 +57,14 @@ import StaffProfilePage from '@/pages/staff/profile';
 import WalkInBookingPage from '@/pages/staff/walk-in-booking';
 
 const router = createBrowserRouter([
+  {
+    path: '/verify',
+    element: <VerifyLandingPage />,
+  },
+  {
+    path: '/verify/:id',
+    element: <VerifyResultPage />,
+  },
   {
     path: '/',
     element: (
