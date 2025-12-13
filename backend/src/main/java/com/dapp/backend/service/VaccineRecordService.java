@@ -5,6 +5,7 @@ import com.dapp.backend.dto.mapper.fhir.FhirImmunizationMapper;
 import com.dapp.backend.dto.response.VaccineRecordResponse;
 import com.dapp.backend.exception.AppException;
 import com.dapp.backend.model.*;
+import com.dapp.backend.dto.blockchain.BlockchainVaccineRecordDetails;
 import com.dapp.backend.repository.FamilyMemberRepository;
 import com.dapp.backend.repository.VaccineRecordRepository;
 import lombok.RequiredArgsConstructor;
@@ -310,6 +311,40 @@ public class VaccineRecordService {
     public VaccineRecordResponse getRecordByIpfsHash(String ipfsHash) throws AppException {
         VaccineRecord record = vaccineRecordRepository.findByIpfsHash(ipfsHash)
                 .orElseThrow(() -> new AppException("Vaccine record not found for IPFS hash: " + ipfsHash));
+
+        if (blockchainService.isBlockchainServiceAvailable()) {
+            if (record.getBlockchainRecordId() != null) {
+                try {
+                    Long chainId = Long.parseLong(record.getBlockchainRecordId());
+                    BlockchainVaccineRecordDetails chainDetails = blockchainService.getVaccineRecord(chainId);
+
+                    if (chainDetails != null && chainDetails.isSuccess() && chainDetails.getData() != null) {
+                        String chainIpfsHash = chainDetails.getData().getIpfsHash();
+                        if (!ipfsHash.equalsIgnoreCase(chainIpfsHash)) {
+                            log.error("❌ Blockchain verification mismatch! Request IPFS: {}, Chain IPFS: {}", ipfsHash,
+                                    chainIpfsHash);
+                            throw new AppException(
+                                    "BLOCKCHAIN INTEGRITY ERROR: Hash does not match the valid chain record");
+                        }
+                        log.info("✅ Blockchain Verification Successful for IPFS: {}", ipfsHash);
+                    } else {
+                        log.warn("⚠️ Blockchain record lookup failed/empty for ID: {}", chainId);
+                        throw new AppException(
+                                "BLOCKCHAIN VERIFICATION FAILED: Record ID " + chainId + " not found on chain");
+                    }
+                } catch (NumberFormatException e) {
+                    log.error("Invalid Blockchain ID format in DB: {}", record.getBlockchainRecordId());
+                    throw new AppException("DATA INTEGRITY ERROR: Invalid Blockchain Record ID");
+                }
+            } else {
+                log.warn("Record exists stored locally but has no Blockchain ID");
+                throw new AppException("UNVERIFIED RECORD: This record has not been synced to the blockchain");
+            }
+        } else {
+            log.warn("Blockchain service unavailable - cannot perform verification");
+            throw new AppException("SERVICE UNAVAILABLE: Unable to connect to blockchain for verification");
+        }
+
         return mapToResponse(record);
     }
 }
