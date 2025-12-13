@@ -194,7 +194,7 @@ public class IdentityService {
                 fhirPatient.setId(member.getDid());
                 fhirPatient.addIdentifier().setSystem("http://vaxsafe.com/did").setValue(member.getDid());
             } else {
-                fhirPatient.setId("FM-" + member.getId());
+                fhirPatient.setId("FM-" + (member.getId() != null ? member.getId() : "PENDING"));
             }
 
             // Set Name
@@ -217,6 +217,38 @@ public class IdentityService {
                         fhirPatient.setGender(org.hl7.fhir.r4.model.Enumerations.AdministrativeGender.FEMALE);
                     default -> fhirPatient.setGender(org.hl7.fhir.r4.model.Enumerations.AdministrativeGender.OTHER);
                 }
+            }
+
+            // Set Phone (Telecom)
+            if (member.getPhone() != null && !member.getPhone().isEmpty()) {
+                org.hl7.fhir.r4.model.ContactPoint phone = new org.hl7.fhir.r4.model.ContactPoint();
+                phone.setSystem(org.hl7.fhir.r4.model.ContactPoint.ContactPointSystem.PHONE);
+                phone.setValue(member.getPhone());
+                phone.setUse(org.hl7.fhir.r4.model.ContactPoint.ContactPointUse.MOBILE);
+                fhirPatient.addTelecom(phone);
+            }
+
+            // Set Identifiers (National ID, Birth Certificate)
+            if (member.getIdentityNumber() != null && !member.getIdentityNumber().isEmpty()) {
+                fhirPatient.addIdentifier()
+                        .setSystem("urn:oid:2.16.840.1.113883.4.1") // Standard OID or custom
+                        .setValue(member.getIdentityNumber())
+                        .setUse(org.hl7.fhir.r4.model.Identifier.IdentifierUse.OFFICIAL);
+            }
+
+            if (member.getBirthCertificateNumber() != null && !member.getBirthCertificateNumber().isEmpty()) {
+                fhirPatient.addIdentifier()
+                        .setSystem("http://vaxsafe.com/fhir/StructureDefinition/birth-certificate")
+                        .setValue(member.getBirthCertificateNumber())
+                        .setUse(org.hl7.fhir.r4.model.Identifier.IdentifierUse.OFFICIAL);
+            }
+
+            // Set Relationship as Extension
+            if (member.getRelationship() != null && !member.getRelationship().isEmpty()) {
+                org.hl7.fhir.r4.model.Extension relExt = new org.hl7.fhir.r4.model.Extension();
+                relExt.setUrl("http://vaxsafe.com/fhir/StructureDefinition/patient-relationship");
+                relExt.setValue(new org.hl7.fhir.r4.model.StringType(member.getRelationship()));
+                fhirPatient.addExtension(relExt);
             }
 
             // Set Guardian info as Extension

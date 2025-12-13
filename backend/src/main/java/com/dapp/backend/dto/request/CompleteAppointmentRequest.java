@@ -20,4 +20,7 @@ public class CompleteAppointmentRequest {
     Integer diastolic;
 
     String adverseReactions;
+
+    String doctorSignature;
+    String patientConsentSignature;
 }

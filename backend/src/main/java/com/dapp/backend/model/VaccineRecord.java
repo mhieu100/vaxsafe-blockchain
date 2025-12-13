@@ -83,6 +83,12 @@ public class VaccineRecord extends BaseEntity {
     @Column(columnDefinition = "TEXT")
     String digitalSignature;
 
+    @Column(columnDefinition = "TEXT")
+    String doctorSignature;
+
+    @Column(columnDefinition = "TEXT")
+    String patientConsentSignature;
+
     boolean isVerified;
 
     LocalDateTime verifiedAt;

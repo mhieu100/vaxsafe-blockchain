@@ -88,6 +88,8 @@ public class VaccineRecordService {
                 .temperature(request.getTemperature())
                 .pulse(request.getPulse())
                 .adverseReactions(request.getAdverseReactions())
+                .doctorSignature(request.getDoctorSignature())
+                .patientConsentSignature(request.getPatientConsentSignature())
                 .isVerified(false)
                 .nextDoseDate(nextDoseDate)
                 .nextDoseNumber(nextDoseDate != null ? appointment.getDoseNumber() + 1 : null)
@@ -102,10 +104,10 @@ public class VaccineRecordService {
         try {
             if (blockchainService.isBlockchainServiceAvailable()) {
 
-                org.hl7.fhir.r4.model.Immunization fhirImmunization = fhirImmunizationMapper.toFhirImmunization(saved);
+                org.hl7.fhir.r4.model.Bundle fhirBundle = fhirImmunizationMapper.toFhirBundle(saved);
 
                 String fhirJson = fhirContext.newJsonParser().setPrettyPrint(true)
-                        .encodeResourceToString(fhirImmunization);
+                        .encodeResourceToString(fhirBundle);
 
                 ipfsHash = blockchainService.uploadToIpfs(fhirJson);
 

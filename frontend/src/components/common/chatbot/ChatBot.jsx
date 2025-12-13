@@ -7,7 +7,7 @@ import {
   ShrinkOutlined,
 } from '@ant-design/icons';
 import { useMutation } from '@tanstack/react-query';
-import { Button, Form, Input, Spin, Tooltip } from 'antd';
+import { Button, Form, Input, Spin } from 'antd';
 import dayjs from 'dayjs';
 import { useEffect, useRef, useState } from 'react';
 import ReactMarkdown from 'react-markdown';
@@ -332,13 +332,24 @@ const ChatBot = () => {
       )}
 
       {}
-      <Tooltip
-        title="Chào bạn tôi là trợ lý AI"
-        placement="left"
-        open={isOpen ? false : showTooltip || isHovered}
-        onOpenChange={(visible) => setIsHovered(visible)}
-        color="blue"
+      <div
+        className="relative"
+        onMouseEnter={() => setIsHovered(true)}
+        onMouseLeave={() => setIsHovered(false)}
       >
+        {!isOpen && (showTooltip || isHovered) && (
+          <div className="absolute right-full mr-3 top-1/2 -translate-y-1/2 whitespace-nowrap">
+            <div className="bg-blue-600 text-white px-4 py-2 rounded-xl rounded-tr-none shadow-lg animate-fade-in text-sm font-medium relative">
+              Chào bạn tôi là trợ lý AI
+              <div
+                className="absolute top-0 -right-2 w-0 h-0 
+                border-t-[8px] border-t-blue-600 
+                border-r-[8px] border-r-transparent"
+              />
+            </div>
+          </div>
+        )}
+
         <button
           type="button"
           onClick={() => setIsOpen(!isOpen)}
@@ -352,7 +363,6 @@ const ChatBot = () => {
             <img src={modelImage} alt="Chat" className="w-full h-full rounded-full object-cover" />
           )}
 
-          {}
           {!isOpen && (
             <span className="absolute top-0 right-0 flex h-3 w-3">
               <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span>
@@ -360,7 +370,7 @@ const ChatBot = () => {
             </span>
           )}
         </button>
-      </Tooltip>
+      </div>
     </div>
   );
 };

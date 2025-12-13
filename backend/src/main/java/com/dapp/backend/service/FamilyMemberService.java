@@ -118,29 +118,28 @@ public class FamilyMemberService {
         FamilyMember familyMember = toEntity(request);
         familyMember.setUser(user);
 
-        try {
-
-            IdentityType idType = identityService.determineIdentityType(familyMember.getDateOfBirth());
-            String identityHash = identityService.generateFamilyMemberIdentityHash(familyMember);
-            String did = identityService.generateDID(identityHash, idType);
-            String ipfsDataHash = identityService.generateFamilyMemberDataJson(familyMember);
-
-            familyMember.setBlockchainIdentityHash(identityHash);
-            familyMember.setDid(did);
-            familyMember.setIpfsDataHash(ipfsDataHash);
-
-            log.debug("Generated identity for family member: {} (hash: {}, DID: {})",
-                    familyMember.getFullName(), identityHash, did);
-        } catch (Exception e) {
-            log.error("Error generating blockchain identity for family member: {}", familyMember.getFullName(), e);
-            throw new AppException("Failed to generate blockchain identity for family member: " + e.getMessage());
-        }
-
+        // 1. Save initially to get ID
         FamilyMember savedMember = familyMemberRepository.save(familyMember);
 
         try {
+            // 2. Generate Identity content (now ID is not null)
+            IdentityType idType = identityService.determineIdentityType(savedMember.getDateOfBirth());
+            String identityHash = identityService.generateFamilyMemberIdentityHash(savedMember);
+            String did = identityService.generateDID(identityHash, idType);
+            String ipfsDataHash = identityService.generateFamilyMemberDataJson(savedMember);
+
+            savedMember.setBlockchainIdentityHash(identityHash);
+            savedMember.setDid(did);
+            savedMember.setIpfsDataHash(ipfsDataHash);
+
+            // 3. Update entity with Identity Data
+            savedMember = familyMemberRepository.save(savedMember);
+
+            log.debug("Generated identity for family member: {} (hash: {}, DID: {})",
+                    savedMember.getFullName(), identityHash, did);
+
+            // 4. Blockchain Sync
             if (blockchainService.isBlockchainServiceAvailable()) {
-                IdentityType idType = identityService.determineIdentityType(savedMember.getDateOfBirth());
                 var response = blockchainService.createIdentity(
                         savedMember.getBlockchainIdentityHash(),
                         savedMember.getDid(),
@@ -157,8 +156,13 @@ public class FamilyMemberService {
                 log.warn("Blockchain service not available, identity saved to database only");
             }
         } catch (Exception e) {
-            log.error("Error syncing blockchain identity for family member: {}", savedMember.getFullName(), e);
-
+            log.error("Error generating/uploading blockchain identity for family member: {}", savedMember.getFullName(),
+                    e);
+            // Non-blocking error for main flow? Or throw?
+            // Better to throw if identity is critical, but we already saved.
+            // Let's propagate error but perhaps we should rollback?
+            // Since method is transactional, throwing exception triggers rollback.
+            throw new AppException("Failed to generate blockchain identity for family member: " + e.getMessage());
         }
 
         return toResponse(savedMember);

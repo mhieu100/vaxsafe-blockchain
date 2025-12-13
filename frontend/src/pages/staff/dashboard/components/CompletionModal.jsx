@@ -32,11 +32,15 @@ const { Option } = Select;
 const CompletionModal = ({ open, onCancel, appointment, onSuccess }) => {
   const [currentStep, setCurrentStep] = useState(0);
   const [loading, setLoading] = useState(false);
+  const [doctorSignature, setDoctorSignature] = useState(null);
+  const [patientConsentSignature, setPatientConsentSignature] = useState(null);
   const [form] = Form.useForm();
 
   useEffect(() => {
     if (open) {
       setCurrentStep(0);
+      setDoctorSignature(null);
+      setPatientConsentSignature(null);
       form.resetFields();
     }
   }, [open, form]);
@@ -56,6 +60,10 @@ const CompletionModal = ({ open, onCancel, appointment, onSuccess }) => {
         notes: values.temperatureNote,
 
         adverseReactions: values.reaction ? `${values.reactionType}: ${values.reaction}` : null,
+
+        // Include Signatures
+        doctorSignature: doctorSignature,
+        patientConsentSignature: patientConsentSignature,
       };
 
       await callCompleteAppointment(appointment.id, payload);
@@ -78,6 +86,20 @@ const CompletionModal = ({ open, onCancel, appointment, onSuccess }) => {
   };
 
   const prev = () => setCurrentStep(currentStep - 1);
+
+  const handleDoctorSign = () => {
+    // Mocking a digital signature generation
+    const mockSig = `DOC_SIG_${new Date().getTime()}_${Math.random().toString(36).substring(7)}`;
+    setDoctorSignature(mockSig);
+    message.success('Bác sĩ đã ký xác nhận điện tử!');
+  };
+
+  const handlePatientConsent = () => {
+    // Mocking patient consent signature
+    const mockSig = `PAT_CONSENT_${new Date().getTime()}_${Math.random().toString(36).substring(7)}`;
+    setPatientConsentSignature(mockSig);
+    message.success('Bệnh nhân đã xác nhận đồng thuận!');
+  };
 
   const steps = [
     {
@@ -169,6 +191,67 @@ const CompletionModal = ({ open, onCancel, appointment, onSuccess }) => {
       ),
     },
     {
+      title: 'Chữ ký số',
+      icon: <CheckCircleOutlined />, // Using check circle as placeholder, maybe Swap with KeyOutlined if available but staying safe
+      content: (
+        <Card bordered={false}>
+          <Title level={5}>1. Chữ ký Bác sĩ (Doctor Signature)</Title>
+          <Alert
+            message="Xác nhận chuyên môn và chịu trách nhiệm y tế."
+            type="info"
+            showIcon
+            style={{ marginBottom: 16 }}
+          />
+          <div style={{ display: 'flex', alignItems: 'center', marginBottom: 24 }}>
+            {doctorSignature ? (
+              <Button
+                type="primary"
+                style={{ background: '#52c41a', borderColor: '#52c41a' }}
+                icon={<CheckCircleOutlined />}
+              >
+                Đã ký điện tử
+              </Button>
+            ) : (
+              <Button type="primary" onClick={handleDoctorSign}>
+                Ký xác nhận ngay
+              </Button>
+            )}
+            <span style={{ marginLeft: 12, color: '#888' }}>
+              {doctorSignature ? 'Mã ký: ' + doctorSignature.substring(0, 20) + '...' : 'Chưa ký'}
+            </span>
+          </div>
+
+          <Divider />
+
+          <Title level={5}>2. Đồng thuận của Bệnh nhân (Patient Consent)</Title>
+          <Alert
+            message="Xác nhận bệnh nhân đã nghe tư vấn và đồng ý tiêm."
+            type="warning"
+            showIcon
+            style={{ marginBottom: 16 }}
+          />
+          <div style={{ display: 'flex', alignItems: 'center' }}>
+            {patientConsentSignature ? (
+              <Button
+                type="primary"
+                style={{ background: '#52c41a', borderColor: '#52c41a' }}
+                icon={<CheckCircleOutlined />}
+              >
+                Đã đồng thuận
+              </Button>
+            ) : (
+              <Button onClick={handlePatientConsent}>Xác nhận đồng ý</Button>
+            )}
+            <span style={{ marginLeft: 12, color: '#888' }}>
+              {patientConsentSignature
+                ? 'Mã ký: ' + patientConsentSignature.substring(0, 20) + '...'
+                : 'Chưa xác nhận'}
+            </span>
+          </div>
+        </Card>
+      ),
+    },
+    {
       title: 'Xác nhận',
       icon: <CheckCircleOutlined />,
       content: (
@@ -180,6 +263,32 @@ const CompletionModal = ({ open, onCancel, appointment, onSuccess }) => {
             <strong>{appointment?.patient}</strong>.
           </Text>
           <Divider />
+          <div
+            style={{
+              textAlign: 'left',
+              background: '#f5f5f5',
+              padding: 12,
+              borderRadius: 8,
+              marginBottom: 16,
+            }}
+          >
+            <p>
+              <strong>Bác sĩ ký:</strong>{' '}
+              {doctorSignature ? (
+                <span style={{ color: 'green' }}>Đã ký</span>
+              ) : (
+                <span style={{ color: 'red' }}>Chưa ký</span>
+              )}
+            </p>
+            <p>
+              <strong>Bệnh nhân đồng thuận:</strong>{' '}
+              {patientConsentSignature ? (
+                <span style={{ color: 'green' }}>Đã xác nhận</span>
+              ) : (
+                <span style={{ color: 'red' }}>Chưa xác nhận</span>
+              )}
+            </p>
+          </div>
           <Alert
             type="warning"
             showIcon
@@ -227,6 +336,7 @@ const CompletionModal = ({ open, onCancel, appointment, onSuccess }) => {
               onClick={handleFinish}
               loading={loading}
               style={{ background: '#52c41a', borderColor: '#52c41a' }}
+              disabled={!doctorSignature || !patientConsentSignature} // Enforce signatures
             >
               Xác nhận hoàn thành
             </Button>
