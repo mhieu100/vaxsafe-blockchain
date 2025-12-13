@@ -1,6 +1,6 @@
 package com.dapp.backend.dto.response;
 
-import com.dapp.backend.enums.MethodPaymentEnum;
+import com.dapp.backend.enums.PaymentMethod;
 import lombok.AccessLevel;
 import lombok.Data;
 import lombok.experimental.FieldDefaults;
@@ -10,7 +10,7 @@ import lombok.experimental.FieldDefaults;
 public class PaymentResponse {
     Long paymentId;
     Long referenceId;
-    MethodPaymentEnum method;
+    PaymentMethod method;
     String paymentURL;
     Double amount;
 }

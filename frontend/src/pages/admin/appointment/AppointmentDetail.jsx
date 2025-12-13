@@ -7,7 +7,7 @@ import {
   PhoneOutlined,
   UserOutlined,
 } from '@ant-design/icons';
-import { Badge, Button, Card, Col, Descriptions, Row, Space, Spin, Tag } from 'antd';
+import { Badge, Button, Card, Col, Descriptions, Row, Space, Spin, Tag, Typography } from 'antd';
 import dayjs from 'dayjs';
 import { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
@@ -47,8 +47,11 @@ const AppointmentDetailPage = () => {
 
   if (!data) {
     return (
-      <div className="p-6">
-        <Typography.Text>Appointment not found</Typography.Text>
+      <div className="p-6 text-center">
+        <Typography.Title level={4}>Appointment not found</Typography.Title>
+        <Button icon={<ArrowLeftOutlined />} onClick={() => navigate('/admin/appointments')}>
+          Back to List
+        </Button>
       </div>
     );
   }

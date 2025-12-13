@@ -54,6 +54,13 @@ public class PaymentService {
                         Appointment appointment = appointmentRepository
                                         .findById(Long.parseLong(request.getReferenceId()))
                                         .orElseThrow(() -> new AppException("Appointment not found!"));
+
+                        // Payment Success -> Transition from INITIAL to PENDING (Confirmed Paid)
+                        if (appointment.getStatus() == AppointmentStatus.INITIAL) {
+                                appointment.setStatus(AppointmentStatus.PENDING);
+                                appointmentRepository.save(appointment);
+                        }
+
                         payment.setReferenceType(request.getType());
 
                         try {

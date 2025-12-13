@@ -150,8 +150,6 @@ const BookingPage = () => {
       const paymentData = response?.data;
       const error = response?.error;
       if (paymentData) {
-        message.success('Đặt lịch tiêm thành công!');
-
         if (paymentData.method === 'PAYPAL' && paymentData.paymentURL) {
           window.location.href = paymentData.paymentURL;
         } else if (paymentData.method === 'BANK' && paymentData.paymentURL) {
@@ -163,10 +161,7 @@ const BookingPage = () => {
       if (error) {
         modal.warning({
           title: 'Đặt lịch hẹn thất bại',
-          content:
-            error?.message === 'Vaccine is out of stock!'
-              ? 'Bạn đã có lịch hẹn đang hoạt động cho loại vắc xin này. Vui lòng kiểm tra lại danh sách lịch hẹn của bạn.'
-              : 'Số lượng vắc xin không đủ',
+          content: error,
           okText: 'Xem lịch hẹn',
           cancelText: 'Đóng',
           closable: true,

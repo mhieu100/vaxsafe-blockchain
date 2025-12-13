@@ -1,6 +1,6 @@
 package com.dapp.backend.dto.request;
 
-import com.dapp.backend.enums.MethodPaymentEnum;
+import com.dapp.backend.enums.PaymentMethod;
 import jakarta.validation.constraints.NotNull;
 import lombok.AccessLevel;
 import lombok.Data;
@@ -40,5 +40,5 @@ public class WalkInBookingRequest {
     String notes;
 
     @NotNull(message = "Payment method is required")
-    MethodPaymentEnum paymentMethod;
+    PaymentMethod paymentMethod;
 }

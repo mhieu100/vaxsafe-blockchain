@@ -1,6 +1,6 @@
 package com.dapp.backend.model;
 
-import com.dapp.backend.enums.MethodPaymentEnum;
+import com.dapp.backend.enums.PaymentMethod;
 import com.dapp.backend.enums.PaymentEnum;
 import com.dapp.backend.enums.TypeTransactionEnum;
 import jakarta.persistence.*;
@@ -22,7 +22,7 @@ public class Payment extends BaseEntity {
     Long referenceId;
     TypeTransactionEnum referenceType;
 
-    MethodPaymentEnum method;
+    PaymentMethod method;
     Double amount;
     String currency;
     PaymentEnum status;

@@ -1,6 +1,6 @@
 package com.dapp.backend.dto.request;
 
-import com.dapp.backend.enums.MethodPaymentEnum;
+import com.dapp.backend.enums.PaymentMethod;
 import jakarta.validation.constraints.NotNull;
 import lombok.AccessLevel;
 import lombok.Data;
@@ -19,5 +19,5 @@ public class NextDoseBookingRequest {
     Long appointmentCenter;
 
     double amount;
-    MethodPaymentEnum paymentMethod;
+    PaymentMethod paymentMethod;
 }

@@ -1,6 +1,6 @@
 package com.dapp.backend.enums;
 
-public enum MethodPaymentEnum {
+public enum PaymentMethod {
     METAMASK("ETH"),
     PAYPAL("USD"),
     BANK("VND"),
@@ -8,7 +8,7 @@ public enum MethodPaymentEnum {
 
     private final String currency;
 
-    MethodPaymentEnum(String currency) {
+    PaymentMethod(String currency) {
         this.currency = currency;
     }
 

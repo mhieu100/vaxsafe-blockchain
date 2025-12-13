@@ -663,12 +663,47 @@ public class AppointmentService {
             throw new AppException("This course is already completed.");
         }
 
-        boolean hasActive = appointmentRepository.existsByVaccinationCourseAndStatusIn(
+        List<Appointment> activeAppointments = appointmentRepository.findByVaccinationCourseAndStatusIn(
                 course,
-                List.of(AppointmentStatus.PENDING, AppointmentStatus.SCHEDULED, AppointmentStatus.RESCHEDULE));
-        if (hasActive) {
-            throw new AppException(
-                    "You already have an active appointment for this course. Please complete or cancel it first.");
+                List.of(AppointmentStatus.PENDING, AppointmentStatus.SCHEDULED, AppointmentStatus.RESCHEDULE,
+                        AppointmentStatus.INITIAL));
+
+        for (Appointment apt : activeAppointments) {
+            if (apt.getStatus() == AppointmentStatus.SCHEDULED || apt.getStatus() == AppointmentStatus.RESCHEDULE) {
+                throw new AppException(
+                        "You already have an active appointment for this course. Please complete or cancel it first.");
+            }
+
+            if (apt.getStatus() == AppointmentStatus.PENDING || apt.getStatus() == AppointmentStatus.INITIAL) {
+                // Check if payment is successful
+                var paymentOpt = paymentRepository.findByAppointmentId(apt.getId(), TypeTransactionEnum.APPOINTMENT);
+                if (paymentOpt.isPresent()) {
+                    Payment p = paymentOpt.get();
+                    if (p.getStatus() == PaymentEnum.SUCCESS) {
+                        throw new AppException(
+                                "You have a paid pending appointment. Please wait for confirmation.");
+                    }
+                    if (p.getMethod() == PaymentMethod.CASH && p.getStatus() == PaymentEnum.PROCESSING) {
+                        throw new AppException(
+                                "You have a pending cash appointment. Please wait for confirmation.");
+                    }
+                    // Cancel stale payment
+                    p.setStatus(PaymentEnum.CANCELLED);
+                    paymentRepository.save(p);
+                }
+
+                // Auto-cancel stale pending appointment
+                apt.setStatus(AppointmentStatus.CANCELLED);
+                appointmentRepository.save(apt);
+
+                if (apt.getSlot() != null) {
+                    DoctorAvailableSlot slot = apt.getSlot();
+                    slot.setAppointment(null);
+                    slot.setStatus(SlotStatus.AVAILABLE);
+                    slotRepository.save(slot);
+                }
+                log.info("Auto-cancelled stale pending next-dose appointment ID: {} to allow new booking", apt.getId());
+            }
         }
 
         if (vaccine.getStock() < 1) {
@@ -710,7 +745,8 @@ public class AppointmentService {
 
         appointment.setVaccine(vaccine);
         appointment.setTotalAmount(bookingRequest.getAmount());
-        appointment.setStatus(AppointmentStatus.PENDING);
+        appointment.setStatus(bookingRequest.getPaymentMethod() == PaymentMethod.CASH ? AppointmentStatus.PENDING
+                : AppointmentStatus.INITIAL);
 
         appointment.setVaccinationCourse(course);
         appointment.setDoseNumber(course.getCurrentDoseIndex() + 1);
@@ -765,8 +801,7 @@ public class AppointmentService {
                 payment.setStatus(PaymentEnum.PROCESSING);
                 payment.setReferenceType(TypeTransactionEnum.APPOINTMENT);
                 paymentRepository.save(payment);
-                appointment.setStatus(AppointmentStatus.PENDING);
-                appointmentRepository.save(appointment);
+                // Appointment is already PENDING
 
                 try {
                     if (user.getEmail() != null && !user.getEmail().isEmpty()
@@ -841,7 +876,10 @@ public class AppointmentService {
         }
         appointment.setVaccine(vaccine);
         appointment.setTotalAmount(bookingRequest.getAmount());
-        appointment.setStatus(AppointmentStatus.PENDING);
+
+        // Set Status: PENDING for CASH, INITIAL for others (Draft)
+        appointment.setStatus(bookingRequest.getPaymentMethod() == PaymentMethod.CASH ? AppointmentStatus.PENDING
+                : AppointmentStatus.INITIAL);
 
         VaccinationCourse course = handleVaccinationCourse(user, familyMember, vaccine,
                 bookingRequest.getAppointmentDate());
@@ -898,8 +936,7 @@ public class AppointmentService {
                 payment.setStatus(PaymentEnum.PROCESSING);
                 payment.setReferenceType(TypeTransactionEnum.APPOINTMENT);
                 paymentRepository.save(payment);
-                appointment.setStatus(AppointmentStatus.PENDING);
-                appointmentRepository.save(appointment);
+                // Appointment already PENDING
 
                 try {
                     if (user.getEmail() != null && !user.getEmail().isEmpty()
@@ -999,6 +1036,11 @@ public class AppointmentService {
         appointment.setTotalAmount((double) vaccine.getPrice());
         appointment.setStatus(AppointmentStatus.SCHEDULED);
 
+        // ... (Walk-in logic continues)
+        // Note: Walk-in usually implies immediate payment/schedule, kept as SCHEDULED.
+
+        // ...
+
         VaccinationCourse course = handleVaccinationCourse(patient, familyMember, vaccine,
                 request.getAppointmentDate());
         appointment.setVaccinationCourse(course);
@@ -1048,6 +1090,51 @@ public class AppointmentService {
         }
 
         return AppointmentMapper.toResponse(savedAppointment);
+    }
+
+    // ...
+
+    public List<AppointmentResponse> getBooking() throws AppException {
+        User user = authService.getCurrentUserLogin();
+        // Exclude INITIAL appointments from the view
+        List<Appointment> appointments = appointmentRepository
+                .findByPatientAndStatusIn(user,
+                        List.of(AppointmentStatus.PENDING, AppointmentStatus.SCHEDULED, AppointmentStatus.RESCHEDULE));
+
+        return appointments.stream()
+                .filter(apt -> {
+                    // Filter out stale PENDING online payments
+                    if (apt.getStatus() == AppointmentStatus.PENDING) {
+                        var paymentOpt = paymentRepository.findByAppointmentId(apt.getId(),
+                                TypeTransactionEnum.APPOINTMENT);
+                        if (paymentOpt.isPresent()) {
+                            Payment p = paymentOpt.get();
+                            // If online payment (not CASH)
+                            if (p.getMethod() != PaymentMethod.CASH && p.getStatus() != PaymentEnum.SUCCESS) {
+                                // If created > 30 mins ago, hide it (consider it abandoned)
+                                if (apt.getCreatedAt() != null
+                                        && apt.getCreatedAt().isBefore(LocalDateTime.now().minusMinutes(30))) {
+                                    return false;
+                                }
+                            }
+                        }
+                    }
+                    return true;
+                })
+                .map(apt -> {
+                    AppointmentResponse response = AppointmentMapper.toResponse(apt);
+                    paymentRepository.findByAppointmentId(apt.getId(), TypeTransactionEnum.APPOINTMENT)
+                            .ifPresent(payment -> {
+                                response.setPaymentId(payment.getId());
+                                response.setPaymentStatus(
+                                        payment.getStatus() != null ? payment.getStatus().name() : null);
+                                response.setPaymentMethod(
+                                        payment.getMethod() != null ? payment.getMethod().name() : null);
+                                response.setPaymentAmount(payment.getAmount());
+                            });
+                    return response;
+                })
+                .toList();
     }
 
     public CenterAvailabilityResponse checkAvailability(Long centerId, LocalDate date) throws AppException {
@@ -1102,11 +1189,47 @@ public class AppointmentService {
         if (existingCourseOpt.isPresent()) {
             VaccinationCourse course = existingCourseOpt.get();
 
-            boolean hasActive = appointmentRepository.existsByVaccinationCourseAndStatusIn(
+            List<Appointment> activeAppointments = appointmentRepository.findByVaccinationCourseAndStatusIn(
                     course,
-                    List.of(AppointmentStatus.PENDING, AppointmentStatus.SCHEDULED, AppointmentStatus.RESCHEDULE));
-            if (hasActive) {
-                throw new AppException("You already have an active appointment for this vaccination course.");
+                    List.of(AppointmentStatus.PENDING, AppointmentStatus.SCHEDULED, AppointmentStatus.RESCHEDULE,
+                            AppointmentStatus.INITIAL));
+
+            for (Appointment apt : activeAppointments) {
+                if (apt.getStatus() == AppointmentStatus.SCHEDULED || apt.getStatus() == AppointmentStatus.RESCHEDULE) {
+                    throw new AppException("You already have an active appointment for this vaccination course.");
+                }
+
+                if (apt.getStatus() == AppointmentStatus.PENDING || apt.getStatus() == AppointmentStatus.INITIAL) {
+                    // Check if payment is successful
+                    var paymentOpt = paymentRepository.findByAppointmentId(apt.getId(),
+                            TypeTransactionEnum.APPOINTMENT);
+                    if (paymentOpt.isPresent()) {
+                        Payment p = paymentOpt.get();
+                        if (p.getStatus() == PaymentEnum.SUCCESS) {
+                            throw new AppException(
+                                    "You have a paid pending appointment. Please wait for confirmation.");
+                        }
+                        if (p.getMethod() == PaymentMethod.CASH && p.getStatus() == PaymentEnum.PROCESSING) {
+                            throw new AppException(
+                                    "You have a pending cash appointment. Please wait for confirmation.");
+                        }
+                        // Cancel stale payment
+                        p.setStatus(PaymentEnum.CANCELLED);
+                        paymentRepository.save(p);
+                    }
+
+                    // Auto-cancel stale pending appointment
+                    apt.setStatus(AppointmentStatus.CANCELLED);
+                    appointmentRepository.save(apt);
+
+                    if (apt.getSlot() != null) {
+                        DoctorAvailableSlot slot = apt.getSlot();
+                        slot.setAppointment(null);
+                        slot.setStatus(SlotStatus.AVAILABLE);
+                        slotRepository.save(slot);
+                    }
+                    log.info("Auto-cancelled stale pending appointment ID: {} to allow new booking", apt.getId());
+                }
             }
 
             // Check if course is actually full but not marked
@@ -1132,28 +1255,6 @@ public class AppointmentService {
                 .currentDoseIndex(0)
                 .startDate(date != null ? date.atStartOfDay() : LocalDateTime.now())
                 .build());
-    }
-
-    public List<AppointmentResponse> getBooking() throws AppException {
-        User user = authService.getCurrentUserLogin();
-        List<Appointment> appointments = appointmentRepository
-                .findByPatientAndStatusIn(user,
-                        List.of(AppointmentStatus.PENDING, AppointmentStatus.SCHEDULED, AppointmentStatus.RESCHEDULE));
-        return appointments.stream()
-                .map(apt -> {
-                    AppointmentResponse response = AppointmentMapper.toResponse(apt);
-                    paymentRepository.findByAppointmentId(apt.getId(), TypeTransactionEnum.APPOINTMENT)
-                            .ifPresent(payment -> {
-                                response.setPaymentId(payment.getId());
-                                response.setPaymentStatus(
-                                        payment.getStatus() != null ? payment.getStatus().name() : null);
-                                response.setPaymentMethod(
-                                        payment.getMethod() != null ? payment.getMethod().name() : null);
-                                response.setPaymentAmount(payment.getAmount());
-                            });
-                    return response;
-                })
-                .toList();
     }
 
     public Pagination getAllAppointmentsAsBookings(Specification<Appointment> specification, Pageable pageable)

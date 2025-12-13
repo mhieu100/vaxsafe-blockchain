@@ -1,6 +1,6 @@
 package com.dapp.backend.dto.request;
 
-import com.dapp.backend.enums.MethodPaymentEnum;
+import com.dapp.backend.enums.PaymentMethod;
 import lombok.AccessLevel;
 import lombok.Data;
 import lombok.experimental.FieldDefaults;
@@ -13,7 +13,7 @@ public class OrderRequest {
     List<ItemRequest> items;
     int itemCount;
     double totalAmount;
-    MethodPaymentEnum paymentMethod;
+    PaymentMethod paymentMethod;
 
     @Data
     @FieldDefaults(level = AccessLevel.PRIVATE)

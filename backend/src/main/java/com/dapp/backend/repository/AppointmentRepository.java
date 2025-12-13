@@ -73,4 +73,7 @@ public interface AppointmentRepository extends JpaRepository<Appointment, Long>,
                         List<AppointmentStatus> statuses, Long id);
 
         List<Appointment> findByVaccinationCourseIn(List<com.dapp.backend.model.VaccinationCourse> courses);
+
+        List<Appointment> findByVaccinationCourseAndStatusIn(com.dapp.backend.model.VaccinationCourse course,
+                        List<AppointmentStatus> statuses);
 }
