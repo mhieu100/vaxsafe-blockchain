@@ -24,7 +24,9 @@ public class GlobalException {
         ApiResponse<Object> res = new ApiResponse<>();
         res.setStatusCode(HttpStatus.BAD_REQUEST.value());
         res.setError(ex.getMessage());
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(res);
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                .header("Content-Type", "application/json")
+                .body(res);
     }
 
     @ExceptionHandler(value = {
@@ -35,7 +37,9 @@ public class GlobalException {
         res.setStatusCode(HttpStatus.NOT_FOUND.value());
         res.setError(ex.getMessage());
         res.setMessage("404 Not Found. URL may not exist...");
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(res);
+        return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                .header("Content-Type", "application/json")
+                .body(res);
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
@@ -50,7 +54,9 @@ public class GlobalException {
         List<String> errors = fieldErrors.stream().map(DefaultMessageSourceResolvable::getDefaultMessage).collect(Collectors.toList());
         res.setMessage(errors.size() > 1 ? errors : errors.get(0));
 
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(res);
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                .header("Content-Type", "application/json")
+                .body(res);
     }
 
     @ExceptionHandler(value = {
@@ -61,7 +67,9 @@ public class GlobalException {
         res.setStatusCode(HttpStatus.BAD_REQUEST.value());
         res.setError(ex.getMessage());
         res.setMessage("Exception upload file...");
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(res);
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                .header("Content-Type", "application/json")
+                .body(res);
     }
 
     @ExceptionHandler(value = {
@@ -72,6 +80,8 @@ public class GlobalException {
         res.setStatusCode(HttpStatus.FORBIDDEN.value());
         res.setError(ex.getMessage());
         res.setMessage("Exception access data...");
-        return ResponseEntity.status(HttpStatus.FORBIDDEN).body(res);
+        return ResponseEntity.status(HttpStatus.FORBIDDEN)
+                .header("Content-Type", "application/json")
+                .body(res);
     }
 }
