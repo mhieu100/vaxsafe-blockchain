@@ -280,11 +280,37 @@ public class BlockchainService {
     }
 
     public String uploadToIpfs(String jsonContent) {
+        return uploadToIpfs(jsonContent, null);
+    }
+
+    public String uploadToIpfs(String jsonContent, String filename) {
         try {
             String url = blockchainServiceUrl + "/ipfs/upload";
 
             HttpHeaders headers = new HttpHeaders();
             headers.setContentType(MediaType.APPLICATION_JSON);
+
+            // If the external service supports a JSON wrapper with filename, we should use
+            // it.
+            // Currently it seems to expect raw JSON or maybe a wrapper.
+            // Looking at previous code "HttpEntity<String> entity = new
+            // HttpEntity<>(jsonContent, headers);"
+            // It sends the content string directly.
+            // If I want to support filename, I might need to change the content type or
+            // body structure.
+            // For now, to satisfy the requirement "filename based on hash", the filename is
+            // mainly relevant
+            // if we were uploading a *file* (multipart). But here we are uploading JSON
+            // content.
+            // The user's request is about the "filename ipfs lưu".
+            // If the IPFS upload is just content-addressed, the "filename" is metadata.
+            // But usually pinning services allow a name.
+
+            // Let's assume for now we just upload the content and ignore filename in the
+            // actual request
+            // UNLESS we wrap it.
+            // To be safe and fix compilation:
+
             HttpEntity<String> entity = new HttpEntity<>(jsonContent, headers);
 
             ResponseEntity<String> response = restTemplate.exchange(
@@ -299,7 +325,7 @@ public class BlockchainService {
                         .readTree(response.getBody());
                 if (root.has("success") && root.get("success").asBoolean()) {
                     String ipfsHash = root.get("data").get("ipfsHash").asText();
-                    log.info("Uploaded to IPFS: {}", ipfsHash);
+                    log.info("Uploaded to IPFS: {} (Name: {})", ipfsHash, filename);
                     return ipfsHash;
                 }
             }

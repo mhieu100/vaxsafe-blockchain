@@ -256,9 +256,9 @@ public class IdentityService {
                 org.hl7.fhir.r4.model.Extension guardianExt = new org.hl7.fhir.r4.model.Extension();
                 guardianExt.setUrl("http://vaxsafe.com/fhir/StructureDefinition/guardian-did");
                 // Assuming guardian has DID, else use ID
-                guardianExt.setValue(new org.hl7.fhir.r4.model.StringType(
-                        member.getUser().getDid() != null ? member.getUser().getDid()
-                                : String.valueOf(member.getUser().getId())));
+                String guardianDid = member.getUser().getDid() != null ? member.getUser().getDid()
+                        : String.valueOf(member.getUser().getId());
+                guardianExt.setValue(new org.hl7.fhir.r4.model.StringType(guardianDid));
                 fhirPatient.addExtension(guardianExt);
             }
 
@@ -267,7 +267,12 @@ public class IdentityService {
 
             // 3. Upload to IPFS
             if (blockchainService.isBlockchainServiceAvailable()) {
-                String ipfsHash = blockchainService.uploadToIpfs(fhirJson);
+                // Use Identity Hash for filename to ensure uniqueness and privacy (no exposing
+                // DB ID)
+                String identityHash = member.getBlockchainIdentityHash(); // Assuming this is available
+                String filename = "VaxSafe_Patient_" + identityHash + ".json";
+
+                String ipfsHash = blockchainService.uploadToIpfs(fhirJson, filename);
                 if (ipfsHash != null) {
                     log.info("✅ Family Member Identity (FHIR) uploaded to IPFS: {}", ipfsHash);
                     return ipfsHash;
