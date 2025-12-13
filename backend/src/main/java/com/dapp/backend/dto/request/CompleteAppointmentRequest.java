@@ -16,8 +16,6 @@ public class CompleteAppointmentRequest {
     Double weight;
     Double temperature;
     Integer pulse;
-    Integer systolic;
-    Integer diastolic;
 
     String adverseReactions;
 

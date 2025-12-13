@@ -90,7 +90,9 @@ public class VaccineRecordService {
                 .adverseReactions(request.getAdverseReactions())
                 .doctorSignature(request.getDoctorSignature())
                 .patientConsentSignature(request.getPatientConsentSignature())
-                .isVerified(false)
+                .isVerified(true)
+                .verifiedAt(LocalDateTime.now())
+                .digitalSignature(request.getDoctorSignature()) // Using doctor's signature as the main record signature
                 .nextDoseDate(nextDoseDate)
                 .nextDoseNumber(nextDoseDate != null ? appointment.getDoseNumber() + 1 : null)
                 .build();
@@ -303,5 +305,11 @@ public class VaccineRecordService {
                 .createdAt(record.getCreatedAt())
                 .updatedAt(record.getUpdatedAt())
                 .build();
+    }
+
+    public VaccineRecordResponse getRecordByIpfsHash(String ipfsHash) throws AppException {
+        VaccineRecord record = vaccineRecordRepository.findByIpfsHash(ipfsHash)
+                .orElseThrow(() -> new AppException("Vaccine record not found for IPFS hash: " + ipfsHash));
+        return mapToResponse(record);
     }
 }

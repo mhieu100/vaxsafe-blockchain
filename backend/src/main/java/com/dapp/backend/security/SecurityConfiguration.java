@@ -82,7 +82,8 @@ public class SecurityConfiguration {
                 "/storage/**", "/email/**",
                 "/api/payments/vnpay/return", "/api/payments/paypal/success", "/api/payments/paypal/cancel",
                 "/api/health/hello",
-                "/oauth2/**", "/login/oauth2/**", "/api/test/**", "/api/reminders/**"
+                "/oauth2/**", "/login/oauth2/**", "/api/test/**", "/api/reminders/**",
+                "/api/public/**"
         };
         http
                 .csrf(AbstractHttpConfigurer::disable)

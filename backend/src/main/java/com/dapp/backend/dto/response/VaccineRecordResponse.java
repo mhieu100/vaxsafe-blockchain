@@ -46,8 +46,7 @@ public class VaccineRecordResponse {
     Double weight;
     Double temperature;
     Integer pulse;
-    Integer systolic;
-    Integer diastolic;
+    
 
     String blockchainRecordId;
     String transactionHash;
